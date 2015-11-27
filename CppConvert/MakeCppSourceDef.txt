@@ -1,0 +1,148 @@
+
+typedef LRESULT(*HandleMessageCallBack)(LPVOID, UINT, WPARAM, LPARAM);
+typedef void(*NotifyCallBack)(LPVOID, TNotifyUI&);
+typedef void(*FinalMessageCallBack)(LPVOID, HWND);
+typedef LRESULT(*MessageCallBack)(LPVOID, UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+typedef void(*InitWindowCallBack)(LPVOID);
+typedef CControlUI*(*CreateControlCallBack)(LPVOID, LPCTSTR);
+
+
+class CDelphi_WindowImplBase : public WindowImplBase
+{
+protected:
+	LPVOID m_Self;
+	LPCTSTR m_ClassName;
+	LPCTSTR m_SkinFile;
+	LPCTSTR m_SkinFolder;
+	LPCTSTR m_ZipFileName;
+	UILIB_RESOURCETYPE m_RType;
+	InitWindowCallBack m_InitWindow;
+	FinalMessageCallBack m_FinalMessage;
+	HandleMessageCallBack m_HandleMessage;
+	NotifyCallBack m_Notify;
+	NotifyCallBack m_Click;
+	MessageCallBack m_MessageHandler;
+	MessageCallBack m_HandleCustomMessage;
+	CreateControlCallBack m_CreateControl;
+
+public:
+	CDelphi_WindowImplBase() :
+		WindowImplBase(),
+		m_Self(NULL),
+		m_ClassName(NULL),
+		m_SkinFile(NULL),
+		m_SkinFolder(NULL),
+		m_ZipFileName(NULL),
+		m_RType(UILIB_FILE),
+		m_InitWindow(NULL),
+		m_FinalMessage(NULL),
+		m_HandleMessage(NULL),
+		m_Notify(NULL),
+		m_Click(NULL),
+		m_MessageHandler(NULL),
+		m_HandleCustomMessage(NULL) {
+	}
+	~CDelphi_WindowImplBase(){ printf("CDelphi_WindowImplBase Destroy\n"); };
+	void InitWindow()
+	{
+		if (m_InitWindow)
+			m_InitWindow(m_Self);
+	}
+	void OnFinalMessage(HWND hWnd)
+	{
+		if (m_FinalMessage)
+			m_FinalMessage(m_Self, hWnd);
+		__super::OnFinalMessage(hWnd);
+		//delete this;
+	}
+	void Notify(TNotifyUI& msg)
+	{
+		if (m_Notify)
+			m_Notify(m_Self, msg);
+		return WindowImplBase::Notify(msg);
+	}
+	void OnClick(TNotifyUI& msg)
+	{
+		if (m_Click)
+			m_Click(m_Self, msg);
+	}
+	CControlUI* CreateControl(LPCTSTR pstrClass) {
+		if (m_CreateControl)
+			return	m_CreateControl(m_Self, pstrClass);
+		return NULL;
+	}
+public:
+	LPCTSTR GetWindowClassName() const { return m_ClassName; }
+	CDuiString GetSkinFile() { return m_SkinFile; };
+	CDuiString GetSkinFolder() { return m_SkinFolder; };
+	CDuiString GetZIPFileName() const { return m_ZipFileName; };
+	UILIB_RESOURCETYPE GetResourceType() const { return m_RType; };
+	LRESULT MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		LRESULT lRes = 0;
+		if (m_MessageHandler)
+		{
+			lRes = m_MessageHandler(m_Self, uMsg, wParam, lParam, bHandled);
+			if (lRes) return lRes;
+		}
+		bool b = (bool)bHandled;
+		lRes = WindowImplBase::MessageHandler(uMsg, wParam, lParam, b);
+		bHandled = (BOOL)b;
+		return lRes;
+	}
+	LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
+	{
+		if (m_HandleMessage)
+		{
+			LRESULT lRes = m_HandleMessage(m_Self, uMsg, wParam, lParam);
+			if (lRes) return lRes;
+		}
+		return  WindowImplBase::HandleMessage(uMsg, wParam, lParam);
+	}
+	LRESULT HandleCustomMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		if (m_HandleCustomMessage)
+		{
+			LRESULT lRes = m_HandleCustomMessage(m_Self, uMsg, wParam, lParam, bHandled);
+			if (lRes) return lRes;
+		}
+		return WindowImplBase::HandleCustomMessage(uMsg, wParam, lParam, bHandled);
+	};
+public:
+	CPaintManagerUI* GetPaintManagerUI() { return &m_PaintManager; };
+	void SetDelphiSelf(LPVOID Self) { m_Self = Self; }
+	void SetClassName(LPCTSTR ClassName) { m_ClassName = ClassName; }
+	void SetSkinFile(LPCTSTR SkinFile) { m_SkinFile = SkinFile; }
+	void SetSkinFolder(LPCTSTR SkinFolder) { m_SkinFolder = SkinFolder; }
+	void SetZipFileName(LPCTSTR ZipFileName) { m_ZipFileName = ZipFileName; }
+	void SetResourceType(UILIB_RESOURCETYPE RType) { m_RType = RType; }
+	void SetInitWindow(InitWindowCallBack Callback) { m_InitWindow = Callback; }
+	void SetFinalMessage(FinalMessageCallBack Callback) { m_FinalMessage = Callback; }
+	void SetHandleMessage(HandleMessageCallBack Callback) { m_HandleMessage = Callback; }
+	void SetNotify(NotifyCallBack Callback) { m_Notify = Callback; }
+	void SetClick(NotifyCallBack Callback) { m_Click = Callback; }
+	void SetMessageHandler(MessageCallBack Callback) { m_MessageHandler = Callback; }
+	void SetHandleCustomMessage(MessageCallBack Callback) { m_HandleCustomMessage = Callback; }
+	void SetCreateControl(CreateControlCallBack CallBack) { m_CreateControl = CallBack; }
+};
+
+typedef void(*DoEventCallBack)(LPVOID, TEventUI&);
+class CDelphi_ListUI : public CListUI {
+protected:
+	LPVOID m_Self;
+	DoEventCallBack m_DoEvent;
+public:
+	CDelphi_ListUI() :
+		m_Self(NULL),
+		m_DoEvent(NULL)
+	{
+	}
+	void DoEvent(TEventUI& event) {
+		if (m_DoEvent)
+			m_DoEvent(m_Self, event);
+		CListUI::DoEvent(event);
+	}
+public:
+	void SetDelphiSelf(LPVOID ASelf) { m_Self = ASelf; }
+	void SetDoEvent(DoEventCallBack ADoEvent) { m_DoEvent = ADoEvent; }
+};
