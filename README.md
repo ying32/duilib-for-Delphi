@@ -17,7 +17,7 @@
   **2015-11-24 重新整理分支的目录，删除了转换工具，之后会提交新的转换工具**  
 ***
 ## 说明
-  **需要将Duilib下的DriectUIlib.cpp和DriectUIlib.h加入原duilib工程中，然后重编译duilib工程, 主意vs中设置为Unicode工程** 
+  **需要将DuilibExport下的DriectUIlib.cpp和DriectUIlib.h加入原duilib工程中，然后查看ReadMe.txt修改一处duilib的源代码，再重编译duilib工程, 主意vs中设置为Unicode工程** 
 
 ## 作者信息
 ***

@@ -113,7 +113,7 @@ begin
   // AFile.Add('//       2、类中的方法及字段必须严格对照c++中类方法和字段的顺序');                               // 已经不走这条路了
   // AFile.Add('//       也只允许2种，一是变量，二是虚方法需要应，不包括以static标识，普通成员函数');            // 已经不走这条路了
   // AFile.Add('//       桥接类中的 public 字段不要乱用，本来定义为protected,因跨单元不能访问，则改为public');   // 已经不走这条路了
-  AFile.Add('//       2、导出的方法原为__thiscall，Delphi中采用stdcall来调用，调用的时候将类指针地址放入ecx寄存器中');
+  //AFile.Add('//       2、导出的方法原为__thiscall，Delphi中采用stdcall来调用，调用的时候将类指针地址放入ecx寄存器中');
   AFile.Add('//');
   // AFile.Add('//       虚函数__thiscall问题，到Delphi这里了没这一约定，只能老老实实干点其它的了'); // 已经不走这条路了
   AFile.Add('//');
