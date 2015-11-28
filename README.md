@@ -2,7 +2,7 @@
 ===============================================================================
 
 **为了让更多人能了解到这个项目，决定迁移一份代码到github上，oschina将只同步github的代码，**   
-**不作提交，[github项目地址](https://github.com/ying32/duilib-for-Delphi/)， **
+**不作提交，[github项目地址](https://github.com/ying32/duilib-for-Delphi/),**
 **[原oschina项目](http://git.oschina.net/ying32/Duilib-for-Delphi)** 
 
 
@@ -32,8 +32,8 @@
 
 ### 截图
 ***
-![截图1](https://github.com/ying32/duilib-for-Delphi/screenshot1.png)  
-![截图2](https://github.com/ying32/duilib-for-Delphi/screenshot2.png)  
+![截图1](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot1.png)  
+![截图2](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot2.png)  
 
 ### 作者信息
 ***
