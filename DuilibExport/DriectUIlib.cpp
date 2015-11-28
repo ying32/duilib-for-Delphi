@@ -3,7 +3,7 @@
 //       作者：ying32
 //       QQ  ：1444386932
 //       E-mail：1444386932@qq.com
-//       本单元由CppConvert工具自动生成于2015-11-27 20:58:02
+//       本单元由CppConvert工具自动生成于2015-11-28 16:34:01
 //       版权所有 (C) 2015-2015 ying32 All Rights Reserved
 //
 //*******************************************************************
@@ -152,7 +152,7 @@ public:
 	CDelphi_ListUI() :
 		m_Self(NULL),
 		m_DoEvent(NULL)
-   {
+	{
 	}
 	void DoEvent(TEventUI& event) {
 		if (m_DoEvent)
@@ -176,11 +176,11 @@ DRIECTUILIB_API void Delphi_StdStringPtrMap_CppDestroy(CStdStringPtrMap* handle)
     delete handle;
 }
 
-DRIECTUILIB_API void Delphi_StdStringPtrMap_Resize(CStdStringPtrMap* handle ,int nSize = 83) {
+DRIECTUILIB_API void Delphi_StdStringPtrMap_Resize(CStdStringPtrMap* handle ,int nSize) {
     handle->Resize(nSize);
 }
 
-DRIECTUILIB_API LPVOID Delphi_StdStringPtrMap_Find(CStdStringPtrMap* handle ,LPCTSTR key, bool optimize = true) {
+DRIECTUILIB_API LPVOID Delphi_StdStringPtrMap_Find(CStdStringPtrMap* handle ,LPCTSTR key, bool optimize) {
     return handle->Find(key, optimize);
 }
 
@@ -210,7 +210,7 @@ DRIECTUILIB_API LPCTSTR Delphi_StdStringPtrMap_GetAt(CStdStringPtrMap* handle ,i
 
 //================================CStdValArray============================
 
-DRIECTUILIB_API CStdValArray* Delphi_StdValArray_CppCreate(int iElementSize, int iPreallocSize = 0) {
+DRIECTUILIB_API CStdValArray* Delphi_StdValArray_CppCreate(int iElementSize, int iPreallocSize) {
     return new CStdValArray(iElementSize, iPreallocSize);
 }
 
@@ -310,7 +310,7 @@ DRIECTUILIB_API void Delphi_NotifyPump_CppDestroy(CNotifyPump* handle) {
     delete handle;
 }
 
-DRIECTUILIB_API bool Delphi_NotifyPump_AddVirtualWnd(CNotifyPump* handle ,CDuiString strName,CNotifyPump* pObject) {
+DRIECTUILIB_API bool Delphi_NotifyPump_AddVirtualWnd(CNotifyPump* handle ,CDuiString strName, CNotifyPump* pObject) {
     return handle->AddVirtualWnd(strName, pObject);
 }
 
@@ -336,11 +336,11 @@ DRIECTUILIB_API void Delphi_DialogBuilder_CppDestroy(CDialogBuilder* handle) {
     delete handle;
 }
 
-DRIECTUILIB_API CControlUI* Delphi_DialogBuilder_Create_01(CDialogBuilder* handle ,STRINGorID xml, LPCTSTR type = NULL, IDialogBuilderCallback* pCallback = NULL, CPaintManagerUI* pManager = NULL, CControlUI* pParent = NULL) {
+DRIECTUILIB_API CControlUI* Delphi_DialogBuilder_Create_01(CDialogBuilder* handle ,STRINGorID xml, LPCTSTR type, IDialogBuilderCallback* pCallback, CPaintManagerUI* pManager, CControlUI* pParent) {
     return handle->Create(xml, type, pCallback, pManager, pParent);
 }
 
-DRIECTUILIB_API CControlUI* Delphi_DialogBuilder_Create_02(CDialogBuilder* handle ,IDialogBuilderCallback* pCallback = NULL, CPaintManagerUI* pManager = NULL, CControlUI* pParent = NULL) {
+DRIECTUILIB_API CControlUI* Delphi_DialogBuilder_Create_02(CDialogBuilder* handle ,IDialogBuilderCallback* pCallback, CPaintManagerUI* pManager, CControlUI* pParent) {
     return handle->Create(pCallback, pManager, pParent);
 }
 
@@ -358,7 +358,7 @@ DRIECTUILIB_API void Delphi_DialogBuilder_GetLastErrorLocation(CDialogBuilder* h
 
 //================================CMarkup============================
 
-DRIECTUILIB_API CMarkup* Delphi_Markup_CppCreate(LPCTSTR pstrXML = NULL) {
+DRIECTUILIB_API CMarkup* Delphi_Markup_CppCreate(LPCTSTR pstrXML) {
     return new CMarkup(pstrXML);
 }
 
@@ -370,11 +370,11 @@ DRIECTUILIB_API bool Delphi_Markup_Load(CMarkup* handle ,LPCTSTR pstrXML) {
     return handle->Load(pstrXML);
 }
 
-DRIECTUILIB_API bool Delphi_Markup_LoadFromMem(CMarkup* handle ,BYTE* pByte, DWORD dwSize, int encoding = XMLFILE_ENCODING_UTF8) {
+DRIECTUILIB_API bool Delphi_Markup_LoadFromMem(CMarkup* handle ,BYTE* pByte, DWORD dwSize, int encoding) {
     return handle->LoadFromMem(pByte, dwSize, encoding);
 }
 
-DRIECTUILIB_API bool Delphi_Markup_LoadFromFile(CMarkup* handle ,LPCTSTR pstrFilename, int encoding = XMLFILE_ENCODING_UTF8) {
+DRIECTUILIB_API bool Delphi_Markup_LoadFromFile(CMarkup* handle ,LPCTSTR pstrFilename, int encoding) {
     return handle->LoadFromFile(pstrFilename, encoding);
 }
 
@@ -386,7 +386,7 @@ DRIECTUILIB_API bool Delphi_Markup_IsValid(CMarkup* handle) {
     return handle->IsValid();
 }
 
-DRIECTUILIB_API void Delphi_Markup_SetPreserveWhitespace(CMarkup* handle ,bool bPreserve = true) {
+DRIECTUILIB_API void Delphi_Markup_SetPreserveWhitespace(CMarkup* handle ,bool bPreserve) {
     handle->SetPreserveWhitespace(bPreserve);
 }
 
@@ -518,7 +518,7 @@ DRIECTUILIB_API CPaintManagerUI* Delphi_ControlUI_GetManager(CControlUI* handle)
     return handle->GetManager();
 }
 
-DRIECTUILIB_API void Delphi_ControlUI_SetManager(CControlUI* handle ,CPaintManagerUI* pManager, CControlUI* pParent, bool bInit = true) {
+DRIECTUILIB_API void Delphi_ControlUI_SetManager(CControlUI* handle ,CPaintManagerUI* pManager, CControlUI* pParent, bool bInit) {
     handle->SetManager(pManager, pParent, bInit);
 }
 
@@ -582,8 +582,8 @@ DRIECTUILIB_API void Delphi_ControlUI_SetColorHSL(CControlUI* handle ,bool bColo
     handle->SetColorHSL(bColorHSL);
 }
 
-DRIECTUILIB_API SIZE Delphi_ControlUI_GetBorderRound(CControlUI* handle) {
-    return handle->GetBorderRound();
+DRIECTUILIB_API void Delphi_ControlUI_GetBorderRound(CControlUI* handle, SIZE& Result) {
+    Result = handle->GetBorderRound();
 }
 
 DRIECTUILIB_API void Delphi_ControlUI_SetBorderRound(CControlUI* handle ,SIZE cxyRound) {
@@ -658,15 +658,15 @@ DRIECTUILIB_API const RECT& Delphi_ControlUI_GetPos(CControlUI* handle) {
     return handle->GetPos();
 }
 
-DRIECTUILIB_API RECT Delphi_ControlUI_GetRelativePos(CControlUI* handle) {
-    return handle->GetRelativePos();
+DRIECTUILIB_API void Delphi_ControlUI_GetRelativePos(CControlUI* handle, RECT& Result) {
+    Result = handle->GetRelativePos();
 }
 
-DRIECTUILIB_API void Delphi_ControlUI_SetPos(CControlUI* handle ,RECT rc, bool bNeedInvalidate = true) {
+DRIECTUILIB_API void Delphi_ControlUI_SetPos(CControlUI* handle ,RECT rc, bool bNeedInvalidate) {
     handle->SetPos(rc, bNeedInvalidate);
 }
 
-DRIECTUILIB_API void Delphi_ControlUI_Move(CControlUI* handle ,SIZE szOffset, bool bNeedInvalidate = true) {
+DRIECTUILIB_API void Delphi_ControlUI_Move(CControlUI* handle ,SIZE szOffset, bool bNeedInvalidate) {
     handle->Move(szOffset, bNeedInvalidate);
 }
 
@@ -686,16 +686,16 @@ DRIECTUILIB_API int Delphi_ControlUI_GetY(CControlUI* handle) {
     return handle->GetY();
 }
 
-DRIECTUILIB_API RECT Delphi_ControlUI_GetPadding(CControlUI* handle) {
-    return handle->GetPadding();
+DRIECTUILIB_API void Delphi_ControlUI_GetPadding(CControlUI* handle, RECT& Result) {
+    Result = handle->GetPadding();
 }
 
 DRIECTUILIB_API void Delphi_ControlUI_SetPadding(CControlUI* handle ,RECT rcPadding) {
     handle->SetPadding(rcPadding);
 }
 
-DRIECTUILIB_API SIZE Delphi_ControlUI_GetFixedXY(CControlUI* handle) {
-    return handle->GetFixedXY();
+DRIECTUILIB_API void Delphi_ControlUI_GetFixedXY(CControlUI* handle, SIZE& Result) {
+    Result = handle->GetFixedXY();
 }
 
 DRIECTUILIB_API void Delphi_ControlUI_SetFixedXY(CControlUI* handle ,SIZE szXY) {
@@ -810,11 +810,11 @@ DRIECTUILIB_API bool Delphi_ControlUI_IsVisible(CControlUI* handle) {
     return handle->IsVisible();
 }
 
-DRIECTUILIB_API void Delphi_ControlUI_SetVisible(CControlUI* handle ,bool bVisible = true) {
+DRIECTUILIB_API void Delphi_ControlUI_SetVisible(CControlUI* handle ,bool bVisible) {
     handle->SetVisible(bVisible);
 }
 
-DRIECTUILIB_API void Delphi_ControlUI_SetInternVisible(CControlUI* handle ,bool bVisible = true) {
+DRIECTUILIB_API void Delphi_ControlUI_SetInternVisible(CControlUI* handle ,bool bVisible) {
     handle->SetInternVisible(bVisible);
 }
 
@@ -822,7 +822,7 @@ DRIECTUILIB_API bool Delphi_ControlUI_IsEnabled(CControlUI* handle) {
     return handle->IsEnabled();
 }
 
-DRIECTUILIB_API void Delphi_ControlUI_SetEnabled(CControlUI* handle ,bool bEnable = true) {
+DRIECTUILIB_API void Delphi_ControlUI_SetEnabled(CControlUI* handle ,bool bEnable) {
     handle->SetEnabled(bEnable);
 }
 
@@ -830,7 +830,7 @@ DRIECTUILIB_API bool Delphi_ControlUI_IsMouseEnabled(CControlUI* handle) {
     return handle->IsMouseEnabled();
 }
 
-DRIECTUILIB_API void Delphi_ControlUI_SetMouseEnabled(CControlUI* handle ,bool bEnable = true) {
+DRIECTUILIB_API void Delphi_ControlUI_SetMouseEnabled(CControlUI* handle ,bool bEnable) {
     handle->SetMouseEnabled(bEnable);
 }
 
@@ -838,7 +838,7 @@ DRIECTUILIB_API bool Delphi_ControlUI_IsKeyboardEnabled(CControlUI* handle) {
     return handle->IsKeyboardEnabled();
 }
 
-DRIECTUILIB_API void Delphi_ControlUI_SetKeyboardEnabled(CControlUI* handle ,bool bEnable = true) {
+DRIECTUILIB_API void Delphi_ControlUI_SetKeyboardEnabled(CControlUI* handle ,bool bEnable) {
     handle->SetKeyboardEnabled(bEnable);
 }
 
@@ -854,7 +854,7 @@ DRIECTUILIB_API bool Delphi_ControlUI_IsFloat(CControlUI* handle) {
     return handle->IsFloat();
 }
 
-DRIECTUILIB_API void Delphi_ControlUI_SetFloat(CControlUI* handle ,bool bFloat = true) {
+DRIECTUILIB_API void Delphi_ControlUI_SetFloat(CControlUI* handle ,bool bFloat) {
     handle->SetFloat(bFloat);
 }
 
@@ -906,11 +906,11 @@ DRIECTUILIB_API CControlUI* Delphi_ControlUI_ApplyAttributeList(CControlUI* hand
     return handle->ApplyAttributeList(pstrList);
 }
 
-DRIECTUILIB_API SIZE Delphi_ControlUI_EstimateSize(CControlUI* handle ,SIZE szAvailable) {
-    return handle->EstimateSize(szAvailable);
+DRIECTUILIB_API void Delphi_ControlUI_EstimateSize(CControlUI* handle ,SIZE szAvailable, SIZE& Result) {
+    Result = handle->EstimateSize(szAvailable);
 }
 
-DRIECTUILIB_API void Delphi_ControlUI_DoPaint(CControlUI* handle ,HDC hDC, const RECT& rcPaint) {
+DRIECTUILIB_API void Delphi_ControlUI_DoPaint(CControlUI* handle ,HDC hDC, RECT& rcPaint) {
     handle->DoPaint(hDC, rcPaint);
 }
 
@@ -934,7 +934,7 @@ DRIECTUILIB_API void Delphi_ControlUI_PaintBorder(CControlUI* handle ,HDC hDC) {
     handle->PaintBorder(hDC);
 }
 
-DRIECTUILIB_API void Delphi_ControlUI_DoPostPaint(CControlUI* handle ,HDC hDC, const RECT& rcPaint) {
+DRIECTUILIB_API void Delphi_ControlUI_DoPostPaint(CControlUI* handle ,HDC hDC, RECT& rcPaint) {
     handle->DoPostPaint(hDC, rcPaint);
 }
 
@@ -968,15 +968,15 @@ DRIECTUILIB_API bool Delphi_Delphi_WindowImplBase_RegisterSuperclass(CDelphi_Win
     return handle->RegisterSuperclass();
 }
 
-DRIECTUILIB_API HWND Delphi_Delphi_WindowImplBase_Create_01(CDelphi_WindowImplBase* handle ,HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle, const RECT rc, HMENU hMenu = NULL) {
+DRIECTUILIB_API HWND Delphi_Delphi_WindowImplBase_Create_01(CDelphi_WindowImplBase* handle ,HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle, RECT rc, HMENU hMenu) {
     return handle->Create(hwndParent, pstrName, dwStyle, dwExStyle, rc, hMenu);
 }
 
-DRIECTUILIB_API HWND Delphi_Delphi_WindowImplBase_Create_02(CDelphi_WindowImplBase* handle ,HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle, int x = CW_USEDEFAULT, int y = CW_USEDEFAULT, int cx = CW_USEDEFAULT, int cy = CW_USEDEFAULT, HMENU hMenu = NULL) {
+DRIECTUILIB_API HWND Delphi_Delphi_WindowImplBase_Create_02(CDelphi_WindowImplBase* handle ,HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle, int x, int y, int cx, int cy, HMENU hMenu) {
     return handle->Create(hwndParent, pstrName, dwStyle, dwExStyle, x, y, cx, cy, hMenu);
 }
 
-DRIECTUILIB_API HWND Delphi_Delphi_WindowImplBase_CreateDuiWindow(CDelphi_WindowImplBase* handle ,HWND hwndParent, LPCTSTR pstrWindowName,DWORD dwStyle =0, DWORD dwExStyle =0) {
+DRIECTUILIB_API HWND Delphi_Delphi_WindowImplBase_CreateDuiWindow(CDelphi_WindowImplBase* handle ,HWND hwndParent, LPCTSTR pstrWindowName, DWORD dwStyle, DWORD dwExStyle) {
     return handle->CreateDuiWindow(hwndParent, pstrWindowName, dwStyle, dwExStyle);
 }
 
@@ -988,7 +988,7 @@ DRIECTUILIB_API void Delphi_Delphi_WindowImplBase_Unsubclass(CDelphi_WindowImplB
     handle->Unsubclass();
 }
 
-DRIECTUILIB_API void Delphi_Delphi_WindowImplBase_ShowWindow(CDelphi_WindowImplBase* handle ,bool bShow = true, bool bTakeFocus = true) {
+DRIECTUILIB_API void Delphi_Delphi_WindowImplBase_ShowWindow(CDelphi_WindowImplBase* handle ,bool bShow, bool bTakeFocus) {
     handle->ShowWindow(bShow, bTakeFocus);
 }
 
@@ -996,7 +996,7 @@ DRIECTUILIB_API UINT Delphi_Delphi_WindowImplBase_ShowModal(CDelphi_WindowImplBa
     return handle->ShowModal();
 }
 
-DRIECTUILIB_API void Delphi_Delphi_WindowImplBase_Close(CDelphi_WindowImplBase* handle ,UINT nRet = IDOK) {
+DRIECTUILIB_API void Delphi_Delphi_WindowImplBase_Close(CDelphi_WindowImplBase* handle ,UINT nRet) {
     handle->Close(nRet);
 }
 
@@ -1008,19 +1008,19 @@ DRIECTUILIB_API void Delphi_Delphi_WindowImplBase_SetIcon(CDelphi_WindowImplBase
     handle->SetIcon(nRes);
 }
 
-DRIECTUILIB_API LRESULT Delphi_Delphi_WindowImplBase_SendMessage(CDelphi_WindowImplBase* handle ,UINT uMsg, WPARAM wParam = 0, LPARAM lParam = 0L) {
+DRIECTUILIB_API LRESULT Delphi_Delphi_WindowImplBase_SendMessage(CDelphi_WindowImplBase* handle ,UINT uMsg, WPARAM wParam, LPARAM lParam) {
     return handle->SendMessage(uMsg, wParam, lParam);
 }
 
-DRIECTUILIB_API LRESULT Delphi_Delphi_WindowImplBase_PostMessage(CDelphi_WindowImplBase* handle ,UINT uMsg, WPARAM wParam = 0, LPARAM lParam = 0L) {
+DRIECTUILIB_API LRESULT Delphi_Delphi_WindowImplBase_PostMessage(CDelphi_WindowImplBase* handle ,UINT uMsg, WPARAM wParam, LPARAM lParam) {
     return handle->PostMessage(uMsg, wParam, lParam);
 }
 
-DRIECTUILIB_API void Delphi_Delphi_WindowImplBase_ResizeClient(CDelphi_WindowImplBase* handle ,int cx = -1, int cy = -1) {
+DRIECTUILIB_API void Delphi_Delphi_WindowImplBase_ResizeClient(CDelphi_WindowImplBase* handle ,int cx, int cy) {
     handle->ResizeClient(cx, cy);
 }
 
-DRIECTUILIB_API bool Delphi_Delphi_WindowImplBase_AddVirtualWnd(CDelphi_WindowImplBase* handle ,CDuiString strName,CNotifyPump* pObject) {
+DRIECTUILIB_API bool Delphi_Delphi_WindowImplBase_AddVirtualWnd(CDelphi_WindowImplBase* handle ,CDuiString strName, CNotifyPump* pObject) {
     return handle->AddVirtualWnd(strName, pObject);
 }
 
@@ -1142,12 +1142,12 @@ DRIECTUILIB_API POINT Delphi_PaintManagerUI_GetMousePos(CPaintManagerUI* handle)
     return handle->GetMousePos();
 }
 
-DRIECTUILIB_API SIZE Delphi_PaintManagerUI_GetClientSize(CPaintManagerUI* handle) {
-    return handle->GetClientSize();
+DRIECTUILIB_API void Delphi_PaintManagerUI_GetClientSize(CPaintManagerUI* handle, SIZE& Result) {
+    Result = handle->GetClientSize();
 }
 
-DRIECTUILIB_API SIZE Delphi_PaintManagerUI_GetInitSize(CPaintManagerUI* handle) {
-    return handle->GetInitSize();
+DRIECTUILIB_API void Delphi_PaintManagerUI_GetInitSize(CPaintManagerUI* handle, SIZE& Result) {
+    Result = handle->GetInitSize();
 }
 
 DRIECTUILIB_API void Delphi_PaintManagerUI_SetInitSize(CPaintManagerUI* handle ,int cx, int cy) {
@@ -1170,24 +1170,24 @@ DRIECTUILIB_API void Delphi_PaintManagerUI_SetCaptionRect(CPaintManagerUI* handl
     handle->SetCaptionRect(rcCaption);
 }
 
-DRIECTUILIB_API SIZE Delphi_PaintManagerUI_GetRoundCorner(CPaintManagerUI* handle) {
-    return handle->GetRoundCorner();
+DRIECTUILIB_API void Delphi_PaintManagerUI_GetRoundCorner(CPaintManagerUI* handle, SIZE& Result) {
+    Result = handle->GetRoundCorner();
 }
 
 DRIECTUILIB_API void Delphi_PaintManagerUI_SetRoundCorner(CPaintManagerUI* handle ,int cx, int cy) {
     handle->SetRoundCorner(cx, cy);
 }
 
-DRIECTUILIB_API SIZE Delphi_PaintManagerUI_GetMinInfo(CPaintManagerUI* handle) {
-    return handle->GetMinInfo();
+DRIECTUILIB_API void Delphi_PaintManagerUI_GetMinInfo(CPaintManagerUI* handle, SIZE& Result) {
+    Result = handle->GetMinInfo();
 }
 
 DRIECTUILIB_API void Delphi_PaintManagerUI_SetMinInfo(CPaintManagerUI* handle ,int cx, int cy) {
     handle->SetMinInfo(cx, cy);
 }
 
-DRIECTUILIB_API SIZE Delphi_PaintManagerUI_GetMaxInfo(CPaintManagerUI* handle) {
-    return handle->GetMaxInfo();
+DRIECTUILIB_API void Delphi_PaintManagerUI_GetMaxInfo(CPaintManagerUI* handle, SIZE& Result) {
+    Result = handle->GetMaxInfo();
 }
 
 DRIECTUILIB_API void Delphi_PaintManagerUI_SetMaxInfo(CPaintManagerUI* handle ,int cx, int cy) {
@@ -1266,7 +1266,7 @@ DRIECTUILIB_API void Delphi_PaintManagerUI_SetResourceZip_01(LPVOID pVoid, unsig
     CPaintManagerUI::SetResourceZip(pVoid, len);
 }
 
-DRIECTUILIB_API void Delphi_PaintManagerUI_SetResourceZip_02(LPCTSTR pstrZip, bool bCachedResourceZip = false) {
+DRIECTUILIB_API void Delphi_PaintManagerUI_SetResourceZip_02(LPCTSTR pstrZip, bool bCachedResourceZip) {
     CPaintManagerUI::SetResourceZip(pstrZip, bCachedResourceZip);
 }
 
@@ -1290,7 +1290,7 @@ DRIECTUILIB_API DWORD Delphi_PaintManagerUI_GetDefaultDisabledColor(CPaintManage
     return handle->GetDefaultDisabledColor();
 }
 
-DRIECTUILIB_API void Delphi_PaintManagerUI_SetDefaultDisabledColor(CPaintManagerUI* handle ,DWORD dwColor, bool bShared = false) {
+DRIECTUILIB_API void Delphi_PaintManagerUI_SetDefaultDisabledColor(CPaintManagerUI* handle ,DWORD dwColor, bool bShared) {
     handle->SetDefaultDisabledColor(dwColor, bShared);
 }
 
@@ -1298,7 +1298,7 @@ DRIECTUILIB_API DWORD Delphi_PaintManagerUI_GetDefaultFontColor(CPaintManagerUI*
     return handle->GetDefaultFontColor();
 }
 
-DRIECTUILIB_API void Delphi_PaintManagerUI_SetDefaultFontColor(CPaintManagerUI* handle ,DWORD dwColor, bool bShared = false) {
+DRIECTUILIB_API void Delphi_PaintManagerUI_SetDefaultFontColor(CPaintManagerUI* handle ,DWORD dwColor, bool bShared) {
     handle->SetDefaultFontColor(dwColor, bShared);
 }
 
@@ -1306,7 +1306,7 @@ DRIECTUILIB_API DWORD Delphi_PaintManagerUI_GetDefaultLinkFontColor(CPaintManage
     return handle->GetDefaultLinkFontColor();
 }
 
-DRIECTUILIB_API void Delphi_PaintManagerUI_SetDefaultLinkFontColor(CPaintManagerUI* handle ,DWORD dwColor, bool bShared = false) {
+DRIECTUILIB_API void Delphi_PaintManagerUI_SetDefaultLinkFontColor(CPaintManagerUI* handle ,DWORD dwColor, bool bShared) {
     handle->SetDefaultLinkFontColor(dwColor, bShared);
 }
 
@@ -1314,7 +1314,7 @@ DRIECTUILIB_API DWORD Delphi_PaintManagerUI_GetDefaultLinkHoverFontColor(CPaintM
     return handle->GetDefaultLinkHoverFontColor();
 }
 
-DRIECTUILIB_API void Delphi_PaintManagerUI_SetDefaultLinkHoverFontColor(CPaintManagerUI* handle ,DWORD dwColor, bool bShared = false) {
+DRIECTUILIB_API void Delphi_PaintManagerUI_SetDefaultLinkHoverFontColor(CPaintManagerUI* handle ,DWORD dwColor, bool bShared) {
     handle->SetDefaultLinkHoverFontColor(dwColor, bShared);
 }
 
@@ -1322,7 +1322,7 @@ DRIECTUILIB_API DWORD Delphi_PaintManagerUI_GetDefaultSelectedBkColor(CPaintMana
     return handle->GetDefaultSelectedBkColor();
 }
 
-DRIECTUILIB_API void Delphi_PaintManagerUI_SetDefaultSelectedBkColor(CPaintManagerUI* handle ,DWORD dwColor, bool bShared = false) {
+DRIECTUILIB_API void Delphi_PaintManagerUI_SetDefaultSelectedBkColor(CPaintManagerUI* handle ,DWORD dwColor, bool bShared) {
     handle->SetDefaultSelectedBkColor(dwColor, bShared);
 }
 
@@ -1330,15 +1330,15 @@ DRIECTUILIB_API TFontInfo* Delphi_PaintManagerUI_GetDefaultFontInfo(CPaintManage
     return handle->GetDefaultFontInfo();
 }
 
-DRIECTUILIB_API void Delphi_PaintManagerUI_SetDefaultFont(CPaintManagerUI* handle ,LPCTSTR pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic, bool bShared = false) {
+DRIECTUILIB_API void Delphi_PaintManagerUI_SetDefaultFont(CPaintManagerUI* handle ,LPCTSTR pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic, bool bShared) {
     handle->SetDefaultFont(pStrFontName, nSize, bBold, bUnderline, bItalic, bShared);
 }
 
-DRIECTUILIB_API DWORD Delphi_PaintManagerUI_GetCustomFontCount(CPaintManagerUI* handle ,bool bShared = false) {
+DRIECTUILIB_API DWORD Delphi_PaintManagerUI_GetCustomFontCount(CPaintManagerUI* handle ,bool bShared) {
     return handle->GetCustomFontCount(bShared);
 }
 
-DRIECTUILIB_API HFONT Delphi_PaintManagerUI_AddFont(CPaintManagerUI* handle ,int id, LPCTSTR pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic, bool bShared = false) {
+DRIECTUILIB_API HFONT Delphi_PaintManagerUI_AddFont(CPaintManagerUI* handle ,int id, LPCTSTR pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic, bool bShared) {
     return handle->AddFont(id, pStrFontName, nSize, bBold, bUnderline, bItalic, bShared);
 }
 
@@ -1350,23 +1350,23 @@ DRIECTUILIB_API HFONT Delphi_PaintManagerUI_GetFont_02(CPaintManagerUI* handle ,
     return handle->GetFont(pStrFontName, nSize, bBold, bUnderline, bItalic);
 }
 
-DRIECTUILIB_API int Delphi_PaintManagerUI_GetFontIndex_01(CPaintManagerUI* handle ,HFONT hFont, bool bShared = false) {
+DRIECTUILIB_API int Delphi_PaintManagerUI_GetFontIndex_01(CPaintManagerUI* handle ,HFONT hFont, bool bShared) {
     return handle->GetFontIndex(hFont, bShared);
 }
 
-DRIECTUILIB_API int Delphi_PaintManagerUI_GetFontIndex_02(CPaintManagerUI* handle ,LPCTSTR pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic, bool bShared = false) {
+DRIECTUILIB_API int Delphi_PaintManagerUI_GetFontIndex_02(CPaintManagerUI* handle ,LPCTSTR pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic, bool bShared) {
     return handle->GetFontIndex(pStrFontName, nSize, bBold, bUnderline, bItalic, bShared);
 }
 
-DRIECTUILIB_API void Delphi_PaintManagerUI_RemoveFont_01(CPaintManagerUI* handle ,HFONT hFont, bool bShared = false) {
+DRIECTUILIB_API void Delphi_PaintManagerUI_RemoveFont_01(CPaintManagerUI* handle ,HFONT hFont, bool bShared) {
     handle->RemoveFont(hFont, bShared);
 }
 
-DRIECTUILIB_API void Delphi_PaintManagerUI_RemoveFont_02(CPaintManagerUI* handle ,int id, bool bShared = false) {
+DRIECTUILIB_API void Delphi_PaintManagerUI_RemoveFont_02(CPaintManagerUI* handle ,int id, bool bShared) {
     handle->RemoveFont(id, bShared);
 }
 
-DRIECTUILIB_API void Delphi_PaintManagerUI_RemoveAllFonts(CPaintManagerUI* handle ,bool bShared = false) {
+DRIECTUILIB_API void Delphi_PaintManagerUI_RemoveAllFonts(CPaintManagerUI* handle ,bool bShared) {
     handle->RemoveAllFonts(bShared);
 }
 
@@ -1382,23 +1382,23 @@ DRIECTUILIB_API const TImageInfo* Delphi_PaintManagerUI_GetImage(CPaintManagerUI
     return handle->GetImage(bitmap);
 }
 
-DRIECTUILIB_API const TImageInfo* Delphi_PaintManagerUI_GetImageEx(CPaintManagerUI* handle ,LPCTSTR bitmap, LPCTSTR type = NULL, DWORD mask = 0, bool bUseHSL = false) {
+DRIECTUILIB_API const TImageInfo* Delphi_PaintManagerUI_GetImageEx(CPaintManagerUI* handle ,LPCTSTR bitmap, LPCTSTR type, DWORD mask, bool bUseHSL) {
     return handle->GetImageEx(bitmap, type, mask, bUseHSL);
 }
 
-DRIECTUILIB_API const TImageInfo* Delphi_PaintManagerUI_AddImage_01(CPaintManagerUI* handle ,LPCTSTR bitmap, LPCTSTR type = NULL, DWORD mask = 0, bool bUseHSL = false, bool bShared = false) {
+DRIECTUILIB_API const TImageInfo* Delphi_PaintManagerUI_AddImage_01(CPaintManagerUI* handle ,LPCTSTR bitmap, LPCTSTR type, DWORD mask, bool bUseHSL, bool bShared) {
     return handle->AddImage(bitmap, type, mask, bUseHSL, bShared);
 }
 
-DRIECTUILIB_API const TImageInfo* Delphi_PaintManagerUI_AddImage_02(CPaintManagerUI* handle ,LPCTSTR bitmap, HBITMAP hBitmap, int iWidth, int iHeight, bool bAlpha, bool bShared = false) {
+DRIECTUILIB_API const TImageInfo* Delphi_PaintManagerUI_AddImage_02(CPaintManagerUI* handle ,LPCTSTR bitmap, HBITMAP hBitmap, int iWidth, int iHeight, bool bAlpha, bool bShared) {
     return handle->AddImage(bitmap, hBitmap, iWidth, iHeight, bAlpha, bShared);
 }
 
-DRIECTUILIB_API void Delphi_PaintManagerUI_RemoveImage(CPaintManagerUI* handle ,LPCTSTR bitmap, bool bShared = false) {
+DRIECTUILIB_API void Delphi_PaintManagerUI_RemoveImage(CPaintManagerUI* handle ,LPCTSTR bitmap, bool bShared) {
     handle->RemoveImage(bitmap, bShared);
 }
 
-DRIECTUILIB_API void Delphi_PaintManagerUI_RemoveAllImages(CPaintManagerUI* handle ,bool bShared = false) {
+DRIECTUILIB_API void Delphi_PaintManagerUI_RemoveAllImages(CPaintManagerUI* handle ,bool bShared) {
     handle->RemoveAllImages(bShared);
 }
 
@@ -1410,7 +1410,7 @@ DRIECTUILIB_API void Delphi_PaintManagerUI_ReloadImages(CPaintManagerUI* handle)
     handle->ReloadImages();
 }
 
-DRIECTUILIB_API void Delphi_PaintManagerUI_AddDefaultAttributeList(CPaintManagerUI* handle ,LPCTSTR pStrControlName, LPCTSTR pStrControlAttrList, bool bShared = false) {
+DRIECTUILIB_API void Delphi_PaintManagerUI_AddDefaultAttributeList(CPaintManagerUI* handle ,LPCTSTR pStrControlName, LPCTSTR pStrControlAttrList, bool bShared) {
     handle->AddDefaultAttributeList(pStrControlName, pStrControlAttrList, bShared);
 }
 
@@ -1418,11 +1418,11 @@ DRIECTUILIB_API LPCTSTR Delphi_PaintManagerUI_GetDefaultAttributeList(CPaintMana
     return handle->GetDefaultAttributeList(pStrControlName);
 }
 
-DRIECTUILIB_API bool Delphi_PaintManagerUI_RemoveDefaultAttributeList(CPaintManagerUI* handle ,LPCTSTR pStrControlName, bool bShared = false) {
+DRIECTUILIB_API bool Delphi_PaintManagerUI_RemoveDefaultAttributeList(CPaintManagerUI* handle ,LPCTSTR pStrControlName, bool bShared) {
     return handle->RemoveDefaultAttributeList(pStrControlName, bShared);
 }
 
-DRIECTUILIB_API void Delphi_PaintManagerUI_RemoveAllDefaultAttributeList(CPaintManagerUI* handle ,bool bShared = false) {
+DRIECTUILIB_API void Delphi_PaintManagerUI_RemoveAllDefaultAttributeList(CPaintManagerUI* handle ,bool bShared) {
     handle->RemoveAllDefaultAttributeList(bShared);
 }
 
@@ -1450,7 +1450,7 @@ DRIECTUILIB_API bool Delphi_PaintManagerUI_AttachDialog(CPaintManagerUI* handle 
     return handle->AttachDialog(pControl);
 }
 
-DRIECTUILIB_API bool Delphi_PaintManagerUI_InitControls(CPaintManagerUI* handle ,CControlUI* pControl, CControlUI* pParent = NULL) {
+DRIECTUILIB_API bool Delphi_PaintManagerUI_InitControls(CPaintManagerUI* handle ,CControlUI* pControl, CControlUI* pParent) {
     return handle->InitControls(pControl, pParent);
 }
 
@@ -1486,7 +1486,7 @@ DRIECTUILIB_API void Delphi_PaintManagerUI_SetFocusNeeded(CPaintManagerUI* handl
     handle->SetFocusNeeded(pControl);
 }
 
-DRIECTUILIB_API bool Delphi_PaintManagerUI_SetNextTabControl(CPaintManagerUI* handle ,bool bForward = true) {
+DRIECTUILIB_API bool Delphi_PaintManagerUI_SetNextTabControl(CPaintManagerUI* handle ,bool bForward) {
     return handle->SetNextTabControl(bForward);
 }
 
@@ -1526,11 +1526,11 @@ DRIECTUILIB_API bool Delphi_PaintManagerUI_RemoveNotifier(CPaintManagerUI* handl
     return handle->RemoveNotifier(pControl);
 }
 
-DRIECTUILIB_API void Delphi_PaintManagerUI_SendNotify_01(CPaintManagerUI* handle ,TNotifyUI& Msg, bool bAsync = false) {
+DRIECTUILIB_API void Delphi_PaintManagerUI_SendNotify_01(CPaintManagerUI* handle ,TNotifyUI& Msg, bool bAsync) {
     handle->SendNotify(Msg, bAsync);
 }
 
-DRIECTUILIB_API void Delphi_PaintManagerUI_SendNotify_02(CPaintManagerUI* handle ,CControlUI* pControl, LPCTSTR pstrMessage, WPARAM wParam = 0, LPARAM lParam = 0, bool bAsync = false) {
+DRIECTUILIB_API void Delphi_PaintManagerUI_SendNotify_02(CPaintManagerUI* handle ,CControlUI* pControl, LPCTSTR pstrMessage, WPARAM wParam, LPARAM lParam, bool bAsync) {
     handle->SendNotify(pControl, pstrMessage, wParam, lParam, bAsync);
 }
 
@@ -1570,11 +1570,11 @@ DRIECTUILIB_API void Delphi_PaintManagerUI_AddDelayedCleanup(CPaintManagerUI* ha
     handle->AddDelayedCleanup(pControl);
 }
 
-DRIECTUILIB_API bool Delphi_PaintManagerUI_AddTranslateAccelerator(CPaintManagerUI* handle ,ITranslateAccelerator *pTranslateAccelerator) {
+DRIECTUILIB_API bool Delphi_PaintManagerUI_AddTranslateAccelerator(CPaintManagerUI* handle ,ITranslateAccelerator* pTranslateAccelerator) {
     return handle->AddTranslateAccelerator(pTranslateAccelerator);
 }
 
-DRIECTUILIB_API bool Delphi_PaintManagerUI_RemoveTranslateAccelerator(CPaintManagerUI* handle ,ITranslateAccelerator *pTranslateAccelerator) {
+DRIECTUILIB_API bool Delphi_PaintManagerUI_RemoveTranslateAccelerator(CPaintManagerUI* handle ,ITranslateAccelerator* pTranslateAccelerator) {
     return handle->RemoveTranslateAccelerator(pTranslateAccelerator);
 }
 
@@ -1602,7 +1602,7 @@ DRIECTUILIB_API CControlUI* Delphi_PaintManagerUI_FindSubControlByName(CPaintMan
     return handle->FindSubControlByName(pParent, pstrName);
 }
 
-DRIECTUILIB_API CControlUI* Delphi_PaintManagerUI_FindSubControlByClass(CPaintManagerUI* handle ,CControlUI* pParent, LPCTSTR pstrClass, int iIndex = 0) {
+DRIECTUILIB_API CControlUI* Delphi_PaintManagerUI_FindSubControlByClass(CPaintManagerUI* handle ,CControlUI* pParent, LPCTSTR pstrClass, int iIndex) {
     return handle->FindSubControlByClass(pParent, pstrClass, iIndex);
 }
 
@@ -1614,7 +1614,7 @@ DRIECTUILIB_API void Delphi_PaintManagerUI_MessageLoop() {
     CPaintManagerUI::MessageLoop();
 }
 
-DRIECTUILIB_API bool Delphi_PaintManagerUI_TranslateMessage(const LPMSG pMsg) {
+DRIECTUILIB_API bool Delphi_PaintManagerUI_TranslateMessage(LPMSG pMsg) {
     return CPaintManagerUI::TranslateMessage(pMsg);
 }
 
@@ -1692,20 +1692,20 @@ DRIECTUILIB_API void Delphi_ContainerUI_DoEvent(CContainerUI* handle ,TEventUI& 
     handle->DoEvent(event);
 }
 
-DRIECTUILIB_API void Delphi_ContainerUI_SetVisible(CContainerUI* handle ,bool bVisible = true) {
+DRIECTUILIB_API void Delphi_ContainerUI_SetVisible(CContainerUI* handle ,bool bVisible) {
     handle->SetVisible(bVisible);
 }
 
-DRIECTUILIB_API void Delphi_ContainerUI_SetInternVisible(CContainerUI* handle ,bool bVisible = true) {
+DRIECTUILIB_API void Delphi_ContainerUI_SetInternVisible(CContainerUI* handle ,bool bVisible) {
     handle->SetInternVisible(bVisible);
 }
 
-DRIECTUILIB_API void Delphi_ContainerUI_SetMouseEnabled(CContainerUI* handle ,bool bEnable = true) {
+DRIECTUILIB_API void Delphi_ContainerUI_SetMouseEnabled(CContainerUI* handle ,bool bEnable) {
     handle->SetMouseEnabled(bEnable);
 }
 
-DRIECTUILIB_API RECT Delphi_ContainerUI_GetInset(CContainerUI* handle) {
-    return handle->GetInset();
+DRIECTUILIB_API void Delphi_ContainerUI_GetInset(CContainerUI* handle, RECT& Result) {
+    Result = handle->GetInset();
 }
 
 DRIECTUILIB_API void Delphi_ContainerUI_SetInset(CContainerUI* handle ,RECT rcInset) {
@@ -1740,23 +1740,23 @@ DRIECTUILIB_API bool Delphi_ContainerUI_IsMouseChildEnabled(CContainerUI* handle
     return handle->IsMouseChildEnabled();
 }
 
-DRIECTUILIB_API void Delphi_ContainerUI_SetMouseChildEnabled(CContainerUI* handle ,bool bEnable = true) {
+DRIECTUILIB_API void Delphi_ContainerUI_SetMouseChildEnabled(CContainerUI* handle ,bool bEnable) {
     handle->SetMouseChildEnabled(bEnable);
 }
 
-DRIECTUILIB_API int Delphi_ContainerUI_FindSelectable(CContainerUI* handle ,int iIndex, bool bForward = true) {
+DRIECTUILIB_API int Delphi_ContainerUI_FindSelectable(CContainerUI* handle ,int iIndex, bool bForward) {
     return handle->FindSelectable(iIndex, bForward);
 }
 
-DRIECTUILIB_API void Delphi_ContainerUI_SetPos(CContainerUI* handle ,RECT rc, bool bNeedInvalidate = true) {
+DRIECTUILIB_API void Delphi_ContainerUI_SetPos(CContainerUI* handle ,RECT rc, bool bNeedInvalidate) {
     handle->SetPos(rc, bNeedInvalidate);
 }
 
-DRIECTUILIB_API void Delphi_ContainerUI_Move(CContainerUI* handle ,SIZE szOffset, bool bNeedInvalidate = true) {
+DRIECTUILIB_API void Delphi_ContainerUI_Move(CContainerUI* handle ,SIZE szOffset, bool bNeedInvalidate) {
     handle->Move(szOffset, bNeedInvalidate);
 }
 
-DRIECTUILIB_API void Delphi_ContainerUI_DoPaint(CContainerUI* handle ,HDC hDC, const RECT& rcPaint) {
+DRIECTUILIB_API void Delphi_ContainerUI_DoPaint(CContainerUI* handle ,HDC hDC, RECT& rcPaint) {
     handle->DoPaint(hDC, rcPaint);
 }
 
@@ -1764,7 +1764,7 @@ DRIECTUILIB_API void Delphi_ContainerUI_SetAttribute(CContainerUI* handle ,LPCTS
     handle->SetAttribute(pstrName, pstrValue);
 }
 
-DRIECTUILIB_API void Delphi_ContainerUI_SetManager(CContainerUI* handle ,CPaintManagerUI* pManager, CControlUI* pParent, bool bInit = true) {
+DRIECTUILIB_API void Delphi_ContainerUI_SetManager(CContainerUI* handle ,CPaintManagerUI* pManager, CControlUI* pParent, bool bInit) {
     handle->SetManager(pManager, pParent, bInit);
 }
 
@@ -1772,19 +1772,19 @@ DRIECTUILIB_API CControlUI* Delphi_ContainerUI_FindControl(CContainerUI* handle 
     return handle->FindControl(Proc, pData, uFlags);
 }
 
-DRIECTUILIB_API bool Delphi_ContainerUI_SetSubControlText(CContainerUI* handle ,LPCTSTR pstrSubControlName,LPCTSTR pstrText) {
+DRIECTUILIB_API bool Delphi_ContainerUI_SetSubControlText(CContainerUI* handle ,LPCTSTR pstrSubControlName, LPCTSTR pstrText) {
     return handle->SetSubControlText(pstrSubControlName, pstrText);
 }
 
-DRIECTUILIB_API bool Delphi_ContainerUI_SetSubControlFixedHeight(CContainerUI* handle ,LPCTSTR pstrSubControlName,int cy) {
+DRIECTUILIB_API bool Delphi_ContainerUI_SetSubControlFixedHeight(CContainerUI* handle ,LPCTSTR pstrSubControlName, int cy) {
     return handle->SetSubControlFixedHeight(pstrSubControlName, cy);
 }
 
-DRIECTUILIB_API bool Delphi_ContainerUI_SetSubControlFixedWdith(CContainerUI* handle ,LPCTSTR pstrSubControlName,int cx) {
+DRIECTUILIB_API bool Delphi_ContainerUI_SetSubControlFixedWdith(CContainerUI* handle ,LPCTSTR pstrSubControlName, int cx) {
     return handle->SetSubControlFixedWdith(pstrSubControlName, cx);
 }
 
-DRIECTUILIB_API bool Delphi_ContainerUI_SetSubControlUserData(CContainerUI* handle ,LPCTSTR pstrSubControlName,LPCTSTR pstrText) {
+DRIECTUILIB_API bool Delphi_ContainerUI_SetSubControlUserData(CContainerUI* handle ,LPCTSTR pstrSubControlName, LPCTSTR pstrText) {
     return handle->SetSubControlUserData(pstrSubControlName, pstrText);
 }
 
@@ -1808,12 +1808,12 @@ DRIECTUILIB_API CControlUI* Delphi_ContainerUI_FindSubControl(CContainerUI* hand
     return handle->FindSubControl(pstrSubControlName);
 }
 
-DRIECTUILIB_API SIZE Delphi_ContainerUI_GetScrollPos(CContainerUI* handle) {
-    return handle->GetScrollPos();
+DRIECTUILIB_API void Delphi_ContainerUI_GetScrollPos(CContainerUI* handle, SIZE& Result) {
+    Result = handle->GetScrollPos();
 }
 
-DRIECTUILIB_API SIZE Delphi_ContainerUI_GetScrollRange(CContainerUI* handle) {
-    return handle->GetScrollRange();
+DRIECTUILIB_API void Delphi_ContainerUI_GetScrollRange(CContainerUI* handle, SIZE& Result) {
+    Result = handle->GetScrollRange();
 }
 
 DRIECTUILIB_API void Delphi_ContainerUI_SetScrollPos(CContainerUI* handle ,SIZE szPos) {
@@ -1868,7 +1868,7 @@ DRIECTUILIB_API void Delphi_ContainerUI_EndRight(CContainerUI* handle) {
     handle->EndRight();
 }
 
-DRIECTUILIB_API void Delphi_ContainerUI_EnableScrollBar(CContainerUI* handle ,bool bEnableVertical = true, bool bEnableHorizontal = false) {
+DRIECTUILIB_API void Delphi_ContainerUI_EnableScrollBar(CContainerUI* handle ,bool bEnableVertical, bool bEnableHorizontal) {
     handle->EnableScrollBar(bEnableVertical, bEnableHorizontal);
 }
 
@@ -1926,16 +1926,16 @@ DRIECTUILIB_API void Delphi_VerticalLayoutUI_DoEvent(CVerticalLayoutUI* handle ,
     handle->DoEvent(event);
 }
 
-DRIECTUILIB_API void Delphi_VerticalLayoutUI_SetPos(CVerticalLayoutUI* handle ,RECT rc, bool bNeedInvalidate = true) {
+DRIECTUILIB_API void Delphi_VerticalLayoutUI_SetPos(CVerticalLayoutUI* handle ,RECT rc, bool bNeedInvalidate) {
     handle->SetPos(rc, bNeedInvalidate);
 }
 
-DRIECTUILIB_API void Delphi_VerticalLayoutUI_DoPostPaint(CVerticalLayoutUI* handle ,HDC hDC, const RECT& rcPaint) {
+DRIECTUILIB_API void Delphi_VerticalLayoutUI_DoPostPaint(CVerticalLayoutUI* handle ,HDC hDC, RECT& rcPaint) {
     handle->DoPostPaint(hDC, rcPaint);
 }
 
-DRIECTUILIB_API RECT Delphi_VerticalLayoutUI_GetThumbRect(CVerticalLayoutUI* handle ,bool bUseNew = false) {
-    return handle->GetThumbRect(bUseNew);
+DRIECTUILIB_API void Delphi_VerticalLayoutUI_GetThumbRect(CVerticalLayoutUI* handle ,bool bUseNew, RECT& Result) {
+    Result = handle->GetThumbRect(bUseNew);
 }
 
 //================================CListUI============================
@@ -1972,7 +1972,7 @@ DRIECTUILIB_API int Delphi_ListUI_GetCurSel(CListUI* handle) {
     return handle->GetCurSel();
 }
 
-DRIECTUILIB_API bool Delphi_ListUI_SelectItem(CListUI* handle ,int iIndex, bool bTakeFocus = false) {
+DRIECTUILIB_API bool Delphi_ListUI_SelectItem(CListUI* handle ,int iIndex, bool bTakeFocus) {
     return handle->SelectItem(iIndex, bTakeFocus);
 }
 
@@ -2116,12 +2116,12 @@ DRIECTUILIB_API bool Delphi_ListUI_IsItemShowHtml(CListUI* handle) {
     return handle->IsItemShowHtml();
 }
 
-DRIECTUILIB_API void Delphi_ListUI_SetItemShowHtml(CListUI* handle ,bool bShowHtml = true) {
+DRIECTUILIB_API void Delphi_ListUI_SetItemShowHtml(CListUI* handle ,bool bShowHtml) {
     handle->SetItemShowHtml(bShowHtml);
 }
 
-DRIECTUILIB_API RECT Delphi_ListUI_GetItemTextPadding(CListUI* handle) {
-    return handle->GetItemTextPadding();
+DRIECTUILIB_API void Delphi_ListUI_GetItemTextPadding(CListUI* handle, RECT& Result) {
+    Result = handle->GetItemTextPadding();
 }
 
 DRIECTUILIB_API DWORD Delphi_ListUI_GetItemTextColor(CListUI* handle) {
@@ -2184,15 +2184,15 @@ DRIECTUILIB_API int Delphi_ListUI_GetExpandedItem(CListUI* handle) {
     return handle->GetExpandedItem();
 }
 
-DRIECTUILIB_API bool Delphi_ListUI_ExpandItem(CListUI* handle ,int iIndex, bool bExpand = true) {
+DRIECTUILIB_API bool Delphi_ListUI_ExpandItem(CListUI* handle ,int iIndex, bool bExpand) {
     return handle->ExpandItem(iIndex, bExpand);
 }
 
-DRIECTUILIB_API void Delphi_ListUI_SetPos(CListUI* handle ,RECT rc, bool bNeedInvalidate = true) {
+DRIECTUILIB_API void Delphi_ListUI_SetPos(CListUI* handle ,RECT rc, bool bNeedInvalidate) {
     handle->SetPos(rc, bNeedInvalidate);
 }
 
-DRIECTUILIB_API void Delphi_ListUI_Move(CListUI* handle ,SIZE szOffset, bool bNeedInvalidate = true) {
+DRIECTUILIB_API void Delphi_ListUI_Move(CListUI* handle ,SIZE szOffset, bool bNeedInvalidate) {
     handle->Move(szOffset, bNeedInvalidate);
 }
 
@@ -2212,12 +2212,12 @@ DRIECTUILIB_API void Delphi_ListUI_SetTextCallback(CListUI* handle ,IListCallbac
     handle->SetTextCallback(pCallback);
 }
 
-DRIECTUILIB_API SIZE Delphi_ListUI_GetScrollPos(CListUI* handle) {
-    return handle->GetScrollPos();
+DRIECTUILIB_API void Delphi_ListUI_GetScrollPos(CListUI* handle, SIZE& Result) {
+    Result = handle->GetScrollPos();
 }
 
-DRIECTUILIB_API SIZE Delphi_ListUI_GetScrollRange(CListUI* handle) {
-    return handle->GetScrollRange();
+DRIECTUILIB_API void Delphi_ListUI_GetScrollRange(CListUI* handle, SIZE& Result) {
+    Result = handle->GetScrollRange();
 }
 
 DRIECTUILIB_API void Delphi_ListUI_SetScrollPos(CListUI* handle ,SIZE szPos) {
@@ -2272,7 +2272,7 @@ DRIECTUILIB_API void Delphi_ListUI_EndRight(CListUI* handle) {
     handle->EndRight();
 }
 
-DRIECTUILIB_API void Delphi_ListUI_EnableScrollBar(CListUI* handle ,bool bEnableVertical = true, bool bEnableHorizontal = false) {
+DRIECTUILIB_API void Delphi_ListUI_EnableScrollBar(CListUI* handle ,bool bEnableVertical, bool bEnableHorizontal) {
     handle->EnableScrollBar(bEnableVertical, bEnableHorizontal);
 }
 
@@ -2356,8 +2356,8 @@ DRIECTUILIB_API int Delphi_LabelUI_GetFont(CLabelUI* handle) {
     return handle->GetFont();
 }
 
-DRIECTUILIB_API RECT Delphi_LabelUI_GetTextPadding(CLabelUI* handle) {
-    return handle->GetTextPadding();
+DRIECTUILIB_API void Delphi_LabelUI_GetTextPadding(CLabelUI* handle, RECT& Result) {
+    Result = handle->GetTextPadding();
 }
 
 DRIECTUILIB_API void Delphi_LabelUI_SetTextPadding(CLabelUI* handle ,RECT rc) {
@@ -2368,12 +2368,12 @@ DRIECTUILIB_API bool Delphi_LabelUI_IsShowHtml(CLabelUI* handle) {
     return handle->IsShowHtml();
 }
 
-DRIECTUILIB_API void Delphi_LabelUI_SetShowHtml(CLabelUI* handle ,bool bShowHtml = true) {
+DRIECTUILIB_API void Delphi_LabelUI_SetShowHtml(CLabelUI* handle ,bool bShowHtml) {
     handle->SetShowHtml(bShowHtml);
 }
 
-DRIECTUILIB_API SIZE Delphi_LabelUI_EstimateSize(CLabelUI* handle ,SIZE szAvailable) {
-    return handle->EstimateSize(szAvailable);
+DRIECTUILIB_API void Delphi_LabelUI_EstimateSize(CLabelUI* handle ,SIZE szAvailable, SIZE& Result) {
+    Result = handle->EstimateSize(szAvailable);
 }
 
 DRIECTUILIB_API void Delphi_LabelUI_DoEvent(CLabelUI* handle ,TEventUI& event) {
@@ -2460,12 +2460,12 @@ DRIECTUILIB_API int Delphi_LabelUI_GetTextRenderingHintAntiAlias(CLabelUI* handl
     return handle->GetTextRenderingHintAntiAlias();
 }
 
-DRIECTUILIB_API void Delphi_LabelUI_SetShadowOffset(CLabelUI* handle ,int _offset,int _angle) {
+DRIECTUILIB_API void Delphi_LabelUI_SetShadowOffset(CLabelUI* handle ,int _offset, int _angle) {
     handle->SetShadowOffset(_offset, _angle);
 }
 
-DRIECTUILIB_API RectF Delphi_LabelUI_GetShadowOffset(CLabelUI* handle) {
-    return handle->GetShadowOffset();
+DRIECTUILIB_API void Delphi_LabelUI_GetShadowOffset(CLabelUI* handle, RectF& Result) {
+    Result = handle->GetShadowOffset();
 }
 
 DRIECTUILIB_API void Delphi_LabelUI_SetTextColor1(CLabelUI* handle ,DWORD _TextColor1) {
@@ -2550,7 +2550,7 @@ DRIECTUILIB_API bool Delphi_ButtonUI_Activate(CButtonUI* handle) {
     return handle->Activate();
 }
 
-DRIECTUILIB_API void Delphi_ButtonUI_SetEnabled(CButtonUI* handle ,bool bEnable = true) {
+DRIECTUILIB_API void Delphi_ButtonUI_SetEnabled(CButtonUI* handle ,bool bEnable) {
     handle->SetEnabled(bEnable);
 }
 
@@ -2646,8 +2646,8 @@ DRIECTUILIB_API DWORD Delphi_ButtonUI_GetFocusedTextColor(CButtonUI* handle) {
     return handle->GetFocusedTextColor();
 }
 
-DRIECTUILIB_API SIZE Delphi_ButtonUI_EstimateSize(CButtonUI* handle ,SIZE szAvailable) {
-    return handle->EstimateSize(szAvailable);
+DRIECTUILIB_API void Delphi_ButtonUI_EstimateSize(CButtonUI* handle ,SIZE szAvailable, SIZE& Result) {
+    Result = handle->EstimateSize(szAvailable);
 }
 
 DRIECTUILIB_API void Delphi_ButtonUI_SetAttribute(CButtonUI* handle ,LPCTSTR pstrName, LPCTSTR pstrValue) {
@@ -2680,7 +2680,7 @@ DRIECTUILIB_API LPVOID Delphi_OptionUI_GetInterface(COptionUI* handle ,LPCTSTR p
     return handle->GetInterface(pstrName);
 }
 
-DRIECTUILIB_API void Delphi_OptionUI_SetManager(COptionUI* handle ,CPaintManagerUI* pManager, CControlUI* pParent, bool bInit = true) {
+DRIECTUILIB_API void Delphi_OptionUI_SetManager(COptionUI* handle ,CPaintManagerUI* pManager, CControlUI* pParent, bool bInit) {
     handle->SetManager(pManager, pParent, bInit);
 }
 
@@ -2688,7 +2688,7 @@ DRIECTUILIB_API bool Delphi_OptionUI_Activate(COptionUI* handle) {
     return handle->Activate();
 }
 
-DRIECTUILIB_API void Delphi_OptionUI_SetEnabled(COptionUI* handle ,bool bEnable = true) {
+DRIECTUILIB_API void Delphi_OptionUI_SetEnabled(COptionUI* handle ,bool bEnable) {
     handle->SetEnabled(bEnable);
 }
 
@@ -2736,7 +2736,7 @@ DRIECTUILIB_API LPCTSTR Delphi_OptionUI_GetGroup(COptionUI* handle) {
     return handle->GetGroup();
 }
 
-DRIECTUILIB_API void Delphi_OptionUI_SetGroup(COptionUI* handle ,LPCTSTR pStrGroupName = NULL) {
+DRIECTUILIB_API void Delphi_OptionUI_SetGroup(COptionUI* handle ,LPCTSTR pStrGroupName) {
     handle->SetGroup(pStrGroupName);
 }
 
@@ -2748,8 +2748,8 @@ DRIECTUILIB_API void Delphi_OptionUI_Selected(COptionUI* handle ,bool bSelected)
     handle->Selected(bSelected);
 }
 
-DRIECTUILIB_API SIZE Delphi_OptionUI_EstimateSize(COptionUI* handle ,SIZE szAvailable) {
-    return handle->EstimateSize(szAvailable);
+DRIECTUILIB_API void Delphi_OptionUI_EstimateSize(COptionUI* handle ,SIZE szAvailable, SIZE& Result) {
+    Result = handle->EstimateSize(szAvailable);
 }
 
 DRIECTUILIB_API void Delphi_OptionUI_SetAttribute(COptionUI* handle ,LPCTSTR pstrName, LPCTSTR pstrValue) {
@@ -2828,11 +2828,11 @@ DRIECTUILIB_API void Delphi_ListContainerElementUI_SetOwner(CListContainerElemen
     handle->SetOwner(pOwner);
 }
 
-DRIECTUILIB_API void Delphi_ListContainerElementUI_SetVisible(CListContainerElementUI* handle ,bool bVisible = true) {
+DRIECTUILIB_API void Delphi_ListContainerElementUI_SetVisible(CListContainerElementUI* handle ,bool bVisible) {
     handle->SetVisible(bVisible);
 }
 
-DRIECTUILIB_API void Delphi_ListContainerElementUI_SetEnabled(CListContainerElementUI* handle ,bool bEnable = true) {
+DRIECTUILIB_API void Delphi_ListContainerElementUI_SetEnabled(CListContainerElementUI* handle ,bool bEnable) {
     handle->SetEnabled(bEnable);
 }
 
@@ -2840,7 +2840,7 @@ DRIECTUILIB_API bool Delphi_ListContainerElementUI_IsSelected(CListContainerElem
     return handle->IsSelected();
 }
 
-DRIECTUILIB_API bool Delphi_ListContainerElementUI_Select(CListContainerElementUI* handle ,bool bSelect = true) {
+DRIECTUILIB_API bool Delphi_ListContainerElementUI_Select(CListContainerElementUI* handle ,bool bSelect) {
     return handle->Select(bSelect);
 }
 
@@ -2848,7 +2848,7 @@ DRIECTUILIB_API bool Delphi_ListContainerElementUI_IsExpanded(CListContainerElem
     return handle->IsExpanded();
 }
 
-DRIECTUILIB_API bool Delphi_ListContainerElementUI_Expand(CListContainerElementUI* handle ,bool bExpand = true) {
+DRIECTUILIB_API bool Delphi_ListContainerElementUI_Expand(CListContainerElementUI* handle ,bool bExpand) {
     return handle->Expand(bExpand);
 }
 
@@ -2868,15 +2868,15 @@ DRIECTUILIB_API void Delphi_ListContainerElementUI_SetAttribute(CListContainerEl
     handle->SetAttribute(pstrName, pstrValue);
 }
 
-DRIECTUILIB_API void Delphi_ListContainerElementUI_DoPaint(CListContainerElementUI* handle ,HDC hDC, const RECT& rcPaint) {
+DRIECTUILIB_API void Delphi_ListContainerElementUI_DoPaint(CListContainerElementUI* handle ,HDC hDC, RECT& rcPaint) {
     handle->DoPaint(hDC, rcPaint);
 }
 
-DRIECTUILIB_API void Delphi_ListContainerElementUI_DrawItemText(CListContainerElementUI* handle ,HDC hDC, const RECT& rcItem) {
+DRIECTUILIB_API void Delphi_ListContainerElementUI_DrawItemText(CListContainerElementUI* handle ,HDC hDC, RECT& rcItem) {
     handle->DrawItemText(hDC, rcItem);
 }
 
-DRIECTUILIB_API void Delphi_ListContainerElementUI_DrawItemBk(CListContainerElementUI* handle ,HDC hDC, const RECT& rcItem) {
+DRIECTUILIB_API void Delphi_ListContainerElementUI_DrawItemBk(CListContainerElementUI* handle ,HDC hDC, RECT& rcItem) {
     handle->DrawItemBk(hDC, rcItem);
 }
 
@@ -2910,7 +2910,7 @@ DRIECTUILIB_API CDuiString Delphi_ComboUI_GetText(CComboUI* handle) {
     return handle->GetText();
 }
 
-DRIECTUILIB_API void Delphi_ComboUI_SetEnabled(CComboUI* handle ,bool bEnable = true) {
+DRIECTUILIB_API void Delphi_ComboUI_SetEnabled(CComboUI* handle ,bool bEnable) {
     handle->SetEnabled(bEnable);
 }
 
@@ -2922,8 +2922,8 @@ DRIECTUILIB_API void Delphi_ComboUI_SetDropBoxAttributeList(CComboUI* handle ,LP
     handle->SetDropBoxAttributeList(pstrList);
 }
 
-DRIECTUILIB_API SIZE Delphi_ComboUI_GetDropBoxSize(CComboUI* handle) {
-    return handle->GetDropBoxSize();
+DRIECTUILIB_API void Delphi_ComboUI_GetDropBoxSize(CComboUI* handle, SIZE& Result) {
+    Result = handle->GetDropBoxSize();
 }
 
 DRIECTUILIB_API void Delphi_ComboUI_SetDropBoxSize(CComboUI* handle ,SIZE szDropBox) {
@@ -2942,7 +2942,7 @@ DRIECTUILIB_API void Delphi_ComboUI_SetSelectCloseFlag(CComboUI* handle ,bool fl
     handle->SetSelectCloseFlag(flag);
 }
 
-DRIECTUILIB_API bool Delphi_ComboUI_SelectItem(CComboUI* handle ,int iIndex, bool bTakeFocus = false) {
+DRIECTUILIB_API bool Delphi_ComboUI_SelectItem(CComboUI* handle ,int iIndex, bool bTakeFocus) {
     return handle->SelectItem(iIndex, bTakeFocus);
 }
 
@@ -2982,8 +2982,8 @@ DRIECTUILIB_API void Delphi_ComboUI_SetShowText(CComboUI* handle ,bool flag) {
     handle->SetShowText(flag);
 }
 
-DRIECTUILIB_API RECT Delphi_ComboUI_GetTextPadding(CComboUI* handle) {
-    return handle->GetTextPadding();
+DRIECTUILIB_API void Delphi_ComboUI_GetTextPadding(CComboUI* handle, RECT& Result) {
+    Result = handle->GetTextPadding();
 }
 
 DRIECTUILIB_API void Delphi_ComboUI_SetTextPadding(CComboUI* handle ,RECT rc) {
@@ -3042,8 +3042,8 @@ DRIECTUILIB_API void Delphi_ComboUI_SetItemTextStyle(CComboUI* handle ,UINT uSty
     handle->SetItemTextStyle(uStyle);
 }
 
-DRIECTUILIB_API RECT Delphi_ComboUI_GetItemTextPadding(CComboUI* handle) {
-    return handle->GetItemTextPadding();
+DRIECTUILIB_API void Delphi_ComboUI_GetItemTextPadding(CComboUI* handle, RECT& Result) {
+    Result = handle->GetItemTextPadding();
 }
 
 DRIECTUILIB_API void Delphi_ComboUI_SetItemTextPadding(CComboUI* handle ,RECT rc) {
@@ -3166,19 +3166,19 @@ DRIECTUILIB_API bool Delphi_ComboUI_IsItemShowHtml(CComboUI* handle) {
     return handle->IsItemShowHtml();
 }
 
-DRIECTUILIB_API void Delphi_ComboUI_SetItemShowHtml(CComboUI* handle ,bool bShowHtml = true) {
+DRIECTUILIB_API void Delphi_ComboUI_SetItemShowHtml(CComboUI* handle ,bool bShowHtml) {
     handle->SetItemShowHtml(bShowHtml);
 }
 
-DRIECTUILIB_API SIZE Delphi_ComboUI_EstimateSize(CComboUI* handle ,SIZE szAvailable) {
-    return handle->EstimateSize(szAvailable);
+DRIECTUILIB_API void Delphi_ComboUI_EstimateSize(CComboUI* handle ,SIZE szAvailable, SIZE& Result) {
+    Result = handle->EstimateSize(szAvailable);
 }
 
-DRIECTUILIB_API void Delphi_ComboUI_SetPos(CComboUI* handle ,RECT rc, bool bNeedInvalidate = true) {
+DRIECTUILIB_API void Delphi_ComboUI_SetPos(CComboUI* handle ,RECT rc, bool bNeedInvalidate) {
     handle->SetPos(rc, bNeedInvalidate);
 }
 
-DRIECTUILIB_API void Delphi_ComboUI_Move(CComboUI* handle ,SIZE szOffset, bool bNeedInvalidate = true) {
+DRIECTUILIB_API void Delphi_ComboUI_Move(CComboUI* handle ,SIZE szOffset, bool bNeedInvalidate) {
     handle->Move(szOffset, bNeedInvalidate);
 }
 
@@ -3190,7 +3190,7 @@ DRIECTUILIB_API void Delphi_ComboUI_SetAttribute(CComboUI* handle ,LPCTSTR pstrN
     handle->SetAttribute(pstrName, pstrValue);
 }
 
-DRIECTUILIB_API void Delphi_ComboUI_DoPaint(CComboUI* handle ,HDC hDC, const RECT& rcPaint) {
+DRIECTUILIB_API void Delphi_ComboUI_DoPaint(CComboUI* handle ,HDC hDC, RECT& rcPaint) {
     handle->DoPaint(hDC, rcPaint);
 }
 
@@ -3266,7 +3266,7 @@ DRIECTUILIB_API UINT Delphi_EditUI_GetControlFlags(CEditUI* handle) {
     return handle->GetControlFlags();
 }
 
-DRIECTUILIB_API void Delphi_EditUI_SetEnabled(CEditUI* handle ,bool bEnable = true) {
+DRIECTUILIB_API void Delphi_EditUI_SetEnabled(CEditUI* handle ,bool bEnable) {
     handle->SetEnabled(bEnable);
 }
 
@@ -3374,24 +3374,24 @@ DRIECTUILIB_API void Delphi_EditUI_SetReplaceSel(CEditUI* handle ,LPCTSTR lpszRe
     handle->SetReplaceSel(lpszReplace);
 }
 
-DRIECTUILIB_API void Delphi_EditUI_SetPos(CEditUI* handle ,RECT rc, bool bNeedInvalidate = true) {
+DRIECTUILIB_API void Delphi_EditUI_SetPos(CEditUI* handle ,RECT rc, bool bNeedInvalidate) {
     handle->SetPos(rc, bNeedInvalidate);
 }
 
-DRIECTUILIB_API void Delphi_EditUI_Move(CEditUI* handle ,SIZE szOffset, bool bNeedInvalidate = true) {
+DRIECTUILIB_API void Delphi_EditUI_Move(CEditUI* handle ,SIZE szOffset, bool bNeedInvalidate) {
     handle->Move(szOffset, bNeedInvalidate);
 }
 
-DRIECTUILIB_API void Delphi_EditUI_SetVisible(CEditUI* handle ,bool bVisible = true) {
+DRIECTUILIB_API void Delphi_EditUI_SetVisible(CEditUI* handle ,bool bVisible) {
     handle->SetVisible(bVisible);
 }
 
-DRIECTUILIB_API void Delphi_EditUI_SetInternVisible(CEditUI* handle ,bool bVisible = true) {
+DRIECTUILIB_API void Delphi_EditUI_SetInternVisible(CEditUI* handle ,bool bVisible) {
     handle->SetInternVisible(bVisible);
 }
 
-DRIECTUILIB_API SIZE Delphi_EditUI_EstimateSize(CEditUI* handle ,SIZE szAvailable) {
-    return handle->EstimateSize(szAvailable);
+DRIECTUILIB_API void Delphi_EditUI_EstimateSize(CEditUI* handle ,SIZE szAvailable, SIZE& Result) {
+    Result = handle->EstimateSize(szAvailable);
 }
 
 DRIECTUILIB_API void Delphi_EditUI_DoEvent(CEditUI* handle ,TEventUI& event) {
@@ -3432,7 +3432,7 @@ DRIECTUILIB_API bool Delphi_ProgressUI_IsHorizontal(CProgressUI* handle) {
     return handle->IsHorizontal();
 }
 
-DRIECTUILIB_API void Delphi_ProgressUI_SetHorizontal(CProgressUI* handle ,bool bHorizontal = true) {
+DRIECTUILIB_API void Delphi_ProgressUI_SetHorizontal(CProgressUI* handle ,bool bHorizontal) {
     handle->SetHorizontal(bHorizontal);
 }
 
@@ -3440,7 +3440,7 @@ DRIECTUILIB_API bool Delphi_ProgressUI_IsStretchForeImage(CProgressUI* handle) {
     return handle->IsStretchForeImage();
 }
 
-DRIECTUILIB_API void Delphi_ProgressUI_SetStretchForeImage(CProgressUI* handle ,bool bStretchForeImage = true) {
+DRIECTUILIB_API void Delphi_ProgressUI_SetStretchForeImage(CProgressUI* handle ,bool bStretchForeImage) {
     handle->SetStretchForeImage(bStretchForeImage);
 }
 
@@ -3510,7 +3510,7 @@ DRIECTUILIB_API bool Delphi_RichEditUI_IsWantTab(CRichEditUI* handle) {
     return handle->IsWantTab();
 }
 
-DRIECTUILIB_API void Delphi_RichEditUI_SetWantTab(CRichEditUI* handle ,bool bWantTab = true) {
+DRIECTUILIB_API void Delphi_RichEditUI_SetWantTab(CRichEditUI* handle ,bool bWantTab) {
     handle->SetWantTab(bWantTab);
 }
 
@@ -3518,7 +3518,7 @@ DRIECTUILIB_API bool Delphi_RichEditUI_IsWantReturn(CRichEditUI* handle) {
     return handle->IsWantReturn();
 }
 
-DRIECTUILIB_API void Delphi_RichEditUI_SetWantReturn(CRichEditUI* handle ,bool bWantReturn = true) {
+DRIECTUILIB_API void Delphi_RichEditUI_SetWantReturn(CRichEditUI* handle ,bool bWantReturn) {
     handle->SetWantReturn(bWantReturn);
 }
 
@@ -3526,7 +3526,7 @@ DRIECTUILIB_API bool Delphi_RichEditUI_IsWantCtrlReturn(CRichEditUI* handle) {
     return handle->IsWantCtrlReturn();
 }
 
-DRIECTUILIB_API void Delphi_RichEditUI_SetWantCtrlReturn(CRichEditUI* handle ,bool bWantCtrlReturn = true) {
+DRIECTUILIB_API void Delphi_RichEditUI_SetWantCtrlReturn(CRichEditUI* handle ,bool bWantCtrlReturn) {
     handle->SetWantCtrlReturn(bWantCtrlReturn);
 }
 
@@ -3534,7 +3534,7 @@ DRIECTUILIB_API bool Delphi_RichEditUI_IsRich(CRichEditUI* handle) {
     return handle->IsRich();
 }
 
-DRIECTUILIB_API void Delphi_RichEditUI_SetRich(CRichEditUI* handle ,bool bRich = true) {
+DRIECTUILIB_API void Delphi_RichEditUI_SetRich(CRichEditUI* handle ,bool bRich) {
     handle->SetRich(bRich);
 }
 
@@ -3542,7 +3542,7 @@ DRIECTUILIB_API bool Delphi_RichEditUI_IsReadOnly(CRichEditUI* handle) {
     return handle->IsReadOnly();
 }
 
-DRIECTUILIB_API void Delphi_RichEditUI_SetReadOnly(CRichEditUI* handle ,bool bReadOnly = true) {
+DRIECTUILIB_API void Delphi_RichEditUI_SetReadOnly(CRichEditUI* handle ,bool bReadOnly) {
     handle->SetReadOnly(bReadOnly);
 }
 
@@ -3550,7 +3550,7 @@ DRIECTUILIB_API bool Delphi_RichEditUI_GetWordWrap(CRichEditUI* handle) {
     return handle->GetWordWrap();
 }
 
-DRIECTUILIB_API void Delphi_RichEditUI_SetWordWrap(CRichEditUI* handle ,bool bWordWrap = true) {
+DRIECTUILIB_API void Delphi_RichEditUI_SetWordWrap(CRichEditUI* handle ,bool bWordWrap) {
     handle->SetWordWrap(bWordWrap);
 }
 
@@ -3590,7 +3590,7 @@ DRIECTUILIB_API void Delphi_RichEditUI_SetLimitText(CRichEditUI* handle ,int iCh
     handle->SetLimitText(iChars);
 }
 
-DRIECTUILIB_API long Delphi_RichEditUI_GetTextLength(CRichEditUI* handle ,DWORD dwFlags = GTL_DEFAULT) {
+DRIECTUILIB_API long Delphi_RichEditUI_GetTextLength(CRichEditUI* handle ,DWORD dwFlags) {
     return handle->GetTextLength(dwFlags);
 }
 
@@ -3606,11 +3606,11 @@ DRIECTUILIB_API bool Delphi_RichEditUI_GetModify(CRichEditUI* handle) {
     return handle->GetModify();
 }
 
-DRIECTUILIB_API void Delphi_RichEditUI_SetModify(CRichEditUI* handle ,bool bModified = true) {
+DRIECTUILIB_API void Delphi_RichEditUI_SetModify(CRichEditUI* handle ,bool bModified) {
     handle->SetModify(bModified);
 }
 
-DRIECTUILIB_API void Delphi_RichEditUI_GetSel_01(CRichEditUI* handle ,CHARRANGE &cr) {
+DRIECTUILIB_API void Delphi_RichEditUI_GetSel_01(CRichEditUI* handle ,CHARRANGE& cr) {
     handle->GetSel(cr);
 }
 
@@ -3618,7 +3618,7 @@ DRIECTUILIB_API void Delphi_RichEditUI_GetSel_02(CRichEditUI* handle ,long& nSta
     handle->GetSel(nStartChar, nEndChar);
 }
 
-DRIECTUILIB_API int Delphi_RichEditUI_SetSel_01(CRichEditUI* handle ,CHARRANGE &cr) {
+DRIECTUILIB_API int Delphi_RichEditUI_SetSel_01(CRichEditUI* handle ,CHARRANGE& cr) {
     return handle->SetSel(cr);
 }
 
@@ -3630,7 +3630,7 @@ DRIECTUILIB_API void Delphi_RichEditUI_ReplaceSel(CRichEditUI* handle ,LPCTSTR l
     handle->ReplaceSel(lpszNewText, bCanUndo);
 }
 
-DRIECTUILIB_API void Delphi_RichEditUI_ReplaceSelW(CRichEditUI* handle ,LPCWSTR lpszNewText, bool bCanUndo = false) {
+DRIECTUILIB_API void Delphi_RichEditUI_ReplaceSelW(CRichEditUI* handle ,LPCWSTR lpszNewText, bool bCanUndo) {
     handle->ReplaceSelW(lpszNewText, bCanUndo);
 }
 
@@ -3666,7 +3666,7 @@ DRIECTUILIB_API bool Delphi_RichEditUI_GetAutoURLDetect(CRichEditUI* handle) {
     return handle->GetAutoURLDetect();
 }
 
-DRIECTUILIB_API bool Delphi_RichEditUI_SetAutoURLDetect(CRichEditUI* handle ,bool bAutoDetect = true) {
+DRIECTUILIB_API bool Delphi_RichEditUI_SetAutoURLDetect(CRichEditUI* handle ,bool bAutoDetect) {
     return handle->SetAutoURLDetect(bAutoDetect);
 }
 
@@ -3682,7 +3682,7 @@ DRIECTUILIB_API CDuiString Delphi_RichEditUI_GetTextRange(CRichEditUI* handle ,l
     return handle->GetTextRange(nStartChar, nEndChar);
 }
 
-DRIECTUILIB_API void Delphi_RichEditUI_HideSelection(CRichEditUI* handle ,bool bHide = true, bool bChangeStyle = false) {
+DRIECTUILIB_API void Delphi_RichEditUI_HideSelection(CRichEditUI* handle ,bool bHide, bool bChangeStyle) {
     handle->HideSelection(bHide, bChangeStyle);
 }
 
@@ -3690,39 +3690,39 @@ DRIECTUILIB_API void Delphi_RichEditUI_ScrollCaret(CRichEditUI* handle) {
     handle->ScrollCaret();
 }
 
-DRIECTUILIB_API int Delphi_RichEditUI_InsertText(CRichEditUI* handle ,long nInsertAfterChar, LPCTSTR lpstrText, bool bCanUndo = false) {
+DRIECTUILIB_API int Delphi_RichEditUI_InsertText(CRichEditUI* handle ,long nInsertAfterChar, LPCTSTR lpstrText, bool bCanUndo) {
     return handle->InsertText(nInsertAfterChar, lpstrText, bCanUndo);
 }
 
-DRIECTUILIB_API int Delphi_RichEditUI_AppendText(CRichEditUI* handle ,LPCTSTR lpstrText, bool bCanUndo = false) {
+DRIECTUILIB_API int Delphi_RichEditUI_AppendText(CRichEditUI* handle ,LPCTSTR lpstrText, bool bCanUndo) {
     return handle->AppendText(lpstrText, bCanUndo);
 }
 
-DRIECTUILIB_API DWORD Delphi_RichEditUI_GetDefaultCharFormat(CRichEditUI* handle ,CHARFORMAT2 &cf) {
+DRIECTUILIB_API DWORD Delphi_RichEditUI_GetDefaultCharFormat(CRichEditUI* handle ,CHARFORMAT2& cf) {
     return handle->GetDefaultCharFormat(cf);
 }
 
-DRIECTUILIB_API bool Delphi_RichEditUI_SetDefaultCharFormat(CRichEditUI* handle ,CHARFORMAT2 &cf) {
+DRIECTUILIB_API bool Delphi_RichEditUI_SetDefaultCharFormat(CRichEditUI* handle ,CHARFORMAT2& cf) {
     return handle->SetDefaultCharFormat(cf);
 }
 
-DRIECTUILIB_API DWORD Delphi_RichEditUI_GetSelectionCharFormat(CRichEditUI* handle ,CHARFORMAT2 &cf) {
+DRIECTUILIB_API DWORD Delphi_RichEditUI_GetSelectionCharFormat(CRichEditUI* handle ,CHARFORMAT2& cf) {
     return handle->GetSelectionCharFormat(cf);
 }
 
-DRIECTUILIB_API bool Delphi_RichEditUI_SetSelectionCharFormat(CRichEditUI* handle ,CHARFORMAT2 &cf) {
+DRIECTUILIB_API bool Delphi_RichEditUI_SetSelectionCharFormat(CRichEditUI* handle ,CHARFORMAT2& cf) {
     return handle->SetSelectionCharFormat(cf);
 }
 
-DRIECTUILIB_API bool Delphi_RichEditUI_SetWordCharFormat(CRichEditUI* handle ,CHARFORMAT2 &cf) {
+DRIECTUILIB_API bool Delphi_RichEditUI_SetWordCharFormat(CRichEditUI* handle ,CHARFORMAT2& cf) {
     return handle->SetWordCharFormat(cf);
 }
 
-DRIECTUILIB_API DWORD Delphi_RichEditUI_GetParaFormat(CRichEditUI* handle ,PARAFORMAT2 &pf) {
+DRIECTUILIB_API DWORD Delphi_RichEditUI_GetParaFormat(CRichEditUI* handle ,PARAFORMAT2& pf) {
     return handle->GetParaFormat(pf);
 }
 
-DRIECTUILIB_API bool Delphi_RichEditUI_SetParaFormat(CRichEditUI* handle ,PARAFORMAT2 &pf) {
+DRIECTUILIB_API bool Delphi_RichEditUI_SetParaFormat(CRichEditUI* handle ,PARAFORMAT2& pf) {
     return handle->SetParaFormat(pf);
 }
 
@@ -3758,15 +3758,15 @@ DRIECTUILIB_API CDuiString Delphi_RichEditUI_GetLine(CRichEditUI* handle ,int nI
     return handle->GetLine(nIndex, nMaxLength);
 }
 
-DRIECTUILIB_API int Delphi_RichEditUI_LineIndex(CRichEditUI* handle ,int nLine = -1) {
+DRIECTUILIB_API int Delphi_RichEditUI_LineIndex(CRichEditUI* handle ,int nLine) {
     return handle->LineIndex(nLine);
 }
 
-DRIECTUILIB_API int Delphi_RichEditUI_LineLength(CRichEditUI* handle ,int nLine = -1) {
+DRIECTUILIB_API int Delphi_RichEditUI_LineLength(CRichEditUI* handle ,int nLine) {
     return handle->LineLength(nLine);
 }
 
-DRIECTUILIB_API bool Delphi_RichEditUI_LineScroll(CRichEditUI* handle ,int nLines, int nChars = 0) {
+DRIECTUILIB_API bool Delphi_RichEditUI_LineScroll(CRichEditUI* handle ,int nLines, int nChars) {
     return handle->LineScroll(nLines, nChars);
 }
 
@@ -3794,11 +3794,11 @@ DRIECTUILIB_API UINT Delphi_RichEditUI_SetUndoLimit(CRichEditUI* handle ,UINT nL
     return handle->SetUndoLimit(nLimit);
 }
 
-DRIECTUILIB_API long Delphi_RichEditUI_StreamIn(CRichEditUI* handle ,int nFormat, EDITSTREAM &es) {
+DRIECTUILIB_API long Delphi_RichEditUI_StreamIn(CRichEditUI* handle ,int nFormat, EDITSTREAM& es) {
     return handle->StreamIn(nFormat, es);
 }
 
-DRIECTUILIB_API long Delphi_RichEditUI_StreamOut(CRichEditUI* handle ,int nFormat, EDITSTREAM &es) {
+DRIECTUILIB_API long Delphi_RichEditUI_StreamOut(CRichEditUI* handle ,int nFormat, EDITSTREAM& es) {
     return handle->StreamOut(nFormat, es);
 }
 
@@ -3810,7 +3810,7 @@ DRIECTUILIB_API bool Delphi_RichEditUI_SetDropAcceptFile(CRichEditUI* handle ,bo
     return handle->SetDropAcceptFile(bAccept);
 }
 
-DRIECTUILIB_API HRESULT Delphi_RichEditUI_TxSendMessage(CRichEditUI* handle ,UINT msg, WPARAM wparam, LPARAM lparam, LRESULT *plresult) {
+DRIECTUILIB_API HRESULT Delphi_RichEditUI_TxSendMessage(CRichEditUI* handle ,UINT msg, WPARAM wparam, LPARAM lparam, LRESULT* plresult) {
     return handle->TxSendMessage(msg, wparam, lparam, plresult);
 }
 
@@ -3822,7 +3822,7 @@ DRIECTUILIB_API bool Delphi_RichEditUI_OnTxViewChanged(CRichEditUI* handle) {
     return handle->OnTxViewChanged();
 }
 
-DRIECTUILIB_API void Delphi_RichEditUI_OnTxNotify(CRichEditUI* handle ,DWORD iNotify, void *pv) {
+DRIECTUILIB_API void Delphi_RichEditUI_OnTxNotify(CRichEditUI* handle ,DWORD iNotify, void* pv) {
     handle->OnTxNotify(iNotify, pv);
 }
 
@@ -3878,15 +3878,15 @@ DRIECTUILIB_API void Delphi_RichEditUI_EndRight(CRichEditUI* handle) {
     handle->EndRight();
 }
 
-DRIECTUILIB_API SIZE Delphi_RichEditUI_EstimateSize(CRichEditUI* handle ,SIZE szAvailable) {
-    return handle->EstimateSize(szAvailable);
+DRIECTUILIB_API void Delphi_RichEditUI_EstimateSize(CRichEditUI* handle ,SIZE szAvailable, SIZE& Result) {
+    Result = handle->EstimateSize(szAvailable);
 }
 
-DRIECTUILIB_API void Delphi_RichEditUI_SetPos(CRichEditUI* handle ,RECT rc, bool bNeedInvalidate = true) {
+DRIECTUILIB_API void Delphi_RichEditUI_SetPos(CRichEditUI* handle ,RECT rc, bool bNeedInvalidate) {
     handle->SetPos(rc, bNeedInvalidate);
 }
 
-DRIECTUILIB_API void Delphi_RichEditUI_Move(CRichEditUI* handle ,SIZE szOffset, bool bNeedInvalidate = true) {
+DRIECTUILIB_API void Delphi_RichEditUI_Move(CRichEditUI* handle ,SIZE szOffset, bool bNeedInvalidate) {
     handle->Move(szOffset, bNeedInvalidate);
 }
 
@@ -3894,7 +3894,7 @@ DRIECTUILIB_API void Delphi_RichEditUI_DoEvent(CRichEditUI* handle ,TEventUI& ev
     handle->DoEvent(event);
 }
 
-DRIECTUILIB_API void Delphi_RichEditUI_DoPaint(CRichEditUI* handle ,HDC hDC, const RECT& rcPaint) {
+DRIECTUILIB_API void Delphi_RichEditUI_DoPaint(CRichEditUI* handle ,HDC hDC, RECT& rcPaint) {
     handle->DoPaint(hDC, rcPaint);
 }
 
@@ -3928,11 +3928,11 @@ DRIECTUILIB_API void Delphi_ScrollBarUI_SetOwner(CScrollBarUI* handle ,CContaine
     handle->SetOwner(pOwner);
 }
 
-DRIECTUILIB_API void Delphi_ScrollBarUI_SetVisible(CScrollBarUI* handle ,bool bVisible = true) {
+DRIECTUILIB_API void Delphi_ScrollBarUI_SetVisible(CScrollBarUI* handle ,bool bVisible) {
     handle->SetVisible(bVisible);
 }
 
-DRIECTUILIB_API void Delphi_ScrollBarUI_SetEnabled(CScrollBarUI* handle ,bool bEnable = true) {
+DRIECTUILIB_API void Delphi_ScrollBarUI_SetEnabled(CScrollBarUI* handle ,bool bEnable) {
     handle->SetEnabled(bEnable);
 }
 
@@ -3944,7 +3944,7 @@ DRIECTUILIB_API bool Delphi_ScrollBarUI_IsHorizontal(CScrollBarUI* handle) {
     return handle->IsHorizontal();
 }
 
-DRIECTUILIB_API void Delphi_ScrollBarUI_SetHorizontal(CScrollBarUI* handle ,bool bHorizontal = true) {
+DRIECTUILIB_API void Delphi_ScrollBarUI_SetHorizontal(CScrollBarUI* handle ,bool bHorizontal) {
     handle->SetHorizontal(bHorizontal);
 }
 
@@ -4172,7 +4172,7 @@ DRIECTUILIB_API void Delphi_ScrollBarUI_SetBkDisabledImage(CScrollBarUI* handle 
     handle->SetBkDisabledImage(pStrImage);
 }
 
-DRIECTUILIB_API void Delphi_ScrollBarUI_SetPos(CScrollBarUI* handle ,RECT rc, bool bNeedInvalidate = true) {
+DRIECTUILIB_API void Delphi_ScrollBarUI_SetPos(CScrollBarUI* handle ,RECT rc, bool bNeedInvalidate) {
     handle->SetPos(rc, bNeedInvalidate);
 }
 
@@ -4184,7 +4184,7 @@ DRIECTUILIB_API void Delphi_ScrollBarUI_SetAttribute(CScrollBarUI* handle ,LPCTS
     handle->SetAttribute(pstrName, pstrValue);
 }
 
-DRIECTUILIB_API void Delphi_ScrollBarUI_DoPaint(CScrollBarUI* handle ,HDC hDC, const RECT& rcPaint) {
+DRIECTUILIB_API void Delphi_ScrollBarUI_DoPaint(CScrollBarUI* handle ,HDC hDC, RECT& rcPaint) {
     handle->DoPaint(hDC, rcPaint);
 }
 
@@ -4230,7 +4230,7 @@ DRIECTUILIB_API LPVOID Delphi_SliderUI_GetInterface(CSliderUI* handle ,LPCTSTR p
     return handle->GetInterface(pstrName);
 }
 
-DRIECTUILIB_API void Delphi_SliderUI_SetEnabled(CSliderUI* handle ,bool bEnable = true) {
+DRIECTUILIB_API void Delphi_SliderUI_SetEnabled(CSliderUI* handle ,bool bEnable) {
     handle->SetEnabled(bEnable);
 }
 
@@ -4246,8 +4246,8 @@ DRIECTUILIB_API void Delphi_SliderUI_SetThumbSize(CSliderUI* handle ,SIZE szXY) 
     handle->SetThumbSize(szXY);
 }
 
-DRIECTUILIB_API RECT Delphi_SliderUI_GetThumbRect(CSliderUI* handle) {
-    return handle->GetThumbRect();
+DRIECTUILIB_API void Delphi_SliderUI_GetThumbRect(CSliderUI* handle, RECT& Result) {
+    Result = handle->GetThumbRect();
 }
 
 DRIECTUILIB_API LPCTSTR Delphi_SliderUI_GetThumbImage(CSliderUI* handle) {
@@ -4316,8 +4316,8 @@ DRIECTUILIB_API void Delphi_TextUI_DoEvent(CTextUI* handle ,TEventUI& event) {
     handle->DoEvent(event);
 }
 
-DRIECTUILIB_API SIZE Delphi_TextUI_EstimateSize(CTextUI* handle ,SIZE szAvailable) {
-    return handle->EstimateSize(szAvailable);
+DRIECTUILIB_API void Delphi_TextUI_EstimateSize(CTextUI* handle ,SIZE szAvailable, SIZE& Result) {
+    Result = handle->EstimateSize(szAvailable);
 }
 
 DRIECTUILIB_API void Delphi_TextUI_PaintText(CTextUI* handle ,HDC hDC) {
@@ -4326,7 +4326,7 @@ DRIECTUILIB_API void Delphi_TextUI_PaintText(CTextUI* handle ,HDC hDC) {
 
 //================================CTreeNodeUI============================
 
-DRIECTUILIB_API CTreeNodeUI* Delphi_TreeNodeUI_CppCreate(CTreeNodeUI* _ParentNode = NULL) {
+DRIECTUILIB_API CTreeNodeUI* Delphi_TreeNodeUI_CppCreate(CTreeNodeUI* _ParentNode) {
     return new CTreeNodeUI(_ParentNode);
 }
 
@@ -4350,7 +4350,7 @@ DRIECTUILIB_API void Delphi_TreeNodeUI_Invalidate(CTreeNodeUI* handle) {
     handle->Invalidate();
 }
 
-DRIECTUILIB_API bool Delphi_TreeNodeUI_Select(CTreeNodeUI* handle ,bool bSelect = true) {
+DRIECTUILIB_API bool Delphi_TreeNodeUI_Select(CTreeNodeUI* handle ,bool bSelect) {
     return handle->Select(bSelect);
 }
 
@@ -4516,7 +4516,7 @@ DRIECTUILIB_API long Delphi_TreeViewUI_AddAt_01(CTreeViewUI* handle ,CTreeNodeUI
     return handle->AddAt(pControl, iIndex);
 }
 
-DRIECTUILIB_API bool Delphi_TreeViewUI_AddAt_02(CTreeViewUI* handle ,CTreeNodeUI* pControl,CTreeNodeUI* _IndexNode) {
+DRIECTUILIB_API bool Delphi_TreeViewUI_AddAt_02(CTreeViewUI* handle ,CTreeNodeUI* pControl, CTreeNodeUI* _IndexNode) {
     return handle->AddAt(pControl, _IndexNode);
 }
 
@@ -4544,11 +4544,11 @@ DRIECTUILIB_API bool Delphi_TreeViewUI_OnDBClickItem(CTreeViewUI* handle ,void* 
     return handle->OnDBClickItem(param);
 }
 
-DRIECTUILIB_API bool Delphi_TreeViewUI_SetItemCheckBox(CTreeViewUI* handle ,bool _Selected,CTreeNodeUI* _TreeNode = NULL) {
+DRIECTUILIB_API bool Delphi_TreeViewUI_SetItemCheckBox(CTreeViewUI* handle ,bool _Selected, CTreeNodeUI* _TreeNode) {
     return handle->SetItemCheckBox(_Selected, _TreeNode);
 }
 
-DRIECTUILIB_API void Delphi_TreeViewUI_SetItemExpand(CTreeViewUI* handle ,bool _Expanded,CTreeNodeUI* _TreeNode = NULL) {
+DRIECTUILIB_API void Delphi_TreeViewUI_SetItemExpand(CTreeViewUI* handle ,bool _Expanded, CTreeNodeUI* _TreeNode) {
     handle->SetItemExpand(_Expanded, _TreeNode);
 }
 
@@ -4646,7 +4646,7 @@ DRIECTUILIB_API bool Delphi_TabLayoutUI_SelectItem_02(CTabLayoutUI* handle ,CCon
     return handle->SelectItem(pControl);
 }
 
-DRIECTUILIB_API void Delphi_TabLayoutUI_SetPos(CTabLayoutUI* handle ,RECT rc, bool bNeedInvalidate = true) {
+DRIECTUILIB_API void Delphi_TabLayoutUI_SetPos(CTabLayoutUI* handle ,RECT rc, bool bNeedInvalidate) {
     handle->SetPos(rc, bNeedInvalidate);
 }
 
@@ -4700,16 +4700,16 @@ DRIECTUILIB_API void Delphi_HorizontalLayoutUI_DoEvent(CHorizontalLayoutUI* hand
     handle->DoEvent(event);
 }
 
-DRIECTUILIB_API void Delphi_HorizontalLayoutUI_SetPos(CHorizontalLayoutUI* handle ,RECT rc, bool bNeedInvalidate = true) {
+DRIECTUILIB_API void Delphi_HorizontalLayoutUI_SetPos(CHorizontalLayoutUI* handle ,RECT rc, bool bNeedInvalidate) {
     handle->SetPos(rc, bNeedInvalidate);
 }
 
-DRIECTUILIB_API void Delphi_HorizontalLayoutUI_DoPostPaint(CHorizontalLayoutUI* handle ,HDC hDC, const RECT& rcPaint) {
+DRIECTUILIB_API void Delphi_HorizontalLayoutUI_DoPostPaint(CHorizontalLayoutUI* handle ,HDC hDC, RECT& rcPaint) {
     handle->DoPostPaint(hDC, rcPaint);
 }
 
-DRIECTUILIB_API RECT Delphi_HorizontalLayoutUI_GetThumbRect(CHorizontalLayoutUI* handle ,bool bUseNew = false) {
-    return handle->GetThumbRect(bUseNew);
+DRIECTUILIB_API void Delphi_HorizontalLayoutUI_GetThumbRect(CHorizontalLayoutUI* handle ,bool bUseNew, RECT& Result) {
+    Result = handle->GetThumbRect(bUseNew);
 }
 
 //================================CListHeaderUI============================
@@ -4730,8 +4730,8 @@ DRIECTUILIB_API LPVOID Delphi_ListHeaderUI_GetInterface(CListHeaderUI* handle ,L
     return handle->GetInterface(pstrName);
 }
 
-DRIECTUILIB_API SIZE Delphi_ListHeaderUI_EstimateSize(CListHeaderUI* handle ,SIZE szAvailable) {
-    return handle->EstimateSize(szAvailable);
+DRIECTUILIB_API void Delphi_ListHeaderUI_EstimateSize(CListHeaderUI* handle ,SIZE szAvailable, SIZE& Result) {
+    Result = handle->EstimateSize(szAvailable);
 }
 
 
