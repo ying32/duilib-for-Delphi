@@ -31,6 +31,7 @@ type
     IsStatic: Boolean;
     IsVirtual: Boolean;
     IsConst: Boolean;
+    IsNeedParamReturn: Boolean;
     CppParams: string; // 保存原cpp的参数，以便后面生成重载的静态函数时用
     OverloadName: string; // 有重载值的重名称，自动编号
     Params: TArray<TParam>;
@@ -44,7 +45,7 @@ type
     FMemberList: TList<TMember>;
     FTypeConvertList: TDictionary<string, string>;
     FParamNameConvertList: TDictionary<string, string>;
-    FDelphiTypes: TDictionary<string, string>; // 用这个比较方便
+    FParamReturnList: TDictionary<string, string>; // 用这个比较方便
     // c++
     FCppHeadFile: TStringList;    // cpp头文件
     FCppSourceFile: TStringList;  // cpp源文件
@@ -67,6 +68,7 @@ type
     procedure AddCppTempMethod(const Fmt: string; Args: array of const); overload;
     procedure AddCppTempMethod(const Str: string); overload;
     function GetCppParamsNoType(LM: TMember): string;
+    function GetCppParamsNoDefualtValue(LM: TMember): string;
     procedure AddDefualtCppHeader;
     procedure AddDefualtCppSource;
     procedure AddCpp(const AClass, AClassNoC: string; AM: TMember);
@@ -97,7 +99,7 @@ type
     procedure ParseEnum(const Str: string);
     procedure InitConvertList;
     procedure InitParamNameList;
-    procedure InitDelphiTypes;
+    procedure InitParamReturnTypes;
     function TypeOf(const CppType: string; AIsReturn: Boolean = False): string;
     function ParamNameOf(const AName: string): string;
     function FuncExistsCountAndFirstIndex(const AFName: string; var AFirstIndex:
@@ -108,7 +110,7 @@ type
     /// </summary>
     function IsVar(const CppType: string): Boolean;
     function IsPointer(const CppType: string): Boolean;
-    function IsDelphiType(const AType: string): Boolean;
+    function IsNeedParamReturn(const AType: string): Boolean;
 
     /// <summary>
     ///   获取构造函数个数
@@ -161,8 +163,8 @@ begin
   InitConvertList;
   FParamNameConvertList := TDictionary<string, string>.Create;
   InitParamNameList;
-  FDelphiTypes := TDictionary<string, string>.Create;
-  InitDelphiTypes;
+  FParamReturnList := TDictionary<string, string>.Create;
+  InitParamReturnTypes;
 
   FCppHeadFile := TStringList.Create;    // cpp头文件
   FCppSourceFile := TStringList.Create;  // cpp源文件
@@ -198,7 +200,7 @@ begin
   FCppMethods.Free;
   FCppSourceFile.Free;
   FCppHeadFile.Free;
-  FDelphiTypes.Free;
+  FParamReturnList.Free;
   FParamNameConvertList.Free;
   FTypeConvertList.Free;
   FMemberList.Free;
@@ -281,7 +283,8 @@ procedure TCppConvert.AddDelphi(const AClass, AClassNoC: string; AM: TMember);
 
 var
   LParams, LParams2, LParams21, LParams3,
-    LOverload, LReturnType, LFuncName, LFuncFullName, LClassFuncFlags: string;
+  LOverload, LReturnType, LFuncName, LFuncFullName, LClassFuncFlags,
+  LReturnStr  : string;
 begin
   LOverload := '';
   LParams2 := GetDelphiParams(AM, False);
@@ -291,6 +294,19 @@ begin
   if AM.OverloadName <> '' then
     LOverload := ' overload;';
   LParams := GetDelphiParams(AM, True);//LParams2;
+
+  if AM.IsNeedParamReturn then
+  begin
+    if LParams.IsEmpty then
+      LParams := 'var Result: ' + GetRealType(TypeOf(AM.ReturnType, True))
+    else LParams := LParams + '; var Result: ' + GetRealType(TypeOf(AM.ReturnType, True));
+    if LParams3.IsEmpty then
+      LParams3 := 'Result'
+    else
+      LParams3 := LParams3 + ', Result';
+  end;
+
+
   // 非静态函数，并不是构造函数
   if (not AM.IsStatic) and (not AM.IsConstructor) then
   begin
@@ -358,8 +374,10 @@ begin
       '%s(Self);', [LFuncFullName], AM);
   end else
   begin
+    // 函数为无返回值或者需要使用参数返回的
     if IsProc(AM.ReturnType) then
     begin
+ 
       LFuncFullName := DeleteSymbol(Format('Delphi_%s_%s%s', [AClassNoC, LFuncName, AM.OverloadName]));
       FDelphiImportA.AddFormat('procedure %s%s; cdecl;', [LFuncFullName, LParams]);
       FDelphiImportB.AddFormat('procedure %s; external DuiLibdll name ''%s'';',
@@ -373,16 +391,26 @@ begin
     begin
       LReturnType := GetRealType(TypeOf(AM.ReturnType, True));
       LFuncFullName := DeleteSymbol(Format('Delphi_%s_%s%s', [AClassNoC, LFuncName, AM.OverloadName]));
-      FDelphiImportA.AddFormat('function %s%s: %s; cdecl;', [LFuncFullName, LParams, LReturnType]);
-      FDelphiImportB.AddFormat('function %s; external DuiLibdll name ''%s'';',
-          [LFuncFullName, LFuncFullName]);
+
+      if AM.IsNeedParamReturn then
+      begin
+        FDelphiImportA.AddFormat('procedure %s%s; cdecl;', [LFuncFullName, LParams]);
+        FDelphiImportB.AddFormat('procedure %s; external DuiLibdll name ''%s'';',
+            [LFuncFullName, LFuncFullName]);
+        LReturnStr := '';
+      end else
+      begin
+        FDelphiImportA.AddFormat('function %s%s: %s; cdecl;', [LFuncFullName, LParams, LReturnType]);
+        FDelphiImportB.AddFormat('function %s; external DuiLibdll name ''%s'';',
+            [LFuncFullName, LFuncFullName]);
+        LReturnStr := 'Result := ';
+      end;
       // class a
       AddDelphiClassAMethod('    %sfunction %s%s: %s;%s', [LClassFuncFlags, LFuncName, LParams2,
         LReturnType, LOverload]);
       // class b
       AddDelphiClassBMethod('%sfunction %s.%s%s: %s;', [LClassFuncFlags, AClass, LFuncName, LParams21,
-        LReturnType], 'Result := %s%s;', [LFuncFullName,
-        LParams3], AM);
+        LReturnType], '%s%s%s;', [LReturnStr, LFuncFullName, LParams3], AM);
     end;
   end;
 end;
@@ -430,27 +458,20 @@ end;
 
 procedure TCppConvert.AddCpp(const AClass, AClassNoC: string; AM: TMember);
 var
-  LReturnStr, LCppParams, LConstFlags: string;
+  LReturnStr, LCppParams, LConstFlags, LReturnType: string;
 begin
   LReturnStr := '';
   if not IsProc(AM.ReturnType) then
     LReturnStr := 'return ';
-  LCppParams := AM.CppParams;
+  LCppParams := GetCppParamsNoDefualtValue(AM);//AM.CppParams;
   if LCppParams.Trim.Equals('void') then LCppParams := '';
   // 判断参数是否为空，或者只有一个void什么的
   if (LCppParams <> '') and (LCppParams <> 'void') and not AM.IsConstructor then
   begin
     if not AM.IsStatic then
-      LCppParams := ' ,' + AM.CppParams;
+      LCppParams := ' ,' + GetCppParamsNoDefualtValue(AM);//AM.CppParams;
   end;
 
-  if AM.Name = 'RemoveTranslateAccelerator' then
-  begin
-    Writeln('----------------------------------');
-    Writeln(AM.CppParams);
-    Writeln(Length(AM.Params));
-    Writeln(GetCppParamsNoType(AM));
-  end;
   if AM.IsConstructor then
   begin
     AddCppTempMethod('DRIECTUILIB_API %s* Delphi_%s_CppCreate%s(%s) {', [AClass, AClassNoC, AM.OverloadName, LCppParams]);
@@ -466,16 +487,25 @@ begin
     LConstFlags := '';
     if AM.IsConst then
       LConstFlags := 'const ';
+
+    LReturnType := AM.ReturnType;
+    if AM.IsNeedParamReturn then
+    begin
+      LCppParams := Format('%s, %s& Result', [LCppParams, LReturnType]);
+      LReturnType := 'void';
+      LReturnStr := 'Result = ';
+    end;
+
     if not AM.IsStatic then
     begin
-      AddCppTempMethod('DRIECTUILIB_API %s%s Delphi_%s_%s%s(%s* handle%s) {', [LConstFlags, AM.ReturnType,
+      AddCppTempMethod('DRIECTUILIB_API %s%s Delphi_%s_%s%s(%s* handle%s) {', [LConstFlags, LReturnType,
         AClassNoC, AM.Name, AM.OverloadName, AClass, LCppParams]);
       AddCppTempMethod(Format('    %shandle->%s(%s);', [LReturnStr, AM.Name, GetCppParamsNoType(AM)]));
     end
     else
     begin
       // 静态函数的处理
-      AddCppTempMethod('DRIECTUILIB_API %s%s Delphi_%s_%s%s(%s) {', [LConstFlags, AM.ReturnType, AClassNoC, AM.Name,
+      AddCppTempMethod('DRIECTUILIB_API %s%s Delphi_%s_%s%s(%s) {', [LConstFlags, LReturnType, AClassNoC, AM.Name,
         AM.OverloadName, LCppParams]);
       AddCppTempMethod(Format('    %s%s::%s(%s);', [LReturnStr, AClass, AM.Name, GetCppParamsNoType(AM)]));
     end;
@@ -589,10 +619,11 @@ begin
   FTypeConvertList.Add('NULL', 'nil');
 end;
 
-procedure TCppConvert.InitDelphiTypes;
+procedure TCppConvert.InitParamReturnTypes;
 begin
-  FDelphiTypes.Add('TRect', '');
-  FDelphiTypes.Add('TSize', '');
+  FParamReturnList.Add('SIZE', '');
+  FParamReturnList.Add('RECT', '');
+  FParamReturnList.Add('RectF', '');
 end;
 
 procedure TCppConvert.InitParamNameList;
@@ -602,9 +633,9 @@ begin
   FParamNameConvertList.Add('self', 'ASelf');
 end;
 
-function TCppConvert.IsDelphiType(const AType: string): Boolean;
+function TCppConvert.IsNeedParamReturn(const AType: string): Boolean;
 begin
-  Result := FDelphiTypes.ContainsKey(AType);
+  Result := FParamReturnList.ContainsKey(AType);
 end;
 
 function TCppConvert.IsPointer(const CppType: string): Boolean;
@@ -732,6 +763,9 @@ begin
 
     AMember.Name := LHeadArr[High(LHeadArr)];
     AMember.ReturnType := LHeadArr[High(LHeadArr) - 1];
+
+    AMember.IsNeedParamReturn := IsNeedParamReturn(AMember.ReturnType);
+
     // 不含返回值与函数名
     for I := 0 to High(LHeadArr) - 2 do
     begin
@@ -1179,6 +1213,17 @@ begin
   FMemberList.Insert(I, LM);
 end;
 
+function TCppConvert.GetCppParamsNoDefualtValue(LM: TMember): string;
+var
+  L: TParam;
+begin
+  Result := '';
+  for L in LM.Params do
+    Result := Result + L.ParamType + ' ' + L.Name + ', ';
+  if not Result.IsEmpty then
+    Delete(Result, Result.Length - 1, 2);
+end;
+
 function TCppConvert.GetCppParamsNoType(LM: TMember): string;
 var
   L: TParam;
@@ -1186,10 +1231,6 @@ begin
   Result := '';
   for L in LM.Params do
   begin
-    if LM.Name = 'RemoveTranslateAccelerator' then
-    begin
-      Writeln(L.Name,  '            ', L.ParamType);
-    end;
     Result := Result + L.Name + ', ';
   end;
   if Result.Length > 0 then
@@ -1248,7 +1289,10 @@ begin
       GetRealType(TypeOf(L.ParamType)), LD]);
   end;
   if Result.Length <> 0 then
-    Delete(Result, Result.Length - 1, 2);
+  begin
+    Result := Result.Trim;
+    Delete(Result, Result.Length, 1);
+  end;
 end;
 
 function TCppConvert.GetDelphiParamsNoType(AM: TMember): string;
@@ -1264,7 +1308,10 @@ begin
   for L in AM.Params do
     Result := Result + Format('%s, ', [ParamNameOf(L.Name)]);
   if Result.Length <> 0 then
-    Delete(Result, Result.Length - 1, 2);
+  begin
+    Result := Result.Trim;
+    Delete(Result, Result.Length, 1);
+  end;
 end;
 
 function TCppConvert.GetHead(const Str: string): string;
