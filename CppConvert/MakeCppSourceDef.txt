@@ -50,10 +50,9 @@ public:
 	}
 	void OnFinalMessage(HWND hWnd)
 	{
+		WindowImplBase::OnFinalMessage(hWnd);
 		if (m_FinalMessage)
 			m_FinalMessage(m_Self, hWnd);
-		__super::OnFinalMessage(hWnd);
-		//delete this;
 	}
 	void Notify(TNotifyUI& msg)
 	{

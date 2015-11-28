@@ -24,9 +24,9 @@ type
 
   TDuiWindowImplBase = class(TDuiBase<CDelphi_WindowImplBase>)
   private
-    FHandle: HWND;
     FParentHandle: HWND;
     FPaintManagerUI: CPaintManagerUI;
+    function GetHandle: HWND;
   protected
     // »Øµ÷º¯Êý
     procedure DUI_InitWindow; cdecl;
@@ -68,7 +68,7 @@ type
     destructor Destroy; override;
     procedure OnReceive(Param: Pointer); virtual;
   public
-    property Handle: HWND read FHandle;
+    property Handle: HWND read GetHandle;
     property ParentHandle: HWND read FParentHandle;
     property PaintManagerUI: CPaintManagerUI read FPaintManagerUI;
   end;
@@ -118,26 +118,27 @@ end;
 
 destructor TDuiWindowImplBase.Destroy;
 begin
-  FThis.CppDestroy;
+  if FThis <> nil then
+    FThis.CppDestroy;
   inherited;
 end;
 
 procedure TDuiWindowImplBase.CreateDuiWindow(AParent: HWND; ATitle: string);
 begin
   FParentHandle := AParent;
-  FHandle := FThis.CreateDuiWindow(AParent, PChar(ATitle), UI_WNDSTYLE_FRAME, WS_EX_STATICEDGE);
+  FThis.CreateDuiWindow(AParent, PChar(ATitle), UI_WNDSTYLE_FRAME, WS_EX_STATICEDGE);
 end;
 
 procedure TDuiWindowImplBase.CreateWindow(hwndParent: HWND; ATitle: string;
   dwStyle, dwExStyle: DWORD; x, y, cx, cy: Integer; hMenu: HMENU);
 begin
-  FHandle := FThis.Create(hwndParent, PChar(ATitle), dwStyle, dwExStyle, x, y, cx, cy, hMenu);
+  FThis.Create(hwndParent, PChar(ATitle), dwStyle, dwExStyle, x, y, cx, cy, hMenu);
 end;
 
 procedure TDuiWindowImplBase.CreateWindow(hwndParent: HWND; ATitle: string;
   dwStyle, dwExStyle: DWORD; const rc: TRect; hMenu: HMENU);
 begin
-  FHandle := FThis.Create(hwndParent, PChar(ATitle), dwStyle, dwExStyle, rc, hMenu);
+  FThis.Create(hwndParent, PChar(ATitle), dwStyle, dwExStyle, rc, hMenu);
 end;
 
 procedure TDuiWindowImplBase.DoClick(var Msg: TNotifyUI);
@@ -235,6 +236,11 @@ begin
   Result := FPaintManagerUI.FindControl(pt);
 end;
 
+function TDuiWindowImplBase.GetHandle: HWND;
+begin
+  Result := FThis.GetHWND;
+end;
+
 function TDuiWindowImplBase.FindControl(const AName: string): CControlUI;
 begin
   Result := FPaintManagerUI.FindControl(PChar(AName));
@@ -253,7 +259,7 @@ end;
 function TDuiWindowImplBase.Perform(uMsg: UINT; wParam: WPARAM;
   lParam: LPARAM): LRESULT;
 begin
-  Result := SendMessage(FHandle, uMsg, wParam, lParam);
+  Result := SendMessage(Handle, uMsg, wParam, lParam);
 end;
 
 procedure TDuiWindowImplBase.SetIcon(nRes: UINT);

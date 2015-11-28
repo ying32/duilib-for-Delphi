@@ -60,6 +60,10 @@ const
 
   kSendButtonControlName: PChar = 'sendbtn';
 
+
+  kChangeBkSkinControlName = 'bkskinbtn';
+  kChangeColorSkinControlName = 'colorskinbtn';
+
   kEmotionRefreshTimerId = 1001;
   kEmotionRefreshInterval = 150;
 
@@ -123,11 +127,26 @@ type
     procedure SendMsg;
   protected
     procedure DoNotify(var Msg: TNotifyUI); override;
+    procedure DoFinalMessage(hWd: HWND); override;
   public
     constructor Create(const bgimage: string; bkcolor: DWORD; myselft_info, friend_info: TFriendListItemInfo);
     destructor Destroy; override;
     procedure OnReceive(Param: Pointer); override;
     procedure OnPrepare(var Msg: TNotifyUI);
+  end;
+
+  TColorSkinWindow = class(TDuiWindowImplBase)
+  private
+    main_frame_: TXGuiFoundation;
+    parent_window_rect_: TRect;
+  protected
+    procedure DoNotify(var Msg: TNotifyUI); override;
+    procedure DoInitWindow; override;
+    function  DoHandleMessage(uMsg: UINT; wParam: WPARAM; lParam: LPARAM): LRESULT; override;
+    procedure DoFinalMessage(hWd: HWND); override;
+  public
+    constructor Create(main_frame: TXGuiFoundation; rcParentWindow: TRect);
+    destructor Destroy; override;
   end;
 
   TFirendList = class(TDuiListUI)
@@ -140,7 +159,7 @@ type
     level_expand_image_: string;
     level_collapse_image_: string;
   protected
-    procedure DoSelectItem; overload;
+    procedure DoSelectItem; override;
   public
     constructor Create(APaintManager: CPaintManagerUI);
     destructor Destroy; override;
@@ -150,6 +169,7 @@ type
     function CanExpand(node: TNode): Boolean;
     procedure SetChildVisible(node: TNode; AVisible: Boolean);
   end;
+
 
 
 { TXGuiFoundation }
@@ -194,6 +214,7 @@ var
   pControl: CControlUI;
   pFriendListItem: CListContainerElementUI;
   pOperatorPannel: CContainerUI;
+  rcWindow: TRect;
 begin
   inherited;
   //Writeln('DoNotify++++++++++++++++', string(Msg.sType));
@@ -292,6 +313,16 @@ begin
         search_edit.Text := msg.pSender.Text;
         search_edit.Show;
       end;
+    end else
+    if LCtlName.Equals(kChangeBkSkinControlName) then
+    begin
+      background := FindControl(kBackgroundControlName);
+    end else
+    if LCtlName.Equals(kChangeColorSkinControlName) then
+    begin
+			GetWindowRect(Handle, rcWindow);
+			rcWindow.top := rcWindow.top + msg.pSender.GetPos.bottom;
+      TColorSkinWindow.Create(Self, rcWindow);
     end;
   end else
   if SameStr(LType, 'selectchanged') then
@@ -533,6 +564,12 @@ begin
 end;
 
 
+
+procedure TChatDialog.DoFinalMessage(hWd: HWND);
+begin
+  inherited;
+  Free;
+end;
 
 procedure TChatDialog.DoNotify(var Msg: TNotifyUI);
 var
@@ -1036,9 +1073,61 @@ begin
     LWindow.OnReceive(@p);
 end;
 
+
+{ TColorSkinWindow }
+
+constructor TColorSkinWindow.Create(main_frame: TXGuiFoundation;
+  rcParentWindow: TRect);
+begin
+  inherited Create('ColorWnd.xml', ExtractFilePath(ParamStr(0)) + 'skin\QQRes\', UILIB_FILE);
+  main_frame_ := main_frame;
+  parent_window_rect_ := rcParentWindow;
+  CreateWindow(0, 'colorskin', WS_POPUP, WS_EX_TOOLWINDOW, 0, 0, 0, 0, 0);
+  Show;
+end;
+
+destructor TColorSkinWindow.Destroy;
+begin
+  Writeln('Free....');
+end;
+
+procedure TColorSkinWindow.DoFinalMessage(hWd: HWND);
+begin
+  inherited;
+  Free;
+end;
+
+function TColorSkinWindow.DoHandleMessage(uMsg: UINT; wParam: WPARAM;
+  lParam: LPARAM): LRESULT;
+begin
+  if uMsg = WM_KILLFOCUS then
+  begin
+    Close;
+    Exit(1);
+  end;
+  Result := 0;
+end;
+
+procedure TColorSkinWindow.DoInitWindow;
+var
+  LSize: TSize;
+begin
+  inherited;
+  Lsize := TSize.Create(140, 165); //PaintManagerUI.GetInitSize;
+  MoveWindow(Handle, parent_window_rect_.right - Lsize.cx, parent_window_rect_.top, Lsize.cx, Lsize.cy, False);
+end;
+
+procedure TColorSkinWindow.DoNotify(var Msg: TNotifyUI);
+begin
+  Writeln(msg.sType.ToString);
+
+end;
+
+
 var
   XGuiFoundation: TXGuiFoundation;
   hInstRich: THandle;
+
 
 
 
@@ -1060,7 +1149,6 @@ begin
     XGuiFoundation.Show;
     Application.Run;
     XGuiFoundation.Free;
-
     SkinChangedList.Free;
 
     OleUninitialize();
