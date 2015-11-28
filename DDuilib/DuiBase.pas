@@ -27,13 +27,13 @@ type
   TDuiBase<T> = class(TObject)
   private
     function GetThisControlUI: CControlUI;
-  protected
+  strict protected
     FThis: T;
   public
     function GetMethodAddr(const AName: string): Pointer;
   public
-    property This: T read FThis;
-    property ThisControlUI: CControlUI read GetThisControlUI;
+    property this: T read FThis;
+    property ControlUI: CControlUI read GetThisControlUI;
   end;
 
 implementation

@@ -1,3 +1,11 @@
+//***************************************************************************
+//
+//       名称：UIListCommonDefine.pas
+//       工具：RAD Studio XE6
+//       作者：ying32
+//       改自duilib qq demo下的UIListCommonDefine.cpp
+//
+//***************************************************************************
 unit UIListCommonDefine;
 
 interface
@@ -11,40 +19,45 @@ uses
 
 type
  TNodeData = packed record
-	 level_: Integer;
-   folder_: Boolean;
-   child_visible_: Boolean;
-   has_child_: Boolean;
-	 text_: CDuiString;
-	 value: CDuiString;
-	 list_elment_: CListContainerElementUI;
+	 Level: Integer;
+   Folder: Boolean;
+   ChildVisible: Boolean;
+   HasChild: Boolean;
+	 Text: string;
+	 Value: string;
+	 ListElment: CListContainerElementUI;
  end;
  PNodeData = ^TNodeData;
 
- TNode = class;
-
- TChildren = TObjectList<TNode>;
 
  TNode = class
  private
-	 children_: TChildren;
-   parent_: TNode;
-	 data_: TNodeData;
-   procedure set_parent(parent: TNode);
+	 FChildrens: TObjectList<TNode>;
+   FParent: TNode;
+	 FNodeData: TNodeData;
+   procedure SetParent(AParent: TNode);
+   function GetLastChild: TNode;
+   // 这个绝对是偷懒行为
+   function GetNodeData: PNodeData;
+   function GetCount: Integer;
+   function GetChild(index: Integer): TNode;
+   function GetFolder: Boolean;
+   function GetHasChildren: Boolean;
  public
    constructor Create; overload;
-   constructor Create(t: TNodeData; parent: TNode); overload;
-   constructor Create(t: TNodeData); overload;
+   constructor Create(ANodeData: TNodeData; AParent: TNode); overload;
+   constructor Create(ANodeData: TNodeData); overload;
    destructor Destroy; override;
-   function num_children: Integer;
-   function child(i: Integer): TNode;
-   function parent: TNode;
-   function folder: Boolean;
-   function has_children: Boolean;
-   procedure add_child(child: TNode);
-   procedure remove_child(child: TNode);
-   function get_last_child: TNode;
-   function data: PNodeData;
+   procedure Add(AChild: TNode);
+   procedure Remove(AChild: TNode);
+ public
+   property HasChildren: Boolean read GetHasChildren;
+   property Folder: Boolean read GetFolder;
+   property Parent: TNode read FParent;
+   property NodeData: PNodeData read GetNodeData;
+   property LastChild: TNode read GetLastChild;
+   property Count: Integer read GetCount;
+   property Childs[Index: Integer]: TNode read GetChild;
  end;
 
 
@@ -62,80 +75,75 @@ end;
 constructor TNode.Create;
 begin
   inherited;
-  children_ := TChildren.Create;
+  FChildrens := TObjectList<TNode>.Create;
 end;
 
-constructor TNode.Create(t: TNodeData; parent: TNode);
+constructor TNode.Create(ANodeData: TNodeData; AParent: TNode);
 begin
-  data_ := t;
-  parent_ := parent;
+  FNodeData := ANodeData;
+  FParent := AParent;
   Create;
 end;
 
-constructor TNode.Create(t: TNodeData);
+constructor TNode.Create(ANodeData: TNodeData);
 begin
-  Create(t, nil);
+  Create(ANodeData, nil);
 end;
 
 destructor TNode.Destroy;
 begin
-  children_.Free;
+  FChildrens.Free;
   inherited;
 end;
 
-procedure TNode.add_child(child: TNode);
+procedure TNode.Add(AChild: TNode);
 begin
-  child.set_parent(Self);
-	children_.Add(child);
+  AChild.SetParent(Self);
+	FChildrens.Add(AChild);
 end;
 
-function TNode.child(i: Integer): TNode;
+function TNode.GetChild(index: Integer): TNode;
 begin
- Result := children_[i];
+  Result := FChildrens[index];
 end;
 
-function TNode.data: PNodeData;
+function TNode.GetNodeData: PNodeData;
 begin
-  Result := @data_;
+  Result := @FNodeData;
 end;
 
 
-function TNode.folder: Boolean;
+function TNode.GetFolder: Boolean;
 begin
-  Result := data_.folder_;
+  Result := FNodeData.Folder;
 end;
 
-function TNode.get_last_child: TNode;
+function TNode.GetLastChild: TNode;
 begin
-  if has_children then
-	  Result := child(num_children - 1).get_last_child
+  if HasChildren then
+	  Result := Childs[GetCount - 1].GetLastChild
   else
 	  Result := Self;
 end;
 
-function TNode.has_children: Boolean;
+function TNode.GetHasChildren: Boolean;
 begin
-  Result := num_children > 0;
+  Result := GetCount > 0;
 end;
 
-function TNode.num_children: Integer;
+function TNode.GetCount: Integer;
 begin
-  Result := children_.Count;
+  Result := FChildrens.Count;
 end;
 
-function TNode.parent: TNode;
+procedure TNode.Remove(AChild: TNode);
 begin
-  Result := parent_;
+  FChildrens.Remove(AChild);
 end;
 
-procedure TNode.remove_child(child: TNode);
+procedure TNode.SetParent(AParent: TNode);
 begin
-  children_.Remove(child);
-end;
-
-procedure TNode.set_parent(parent: TNode);
-begin
- parent_ := parent;
+  FParent := AParent;
 end;
 
 end.

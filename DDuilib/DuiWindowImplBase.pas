@@ -16,6 +16,7 @@ interface
 
 uses
   Winapi.Windows,
+  Winapi.Messages,
   System.SysUtils,
   DuiBase,
   Duilib;
@@ -24,6 +25,7 @@ type
 
   TDuiWindowImplBase = class(TDuiBase<CDelphi_WindowImplBase>)
   private
+    FHandle: HWND;
     FParentHandle: HWND;
     FPaintManagerUI: CPaintManagerUI;
     function GetHandle: HWND;
@@ -61,6 +63,9 @@ type
     function FindControl(const AName: string): CControlUI; overload;
     function FindControl(const pt: TPoint): CControlUI; overload;
     function Perform(uMsg: UINT; wParam: WPARAM = 0; lParam: LPARAM = 0): LRESULT;
+    procedure Minimize;
+    procedure Restore;
+    procedure Maximize;
   public
     constructor Create(ASkinFile, ASkinFolder, AZipFileName: string; ARType: TResourceType);  overload;
     constructor Create(ASkinFile, ASkinFolder: string; ARType: TResourceType);  overload;
@@ -243,7 +248,9 @@ end;
 
 function TDuiWindowImplBase.GetHandle: HWND;
 begin
-  Result := FThis.GetHWND;
+  if FHandle = 0 then
+    FHandle := FThis.GetHWND;
+   Result := FHandle;
 end;
 
 function TDuiWindowImplBase.GetInitSize: TSize;
@@ -261,6 +268,16 @@ begin
   FThis.ShowWindow(False, False);
 end;
 
+procedure TDuiWindowImplBase.Maximize;
+begin
+  Perform(WM_SYSCOMMAND, SC_MAXIMIZE);
+end;
+
+procedure TDuiWindowImplBase.Minimize;
+begin
+  Perform(WM_SYSCOMMAND, SC_MINIMIZE);
+end;
+
 procedure TDuiWindowImplBase.OnReceive(Param: Pointer);
 begin
   // virtual method
@@ -270,6 +287,11 @@ function TDuiWindowImplBase.Perform(uMsg: UINT; wParam: WPARAM;
   lParam: LPARAM): LRESULT;
 begin
   Result := SendMessage(Handle, uMsg, wParam, lParam);
+end;
+
+procedure TDuiWindowImplBase.Restore;
+begin
+  Perform(WM_SYSCOMMAND, SC_RESTORE);
 end;
 
 procedure TDuiWindowImplBase.SetIcon(nRes: UINT);
