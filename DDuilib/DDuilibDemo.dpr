@@ -23,42 +23,42 @@ uses
 const
   kFriendListItemNormalHeight = 32;
   kFriendListItemSelectedHeight = 50;
-  kLogoButtonControlName: PChar = 'logo';
-  kLogoContainerControlName: PChar = 'logo_container';
-  kNickNameControlName: PChar = 'nickname';
-  kDescriptionControlName: PChar = 'description';
-  kOperatorPannelControlName: PChar = 'operation';
+  kLogoButtonControlName = 'logo';
+  kLogoContainerControlName = 'logo_container';
+  kNickNameControlName = 'nickname';
+  kDescriptionControlName = 'description';
+  kOperatorPannelControlName = 'operation';
 
-  kTabControlName: PChar = 'tabs';
+  kTabControlName = 'tabs';
 
-  kFriendButtonControlName: PChar = 'friendbtn';
-  kGroupButtonControlName: PChar = 'groupbtn';
-  kMicroBlogButtonControlName: PChar = 'microblogbtn';
+  kFriendButtonControlName = 'friendbtn';
+  kGroupButtonControlName = 'groupbtn';
+  kMicroBlogButtonControlName = 'microblogbtn';
 
-  kBackgroundControlName: PChar = 'bg';
+  kBackgroundControlName = 'bg';
 
 
-  kTitleControlName: PChar = 'apptitle';
-  kCloseButtonControlName: PChar = 'closebtn';
-  kMinButtonControlName: PChar = 'minbtn';
-  kMaxButtonControlName: PChar = 'maxbtn';
-  kRestoreButtonControlName: PChar = 'restorebtn';
+  kTitleControlName = 'apptitle';
+  kCloseButtonControlName = 'closebtn';
+  kMinButtonControlName = 'minbtn';
+  kMaxButtonControlName = 'maxbtn';
+  kRestoreButtonControlName = 'restorebtn';
 
-  kFontButtonControlName: PChar = 'fontbtn';
-  kFontbarControlName: PChar = 'fontbar';
-  kFontTypeControlName: PChar = 'font_type';
-  kFontSizeControlName: PChar = 'font_size';
-  kBoldButtonControlName: PChar = 'boldbtn';
-  kItalicButtonControlName: PChar = 'italicbtn';
-  KUnderlineButtonControlName: PChar = 'underlinebtn';
-  kColorButtonControlName: PChar = 'colorbtn';
+  kFontButtonControlName = 'fontbtn';
+  kFontbarControlName = 'fontbar';
+  kFontTypeControlName = 'font_type';
+  kFontSizeControlName = 'font_size';
+  kBoldButtonControlName = 'boldbtn';
+  kItalicButtonControlName = 'italicbtn';
+  KUnderlineButtonControlName = 'underlinebtn';
+  kColorButtonControlName = 'colorbtn';
 
-  kInputRichEditControlName: PChar = 'input_richedit';
-  kViewRichEditControlName: PChar = 'view_richedit';
+  kInputRichEditControlName = 'input_richedit';
+  kViewRichEditControlName = 'view_richedit';
 
-  kEmotionButtonControlName: PChar = 'emotionbtn';
+  kEmotionButtonControlName = 'emotionbtn';
 
-  kSendButtonControlName: PChar = 'sendbtn';
+  kSendButtonControlName = 'sendbtn';
 
 
   kChangeBkSkinControlName = 'bkskinbtn';
@@ -66,6 +66,19 @@ const
 
   kEmotionRefreshTimerId = 1001;
   kEmotionRefreshInterval = 150;
+  kBackgroundSkinImageCount = 3;
+
+
+  kAdjustColorControlName = 'adjcolor';
+  kAdjustBkControlName = 'adjbk';
+
+  kAdjustColorSliderRControlName = 'AdjustColorSliderR';
+  kAdjustColorSliderGControlName = 'AdjustColorSliderG';
+  kAdjustColorSliderBControlName = 'AdjustColorSliderB';
+
+  kHColorLayoutControlName = 'HColorLayout';
+  kHBkLayoutControlName = 'HBkLayout';
+
 
 type
 
@@ -105,9 +118,11 @@ type
   protected
     procedure DoNotify(var Msg: TNotifyUI); override;
     function  DoCreateControl(pstrStr: string): CControlUI; override;
+    procedure DoFinalMessage(hWd: HWND); override;
   public
     procedure UpdateFriendsList;
     procedure OnPrepare(var Msg: TNotifyUI);
+    procedure SetBkColor(bkColor: DWORD);
   public
     constructor Create;
     destructor Destroy; override;
@@ -130,7 +145,6 @@ type
     procedure DoFinalMessage(hWd: HWND); override;
   public
     constructor Create(const bgimage: string; bkcolor: DWORD; myselft_info, friend_info: TFriendListItemInfo);
-    destructor Destroy; override;
     procedure OnReceive(Param: Pointer); override;
     procedure OnPrepare(var Msg: TNotifyUI);
   end;
@@ -146,7 +160,6 @@ type
     procedure DoFinalMessage(hWd: HWND); override;
   public
     constructor Create(main_frame: TXGuiFoundation; rcParentWindow: TRect);
-    destructor Destroy; override;
   end;
 
   TFirendList = class(TDuiListUI)
@@ -200,6 +213,11 @@ begin
   Result := nil;
 end;
 
+procedure TXGuiFoundation.DoFinalMessage(hWd: HWND);
+begin
+  inherited;
+end;
+
 {$REGION 'DoNotify'}
 procedure TXGuiFoundation.DoNotify(var msg: TNotifyUI);
 var
@@ -211,7 +229,6 @@ var
   friend_info, citer : TFriendListItemInfo;
   chatDlg: TChatDialog;
   skinparam: TSkinChangedParam;
-  pControl: CControlUI;
   pFriendListItem: CListContainerElementUI;
   pOperatorPannel: CContainerUI;
   rcWindow: TRect;
@@ -257,6 +274,7 @@ begin
     if SameStr(LCtlName, 'closebtn') then
     begin
       Close;
+//      Application.Terminate;
     end else
     if SameStr(LCtlName, 'minbtn') then
     begin
@@ -317,6 +335,24 @@ begin
     if LCtlName.Equals(kChangeBkSkinControlName) then
     begin
       background := FindControl(kBackgroundControlName);
+      if background <> nil then
+      begin
+        Inc(bk_image_index_);
+        if kBackgroundSkinImageCount < bk_image_index_ then
+					bk_image_index_ := 0;
+      end;
+      background.BkImage := Format('file=''bg%d.png'' corner=''600,200,1,1''', [bk_image_index_]);
+
+      background := FindControl(kBackgroundControlName);
+      if background <> nil then
+      begin
+
+        skinparam.bkcolor := background.BkColor;
+        skinparam.bgimage := '';
+        if background.BkImage <> '' then
+          skinparam.bgimage := Format('bg%d.png', [bk_image_index_]);
+      end;
+      SendSkinChanged(skinparam);
     end else
     if LCtlName.Equals(kChangeColorSkinControlName) then
     begin
@@ -449,6 +485,23 @@ begin
   UpdateFriendsList;
 end;
 
+procedure TXGuiFoundation.SetBkColor(bkColor: DWORD);
+var
+  background: CControlUI;
+  param: TSkinChangedParam;
+begin
+	background := FindControl(kBackgroundControlName);
+  if background <> nil then
+	begin
+		background.BkImage := '';
+		background.BkColor := bkColor;
+		background.NeedUpdate();
+		param.bkcolor := background.BkColor;
+		param.bgimage := background.BkImage;
+    SendSkinChanged(param);
+	end;
+end;
+
 procedure TXGuiFoundation.UpdateFriendsList;
 var
   item: TFriendListItemInfo;
@@ -556,13 +609,6 @@ begin
   font_face_name_ := 'Œ¢»Ì—≈∫⁄';
   CreateWindow(0, 'ChatDialog', UI_WNDSTYLE_FRAME or WS_POPUP, 0, 0, 0, 0, 0, 0);
 end;
-
-destructor TChatDialog.Destroy;
-begin
-
-  inherited;
-end;
-
 
 
 procedure TChatDialog.DoFinalMessage(hWd: HWND);
@@ -676,13 +722,14 @@ begin
   L := Param;
   if L <> nil then
   begin
+
     bgimage_ := L^.bgimage;
     bkcolor_ := L^.bkcolor;
     background := FindControl(kBackgroundControlName);
     if background <> nil then
     begin
       if not bgimage_.IsEmpty() then
-        background.BkImage := Format('"file=''%s'' corner=''600,200,1,1''"', [bgimage_])
+        background.BkImage := Format('file=''%s'' corner=''600,200,1,1''', [bgimage_])
       else
         background.BkImage := '';
       background.BkColor := bkcolor_;
@@ -1082,13 +1129,8 @@ begin
   inherited Create('ColorWnd.xml', ExtractFilePath(ParamStr(0)) + 'skin\QQRes\', UILIB_FILE);
   main_frame_ := main_frame;
   parent_window_rect_ := rcParentWindow;
-  CreateWindow(0, 'colorskin', WS_POPUP, WS_EX_TOOLWINDOW, 0, 0, 0, 0, 0);
+  CreateWindow(0, 'colorskin', WS_POPUP, WS_EX_TOOLWINDOW, 0, 0);
   Show;
-end;
-
-destructor TColorSkinWindow.Destroy;
-begin
-  Writeln('Free....');
 end;
 
 procedure TColorSkinWindow.DoFinalMessage(hWd: HWND);
@@ -1113,25 +1155,101 @@ var
   LSize: TSize;
 begin
   inherited;
+  // ’‚¿Ô÷µ¥ÌŒÛ£ø
   Lsize := TSize.Create(140, 165); //PaintManagerUI.GetInitSize;
+  //Writeln(LSize.cx, ',',  LSize.cy);
   MoveWindow(Handle, parent_window_rect_.right - Lsize.cx, parent_window_rect_.top, Lsize.cx, Lsize.cy, False);
 end;
 
 procedure TColorSkinWindow.DoNotify(var Msg: TNotifyUI);
+var
+  pTabControl: CTabLayoutUI;
+  LType, LCtlName: string;
+  AdjustColorSliderR, AdjustColorSliderG, AdjustColorSliderB: CSliderUI;
+  dwColor: DWORD;
+  r, g, b: Byte;
+  crColor: COLORREF;
 begin
-  Writeln(msg.sType.ToString);
-
+  LType := msg.sType;
+  LCtlName := msg.pSender.Name;
+  if LType.Equals('click') then
+  begin
+    pTabControl := CTabLayoutUI(FindControl(kTabControlName));
+    if pTabControl <> nil then
+    begin
+      if pTabControl.SelectIndex = 0 then
+      begin
+				if LCtlName.Contains('colour_') then
+				begin
+					AdjustColorSliderR := CSliderUI(FindControl(kAdjustColorSliderRControlName));
+					AdjustColorSliderG := CSliderUI(FindControl(kAdjustColorSliderGControlName));
+					AdjustColorSliderB := CSliderUI(FindControl(kAdjustColorSliderBControlName));
+					if (AdjustColorSliderR <> nil) and (AdjustColorSliderG <> nil) and (AdjustColorSliderB <> nil) then
+					begin
+						dwColor := msg.pSender.BkColor;
+						AdjustColorSliderR.SetValue(GetRValue(dwColor));
+						AdjustColorSliderG.SetValue(GetGValue(dwColor));
+						AdjustColorSliderB.SetValue(GetBValue(dwColor));
+						main_frame_.SetBkColor(dwColor);
+          end;
+        end;
+      end else if pTabControl.SelectIndex = 1 then
+      begin
+        Writeln(LCtlName);
+      end;
+    end;
+  end else
+  if LType.Equals('valuechanged') then
+  begin
+    pTabControl := CTabLayoutUI(FindControl(kTabControlName));
+    if pTabControl <> nil then
+    begin
+      if pTabControl.SelectIndex = 0 then
+      begin
+        AdjustColorSliderR := CSliderUI(FindControl(kAdjustColorSliderRControlName));
+        AdjustColorSliderG := CSliderUI(FindControl(kAdjustColorSliderGControlName));
+        AdjustColorSliderB := CSliderUI(FindControl(kAdjustColorSliderBControlName));
+        if (AdjustColorSliderR <> nil) and (AdjustColorSliderG <> nil) and (AdjustColorSliderB <> nil) then
+        begin
+          if LCtlName.Equals(kAdjustColorSliderRControlName) or
+             LCtlName.Equals(kAdjustColorSliderGControlName) or
+             LCtlName.Equals(kAdjustColorSliderBControlName) then
+          begin
+            r := AdjustColorSliderR.GetValue();
+						g := AdjustColorSliderG.GetValue();
+						b := AdjustColorSliderB.GetValue();
+						crColor := RGB(r, g, b);
+            main_frame_.SetBkColor(StrToIntDef('$FF' + IntToHex(crColor, 6), 0));
+          end;
+        end;
+      end else if pTabControl.SelectIndex = 1 then
+      begin
+      end;
+    end;
+  end else
+  if LType.Equals('selectchanged') then
+  begin
+    pTabControl := CTabLayoutUI(FindControl(kTabControlName));
+    if pTabControl <> nil then
+    begin
+      if LCtlName.Equals(kAdjustColorControlName) then
+      begin
+         if pTabControl.SelectIndex <> 0 then
+           pTabControl.SelectIndex := 0;
+      end else
+      if LCtlName.Equals(kAdjustBkControlName) then
+      begin
+         if pTabControl.SelectIndex <> 1 then
+           pTabControl.SelectIndex := 1;
+      end;
+    end;
+  end;
 end;
 
 
 var
   XGuiFoundation: TXGuiFoundation;
   hInstRich: THandle;
-
-
-
-
-
 
 begin
   try
@@ -1149,12 +1267,14 @@ begin
     XGuiFoundation.Show;
     Application.Run;
     XGuiFoundation.Free;
+
+
     SkinChangedList.Free;
 
     OleUninitialize();
 	  CoUninitialize();
     FreeLibrary(hInstRich);
-    readln;
+
   except
     on E: Exception do
      // Writeln(E.ClassName, ': ', E.Message);

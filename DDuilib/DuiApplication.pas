@@ -3,14 +3,15 @@ unit DuiApplication;
 interface
 
 uses
-  Duilib,
-  DuiWindowImplBase;
+  Winapi.Windows,
+  Duilib;
 
 type
   TDuiApplication = class
   public
     procedure Initialize;
     procedure Run;
+    procedure Terminate;
     //procedure CreateForm();
   end;
 
@@ -29,6 +30,12 @@ end;
 procedure TDuiApplication.Run;
 begin
   CPaintManagerUI.MessageLoop;
+end;
+
+procedure TDuiApplication.Terminate;
+begin
+  CPaintManagerUI.Term;
+  //PostQuitMessage(0);
 end;
 
 initialization

@@ -54,7 +54,7 @@ type
     procedure Close;
     procedure CreateDuiWindow(AParent: HWND; ATitle: string);
     procedure CreateWindow(hwndParent: HWND; ATitle: string; dwStyle: DWORD; dwExStyle: DWORD; const rc: TRect; hMenu: HMENU); overload;
-    procedure CreateWindow(hwndParent: HWND; ATitle: string; dwStyle: DWORD; dwExStyle: DWORD; x: Integer; y: Integer; cx: Integer; cy: Integer; hMenu: HMENU); overload;
+    procedure CreateWindow(hwndParent: HWND; ATitle: string; dwStyle: DWORD; dwExStyle: DWORD; x: Integer = Integer(CW_USEDEFAULT); y: Integer = Integer(CW_USEDEFAULT); cx: Integer = Integer(CW_USEDEFAULT); cy: Integer = Integer(CW_USEDEFAULT); hMenu: HMENU = 0); overload;
 
     procedure SetIcon(nRes: UINT);
     function FindControl(const AName: string): CControlUI; overload;
