@@ -831,9 +831,9 @@ begin
 		parent := root_node_;
 
   if not FDlgBuilder.GetMarkup.IsValid then
-    pListElement := Pointer(FDlgBuilder.Create('friend_list_item.xml', nil, nil, FPaintManager))
+    pListElement := CListContainerElementUI(FDlgBuilder.Create('friend_list_item.xml', nil, nil, FPaintManager))
   else
-    pListElement := Pointer(FDlgBuilder.Create(nil, FPaintManager));
+    pListElement := CListContainerElementUI(FDlgBuilder.Create(nil, FPaintManager));
   if pListElement = nil then Exit;
 
   node := TNode.Create;
@@ -1153,11 +1153,10 @@ end;
 procedure TColorSkinWindow.DoInitWindow;
 var
   LSize: TSize;
+  P: DWORD;
 begin
   inherited;
-  // ’‚¿Ô÷µ¥ÌŒÛ£ø
-  Lsize := TSize.Create(140, 165); //PaintManagerUI.GetInitSize;
-  //Writeln(LSize.cx, ',',  LSize.cy);
+  LSize := InitSize;
   MoveWindow(Handle, parent_window_rect_.right - Lsize.cx, parent_window_rect_.top, Lsize.cx, Lsize.cy, False);
 end;
 
@@ -1247,10 +1246,10 @@ begin
 end;
 
 
+
 var
   XGuiFoundation: TXGuiFoundation;
   hInstRich: THandle;
-
 begin
   try
     ReportMemoryLeaksOnShutdown := True;

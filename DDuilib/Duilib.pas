@@ -4,7 +4,7 @@
 //       作者：ying32
 //       QQ  ：1444386932
 //       E-mail：1444386932@qq.com
-//       本单元由CppConvert工具自动生成于2015-11-27 20:58:03
+//       本单元由CppConvert工具自动生成于2015-11-28 17:01:00
 //       版权所有 (C) 2015 ying32 All Rights Reserved
 //
 //       1、以C开头的都是用来桥接C++类的，理论上是不给继承，除非是c++的类
@@ -1640,7 +1640,7 @@ function Delphi_ControlUI_GetFocusBorderColor(Handle: CControlUI): DWORD; cdecl;
 procedure Delphi_ControlUI_SetFocusBorderColor(Handle: CControlUI; dwBorderColor: DWORD); cdecl;
 function Delphi_ControlUI_IsColorHSL(Handle: CControlUI): Boolean; cdecl;
 procedure Delphi_ControlUI_SetColorHSL(Handle: CControlUI; bColorHSL: Boolean); cdecl;
-function Delphi_ControlUI_GetBorderRound(Handle: CControlUI): TSize; cdecl;
+procedure Delphi_ControlUI_GetBorderRound(Handle: CControlUI; var Result: TSize); cdecl;
 procedure Delphi_ControlUI_SetBorderRound(Handle: CControlUI; cxyRound: TSize); cdecl;
 function Delphi_ControlUI_DrawImage(Handle: CControlUI; hDC: HDC; var drawInfo: TDrawInfo): Boolean; cdecl;
 function Delphi_ControlUI_GetBorderSize(Handle: CControlUI): Integer; cdecl;
@@ -1659,16 +1659,16 @@ procedure Delphi_ControlUI_SetBottomBorderSize(Handle: CControlUI; nSize: Intege
 function Delphi_ControlUI_GetBorderStyle(Handle: CControlUI): Integer; cdecl;
 procedure Delphi_ControlUI_SetBorderStyle(Handle: CControlUI; nStyle: Integer); cdecl;
 function Delphi_ControlUI_GetPos(Handle: CControlUI): PRect; cdecl;
-function Delphi_ControlUI_GetRelativePos(Handle: CControlUI): TRect; cdecl;
+procedure Delphi_ControlUI_GetRelativePos(Handle: CControlUI; var Result: TRect); cdecl;
 procedure Delphi_ControlUI_SetPos(Handle: CControlUI; rc: TRect; bNeedInvalidate: Boolean); cdecl;
 procedure Delphi_ControlUI_Move(Handle: CControlUI; szOffset: TSize; bNeedInvalidate: Boolean); cdecl;
 function Delphi_ControlUI_GetWidth(Handle: CControlUI): Integer; cdecl;
 function Delphi_ControlUI_GetHeight(Handle: CControlUI): Integer; cdecl;
 function Delphi_ControlUI_GetX(Handle: CControlUI): Integer; cdecl;
 function Delphi_ControlUI_GetY(Handle: CControlUI): Integer; cdecl;
-function Delphi_ControlUI_GetPadding(Handle: CControlUI): TRect; cdecl;
+procedure Delphi_ControlUI_GetPadding(Handle: CControlUI; var Result: TRect); cdecl;
 procedure Delphi_ControlUI_SetPadding(Handle: CControlUI; rcPadding: TRect); cdecl;
-function Delphi_ControlUI_GetFixedXY(Handle: CControlUI): TSize; cdecl;
+procedure Delphi_ControlUI_GetFixedXY(Handle: CControlUI; var Result: TSize); cdecl;
 procedure Delphi_ControlUI_SetFixedXY(Handle: CControlUI; szXY: TSize); cdecl;
 function Delphi_ControlUI_GetFixedWidth(Handle: CControlUI): Integer; cdecl;
 procedure Delphi_ControlUI_SetFixedWidth(Handle: CControlUI; cx: Integer); cdecl;
@@ -1721,7 +1721,7 @@ procedure Delphi_ControlUI_Event(Handle: CControlUI; var event: TEventUI); cdecl
 procedure Delphi_ControlUI_DoEvent(Handle: CControlUI; var event: TEventUI); cdecl;
 procedure Delphi_ControlUI_SetAttribute(Handle: CControlUI; pstrName: LPCTSTR; pstrValue: LPCTSTR); cdecl;
 function Delphi_ControlUI_ApplyAttributeList(Handle: CControlUI; pstrList: LPCTSTR): CControlUI; cdecl;
-function Delphi_ControlUI_EstimateSize(Handle: CControlUI; szAvailable: TSize): TSize; cdecl;
+procedure Delphi_ControlUI_EstimateSize(Handle: CControlUI; szAvailable: TSize; var Result: TSize); cdecl;
 procedure Delphi_ControlUI_DoPaint(Handle: CControlUI; hDC: HDC; var rcPaint: TRect); cdecl;
 procedure Delphi_ControlUI_PaintBkColor(Handle: CControlUI; hDC: HDC); cdecl;
 procedure Delphi_ControlUI_PaintBkImage(Handle: CControlUI; hDC: HDC); cdecl;
@@ -1785,18 +1785,18 @@ function Delphi_PaintManagerUI_GetPaintDC(Handle: CPaintManagerUI): HDC; cdecl;
 function Delphi_PaintManagerUI_GetPaintWindow(Handle: CPaintManagerUI): HWND; cdecl;
 function Delphi_PaintManagerUI_GetTooltipWindow(Handle: CPaintManagerUI): HWND; cdecl;
 function Delphi_PaintManagerUI_GetMousePos(Handle: CPaintManagerUI): TPoint; cdecl;
-function Delphi_PaintManagerUI_GetClientSize(Handle: CPaintManagerUI): TSize; cdecl;
-function Delphi_PaintManagerUI_GetInitSize(Handle: CPaintManagerUI): TSize; cdecl;
+procedure Delphi_PaintManagerUI_GetClientSize(Handle: CPaintManagerUI; var Result: TSize); cdecl;
+procedure Delphi_PaintManagerUI_GetInitSize(Handle: CPaintManagerUI; var Result: TSize); cdecl;
 procedure Delphi_PaintManagerUI_SetInitSize(Handle: CPaintManagerUI; cx: Integer; cy: Integer); cdecl;
 function Delphi_PaintManagerUI_GetSizeBox(Handle: CPaintManagerUI): PRect; cdecl;
 procedure Delphi_PaintManagerUI_SetSizeBox(Handle: CPaintManagerUI; var rcSizeBox: TRect); cdecl;
 function Delphi_PaintManagerUI_GetCaptionRect(Handle: CPaintManagerUI): PRect; cdecl;
 procedure Delphi_PaintManagerUI_SetCaptionRect(Handle: CPaintManagerUI; var rcCaption: TRect); cdecl;
-function Delphi_PaintManagerUI_GetRoundCorner(Handle: CPaintManagerUI): TSize; cdecl;
+procedure Delphi_PaintManagerUI_GetRoundCorner(Handle: CPaintManagerUI; var Result: TSize); cdecl;
 procedure Delphi_PaintManagerUI_SetRoundCorner(Handle: CPaintManagerUI; cx: Integer; cy: Integer); cdecl;
-function Delphi_PaintManagerUI_GetMinInfo(Handle: CPaintManagerUI): TSize; cdecl;
+procedure Delphi_PaintManagerUI_GetMinInfo(Handle: CPaintManagerUI; var Result: TSize); cdecl;
 procedure Delphi_PaintManagerUI_SetMinInfo(Handle: CPaintManagerUI; cx: Integer; cy: Integer); cdecl;
-function Delphi_PaintManagerUI_GetMaxInfo(Handle: CPaintManagerUI): TSize; cdecl;
+procedure Delphi_PaintManagerUI_GetMaxInfo(Handle: CPaintManagerUI; var Result: TSize); cdecl;
 procedure Delphi_PaintManagerUI_SetMaxInfo(Handle: CPaintManagerUI; cx: Integer; cy: Integer); cdecl;
 function Delphi_PaintManagerUI_GetTransparent(Handle: CPaintManagerUI): Integer; cdecl;
 procedure Delphi_PaintManagerUI_SetTransparent(Handle: CPaintManagerUI; nOpacity: Integer); cdecl;
@@ -1928,7 +1928,7 @@ procedure Delphi_ContainerUI_DoEvent(Handle: CContainerUI; var event: TEventUI);
 procedure Delphi_ContainerUI_SetVisible(Handle: CContainerUI; bVisible: Boolean); cdecl;
 procedure Delphi_ContainerUI_SetInternVisible(Handle: CContainerUI; bVisible: Boolean); cdecl;
 procedure Delphi_ContainerUI_SetMouseEnabled(Handle: CContainerUI; bEnable: Boolean); cdecl;
-function Delphi_ContainerUI_GetInset(Handle: CContainerUI): TRect; cdecl;
+procedure Delphi_ContainerUI_GetInset(Handle: CContainerUI; var Result: TRect); cdecl;
 procedure Delphi_ContainerUI_SetInset(Handle: CContainerUI; rcInset: TRect); cdecl;
 function Delphi_ContainerUI_GetChildPadding(Handle: CContainerUI): Integer; cdecl;
 procedure Delphi_ContainerUI_SetChildPadding(Handle: CContainerUI; iPadding: Integer); cdecl;
@@ -1954,8 +1954,8 @@ function Delphi_ContainerUI_GetSubControlFixedHeight(Handle: CContainerUI; pstrS
 function Delphi_ContainerUI_GetSubControlFixedWdith(Handle: CContainerUI; pstrSubControlName: LPCTSTR): Integer; cdecl;
 function Delphi_ContainerUI_GetSubControlUserData(Handle: CContainerUI; pstrSubControlName: LPCTSTR): CDuiString; cdecl;
 function Delphi_ContainerUI_FindSubControl(Handle: CContainerUI; pstrSubControlName: LPCTSTR): CControlUI; cdecl;
-function Delphi_ContainerUI_GetScrollPos(Handle: CContainerUI): TSize; cdecl;
-function Delphi_ContainerUI_GetScrollRange(Handle: CContainerUI): TSize; cdecl;
+procedure Delphi_ContainerUI_GetScrollPos(Handle: CContainerUI; var Result: TSize); cdecl;
+procedure Delphi_ContainerUI_GetScrollRange(Handle: CContainerUI; var Result: TSize); cdecl;
 procedure Delphi_ContainerUI_SetScrollPos(Handle: CContainerUI; szPos: TSize); cdecl;
 procedure Delphi_ContainerUI_LineUp(Handle: CContainerUI); cdecl;
 procedure Delphi_ContainerUI_LineDown(Handle: CContainerUI); cdecl;
@@ -1988,7 +1988,7 @@ procedure Delphi_VerticalLayoutUI_SetAttribute(Handle: CVerticalLayoutUI; pstrNa
 procedure Delphi_VerticalLayoutUI_DoEvent(Handle: CVerticalLayoutUI; var event: TEventUI); cdecl;
 procedure Delphi_VerticalLayoutUI_SetPos(Handle: CVerticalLayoutUI; rc: TRect; bNeedInvalidate: Boolean); cdecl;
 procedure Delphi_VerticalLayoutUI_DoPostPaint(Handle: CVerticalLayoutUI; hDC: HDC; var rcPaint: TRect); cdecl;
-function Delphi_VerticalLayoutUI_GetThumbRect(Handle: CVerticalLayoutUI; bUseNew: Boolean): TRect; cdecl;
+procedure Delphi_VerticalLayoutUI_GetThumbRect(Handle: CVerticalLayoutUI; bUseNew: Boolean; var Result: TRect); cdecl;
 
 //================================CListUI============================
 
@@ -2037,7 +2037,7 @@ procedure Delphi_ListUI_SetDisabledItemImage(Handle: CListUI; pStrImage: LPCTSTR
 procedure Delphi_ListUI_SetItemLineColor(Handle: CListUI; dwLineColor: DWORD); cdecl;
 function Delphi_ListUI_IsItemShowHtml(Handle: CListUI): Boolean; cdecl;
 procedure Delphi_ListUI_SetItemShowHtml(Handle: CListUI; bShowHtml: Boolean); cdecl;
-function Delphi_ListUI_GetItemTextPadding(Handle: CListUI): TRect; cdecl;
+procedure Delphi_ListUI_GetItemTextPadding(Handle: CListUI; var Result: TRect); cdecl;
 function Delphi_ListUI_GetItemTextColor(Handle: CListUI): DWORD; cdecl;
 function Delphi_ListUI_GetItemBkColor(Handle: CListUI): DWORD; cdecl;
 function Delphi_ListUI_GetItemBkImage(Handle: CListUI): LPCTSTR; cdecl;
@@ -2060,8 +2060,8 @@ procedure Delphi_ListUI_DoEvent(Handle: CListUI; var event: TEventUI); cdecl;
 procedure Delphi_ListUI_SetAttribute(Handle: CListUI; pstrName: LPCTSTR; pstrValue: LPCTSTR); cdecl;
 function Delphi_ListUI_GetTextCallback(Handle: CListUI): IListCallbackUI; cdecl;
 procedure Delphi_ListUI_SetTextCallback(Handle: CListUI; pCallback: IListCallbackUI); cdecl;
-function Delphi_ListUI_GetScrollPos(Handle: CListUI): TSize; cdecl;
-function Delphi_ListUI_GetScrollRange(Handle: CListUI): TSize; cdecl;
+procedure Delphi_ListUI_GetScrollPos(Handle: CListUI; var Result: TSize); cdecl;
+procedure Delphi_ListUI_GetScrollRange(Handle: CListUI; var Result: TSize); cdecl;
 procedure Delphi_ListUI_SetScrollPos(Handle: CListUI; szPos: TSize); cdecl;
 procedure Delphi_ListUI_LineUp(Handle: CListUI); cdecl;
 procedure Delphi_ListUI_LineDown(Handle: CListUI); cdecl;
@@ -2101,11 +2101,11 @@ procedure Delphi_LabelUI_SetDisabledTextColor(Handle: CLabelUI; dwTextColor: DWO
 function Delphi_LabelUI_GetDisabledTextColor(Handle: CLabelUI): DWORD; cdecl;
 procedure Delphi_LabelUI_SetFont(Handle: CLabelUI; index: Integer); cdecl;
 function Delphi_LabelUI_GetFont(Handle: CLabelUI): Integer; cdecl;
-function Delphi_LabelUI_GetTextPadding(Handle: CLabelUI): TRect; cdecl;
+procedure Delphi_LabelUI_GetTextPadding(Handle: CLabelUI; var Result: TRect); cdecl;
 procedure Delphi_LabelUI_SetTextPadding(Handle: CLabelUI; rc: TRect); cdecl;
 function Delphi_LabelUI_IsShowHtml(Handle: CLabelUI): Boolean; cdecl;
 procedure Delphi_LabelUI_SetShowHtml(Handle: CLabelUI; bShowHtml: Boolean); cdecl;
-function Delphi_LabelUI_EstimateSize(Handle: CLabelUI; szAvailable: TSize): TSize; cdecl;
+procedure Delphi_LabelUI_EstimateSize(Handle: CLabelUI; szAvailable: TSize; var Result: TSize); cdecl;
 procedure Delphi_LabelUI_DoEvent(Handle: CLabelUI; var event: TEventUI); cdecl;
 procedure Delphi_LabelUI_SetAttribute(Handle: CLabelUI; pstrName: LPCTSTR; pstrValue: LPCTSTR); cdecl;
 procedure Delphi_LabelUI_PaintText(Handle: CLabelUI; hDC: HDC); cdecl;
@@ -2128,7 +2128,7 @@ function Delphi_LabelUI_GetGradientLength(Handle: CLabelUI): Integer; cdecl;
 procedure Delphi_LabelUI_SetTextRenderingHintAntiAlias(Handle: CLabelUI; _TextRenderingHintAntiAlias: Integer); cdecl;
 function Delphi_LabelUI_GetTextRenderingHintAntiAlias(Handle: CLabelUI): Integer; cdecl;
 procedure Delphi_LabelUI_SetShadowOffset(Handle: CLabelUI; _offset: Integer; _angle: Integer); cdecl;
-function Delphi_LabelUI_GetShadowOffset(Handle: CLabelUI): TRectF; cdecl;
+procedure Delphi_LabelUI_GetShadowOffset(Handle: CLabelUI; var Result: TRectF); cdecl;
 procedure Delphi_LabelUI_SetTextColor1(Handle: CLabelUI; _TextColor1: DWORD); cdecl;
 function Delphi_LabelUI_GetTextColor1(Handle: CLabelUI): DWORD; cdecl;
 procedure Delphi_LabelUI_SetTextShadowColorA(Handle: CLabelUI; _TextShadowColorA: DWORD); cdecl;
@@ -2176,7 +2176,7 @@ procedure Delphi_ButtonUI_SetPushedTextColor(Handle: CButtonUI; dwColor: DWORD);
 function Delphi_ButtonUI_GetPushedTextColor(Handle: CButtonUI): DWORD; cdecl;
 procedure Delphi_ButtonUI_SetFocusedTextColor(Handle: CButtonUI; dwColor: DWORD); cdecl;
 function Delphi_ButtonUI_GetFocusedTextColor(Handle: CButtonUI): DWORD; cdecl;
-function Delphi_ButtonUI_EstimateSize(Handle: CButtonUI; szAvailable: TSize): TSize; cdecl;
+procedure Delphi_ButtonUI_EstimateSize(Handle: CButtonUI; szAvailable: TSize; var Result: TSize); cdecl;
 procedure Delphi_ButtonUI_SetAttribute(Handle: CButtonUI; pstrName: LPCTSTR; pstrValue: LPCTSTR); cdecl;
 procedure Delphi_ButtonUI_PaintText(Handle: CButtonUI; hDC: HDC); cdecl;
 procedure Delphi_ButtonUI_PaintStatusImage(Handle: CButtonUI; hDC: HDC); cdecl;
@@ -2204,7 +2204,7 @@ function Delphi_OptionUI_GetGroup(Handle: COptionUI): LPCTSTR; cdecl;
 procedure Delphi_OptionUI_SetGroup(Handle: COptionUI; pStrGroupName: LPCTSTR); cdecl;
 function Delphi_OptionUI_IsSelected(Handle: COptionUI): Boolean; cdecl;
 procedure Delphi_OptionUI_Selected(Handle: COptionUI; bSelected: Boolean); cdecl;
-function Delphi_OptionUI_EstimateSize(Handle: COptionUI; szAvailable: TSize): TSize; cdecl;
+procedure Delphi_OptionUI_EstimateSize(Handle: COptionUI; szAvailable: TSize; var Result: TSize); cdecl;
 procedure Delphi_OptionUI_SetAttribute(Handle: COptionUI; pstrName: LPCTSTR; pstrValue: LPCTSTR); cdecl;
 procedure Delphi_OptionUI_PaintStatusImage(Handle: COptionUI; hDC: HDC); cdecl;
 procedure Delphi_OptionUI_PaintText(Handle: COptionUI; hDC: HDC); cdecl;
@@ -2255,7 +2255,7 @@ function Delphi_ComboUI_GetText(Handle: CComboUI): CDuiString; cdecl;
 procedure Delphi_ComboUI_SetEnabled(Handle: CComboUI; bEnable: Boolean); cdecl;
 function Delphi_ComboUI_GetDropBoxAttributeList(Handle: CComboUI): CDuiString; cdecl;
 procedure Delphi_ComboUI_SetDropBoxAttributeList(Handle: CComboUI; pstrList: LPCTSTR); cdecl;
-function Delphi_ComboUI_GetDropBoxSize(Handle: CComboUI): TSize; cdecl;
+procedure Delphi_ComboUI_GetDropBoxSize(Handle: CComboUI; var Result: TSize); cdecl;
 procedure Delphi_ComboUI_SetDropBoxSize(Handle: CComboUI; szDropBox: TSize); cdecl;
 function Delphi_ComboUI_GetCurSel(Handle: CComboUI): Integer; cdecl;
 function Delphi_ComboUI_GetSelectCloseFlag(Handle: CComboUI): Boolean; cdecl;
@@ -2270,7 +2270,7 @@ procedure Delphi_ComboUI_RemoveAll(Handle: CComboUI); cdecl;
 function Delphi_ComboUI_Activate(Handle: CComboUI): Boolean; cdecl;
 function Delphi_ComboUI_GetShowText(Handle: CComboUI): Boolean; cdecl;
 procedure Delphi_ComboUI_SetShowText(Handle: CComboUI; flag: Boolean); cdecl;
-function Delphi_ComboUI_GetTextPadding(Handle: CComboUI): TRect; cdecl;
+procedure Delphi_ComboUI_GetTextPadding(Handle: CComboUI; var Result: TRect); cdecl;
 procedure Delphi_ComboUI_SetTextPadding(Handle: CComboUI; rc: TRect); cdecl;
 function Delphi_ComboUI_GetNormalImage(Handle: CComboUI): LPCTSTR; cdecl;
 procedure Delphi_ComboUI_SetNormalImage(Handle: CComboUI; pStrImage: LPCTSTR); cdecl;
@@ -2285,7 +2285,7 @@ procedure Delphi_ComboUI_SetDisabledImage(Handle: CComboUI; pStrImage: LPCTSTR);
 function Delphi_ComboUI_GetListInfo(Handle: CComboUI): PListInfoUI; cdecl;
 procedure Delphi_ComboUI_SetItemFont(Handle: CComboUI; index: Integer); cdecl;
 procedure Delphi_ComboUI_SetItemTextStyle(Handle: CComboUI; uStyle: UINT); cdecl;
-function Delphi_ComboUI_GetItemTextPadding(Handle: CComboUI): TRect; cdecl;
+procedure Delphi_ComboUI_GetItemTextPadding(Handle: CComboUI; var Result: TRect); cdecl;
 procedure Delphi_ComboUI_SetItemTextPadding(Handle: CComboUI; rc: TRect); cdecl;
 function Delphi_ComboUI_GetItemTextColor(Handle: CComboUI): DWORD; cdecl;
 procedure Delphi_ComboUI_SetItemTextColor(Handle: CComboUI; dwTextColor: DWORD); cdecl;
@@ -2317,7 +2317,7 @@ function Delphi_ComboUI_GetItemLineColor(Handle: CComboUI): DWORD; cdecl;
 procedure Delphi_ComboUI_SetItemLineColor(Handle: CComboUI; dwLineColor: DWORD); cdecl;
 function Delphi_ComboUI_IsItemShowHtml(Handle: CComboUI): Boolean; cdecl;
 procedure Delphi_ComboUI_SetItemShowHtml(Handle: CComboUI; bShowHtml: Boolean); cdecl;
-function Delphi_ComboUI_EstimateSize(Handle: CComboUI; szAvailable: TSize): TSize; cdecl;
+procedure Delphi_ComboUI_EstimateSize(Handle: CComboUI; szAvailable: TSize; var Result: TSize); cdecl;
 procedure Delphi_ComboUI_SetPos(Handle: CComboUI; rc: TRect; bNeedInvalidate: Boolean); cdecl;
 procedure Delphi_ComboUI_Move(Handle: CComboUI; szOffset: TSize; bNeedInvalidate: Boolean); cdecl;
 procedure Delphi_ComboUI_DoEvent(Handle: CComboUI; var event: TEventUI); cdecl;
@@ -2377,7 +2377,7 @@ procedure Delphi_EditUI_SetPos(Handle: CEditUI; rc: TRect; bNeedInvalidate: Bool
 procedure Delphi_EditUI_Move(Handle: CEditUI; szOffset: TSize; bNeedInvalidate: Boolean); cdecl;
 procedure Delphi_EditUI_SetVisible(Handle: CEditUI; bVisible: Boolean); cdecl;
 procedure Delphi_EditUI_SetInternVisible(Handle: CEditUI; bVisible: Boolean); cdecl;
-function Delphi_EditUI_EstimateSize(Handle: CEditUI; szAvailable: TSize): TSize; cdecl;
+procedure Delphi_EditUI_EstimateSize(Handle: CEditUI; szAvailable: TSize; var Result: TSize); cdecl;
 procedure Delphi_EditUI_DoEvent(Handle: CEditUI; var event: TEventUI); cdecl;
 procedure Delphi_EditUI_SetAttribute(Handle: CEditUI; pstrName: LPCTSTR; pstrValue: LPCTSTR); cdecl;
 procedure Delphi_EditUI_PaintStatusImage(Handle: CEditUI; hDC: HDC); cdecl;
@@ -2504,7 +2504,7 @@ procedure Delphi_RichEditUI_PageLeft(Handle: CRichEditUI); cdecl;
 procedure Delphi_RichEditUI_PageRight(Handle: CRichEditUI); cdecl;
 procedure Delphi_RichEditUI_HomeLeft(Handle: CRichEditUI); cdecl;
 procedure Delphi_RichEditUI_EndRight(Handle: CRichEditUI); cdecl;
-function Delphi_RichEditUI_EstimateSize(Handle: CRichEditUI; szAvailable: TSize): TSize; cdecl;
+procedure Delphi_RichEditUI_EstimateSize(Handle: CRichEditUI; szAvailable: TSize; var Result: TSize); cdecl;
 procedure Delphi_RichEditUI_SetPos(Handle: CRichEditUI; rc: TRect; bNeedInvalidate: Boolean); cdecl;
 procedure Delphi_RichEditUI_Move(Handle: CRichEditUI; szOffset: TSize; bNeedInvalidate: Boolean); cdecl;
 procedure Delphi_RichEditUI_DoEvent(Handle: CRichEditUI; var event: TEventUI); cdecl;
@@ -2601,7 +2601,7 @@ procedure Delphi_SliderUI_SetEnabled(Handle: CSliderUI; bEnable: Boolean); cdecl
 function Delphi_SliderUI_GetChangeStep(Handle: CSliderUI): Integer; cdecl;
 procedure Delphi_SliderUI_SetChangeStep(Handle: CSliderUI; step: Integer); cdecl;
 procedure Delphi_SliderUI_SetThumbSize(Handle: CSliderUI; szXY: TSize); cdecl;
-function Delphi_SliderUI_GetThumbRect(Handle: CSliderUI): TRect; cdecl;
+procedure Delphi_SliderUI_GetThumbRect(Handle: CSliderUI; var Result: TRect); cdecl;
 function Delphi_SliderUI_GetThumbImage(Handle: CSliderUI): LPCTSTR; cdecl;
 procedure Delphi_SliderUI_SetThumbImage(Handle: CSliderUI; pStrImage: LPCTSTR); cdecl;
 function Delphi_SliderUI_GetThumbHotImage(Handle: CSliderUI): LPCTSTR; cdecl;
@@ -2621,7 +2621,7 @@ function Delphi_TextUI_GetControlFlags(Handle: CTextUI): UINT; cdecl;
 function Delphi_TextUI_GetInterface(Handle: CTextUI; pstrName: LPCTSTR): Pointer; cdecl;
 function Delphi_TextUI_GetLinkContent(Handle: CTextUI; iIndex: Integer): CDuiString; cdecl;
 procedure Delphi_TextUI_DoEvent(Handle: CTextUI; var event: TEventUI); cdecl;
-function Delphi_TextUI_EstimateSize(Handle: CTextUI; szAvailable: TSize): TSize; cdecl;
+procedure Delphi_TextUI_EstimateSize(Handle: CTextUI; szAvailable: TSize; var Result: TSize); cdecl;
 procedure Delphi_TextUI_PaintText(Handle: CTextUI; hDC: HDC); cdecl;
 
 //================================CTreeNodeUI============================
@@ -2729,7 +2729,7 @@ procedure Delphi_HorizontalLayoutUI_SetAttribute(Handle: CHorizontalLayoutUI; ps
 procedure Delphi_HorizontalLayoutUI_DoEvent(Handle: CHorizontalLayoutUI; var event: TEventUI); cdecl;
 procedure Delphi_HorizontalLayoutUI_SetPos(Handle: CHorizontalLayoutUI; rc: TRect; bNeedInvalidate: Boolean); cdecl;
 procedure Delphi_HorizontalLayoutUI_DoPostPaint(Handle: CHorizontalLayoutUI; hDC: HDC; var rcPaint: TRect); cdecl;
-function Delphi_HorizontalLayoutUI_GetThumbRect(Handle: CHorizontalLayoutUI; bUseNew: Boolean): TRect; cdecl;
+procedure Delphi_HorizontalLayoutUI_GetThumbRect(Handle: CHorizontalLayoutUI; bUseNew: Boolean; var Result: TRect); cdecl;
 
 //================================CListHeaderUI============================
 
@@ -2737,8 +2737,9 @@ function Delphi_ListHeaderUI_CppCreate: CListHeaderUI; cdecl;
 procedure Delphi_ListHeaderUI_CppDestroy(Handle: CListHeaderUI); cdecl;
 function Delphi_ListHeaderUI_GetClass(Handle: CListHeaderUI): LPCTSTR; cdecl;
 function Delphi_ListHeaderUI_GetInterface(Handle: CListHeaderUI; pstrName: LPCTSTR): Pointer; cdecl;
-function Delphi_ListHeaderUI_EstimateSize(Handle: CListHeaderUI; szAvailable: TSize): TSize; cdecl;
+procedure Delphi_ListHeaderUI_EstimateSize(Handle: CListHeaderUI; szAvailable: TSize; var Result: TSize); cdecl;
 implementation
+
 
 { CDuiString }
 
@@ -3328,7 +3329,7 @@ end;
 
 function CControlUI.GetBorderRound: TSize;
 begin
-  Result := Delphi_ControlUI_GetBorderRound(Self);
+  Delphi_ControlUI_GetBorderRound(Self, Result);
 end;
 
 procedure CControlUI.SetBorderRound(cxyRound: TSize);
@@ -3423,7 +3424,7 @@ end;
 
 function CControlUI.GetRelativePos: TRect;
 begin
-  Result := Delphi_ControlUI_GetRelativePos(Self);
+  Delphi_ControlUI_GetRelativePos(Self, Result);
 end;
 
 procedure CControlUI.SetPos(rc: TRect; bNeedInvalidate: Boolean);
@@ -3458,7 +3459,7 @@ end;
 
 function CControlUI.GetPadding: TRect;
 begin
-  Result := Delphi_ControlUI_GetPadding(Self);
+  Delphi_ControlUI_GetPadding(Self, Result);
 end;
 
 procedure CControlUI.SetPadding(rcPadding: TRect);
@@ -3468,7 +3469,7 @@ end;
 
 function CControlUI.GetFixedXY: TSize;
 begin
-  Result := Delphi_ControlUI_GetFixedXY(Self);
+  Delphi_ControlUI_GetFixedXY(Self, Result);
 end;
 
 procedure CControlUI.SetFixedXY(szXY: TSize);
@@ -3733,7 +3734,7 @@ end;
 
 function CControlUI.EstimateSize(szAvailable: TSize): TSize;
 begin
-  Result := Delphi_ControlUI_EstimateSize(Self, szAvailable);
+  Delphi_ControlUI_EstimateSize(Self, szAvailable, Result);
 end;
 
 procedure CControlUI.DoPaint(hDC: HDC; var rcPaint: TRect);
@@ -4027,12 +4028,12 @@ end;
 
 function CPaintManagerUI.GetClientSize: TSize;
 begin
-  Result := Delphi_PaintManagerUI_GetClientSize(Self);
+  Delphi_PaintManagerUI_GetClientSize(Self, Result);
 end;
 
 function CPaintManagerUI.GetInitSize: TSize;
 begin
-  Result := Delphi_PaintManagerUI_GetInitSize(Self);
+  Delphi_PaintManagerUI_GetInitSize(Self, Result);
 end;
 
 procedure CPaintManagerUI.SetInitSize(cx: Integer; cy: Integer);
@@ -4062,7 +4063,7 @@ end;
 
 function CPaintManagerUI.GetRoundCorner: TSize;
 begin
-  Result := Delphi_PaintManagerUI_GetRoundCorner(Self);
+  Delphi_PaintManagerUI_GetRoundCorner(Self, Result);
 end;
 
 procedure CPaintManagerUI.SetRoundCorner(cx: Integer; cy: Integer);
@@ -4072,7 +4073,7 @@ end;
 
 function CPaintManagerUI.GetMinInfo: TSize;
 begin
-  Result := Delphi_PaintManagerUI_GetMinInfo(Self);
+  Delphi_PaintManagerUI_GetMinInfo(Self, Result);
 end;
 
 procedure CPaintManagerUI.SetMinInfo(cx: Integer; cy: Integer);
@@ -4082,7 +4083,7 @@ end;
 
 function CPaintManagerUI.GetMaxInfo: TSize;
 begin
-  Result := Delphi_PaintManagerUI_GetMaxInfo(Self);
+  Delphi_PaintManagerUI_GetMaxInfo(Self, Result);
 end;
 
 procedure CPaintManagerUI.SetMaxInfo(cx: Integer; cy: Integer);
@@ -4729,7 +4730,7 @@ end;
 
 function CContainerUI.GetInset: TRect;
 begin
-  Result := Delphi_ContainerUI_GetInset(Self);
+  Delphi_ContainerUI_GetInset(Self, Result);
 end;
 
 procedure CContainerUI.SetInset(rcInset: TRect);
@@ -4859,12 +4860,12 @@ end;
 
 function CContainerUI.GetScrollPos: TSize;
 begin
-  Result := Delphi_ContainerUI_GetScrollPos(Self);
+  Delphi_ContainerUI_GetScrollPos(Self, Result);
 end;
 
 function CContainerUI.GetScrollRange: TSize;
 begin
-  Result := Delphi_ContainerUI_GetScrollRange(Self);
+  Delphi_ContainerUI_GetScrollRange(Self, Result);
 end;
 
 procedure CContainerUI.SetScrollPos(szPos: TSize);
@@ -5016,7 +5017,7 @@ end;
 
 function CVerticalLayoutUI.GetThumbRect(bUseNew: Boolean): TRect;
 begin
-  Result := Delphi_VerticalLayoutUI_GetThumbRect(Self, bUseNew);
+  Delphi_VerticalLayoutUI_GetThumbRect(Self, bUseNew, Result);
 end;
 
 { CListUI }
@@ -5248,7 +5249,7 @@ end;
 
 function CListUI.GetItemTextPadding: TRect;
 begin
-  Result := Delphi_ListUI_GetItemTextPadding(Self);
+  Delphi_ListUI_GetItemTextPadding(Self, Result);
 end;
 
 function CListUI.GetItemTextColor: DWORD;
@@ -5363,12 +5364,12 @@ end;
 
 function CListUI.GetScrollPos: TSize;
 begin
-  Result := Delphi_ListUI_GetScrollPos(Self);
+  Delphi_ListUI_GetScrollPos(Self, Result);
 end;
 
 function CListUI.GetScrollRange: TSize;
 begin
-  Result := Delphi_ListUI_GetScrollRange(Self);
+  Delphi_ListUI_GetScrollRange(Self, Result);
 end;
 
 procedure CListUI.SetScrollPos(szPos: TSize);
@@ -5542,7 +5543,7 @@ end;
 
 function CLabelUI.GetTextPadding: TRect;
 begin
-  Result := Delphi_LabelUI_GetTextPadding(Self);
+  Delphi_LabelUI_GetTextPadding(Self, Result);
 end;
 
 procedure CLabelUI.SetTextPadding(rc: TRect);
@@ -5562,7 +5563,7 @@ end;
 
 function CLabelUI.EstimateSize(szAvailable: TSize): TSize;
 begin
-  Result := Delphi_LabelUI_EstimateSize(Self, szAvailable);
+  Delphi_LabelUI_EstimateSize(Self, szAvailable, Result);
 end;
 
 procedure CLabelUI.DoEvent(var event: TEventUI);
@@ -5677,7 +5678,7 @@ end;
 
 function CLabelUI.GetShadowOffset: TRectF;
 begin
-  Result := Delphi_LabelUI_GetShadowOffset(Self);
+  Delphi_LabelUI_GetShadowOffset(Self, Result);
 end;
 
 procedure CLabelUI.SetTextColor1(_TextColor1: DWORD);
@@ -5904,7 +5905,7 @@ end;
 
 function CButtonUI.EstimateSize(szAvailable: TSize): TSize;
 begin
-  Result := Delphi_ButtonUI_EstimateSize(Self, szAvailable);
+  Delphi_ButtonUI_EstimateSize(Self, szAvailable, Result);
 end;
 
 procedure CButtonUI.SetAttribute(pstrName: LPCTSTR; pstrValue: LPCTSTR);
@@ -6031,7 +6032,7 @@ end;
 
 function COptionUI.EstimateSize(szAvailable: TSize): TSize;
 begin
-  Result := Delphi_OptionUI_EstimateSize(Self, szAvailable);
+  Delphi_OptionUI_EstimateSize(Self, szAvailable, Result);
 end;
 
 procedure COptionUI.SetAttribute(pstrName: LPCTSTR; pstrValue: LPCTSTR);
@@ -6247,7 +6248,7 @@ end;
 
 function CComboUI.GetDropBoxSize: TSize;
 begin
-  Result := Delphi_ComboUI_GetDropBoxSize(Self);
+  Delphi_ComboUI_GetDropBoxSize(Self, Result);
 end;
 
 procedure CComboUI.SetDropBoxSize(szDropBox: TSize);
@@ -6322,7 +6323,7 @@ end;
 
 function CComboUI.GetTextPadding: TRect;
 begin
-  Result := Delphi_ComboUI_GetTextPadding(Self);
+  Delphi_ComboUI_GetTextPadding(Self, Result);
 end;
 
 procedure CComboUI.SetTextPadding(rc: TRect);
@@ -6397,7 +6398,7 @@ end;
 
 function CComboUI.GetItemTextPadding: TRect;
 begin
-  Result := Delphi_ComboUI_GetItemTextPadding(Self);
+  Delphi_ComboUI_GetItemTextPadding(Self, Result);
 end;
 
 procedure CComboUI.SetItemTextPadding(rc: TRect);
@@ -6557,7 +6558,7 @@ end;
 
 function CComboUI.EstimateSize(szAvailable: TSize): TSize;
 begin
-  Result := Delphi_ComboUI_EstimateSize(Self, szAvailable);
+  Delphi_ComboUI_EstimateSize(Self, szAvailable, Result);
 end;
 
 procedure CComboUI.SetPos(rc: TRect; bNeedInvalidate: Boolean);
@@ -6831,7 +6832,7 @@ end;
 
 function CEditUI.EstimateSize(szAvailable: TSize): TSize;
 begin
-  Result := Delphi_EditUI_EstimateSize(Self, szAvailable);
+  Delphi_EditUI_EstimateSize(Self, szAvailable, Result);
 end;
 
 procedure CEditUI.DoEvent(var event: TEventUI);
@@ -7440,7 +7441,7 @@ end;
 
 function CRichEditUI.EstimateSize(szAvailable: TSize): TSize;
 begin
-  Result := Delphi_RichEditUI_EstimateSize(Self, szAvailable);
+  Delphi_RichEditUI_EstimateSize(Self, szAvailable, Result);
 end;
 
 procedure CRichEditUI.SetPos(rc: TRect; bNeedInvalidate: Boolean);
@@ -7899,7 +7900,7 @@ end;
 
 function CSliderUI.GetThumbRect: TRect;
 begin
-  Result := Delphi_SliderUI_GetThumbRect(Self);
+  Delphi_SliderUI_GetThumbRect(Self, Result);
 end;
 
 function CSliderUI.GetThumbImage: LPCTSTR;
@@ -7986,7 +7987,7 @@ end;
 
 function CTextUI.EstimateSize(szAvailable: TSize): TSize;
 begin
-  Result := Delphi_TextUI_EstimateSize(Self, szAvailable);
+  Delphi_TextUI_EstimateSize(Self, szAvailable, Result);
 end;
 
 procedure CTextUI.PaintText(hDC: HDC);
@@ -8474,7 +8475,7 @@ end;
 
 function CHorizontalLayoutUI.GetThumbRect(bUseNew: Boolean): TRect;
 begin
-  Result := Delphi_HorizontalLayoutUI_GetThumbRect(Self, bUseNew);
+  Delphi_HorizontalLayoutUI_GetThumbRect(Self, bUseNew, Result);
 end;
 
 { CListHeaderUI }
@@ -8501,7 +8502,7 @@ end;
 
 function CListHeaderUI.EstimateSize(szAvailable: TSize): TSize;
 begin
-  Result := Delphi_ListHeaderUI_EstimateSize(Self, szAvailable);
+  Delphi_ListHeaderUI_EstimateSize(Self, szAvailable, Result);
 end;
 
 
@@ -8629,7 +8630,7 @@ function Delphi_ControlUI_GetFocusBorderColor; external DuiLibdll name 'Delphi_C
 procedure Delphi_ControlUI_SetFocusBorderColor; external DuiLibdll name 'Delphi_ControlUI_SetFocusBorderColor';
 function Delphi_ControlUI_IsColorHSL; external DuiLibdll name 'Delphi_ControlUI_IsColorHSL';
 procedure Delphi_ControlUI_SetColorHSL; external DuiLibdll name 'Delphi_ControlUI_SetColorHSL';
-function Delphi_ControlUI_GetBorderRound; external DuiLibdll name 'Delphi_ControlUI_GetBorderRound';
+procedure Delphi_ControlUI_GetBorderRound; external DuiLibdll name 'Delphi_ControlUI_GetBorderRound';
 procedure Delphi_ControlUI_SetBorderRound; external DuiLibdll name 'Delphi_ControlUI_SetBorderRound';
 function Delphi_ControlUI_DrawImage; external DuiLibdll name 'Delphi_ControlUI_DrawImage';
 function Delphi_ControlUI_GetBorderSize; external DuiLibdll name 'Delphi_ControlUI_GetBorderSize';
@@ -8648,16 +8649,16 @@ procedure Delphi_ControlUI_SetBottomBorderSize; external DuiLibdll name 'Delphi_
 function Delphi_ControlUI_GetBorderStyle; external DuiLibdll name 'Delphi_ControlUI_GetBorderStyle';
 procedure Delphi_ControlUI_SetBorderStyle; external DuiLibdll name 'Delphi_ControlUI_SetBorderStyle';
 function Delphi_ControlUI_GetPos; external DuiLibdll name 'Delphi_ControlUI_GetPos';
-function Delphi_ControlUI_GetRelativePos; external DuiLibdll name 'Delphi_ControlUI_GetRelativePos';
+procedure Delphi_ControlUI_GetRelativePos; external DuiLibdll name 'Delphi_ControlUI_GetRelativePos';
 procedure Delphi_ControlUI_SetPos; external DuiLibdll name 'Delphi_ControlUI_SetPos';
 procedure Delphi_ControlUI_Move; external DuiLibdll name 'Delphi_ControlUI_Move';
 function Delphi_ControlUI_GetWidth; external DuiLibdll name 'Delphi_ControlUI_GetWidth';
 function Delphi_ControlUI_GetHeight; external DuiLibdll name 'Delphi_ControlUI_GetHeight';
 function Delphi_ControlUI_GetX; external DuiLibdll name 'Delphi_ControlUI_GetX';
 function Delphi_ControlUI_GetY; external DuiLibdll name 'Delphi_ControlUI_GetY';
-function Delphi_ControlUI_GetPadding; external DuiLibdll name 'Delphi_ControlUI_GetPadding';
+procedure Delphi_ControlUI_GetPadding; external DuiLibdll name 'Delphi_ControlUI_GetPadding';
 procedure Delphi_ControlUI_SetPadding; external DuiLibdll name 'Delphi_ControlUI_SetPadding';
-function Delphi_ControlUI_GetFixedXY; external DuiLibdll name 'Delphi_ControlUI_GetFixedXY';
+procedure Delphi_ControlUI_GetFixedXY; external DuiLibdll name 'Delphi_ControlUI_GetFixedXY';
 procedure Delphi_ControlUI_SetFixedXY; external DuiLibdll name 'Delphi_ControlUI_SetFixedXY';
 function Delphi_ControlUI_GetFixedWidth; external DuiLibdll name 'Delphi_ControlUI_GetFixedWidth';
 procedure Delphi_ControlUI_SetFixedWidth; external DuiLibdll name 'Delphi_ControlUI_SetFixedWidth';
@@ -8710,7 +8711,7 @@ procedure Delphi_ControlUI_Event; external DuiLibdll name 'Delphi_ControlUI_Even
 procedure Delphi_ControlUI_DoEvent; external DuiLibdll name 'Delphi_ControlUI_DoEvent';
 procedure Delphi_ControlUI_SetAttribute; external DuiLibdll name 'Delphi_ControlUI_SetAttribute';
 function Delphi_ControlUI_ApplyAttributeList; external DuiLibdll name 'Delphi_ControlUI_ApplyAttributeList';
-function Delphi_ControlUI_EstimateSize; external DuiLibdll name 'Delphi_ControlUI_EstimateSize';
+procedure Delphi_ControlUI_EstimateSize; external DuiLibdll name 'Delphi_ControlUI_EstimateSize';
 procedure Delphi_ControlUI_DoPaint; external DuiLibdll name 'Delphi_ControlUI_DoPaint';
 procedure Delphi_ControlUI_PaintBkColor; external DuiLibdll name 'Delphi_ControlUI_PaintBkColor';
 procedure Delphi_ControlUI_PaintBkImage; external DuiLibdll name 'Delphi_ControlUI_PaintBkImage';
@@ -8774,18 +8775,18 @@ function Delphi_PaintManagerUI_GetPaintDC; external DuiLibdll name 'Delphi_Paint
 function Delphi_PaintManagerUI_GetPaintWindow; external DuiLibdll name 'Delphi_PaintManagerUI_GetPaintWindow';
 function Delphi_PaintManagerUI_GetTooltipWindow; external DuiLibdll name 'Delphi_PaintManagerUI_GetTooltipWindow';
 function Delphi_PaintManagerUI_GetMousePos; external DuiLibdll name 'Delphi_PaintManagerUI_GetMousePos';
-function Delphi_PaintManagerUI_GetClientSize; external DuiLibdll name 'Delphi_PaintManagerUI_GetClientSize';
-function Delphi_PaintManagerUI_GetInitSize; external DuiLibdll name 'Delphi_PaintManagerUI_GetInitSize';
+procedure Delphi_PaintManagerUI_GetClientSize; external DuiLibdll name 'Delphi_PaintManagerUI_GetClientSize';
+procedure Delphi_PaintManagerUI_GetInitSize; external DuiLibdll name 'Delphi_PaintManagerUI_GetInitSize';
 procedure Delphi_PaintManagerUI_SetInitSize; external DuiLibdll name 'Delphi_PaintManagerUI_SetInitSize';
 function Delphi_PaintManagerUI_GetSizeBox; external DuiLibdll name 'Delphi_PaintManagerUI_GetSizeBox';
 procedure Delphi_PaintManagerUI_SetSizeBox; external DuiLibdll name 'Delphi_PaintManagerUI_SetSizeBox';
 function Delphi_PaintManagerUI_GetCaptionRect; external DuiLibdll name 'Delphi_PaintManagerUI_GetCaptionRect';
 procedure Delphi_PaintManagerUI_SetCaptionRect; external DuiLibdll name 'Delphi_PaintManagerUI_SetCaptionRect';
-function Delphi_PaintManagerUI_GetRoundCorner; external DuiLibdll name 'Delphi_PaintManagerUI_GetRoundCorner';
+procedure Delphi_PaintManagerUI_GetRoundCorner; external DuiLibdll name 'Delphi_PaintManagerUI_GetRoundCorner';
 procedure Delphi_PaintManagerUI_SetRoundCorner; external DuiLibdll name 'Delphi_PaintManagerUI_SetRoundCorner';
-function Delphi_PaintManagerUI_GetMinInfo; external DuiLibdll name 'Delphi_PaintManagerUI_GetMinInfo';
+procedure Delphi_PaintManagerUI_GetMinInfo; external DuiLibdll name 'Delphi_PaintManagerUI_GetMinInfo';
 procedure Delphi_PaintManagerUI_SetMinInfo; external DuiLibdll name 'Delphi_PaintManagerUI_SetMinInfo';
-function Delphi_PaintManagerUI_GetMaxInfo; external DuiLibdll name 'Delphi_PaintManagerUI_GetMaxInfo';
+procedure Delphi_PaintManagerUI_GetMaxInfo; external DuiLibdll name 'Delphi_PaintManagerUI_GetMaxInfo';
 procedure Delphi_PaintManagerUI_SetMaxInfo; external DuiLibdll name 'Delphi_PaintManagerUI_SetMaxInfo';
 function Delphi_PaintManagerUI_GetTransparent; external DuiLibdll name 'Delphi_PaintManagerUI_GetTransparent';
 procedure Delphi_PaintManagerUI_SetTransparent; external DuiLibdll name 'Delphi_PaintManagerUI_SetTransparent';
@@ -8917,7 +8918,7 @@ procedure Delphi_ContainerUI_DoEvent; external DuiLibdll name 'Delphi_ContainerU
 procedure Delphi_ContainerUI_SetVisible; external DuiLibdll name 'Delphi_ContainerUI_SetVisible';
 procedure Delphi_ContainerUI_SetInternVisible; external DuiLibdll name 'Delphi_ContainerUI_SetInternVisible';
 procedure Delphi_ContainerUI_SetMouseEnabled; external DuiLibdll name 'Delphi_ContainerUI_SetMouseEnabled';
-function Delphi_ContainerUI_GetInset; external DuiLibdll name 'Delphi_ContainerUI_GetInset';
+procedure Delphi_ContainerUI_GetInset; external DuiLibdll name 'Delphi_ContainerUI_GetInset';
 procedure Delphi_ContainerUI_SetInset; external DuiLibdll name 'Delphi_ContainerUI_SetInset';
 function Delphi_ContainerUI_GetChildPadding; external DuiLibdll name 'Delphi_ContainerUI_GetChildPadding';
 procedure Delphi_ContainerUI_SetChildPadding; external DuiLibdll name 'Delphi_ContainerUI_SetChildPadding';
@@ -8943,8 +8944,8 @@ function Delphi_ContainerUI_GetSubControlFixedHeight; external DuiLibdll name 'D
 function Delphi_ContainerUI_GetSubControlFixedWdith; external DuiLibdll name 'Delphi_ContainerUI_GetSubControlFixedWdith';
 function Delphi_ContainerUI_GetSubControlUserData; external DuiLibdll name 'Delphi_ContainerUI_GetSubControlUserData';
 function Delphi_ContainerUI_FindSubControl; external DuiLibdll name 'Delphi_ContainerUI_FindSubControl';
-function Delphi_ContainerUI_GetScrollPos; external DuiLibdll name 'Delphi_ContainerUI_GetScrollPos';
-function Delphi_ContainerUI_GetScrollRange; external DuiLibdll name 'Delphi_ContainerUI_GetScrollRange';
+procedure Delphi_ContainerUI_GetScrollPos; external DuiLibdll name 'Delphi_ContainerUI_GetScrollPos';
+procedure Delphi_ContainerUI_GetScrollRange; external DuiLibdll name 'Delphi_ContainerUI_GetScrollRange';
 procedure Delphi_ContainerUI_SetScrollPos; external DuiLibdll name 'Delphi_ContainerUI_SetScrollPos';
 procedure Delphi_ContainerUI_LineUp; external DuiLibdll name 'Delphi_ContainerUI_LineUp';
 procedure Delphi_ContainerUI_LineDown; external DuiLibdll name 'Delphi_ContainerUI_LineDown';
@@ -8977,7 +8978,7 @@ procedure Delphi_VerticalLayoutUI_SetAttribute; external DuiLibdll name 'Delphi_
 procedure Delphi_VerticalLayoutUI_DoEvent; external DuiLibdll name 'Delphi_VerticalLayoutUI_DoEvent';
 procedure Delphi_VerticalLayoutUI_SetPos; external DuiLibdll name 'Delphi_VerticalLayoutUI_SetPos';
 procedure Delphi_VerticalLayoutUI_DoPostPaint; external DuiLibdll name 'Delphi_VerticalLayoutUI_DoPostPaint';
-function Delphi_VerticalLayoutUI_GetThumbRect; external DuiLibdll name 'Delphi_VerticalLayoutUI_GetThumbRect';
+procedure Delphi_VerticalLayoutUI_GetThumbRect; external DuiLibdll name 'Delphi_VerticalLayoutUI_GetThumbRect';
 
 //================================CListUI============================
 
@@ -9026,7 +9027,7 @@ procedure Delphi_ListUI_SetDisabledItemImage; external DuiLibdll name 'Delphi_Li
 procedure Delphi_ListUI_SetItemLineColor; external DuiLibdll name 'Delphi_ListUI_SetItemLineColor';
 function Delphi_ListUI_IsItemShowHtml; external DuiLibdll name 'Delphi_ListUI_IsItemShowHtml';
 procedure Delphi_ListUI_SetItemShowHtml; external DuiLibdll name 'Delphi_ListUI_SetItemShowHtml';
-function Delphi_ListUI_GetItemTextPadding; external DuiLibdll name 'Delphi_ListUI_GetItemTextPadding';
+procedure Delphi_ListUI_GetItemTextPadding; external DuiLibdll name 'Delphi_ListUI_GetItemTextPadding';
 function Delphi_ListUI_GetItemTextColor; external DuiLibdll name 'Delphi_ListUI_GetItemTextColor';
 function Delphi_ListUI_GetItemBkColor; external DuiLibdll name 'Delphi_ListUI_GetItemBkColor';
 function Delphi_ListUI_GetItemBkImage; external DuiLibdll name 'Delphi_ListUI_GetItemBkImage';
@@ -9049,8 +9050,8 @@ procedure Delphi_ListUI_DoEvent; external DuiLibdll name 'Delphi_ListUI_DoEvent'
 procedure Delphi_ListUI_SetAttribute; external DuiLibdll name 'Delphi_ListUI_SetAttribute';
 function Delphi_ListUI_GetTextCallback; external DuiLibdll name 'Delphi_ListUI_GetTextCallback';
 procedure Delphi_ListUI_SetTextCallback; external DuiLibdll name 'Delphi_ListUI_SetTextCallback';
-function Delphi_ListUI_GetScrollPos; external DuiLibdll name 'Delphi_ListUI_GetScrollPos';
-function Delphi_ListUI_GetScrollRange; external DuiLibdll name 'Delphi_ListUI_GetScrollRange';
+procedure Delphi_ListUI_GetScrollPos; external DuiLibdll name 'Delphi_ListUI_GetScrollPos';
+procedure Delphi_ListUI_GetScrollRange; external DuiLibdll name 'Delphi_ListUI_GetScrollRange';
 procedure Delphi_ListUI_SetScrollPos; external DuiLibdll name 'Delphi_ListUI_SetScrollPos';
 procedure Delphi_ListUI_LineUp; external DuiLibdll name 'Delphi_ListUI_LineUp';
 procedure Delphi_ListUI_LineDown; external DuiLibdll name 'Delphi_ListUI_LineDown';
@@ -9090,11 +9091,11 @@ procedure Delphi_LabelUI_SetDisabledTextColor; external DuiLibdll name 'Delphi_L
 function Delphi_LabelUI_GetDisabledTextColor; external DuiLibdll name 'Delphi_LabelUI_GetDisabledTextColor';
 procedure Delphi_LabelUI_SetFont; external DuiLibdll name 'Delphi_LabelUI_SetFont';
 function Delphi_LabelUI_GetFont; external DuiLibdll name 'Delphi_LabelUI_GetFont';
-function Delphi_LabelUI_GetTextPadding; external DuiLibdll name 'Delphi_LabelUI_GetTextPadding';
+procedure Delphi_LabelUI_GetTextPadding; external DuiLibdll name 'Delphi_LabelUI_GetTextPadding';
 procedure Delphi_LabelUI_SetTextPadding; external DuiLibdll name 'Delphi_LabelUI_SetTextPadding';
 function Delphi_LabelUI_IsShowHtml; external DuiLibdll name 'Delphi_LabelUI_IsShowHtml';
 procedure Delphi_LabelUI_SetShowHtml; external DuiLibdll name 'Delphi_LabelUI_SetShowHtml';
-function Delphi_LabelUI_EstimateSize; external DuiLibdll name 'Delphi_LabelUI_EstimateSize';
+procedure Delphi_LabelUI_EstimateSize; external DuiLibdll name 'Delphi_LabelUI_EstimateSize';
 procedure Delphi_LabelUI_DoEvent; external DuiLibdll name 'Delphi_LabelUI_DoEvent';
 procedure Delphi_LabelUI_SetAttribute; external DuiLibdll name 'Delphi_LabelUI_SetAttribute';
 procedure Delphi_LabelUI_PaintText; external DuiLibdll name 'Delphi_LabelUI_PaintText';
@@ -9117,7 +9118,7 @@ function Delphi_LabelUI_GetGradientLength; external DuiLibdll name 'Delphi_Label
 procedure Delphi_LabelUI_SetTextRenderingHintAntiAlias; external DuiLibdll name 'Delphi_LabelUI_SetTextRenderingHintAntiAlias';
 function Delphi_LabelUI_GetTextRenderingHintAntiAlias; external DuiLibdll name 'Delphi_LabelUI_GetTextRenderingHintAntiAlias';
 procedure Delphi_LabelUI_SetShadowOffset; external DuiLibdll name 'Delphi_LabelUI_SetShadowOffset';
-function Delphi_LabelUI_GetShadowOffset; external DuiLibdll name 'Delphi_LabelUI_GetShadowOffset';
+procedure Delphi_LabelUI_GetShadowOffset; external DuiLibdll name 'Delphi_LabelUI_GetShadowOffset';
 procedure Delphi_LabelUI_SetTextColor1; external DuiLibdll name 'Delphi_LabelUI_SetTextColor1';
 function Delphi_LabelUI_GetTextColor1; external DuiLibdll name 'Delphi_LabelUI_GetTextColor1';
 procedure Delphi_LabelUI_SetTextShadowColorA; external DuiLibdll name 'Delphi_LabelUI_SetTextShadowColorA';
@@ -9165,7 +9166,7 @@ procedure Delphi_ButtonUI_SetPushedTextColor; external DuiLibdll name 'Delphi_Bu
 function Delphi_ButtonUI_GetPushedTextColor; external DuiLibdll name 'Delphi_ButtonUI_GetPushedTextColor';
 procedure Delphi_ButtonUI_SetFocusedTextColor; external DuiLibdll name 'Delphi_ButtonUI_SetFocusedTextColor';
 function Delphi_ButtonUI_GetFocusedTextColor; external DuiLibdll name 'Delphi_ButtonUI_GetFocusedTextColor';
-function Delphi_ButtonUI_EstimateSize; external DuiLibdll name 'Delphi_ButtonUI_EstimateSize';
+procedure Delphi_ButtonUI_EstimateSize; external DuiLibdll name 'Delphi_ButtonUI_EstimateSize';
 procedure Delphi_ButtonUI_SetAttribute; external DuiLibdll name 'Delphi_ButtonUI_SetAttribute';
 procedure Delphi_ButtonUI_PaintText; external DuiLibdll name 'Delphi_ButtonUI_PaintText';
 procedure Delphi_ButtonUI_PaintStatusImage; external DuiLibdll name 'Delphi_ButtonUI_PaintStatusImage';
@@ -9193,7 +9194,7 @@ function Delphi_OptionUI_GetGroup; external DuiLibdll name 'Delphi_OptionUI_GetG
 procedure Delphi_OptionUI_SetGroup; external DuiLibdll name 'Delphi_OptionUI_SetGroup';
 function Delphi_OptionUI_IsSelected; external DuiLibdll name 'Delphi_OptionUI_IsSelected';
 procedure Delphi_OptionUI_Selected; external DuiLibdll name 'Delphi_OptionUI_Selected';
-function Delphi_OptionUI_EstimateSize; external DuiLibdll name 'Delphi_OptionUI_EstimateSize';
+procedure Delphi_OptionUI_EstimateSize; external DuiLibdll name 'Delphi_OptionUI_EstimateSize';
 procedure Delphi_OptionUI_SetAttribute; external DuiLibdll name 'Delphi_OptionUI_SetAttribute';
 procedure Delphi_OptionUI_PaintStatusImage; external DuiLibdll name 'Delphi_OptionUI_PaintStatusImage';
 procedure Delphi_OptionUI_PaintText; external DuiLibdll name 'Delphi_OptionUI_PaintText';
@@ -9244,7 +9245,7 @@ function Delphi_ComboUI_GetText; external DuiLibdll name 'Delphi_ComboUI_GetText
 procedure Delphi_ComboUI_SetEnabled; external DuiLibdll name 'Delphi_ComboUI_SetEnabled';
 function Delphi_ComboUI_GetDropBoxAttributeList; external DuiLibdll name 'Delphi_ComboUI_GetDropBoxAttributeList';
 procedure Delphi_ComboUI_SetDropBoxAttributeList; external DuiLibdll name 'Delphi_ComboUI_SetDropBoxAttributeList';
-function Delphi_ComboUI_GetDropBoxSize; external DuiLibdll name 'Delphi_ComboUI_GetDropBoxSize';
+procedure Delphi_ComboUI_GetDropBoxSize; external DuiLibdll name 'Delphi_ComboUI_GetDropBoxSize';
 procedure Delphi_ComboUI_SetDropBoxSize; external DuiLibdll name 'Delphi_ComboUI_SetDropBoxSize';
 function Delphi_ComboUI_GetCurSel; external DuiLibdll name 'Delphi_ComboUI_GetCurSel';
 function Delphi_ComboUI_GetSelectCloseFlag; external DuiLibdll name 'Delphi_ComboUI_GetSelectCloseFlag';
@@ -9259,7 +9260,7 @@ procedure Delphi_ComboUI_RemoveAll; external DuiLibdll name 'Delphi_ComboUI_Remo
 function Delphi_ComboUI_Activate; external DuiLibdll name 'Delphi_ComboUI_Activate';
 function Delphi_ComboUI_GetShowText; external DuiLibdll name 'Delphi_ComboUI_GetShowText';
 procedure Delphi_ComboUI_SetShowText; external DuiLibdll name 'Delphi_ComboUI_SetShowText';
-function Delphi_ComboUI_GetTextPadding; external DuiLibdll name 'Delphi_ComboUI_GetTextPadding';
+procedure Delphi_ComboUI_GetTextPadding; external DuiLibdll name 'Delphi_ComboUI_GetTextPadding';
 procedure Delphi_ComboUI_SetTextPadding; external DuiLibdll name 'Delphi_ComboUI_SetTextPadding';
 function Delphi_ComboUI_GetNormalImage; external DuiLibdll name 'Delphi_ComboUI_GetNormalImage';
 procedure Delphi_ComboUI_SetNormalImage; external DuiLibdll name 'Delphi_ComboUI_SetNormalImage';
@@ -9274,7 +9275,7 @@ procedure Delphi_ComboUI_SetDisabledImage; external DuiLibdll name 'Delphi_Combo
 function Delphi_ComboUI_GetListInfo; external DuiLibdll name 'Delphi_ComboUI_GetListInfo';
 procedure Delphi_ComboUI_SetItemFont; external DuiLibdll name 'Delphi_ComboUI_SetItemFont';
 procedure Delphi_ComboUI_SetItemTextStyle; external DuiLibdll name 'Delphi_ComboUI_SetItemTextStyle';
-function Delphi_ComboUI_GetItemTextPadding; external DuiLibdll name 'Delphi_ComboUI_GetItemTextPadding';
+procedure Delphi_ComboUI_GetItemTextPadding; external DuiLibdll name 'Delphi_ComboUI_GetItemTextPadding';
 procedure Delphi_ComboUI_SetItemTextPadding; external DuiLibdll name 'Delphi_ComboUI_SetItemTextPadding';
 function Delphi_ComboUI_GetItemTextColor; external DuiLibdll name 'Delphi_ComboUI_GetItemTextColor';
 procedure Delphi_ComboUI_SetItemTextColor; external DuiLibdll name 'Delphi_ComboUI_SetItemTextColor';
@@ -9306,7 +9307,7 @@ function Delphi_ComboUI_GetItemLineColor; external DuiLibdll name 'Delphi_ComboU
 procedure Delphi_ComboUI_SetItemLineColor; external DuiLibdll name 'Delphi_ComboUI_SetItemLineColor';
 function Delphi_ComboUI_IsItemShowHtml; external DuiLibdll name 'Delphi_ComboUI_IsItemShowHtml';
 procedure Delphi_ComboUI_SetItemShowHtml; external DuiLibdll name 'Delphi_ComboUI_SetItemShowHtml';
-function Delphi_ComboUI_EstimateSize; external DuiLibdll name 'Delphi_ComboUI_EstimateSize';
+procedure Delphi_ComboUI_EstimateSize; external DuiLibdll name 'Delphi_ComboUI_EstimateSize';
 procedure Delphi_ComboUI_SetPos; external DuiLibdll name 'Delphi_ComboUI_SetPos';
 procedure Delphi_ComboUI_Move; external DuiLibdll name 'Delphi_ComboUI_Move';
 procedure Delphi_ComboUI_DoEvent; external DuiLibdll name 'Delphi_ComboUI_DoEvent';
@@ -9366,7 +9367,7 @@ procedure Delphi_EditUI_SetPos; external DuiLibdll name 'Delphi_EditUI_SetPos';
 procedure Delphi_EditUI_Move; external DuiLibdll name 'Delphi_EditUI_Move';
 procedure Delphi_EditUI_SetVisible; external DuiLibdll name 'Delphi_EditUI_SetVisible';
 procedure Delphi_EditUI_SetInternVisible; external DuiLibdll name 'Delphi_EditUI_SetInternVisible';
-function Delphi_EditUI_EstimateSize; external DuiLibdll name 'Delphi_EditUI_EstimateSize';
+procedure Delphi_EditUI_EstimateSize; external DuiLibdll name 'Delphi_EditUI_EstimateSize';
 procedure Delphi_EditUI_DoEvent; external DuiLibdll name 'Delphi_EditUI_DoEvent';
 procedure Delphi_EditUI_SetAttribute; external DuiLibdll name 'Delphi_EditUI_SetAttribute';
 procedure Delphi_EditUI_PaintStatusImage; external DuiLibdll name 'Delphi_EditUI_PaintStatusImage';
@@ -9493,7 +9494,7 @@ procedure Delphi_RichEditUI_PageLeft; external DuiLibdll name 'Delphi_RichEditUI
 procedure Delphi_RichEditUI_PageRight; external DuiLibdll name 'Delphi_RichEditUI_PageRight';
 procedure Delphi_RichEditUI_HomeLeft; external DuiLibdll name 'Delphi_RichEditUI_HomeLeft';
 procedure Delphi_RichEditUI_EndRight; external DuiLibdll name 'Delphi_RichEditUI_EndRight';
-function Delphi_RichEditUI_EstimateSize; external DuiLibdll name 'Delphi_RichEditUI_EstimateSize';
+procedure Delphi_RichEditUI_EstimateSize; external DuiLibdll name 'Delphi_RichEditUI_EstimateSize';
 procedure Delphi_RichEditUI_SetPos; external DuiLibdll name 'Delphi_RichEditUI_SetPos';
 procedure Delphi_RichEditUI_Move; external DuiLibdll name 'Delphi_RichEditUI_Move';
 procedure Delphi_RichEditUI_DoEvent; external DuiLibdll name 'Delphi_RichEditUI_DoEvent';
@@ -9590,7 +9591,7 @@ procedure Delphi_SliderUI_SetEnabled; external DuiLibdll name 'Delphi_SliderUI_S
 function Delphi_SliderUI_GetChangeStep; external DuiLibdll name 'Delphi_SliderUI_GetChangeStep';
 procedure Delphi_SliderUI_SetChangeStep; external DuiLibdll name 'Delphi_SliderUI_SetChangeStep';
 procedure Delphi_SliderUI_SetThumbSize; external DuiLibdll name 'Delphi_SliderUI_SetThumbSize';
-function Delphi_SliderUI_GetThumbRect; external DuiLibdll name 'Delphi_SliderUI_GetThumbRect';
+procedure Delphi_SliderUI_GetThumbRect; external DuiLibdll name 'Delphi_SliderUI_GetThumbRect';
 function Delphi_SliderUI_GetThumbImage; external DuiLibdll name 'Delphi_SliderUI_GetThumbImage';
 procedure Delphi_SliderUI_SetThumbImage; external DuiLibdll name 'Delphi_SliderUI_SetThumbImage';
 function Delphi_SliderUI_GetThumbHotImage; external DuiLibdll name 'Delphi_SliderUI_GetThumbHotImage';
@@ -9610,7 +9611,7 @@ function Delphi_TextUI_GetControlFlags; external DuiLibdll name 'Delphi_TextUI_G
 function Delphi_TextUI_GetInterface; external DuiLibdll name 'Delphi_TextUI_GetInterface';
 function Delphi_TextUI_GetLinkContent; external DuiLibdll name 'Delphi_TextUI_GetLinkContent';
 procedure Delphi_TextUI_DoEvent; external DuiLibdll name 'Delphi_TextUI_DoEvent';
-function Delphi_TextUI_EstimateSize; external DuiLibdll name 'Delphi_TextUI_EstimateSize';
+procedure Delphi_TextUI_EstimateSize; external DuiLibdll name 'Delphi_TextUI_EstimateSize';
 procedure Delphi_TextUI_PaintText; external DuiLibdll name 'Delphi_TextUI_PaintText';
 
 //================================CTreeNodeUI============================
@@ -9718,7 +9719,7 @@ procedure Delphi_HorizontalLayoutUI_SetAttribute; external DuiLibdll name 'Delph
 procedure Delphi_HorizontalLayoutUI_DoEvent; external DuiLibdll name 'Delphi_HorizontalLayoutUI_DoEvent';
 procedure Delphi_HorizontalLayoutUI_SetPos; external DuiLibdll name 'Delphi_HorizontalLayoutUI_SetPos';
 procedure Delphi_HorizontalLayoutUI_DoPostPaint; external DuiLibdll name 'Delphi_HorizontalLayoutUI_DoPostPaint';
-function Delphi_HorizontalLayoutUI_GetThumbRect; external DuiLibdll name 'Delphi_HorizontalLayoutUI_GetThumbRect';
+procedure Delphi_HorizontalLayoutUI_GetThumbRect; external DuiLibdll name 'Delphi_HorizontalLayoutUI_GetThumbRect';
 
 //================================CListHeaderUI============================
 
@@ -9726,7 +9727,7 @@ function Delphi_ListHeaderUI_CppCreate; external DuiLibdll name 'Delphi_ListHead
 procedure Delphi_ListHeaderUI_CppDestroy; external DuiLibdll name 'Delphi_ListHeaderUI_CppDestroy';
 function Delphi_ListHeaderUI_GetClass; external DuiLibdll name 'Delphi_ListHeaderUI_GetClass';
 function Delphi_ListHeaderUI_GetInterface; external DuiLibdll name 'Delphi_ListHeaderUI_GetInterface';
-function Delphi_ListHeaderUI_EstimateSize; external DuiLibdll name 'Delphi_ListHeaderUI_EstimateSize';
+procedure Delphi_ListHeaderUI_EstimateSize; external DuiLibdll name 'Delphi_ListHeaderUI_EstimateSize';
 
 initialization
 

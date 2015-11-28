@@ -27,6 +27,7 @@ type
     FParentHandle: HWND;
     FPaintManagerUI: CPaintManagerUI;
     function GetHandle: HWND;
+    function GetInitSize: TSize;
   protected
     // »Øµ÷º¯Êý
     procedure DUI_InitWindow; cdecl;
@@ -71,6 +72,7 @@ type
     property Handle: HWND read GetHandle;
     property ParentHandle: HWND read FParentHandle;
     property PaintManagerUI: CPaintManagerUI read FPaintManagerUI;
+    property InitSize: TSize read GetInitSize;
   end;
 
 
@@ -81,12 +83,17 @@ implementation
 constructor TDuiWindowImplBase.Create(ASkinFile, ASkinFolder, AZipFileName: string; ARType: TResourceType);
 begin
   FThis := CDelphi_WindowImplBase.CppCreate;
+  FPaintManagerUI := FThis.GetPaintManagerUI;
   FThis.SetClassName(PChar(ClassName));
   FThis.SetSkinFile(PChar(ASkinFile));
   FThis.SetSkinFolder(PChar(ASkinFolder));
   FThis.SetZipFileName('');
   FThis.SetResourceType(ARType);
   FThis.SetDelphiSelf(Self);
+
+//  Delphi_PaintManagerUI_GetInitSize(FThis.GetPaintManagerUI);
+//  Writeln(Format('Delphi PaintManagerUI = %p', [Pointer(PaintManagerUI)]));
+//  FThis.GetPaintManagerUI.GetInitSize;
 
   FThis.SetInitWindow(GetMethodAddr('DUI_InitWindow'));
   FThis.SetClick(GetMethodAddr('DUI_Click'));
@@ -96,8 +103,6 @@ begin
   FThis.SetHandleMessage(GetMethodAddr('DUI_HandleMessage'));
   FThis.SetHandleCustomMessage(GetMethodAddr('DUI_HandleCustomMessage'));
   FThis.SetCreateControl(GetMethodAddr('DUI_CreateControl'));
-
-  FPaintManagerUI := FThis.GetPaintManagerUI;
 end;
 
 constructor TDuiWindowImplBase.Create(ASkinFile, ASkinFolder: string; ARType: TResourceType);
@@ -239,6 +244,11 @@ end;
 function TDuiWindowImplBase.GetHandle: HWND;
 begin
   Result := FThis.GetHWND;
+end;
+
+function TDuiWindowImplBase.GetInitSize: TSize;
+begin
+  Result := FPaintManagerUI.GetInitSize;
 end;
 
 function TDuiWindowImplBase.FindControl(const AName: string): CControlUI;
