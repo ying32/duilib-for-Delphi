@@ -18,51 +18,50 @@ uses
   Duilib;
 
 type
- TNodeData = packed record
-	 Level: Integer;
-   Folder: Boolean;
-   ChildVisible: Boolean;
-   HasChild: Boolean;
-	 Text: string;
-	 Value: string;
-	 ListElment: CListContainerElementUI;
- end;
- PNodeData = ^TNodeData;
+  TNodeData = packed record
+    Level: Integer;
+    Folder: Boolean;
+    ChildVisible: Boolean;
+    HasChild: Boolean;
+    Text: string;
+    Value: string;
+    ListElment: CListContainerElementUI;
+  end;
 
+  PNodeData = ^TNodeData;
 
- TNode = class
- private
-	 FChildrens: TObjectList<TNode>;
-   FParent: TNode;
-	 FNodeData: TNodeData;
-   procedure SetParent(AParent: TNode);
-   function GetLastChild: TNode;
+  TNode = class
+  private
+    FChildrens: TObjectList<TNode>;
+    FParent: TNode;
+    FNodeData: TNodeData;
+    procedure SetParent(AParent: TNode);
+    function GetLastChild: TNode;
    // 这个绝对是偷懒行为
-   function GetNodeData: PNodeData;
-   function GetCount: Integer;
-   function GetChild(index: Integer): TNode;
-   function GetFolder: Boolean;
-   function GetHasChildren: Boolean;
- public
-   constructor Create; overload;
-   constructor Create(ANodeData: TNodeData; AParent: TNode); overload;
-   constructor Create(ANodeData: TNodeData); overload;
-   destructor Destroy; override;
-   procedure Add(AChild: TNode);
-   procedure Remove(AChild: TNode);
- public
-   property HasChildren: Boolean read GetHasChildren;
-   property Folder: Boolean read GetFolder;
-   property Parent: TNode read FParent;
-   property NodeData: PNodeData read GetNodeData;
-   property LastChild: TNode read GetLastChild;
-   property Count: Integer read GetCount;
-   property Childs[Index: Integer]: TNode read GetChild;
- end;
+    function GetNodeData: PNodeData;
+    function GetCount: Integer;
+    function GetChild(index: Integer): TNode;
+    function GetFolder: Boolean;
+    function GetHasChildren: Boolean;
+  public
+    constructor Create; overload;
+    constructor Create(ANodeData: TNodeData; AParent: TNode); overload;
+    constructor Create(ANodeData: TNodeData); overload;
+    destructor Destroy; override;
+    procedure Add(AChild: TNode);
+    procedure Remove(AChild: TNode);
+  public
+    property HasChildren: Boolean read GetHasChildren;
+    property Folder: Boolean read GetFolder;
+    property Parent: TNode read FParent;
+    property NodeData: PNodeData read GetNodeData;
+    property LastChild: TNode read GetLastChild;
+    property Count: Integer read GetCount;
+    property Childs[Index: Integer]: TNode read GetChild;
+  end;
 
+function CalculateDelay(state: double): Double;
 
-
-  function CalculateDelay(state: double): Double;
 implementation
 
 function CalculateDelay(state: double): Double;
@@ -99,7 +98,7 @@ end;
 procedure TNode.Add(AChild: TNode);
 begin
   AChild.SetParent(Self);
-	FChildrens.Add(AChild);
+  FChildrens.Add(AChild);
 end;
 
 function TNode.GetChild(index: Integer): TNode;
@@ -112,7 +111,6 @@ begin
   Result := @FNodeData;
 end;
 
-
 function TNode.GetFolder: Boolean;
 begin
   Result := FNodeData.Folder;
@@ -121,9 +119,9 @@ end;
 function TNode.GetLastChild: TNode;
 begin
   if HasChildren then
-	  Result := Childs[GetCount - 1].GetLastChild
+    Result := Childs[GetCount - 1].GetLastChild
   else
-	  Result := Self;
+    Result := Self;
 end;
 
 function TNode.GetHasChildren: Boolean;
@@ -147,3 +145,4 @@ begin
 end;
 
 end.
+

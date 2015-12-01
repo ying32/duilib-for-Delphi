@@ -138,10 +138,23 @@ type
   protected
     procedure DoNotify(var Msg: TNotifyUI); override;
     procedure DoInitWindow; override;
-    function DoHandleMessage(uMsg: UINT; wParam: WPARAM; lParam: LPARAM): LRESULT; override;
+    procedure DoHandleMessage(var Msg: TMessage); override;
     procedure DoFinalMessage(hWd: HWND); override;
   public
     constructor Create(main_frame: TXGuiFoundation; rcParentWindow: TRect);
+  end;
+
+  TEmotionList = class(TDuiWindowImplBase)
+  private
+    FChatDialog: TChatDialog;
+    FPoint: TPoint;
+  protected
+    procedure DoNotify(var Msg: TNotifyUI); override;
+    procedure DoInitWindow; override;
+    procedure DoHandleMessage(var Msg: TMessage); override;
+    procedure DoFinalMessage(hWd: HWND); override;
+  public
+    constructor Create(ADialog: TChatDialog; APoint: TPoint);
   end;
 
   TFirendList = class(TDuiListUI)
@@ -190,9 +203,8 @@ begin
   begin
     if FFirned = nil then
       FFirned := TFirendList.Create(PaintManagerUI);
-    Exit(FFirned.ControlUI);
-  end;
-  Result := nil;
+    Result := FFirned.ControlUI;
+  end else Result := inherited DoCreateControl(pstrStr);
 end;
 
 procedure TXGuiFoundation.DoFinalMessage(hWd: HWND);
@@ -495,7 +507,6 @@ begin
     item.NickName := 'ÎÒµÄºÃÓÑ';
     root_parent := FFirned.AddNode(item, nil);
     FFirendList.Add(item);
-    Writeln('parent=', DWORD(root_parent));
 
     item.Id := '1';
     item.Folder := False;
@@ -503,7 +514,6 @@ begin
     item.NickName := 'ying32';
     item.Description := '1444386932@qq.com';
     FFirned.AddNode(item, root_parent);
-    Writeln('root_parent.chinds=', root_parent.Count);
     FFirendList.Add(item);
 
     FMySelfInfo := item;
@@ -601,6 +611,7 @@ var
   LCtlName, LType: string;
   pFontbar: CContainerUI;
   font_type: CComboUI;
+  LWindowR: TRect;
 begin
   inherited;
   LCtlName := msg.pSender.Name;
@@ -627,7 +638,8 @@ begin
     end
     else if LCtlName.Equals(kEmotionButtonControlName) then
     begin
-
+      GetWindowRect(Handle, LWindowR);
+      TEmotionList.Create(Self, Point(LWindowR.Left + Msg.pSender.GetPos^.Left, LWindowR.Top + Msg.pSender.GetPos^.Top));
     end;
   end
   else if LType.Equals(DUI_EVENT_RETURN) then
@@ -814,8 +826,6 @@ begin
     Exit;
 
   node := TNode.Create;
-
-  Writeln('parent.NodeData.Level=', parent.NodeData.Level);
 
   node.NodeData.Level := parent.NodeData.Level + 1;
 
@@ -1115,14 +1125,13 @@ begin
   Free;
 end;
 
-function TColorSkinWindow.DoHandleMessage(uMsg: UINT; wParam: WPARAM; lParam: LPARAM): LRESULT;
+procedure TColorSkinWindow.DoHandleMessage(var Msg: TMessage);
 begin
-  if uMsg = WM_KILLFOCUS then
+  if Msg.Msg = WM_KILLFOCUS then
   begin
     Close;
-    Exit(1);
+    Msg.Result := 1;
   end;
-  Result := 0;
 end;
 
 procedure TColorSkinWindow.DoInitWindow;
@@ -1219,9 +1228,61 @@ begin
   end;
 end;
 
+
+{ TEmotionList }
+
+constructor TEmotionList.Create(ADialog: TChatDialog; APoint: TPoint);
+begin
+  inherited Create('emotion_list.xml', ExtractFilePath(ParamStr(0)) + 'skin\QQRes\');
+  FChatDialog := ADialog;
+  FPoint := APoint;
+  CreateWindow(0, 'emotion', WS_POPUP, WS_EX_TOOLWINDOW);
+  Show;
+end;
+
+procedure TEmotionList.DoFinalMessage(hWd: HWND);
+begin
+  inherited;
+  Free;
+end;
+
+procedure TEmotionList.DoHandleMessage(var Msg: TMessage);
+begin
+  inherited;
+  if Msg.Msg = WM_KILLFOCUS then
+  begin
+    Close;
+    Msg.Result := 1;
+  end;
+end;
+
+procedure TEmotionList.DoInitWindow;
+var
+  LSize: TSize;
+begin
+  inherited;
+  LSize := InitSize;
+  MoveWindow(Handle, FPoint.X, FPoint.Y - LSize.cy, Lsize.cx, Lsize.cy, False);
+end;
+
+procedure TEmotionList.DoNotify(var Msg: TNotifyUI);
+var
+  LType, LCtlName: string;
+begin
+  inherited;
+  LType := Msg.sType;
+  LCtlName := Msg.pSender.Name;
+  if LType.Equals(DUI_EVENT_CLICK) then
+  begin
+
+  end;
+end;
+
 var
   XGuiFoundation: TXGuiFoundation;
   hInstRich: THandle;
+
+
 
 begin
   try

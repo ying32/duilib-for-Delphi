@@ -44,11 +44,11 @@ type
     procedure DoInitWindow; virtual;
     procedure DoNotify(var Msg: TNotifyUI); virtual;
     procedure DoClick(var msg: TNotifyUI); virtual;
-    function  DoHandleMessage(uMsg: UINT; wParam: WPARAM; lParam: LPARAM): LRESULT; virtual;
-    function  DoMessageHandler(uMsg: UINT; wParam: WPARAM; lParam: LPARAM; var bHandled: BOOL): LRESULT; virtual;
+    procedure DoHandleMessage(var Msg: TMessage); virtual;
+    procedure DoMessageHandler(var Msg: TMessage; var bHandled: BOOL); virtual;
     procedure DoFinalMessage(hWd: HWND); virtual;
-    function  DoHandleCustomMessage(uMsg: UINT; wParam: WPARAM; lParam: LPARAM; var bHandled: BOOL): LRESULT; virtual;
-    function  DoCreateControl(pstrStr: string): CControlUI; virtual;
+    procedure DoHandleCustomMessage(var Msg: TMessage; var bHandled: BOOL); virtual;
+    function DoCreateControl(pstrStr: string): CControlUI; virtual;
   public
     procedure Show;
     procedure Hide;
@@ -167,18 +167,14 @@ begin
   // virtual method
 end;
 
-function TDuiWindowImplBase.DoHandleCustomMessage(uMsg: UINT; wParam: WPARAM;
-  lParam: LPARAM; var bHandled: BOOL): LRESULT;
+procedure TDuiWindowImplBase.DoHandleCustomMessage(var Msg: TMessage; var bHandled: BOOL);
 begin
   // virtual method
-  Result := 0;
 end;
 
-function TDuiWindowImplBase.DoHandleMessage(uMsg: UINT; wParam: WPARAM;
-  lParam: LPARAM): LRESULT;
+procedure TDuiWindowImplBase.DoHandleMessage(var Msg: TMessage);
 begin
   // virtual method
-  Result := 0;
 end;
 
 procedure TDuiWindowImplBase.DoInitWindow;
@@ -186,11 +182,9 @@ begin
   // virtual method
 end;
 
-function TDuiWindowImplBase.DoMessageHandler(uMsg: UINT; wParam: WPARAM;
-  lParam: LPARAM; var bHandled: BOOL): LRESULT;
+procedure TDuiWindowImplBase.DoMessageHandler(var Msg: TMessage; var bHandled: BOOL);
 begin
   // virtual method
-  Result := 0;
 end;
 
 procedure TDuiWindowImplBase.DoNotify(var Msg: TNotifyUI);
@@ -205,7 +199,7 @@ end;
 
 function TDuiWindowImplBase.DUI_CreateControl(pstrStr: LPCTSTR): CControlUI;
 begin
-  Result := DoCreateControl(pstrStr)
+  Result := DoCreateControl(pstrStr);
 end;
 
 procedure TDuiWindowImplBase.DUI_FinalMessage(hWd: HWND);
@@ -215,14 +209,28 @@ end;
 
 function TDuiWindowImplBase.DUI_HandleCustomMessage(uMsg: UINT; wParam: WPARAM;
   lParam: LPARAM; var bHandled: BOOL): LRESULT;
+var
+  LMsg: TMessage;
 begin
-  Result := DoHandleCustomMessage(uMsg, wParam, lParam, bHandled);
+  LMsg.Msg := uMsg;
+  LMsg.WParam := wParam;
+  LMsg.LParam := lParam;
+  LMsg.Result := 0;
+  DoHandleCustomMessage(LMsg, bHandled);
+  Result := LMsg.Result;
 end;
 
 function TDuiWindowImplBase.DUI_HandleMessage(uMsg: UINT; wParam: WPARAM;
   lParam: LPARAM): LRESULT;
+var
+  LMsg: TMessage;
 begin
-  Result := DoHandleMessage(uMsg, wParam, lParam);
+  LMsg.Msg := uMsg;
+  LMsg.WParam := wParam;
+  LMsg.LParam := lParam;
+  LMsg.Result := 0;
+  DoHandleMessage(LMsg);
+  Result := LMsg.Result;
 end;
 
 procedure TDuiWindowImplBase.DUI_InitWindow;
@@ -232,8 +240,15 @@ end;
 
 function TDuiWindowImplBase.DUI_MessageHandler(uMsg: UINT; wParam: WPARAM;
   lParam: LPARAM; var bHandled: BOOL): LRESULT;
+var
+  LMsg: TMessage;
 begin
-  Result := DoMessageHandler(uMsg, wParam, lParam, bHandled);
+  LMsg.Msg := uMsg;
+  LMsg.WParam := wParam;
+  LMsg.LParam := lParam;
+  LMsg.Result := 0;
+  DoMessageHandler(LMsg, bHandled);
+  Result := LMsg.Result;
 end;
 
 procedure TDuiWindowImplBase.DUI_Notify(var Msg: TNotifyUI);
