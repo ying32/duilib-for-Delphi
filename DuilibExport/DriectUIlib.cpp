@@ -4735,4 +4735,174 @@ DRIECTUILIB_API void Delphi_ListHeaderUI_EstimateSize(CListHeaderUI* handle ,SIZ
 }
 
 
+//================================CActiveXUI============================
 
+DRIECTUILIB_API CActiveXUI* Delphi_ActiveXUI_CppCreate() {
+    return new CActiveXUI();
+}
+
+DRIECTUILIB_API void Delphi_ActiveXUI_CppDestroy(CActiveXUI* handle) {
+    delete handle;
+}
+
+DRIECTUILIB_API LPCTSTR Delphi_ActiveXUI_GetClass(CActiveXUI* handle) {
+    return handle->GetClass();
+}
+
+DRIECTUILIB_API LPVOID Delphi_ActiveXUI_GetInterface(CActiveXUI* handle ,LPCTSTR pstrName) {
+    return handle->GetInterface(pstrName);
+}
+
+DRIECTUILIB_API HWND Delphi_ActiveXUI_GetHostWindow(CActiveXUI* handle) {
+    return handle->GetHostWindow();
+}
+
+DRIECTUILIB_API bool Delphi_ActiveXUI_IsDelayCreate(CActiveXUI* handle) {
+    return handle->IsDelayCreate();
+}
+
+DRIECTUILIB_API void Delphi_ActiveXUI_SetDelayCreate(CActiveXUI* handle ,bool bDelayCreate) {
+    handle->SetDelayCreate(bDelayCreate);
+}
+
+DRIECTUILIB_API bool Delphi_ActiveXUI_CreateControl_01(CActiveXUI* handle ,CLSID clsid) {
+    return handle->CreateControl(clsid);
+}
+
+DRIECTUILIB_API bool Delphi_ActiveXUI_CreateControl_02(CActiveXUI* handle ,LPCTSTR pstrCLSID) {
+    return handle->CreateControl(pstrCLSID);
+}
+
+DRIECTUILIB_API HRESULT Delphi_ActiveXUI_GetControl(CActiveXUI* handle ,IID iid, LPVOID* ppRet) {
+    return handle->GetControl(iid, ppRet);
+}
+
+DRIECTUILIB_API void Delphi_ActiveXUI_GetClisd(CActiveXUI* handle, CLSID& Result) {
+    Result = handle->GetClisd();
+}
+
+DRIECTUILIB_API CDuiString Delphi_ActiveXUI_GetModuleName(CActiveXUI* handle) {
+    return handle->GetModuleName();
+}
+
+DRIECTUILIB_API void Delphi_ActiveXUI_SetModuleName(CActiveXUI* handle ,LPCTSTR pstrText) {
+    handle->SetModuleName(pstrText);
+}
+
+DRIECTUILIB_API void Delphi_ActiveXUI_SetVisible(CActiveXUI* handle ,bool bVisible) {
+    handle->SetVisible(bVisible);
+}
+
+DRIECTUILIB_API void Delphi_ActiveXUI_SetInternVisible(CActiveXUI* handle ,bool bVisible) {
+    handle->SetInternVisible(bVisible);
+}
+
+DRIECTUILIB_API void Delphi_ActiveXUI_SetPos(CActiveXUI* handle ,RECT rc, bool bNeedInvalidate) {
+    handle->SetPos(rc, bNeedInvalidate);
+}
+
+DRIECTUILIB_API void Delphi_ActiveXUI_Move(CActiveXUI* handle ,SIZE szOffset, bool bNeedInvalidate) {
+    handle->Move(szOffset, bNeedInvalidate);
+}
+
+DRIECTUILIB_API void Delphi_ActiveXUI_DoPaint(CActiveXUI* handle ,HDC hDC, RECT& rcPaint) {
+    handle->DoPaint(hDC, rcPaint);
+}
+
+DRIECTUILIB_API void Delphi_ActiveXUI_SetAttribute(CActiveXUI* handle ,LPCTSTR pstrName, LPCTSTR pstrValue) {
+    handle->SetAttribute(pstrName, pstrValue);
+}
+
+//================================CWebBrowserUI============================
+
+DRIECTUILIB_API CWebBrowserUI* Delphi_WebBrowserUI_CppCreate() {
+    return new CWebBrowserUI();
+}
+
+DRIECTUILIB_API void Delphi_WebBrowserUI_CppDestroy(CWebBrowserUI* handle) {
+    delete handle;
+}
+
+DRIECTUILIB_API LPCTSTR Delphi_WebBrowserUI_GetClass(CWebBrowserUI* handle) {
+    return handle->GetClass();
+}
+
+DRIECTUILIB_API LPVOID Delphi_WebBrowserUI_GetInterface(CWebBrowserUI* handle ,LPCTSTR pstrName) {
+    return handle->GetInterface(pstrName);
+}
+
+DRIECTUILIB_API void Delphi_WebBrowserUI_SetHomePage(CWebBrowserUI* handle ,LPCTSTR lpszUrl) {
+    handle->SetHomePage(lpszUrl);
+}
+
+DRIECTUILIB_API LPCTSTR Delphi_WebBrowserUI_GetHomePage(CWebBrowserUI* handle) {
+    return handle->GetHomePage();
+}
+
+DRIECTUILIB_API void Delphi_WebBrowserUI_SetAutoNavigation(CWebBrowserUI* handle ,bool bAuto) {
+    handle->SetAutoNavigation(bAuto);
+}
+
+DRIECTUILIB_API bool Delphi_WebBrowserUI_IsAutoNavigation(CWebBrowserUI* handle) {
+    return handle->IsAutoNavigation();
+}
+
+DRIECTUILIB_API void Delphi_WebBrowserUI_SetWebBrowserEventHandler(CWebBrowserUI* handle ,CWebBrowserEventHandler* pEventHandler) {
+    handle->SetWebBrowserEventHandler(pEventHandler);
+}
+
+DRIECTUILIB_API void Delphi_WebBrowserUI_Navigate2(CWebBrowserUI* handle ,LPCTSTR lpszUrl) {
+    handle->Navigate2(lpszUrl);
+}
+
+DRIECTUILIB_API void Delphi_WebBrowserUI_Refresh(CWebBrowserUI* handle) {
+    handle->Refresh();
+}
+
+DRIECTUILIB_API void Delphi_WebBrowserUI_Refresh2(CWebBrowserUI* handle ,int Level) {
+    handle->Refresh2(Level);
+}
+
+DRIECTUILIB_API void Delphi_WebBrowserUI_GoBack(CWebBrowserUI* handle) {
+    handle->GoBack();
+}
+
+DRIECTUILIB_API void Delphi_WebBrowserUI_GoForward(CWebBrowserUI* handle) {
+    handle->GoForward();
+}
+
+DRIECTUILIB_API void Delphi_WebBrowserUI_NavigateHomePage(CWebBrowserUI* handle) {
+    handle->NavigateHomePage();
+}
+
+DRIECTUILIB_API void Delphi_WebBrowserUI_NavigateUrl(CWebBrowserUI* handle ,LPCTSTR lpszUrl) {
+    handle->NavigateUrl(lpszUrl);
+}
+
+DRIECTUILIB_API bool Delphi_WebBrowserUI_DoCreateControl(CWebBrowserUI* handle) {
+    return handle->DoCreateControl();
+}
+
+DRIECTUILIB_API IWebBrowser2* Delphi_WebBrowserUI_GetWebBrowser2(CWebBrowserUI* handle) {
+    return handle->GetWebBrowser2();
+}
+
+DRIECTUILIB_API IDispatch* Delphi_WebBrowserUI_GetHtmlWindow(CWebBrowserUI* handle) {
+    return handle->GetHtmlWindow();
+}
+
+DRIECTUILIB_API DISPID Delphi_WebBrowserUI_FindId(IDispatch* pObj, LPOLESTR pName) {
+    return CWebBrowserUI::FindId(pObj, pName);
+}
+
+DRIECTUILIB_API HRESULT Delphi_WebBrowserUI_InvokeMethod(IDispatch* pObj, LPOLESTR pMehtod, VARIANT* pVarResult, VARIANT* ps, int cArgs) {
+    return CWebBrowserUI::InvokeMethod(pObj, pMehtod, pVarResult, ps, cArgs);
+}
+
+DRIECTUILIB_API HRESULT Delphi_WebBrowserUI_GetProperty(IDispatch* pObj, LPOLESTR pName, VARIANT* pValue) {
+    return CWebBrowserUI::GetProperty(pObj, pName, pValue);
+}
+
+DRIECTUILIB_API HRESULT Delphi_WebBrowserUI_SetProperty(IDispatch* pObj, LPOLESTR pName, VARIANT* pValue) {
+    return CWebBrowserUI::SetProperty(pObj, pName, pValue);
+}
