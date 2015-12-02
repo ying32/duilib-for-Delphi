@@ -1,6 +1,5 @@
 program DDuilibDemo;
 
-//{$APPTYPE CONSOLE}
 
 {$R *.res}
 
@@ -13,15 +12,12 @@ uses
   System.Types,
   Winapi.RichEdit,
   System.Generics.Collections,
-  Duilib in 'Duilib.pas',
-  DuiWindowImplBase in 'DuiWindowImplBase.pas',
-  DuiBase in 'DuiBase.pas',
-  DuiListUI in 'DuiListUI.pas',
-  UIListCommonDefine in 'UIListCommonDefine.pas',
-  DuilibHelper in 'DuilibHelper.pas',
-  DuiConst in 'DuiConst.pas',
-  DuiActiveX in 'DuiActiveX.pas',
-  DuiWebBrowser in 'DuiWebBrowser.pas';
+  Duilib,
+  DuiListUI,
+  DuiWindowImplBase,
+  DuiConst,
+  DuilibHelper,
+  UIListCommonDefine in 'UIListCommonDefine.pas';
 
 const
   kFriendListItemNormalHeight = 32;

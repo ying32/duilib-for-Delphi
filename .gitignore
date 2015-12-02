@@ -55,3 +55,7 @@ __history/
 
 # Castalia statistics file
 *.stat
+/Demo/Apps/*.local
+/Demo/QQDemo/*.identcache
+/Demo/QQDemo/*.local
+/Demo/QQDemo/Win32
