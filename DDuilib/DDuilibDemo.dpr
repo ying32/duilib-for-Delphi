@@ -128,6 +128,7 @@ type
   protected
     procedure DoNotify(var Msg: TNotifyUI); override;
     procedure DoFinalMessage(hWd: HWND); override;
+    procedure DoHandleMessage(var Msg: TMessage); override;
   public
     constructor Create(const bgimage: string; bkcolor: DWORD; myselft_info, friend_info: TFriendListItemInfo);
     procedure OnReceive(Param: Pointer); override;
@@ -179,6 +180,19 @@ type
     function RemoveNode(node: TNode): Boolean;
     function CanExpand(node: TNode): Boolean;
     procedure SetChildVisible(node: TNode; AVisible: Boolean);
+  end;
+
+  // 一个简单的菜单，可看duilib的listDemo里面有一个菜单
+  TRichEditSampleMenu = class(TDuiWindowImplBase)
+  private
+    FChatDialog: TChatDialog;
+  protected
+    procedure DoNotify(var Msg: TNotifyUI); override;
+    procedure DoHandleMessage(var Msg: TMessage); override;
+    procedure DoFinalMessage(hWd: HWND); override;
+    procedure DoInitWindow; override;
+  public
+    constructor Create(ADialog: TChatDialog);
   end;
 
 
@@ -611,16 +625,42 @@ begin
   Free;
 end;
 
+procedure TChatDialog.DoHandleMessage(var Msg: TMessage);
+var
+  LPoint: TPoint;
+  LControl: CControlUI;
+begin
+  inherited;
+  if Msg.Msg = WM_RBUTTONUP then
+  begin
+    OutputDebugString('TChatDialog.DoHandleMessage WM_RBUTTONUP');
+    LPoint.X := TWMMouse(Msg).XPos;
+    LPoint.Y := TWMMouse(Msg).YPos;
+    LControl := FindControl(LPoint);
+    if LControl <> nil then
+    begin
+      if LControl.ClassName.Equals('RichEditUI') then
+      begin
+        PaintManagerUI.SendNotify(LControl, 'RichPopupMenu');
+      end;
+    end;
+  end;
+end;
+
 procedure TChatDialog.DoNotify(var Msg: TNotifyUI);
 var
   LCtlName, LType: string;
   pFontbar: CContainerUI;
   font_type: CComboUI;
   LWindowR: TRect;
+  LRichEdit: CRichEditUI;
 begin
   inherited;
   LCtlName := msg.pSender.Name;
   LType := Msg.sType;
+
+  OutputDebugString(PChar(Format('Type=%s, Name=%s', [LType, LCtlName])));
+
   if LType.Equals(DUI_EVENT_WINDOWINIT) then
     OnPrepare(msg)
   else if SameStr(LType, DUI_EVENT_CLICK) then
@@ -662,6 +702,26 @@ begin
         FFontFaceName := font_type.Text;
         FontStyleChanged();
       end;
+    end;
+  end else if LType.Equals('RichPopupMenu') then
+  begin
+    OutputDebugString(PChar(Format('+++++++++++++++++++++RichPopupMenu, Name=%s', [LCtlName])));
+    TRichEditSampleMenu.Create(Self);
+  end else if LType.Equals('RichEditPopupClick') then
+  begin
+    //LRichEdit := CRichEditUI(FindControl(kInputRichEditControlName));
+    //if LRichEdit = nil then
+    LRichEdit := CRichEditUI(FindControl(kViewRichEditControlName));
+    if LRichEdit <> nil then
+    begin
+      if LCtlName.Equals('menu_copy') then
+        LRichEdit.Copy
+      else
+      if LCtlName.Equals('menu_cut') then
+        LRichEdit.Cut
+      else
+      if LCtlName.Equals('menu_paste') then
+        LRichEdit.Paste;
     end;
   end;
 end;
@@ -1280,6 +1340,56 @@ begin
   if LType.Equals(DUI_EVENT_CLICK) then
   begin
 
+  end;
+end;
+
+
+{ TRichEditSampleMenu }
+
+constructor TRichEditSampleMenu.Create(ADialog: TChatDialog);
+begin
+  inherited Create('menu.xml', ExtractFilePath(ParamStr(0)) + 'skin\QQRes\');
+  FChatDialog := ADialog;
+  CreateWindow(0, 'RichPopupMenu', WS_POPUP, WS_EX_TOOLWINDOW);
+  Show;
+end;
+
+procedure TRichEditSampleMenu.DoFinalMessage(hWd: HWND);
+begin
+  inherited;
+  Free;
+end;
+
+procedure TRichEditSampleMenu.DoHandleMessage(var Msg: TMessage);
+begin
+  inherited;
+  if Msg.Msg = WM_KILLFOCUS then
+  begin
+    Msg.Result := 1;
+    Close;
+  end;
+end;
+
+procedure TRichEditSampleMenu.DoInitWindow;
+var
+  P: TPoint;
+  LSize: TSize;
+begin
+  inherited;
+  GetCursorPos(P);
+  LSize := InitSize;
+  MoveWindow(Handle, P.X, P.Y, LSize.cx, LSize.cy, False);
+end;
+
+procedure TRichEditSampleMenu.DoNotify(var Msg: TNotifyUI);
+begin
+  inherited;
+  if Msg.sType = 'itemselect' then
+    Close
+  else if Msg.sType = 'itemclick' then
+  begin
+    if Assigned(FChatDialog) then
+      FChatDialog.PaintManagerUI.SendNotify(Msg.pSender, 'RichEditPopupClick');
   end;
 end;
 
