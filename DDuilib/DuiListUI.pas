@@ -44,6 +44,10 @@ type
   public
     constructor Create;
     destructor Destroy; override;
+    /// <summary>
+    ///   留一个主动释放的接口吧
+    /// </summary>
+    procedure FreeCpp;
   public
     property Count: Integer read GetCount;
     property CurSel: Integer read GetCurSel;
@@ -66,7 +70,7 @@ end;
 
 destructor TDuiListUI.Destroy;
 begin
-  FThis.CppDestroy;
+  //FThis.CppDestroy; 由交PaintManagerUI去释放？
   inherited;
 end;
 
@@ -78,6 +82,12 @@ end;
 procedure TDuiListUI.DUI_DoEvent(var AEvent: TEventUI);
 begin
   DoEvent(AEvent);
+end;
+
+procedure TDuiListUI.FreeCpp;
+begin
+  if FThis <> nil then
+    FThis.CppDestroy;
 end;
 
 function TDuiListUI.GetCount: Integer;

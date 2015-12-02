@@ -1,6 +1,6 @@
 program DDuilibDemo;
 
-{$APPTYPE CONSOLE}
+//{$APPTYPE CONSOLE}
 
 {$R *.res}
 
@@ -186,7 +186,7 @@ constructor TXGuiFoundation.Create;
 begin
   inherited Create('main_frame.xml', '\skin\QQRes\', UILIB_FILE);
   FFirendList := TList<TFriendListItemInfo>.Create;
-  CreateDuiWindow(GetDesktopWindow, 'QQ2010');
+  CreateWindow(0, 'QQ2010', UI_WNDSTYLE_FRAME, WS_EX_STATICEDGE or WS_EX_APPWINDOW, 0, 0, 600, 800);
 end;
 
 destructor TXGuiFoundation.Destroy;
@@ -194,6 +194,7 @@ begin
   if FFirned <> nil then
     FFirned.Free;
   FFirendList.Free;
+  PostQuitMessage(0);
   inherited;
 end;
 
@@ -210,6 +211,7 @@ end;
 procedure TXGuiFoundation.DoFinalMessage(hWd: HWND);
 begin
   inherited;
+  PostQuitMessage(0);
 end;
 
 {$REGION 'DoNotify'}
@@ -1309,7 +1311,8 @@ begin
 
   except
     on E: Exception do
-      Writeln(E.ClassName, ': ', E.Message);
+      MessageBox(0, PChar(E.Message), nil, MB_OK);
+     // Writeln(E.ClassName, ': ', E.Message);
   end;
 end.
 

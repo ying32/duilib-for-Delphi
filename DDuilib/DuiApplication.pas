@@ -34,8 +34,7 @@ end;
 
 procedure TDuiApplication.Terminate;
 begin
-  CPaintManagerUI.Term;
-  //PostQuitMessage(0);
+  PostQuitMessage(0);
 end;
 
 initialization
