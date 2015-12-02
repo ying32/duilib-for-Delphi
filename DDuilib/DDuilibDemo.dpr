@@ -17,7 +17,6 @@ uses
   DuiWindowImplBase in 'DuiWindowImplBase.pas',
   DuiBase in 'DuiBase.pas',
   DuiListUI in 'DuiListUI.pas',
-  DuiApplication in 'DuiApplication.pas',
   UIListCommonDefine in 'UIListCommonDefine.pas',
   DuilibHelper in 'DuilibHelper.pas',
   DuiConst in 'DuiConst.pas',
@@ -1403,29 +1402,28 @@ begin
   try
     ReportMemoryLeaksOnShutdown := True;
 
-    hInstRich := LoadLibrary('Riched20.dll');
-    CoInitialize(nil);
-    OleInitialize(nil);
+//    hInstRich := LoadLibrary('Riched20.dll');
+//    CoInitialize(nil);
+//    OleInitialize(nil);
 
     SkinChangedList := TList<TDuiWindowImplBase>.Create;
 
-    Application.Initialize;
+    DuiApplication.Initialize;
     XGuiFoundation := TXGuiFoundation.Create;
     XGuiFoundation.CenterWindow;
     XGuiFoundation.Show;
-    Application.Run;
+    DuiApplication.Run;
     XGuiFoundation.Free;
 
     SkinChangedList.Free;
 
-    OleUninitialize();
-    CoUninitialize();
-    FreeLibrary(hInstRich);
+//    OleUninitialize();
+//    CoUninitialize();
+//    FreeLibrary(hInstRich);
 
   except
     on E: Exception do
       MessageBox(0, PChar(E.Message), nil, MB_OK);
-     // Writeln(E.ClassName, ': ', E.Message);
   end;
 end.
 

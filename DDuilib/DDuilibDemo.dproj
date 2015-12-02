@@ -80,7 +80,6 @@
         <DCCReference Include="DuiWindowImplBase.pas"/>
         <DCCReference Include="DuiBase.pas"/>
         <DCCReference Include="DuiListUI.pas"/>
-        <DCCReference Include="DuiApplication.pas"/>
         <DCCReference Include="UIListCommonDefine.pas"/>
         <DCCReference Include="DuilibHelper.pas"/>
         <DCCReference Include="DuiConst.pas"/>
