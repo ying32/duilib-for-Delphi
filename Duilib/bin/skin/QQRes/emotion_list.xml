@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window sizebox="4,4,6,6" caption="0,0,0,30" size="320,230" mininfo="320,230" maxinfo="320,230" opacity="true" transparency="0">
+  <Font name="微软雅黑" size="12" bold="false" default="true" />
+  <Font name="微软雅黑" size="12" bold="true"/>
+  <VerticalLayout bordersize="0" bkimage="file='bg.bmp' corner='4,4,2,2' mask='0xffffffff'">
+    <HorizontalLayout height="33" width="320">
+      <Option float="true" pos="0,0,70,33" name="default_emotion" text="默认" bordersize="0" selected="true" group="emotiongroup" selectedimage="unsel.bmp" bordercolor="#FF768D9B" textpadding="0,0,0,2" textcolor="#FF386382" disabledtextcolor="#FFA7A6AA" showhtml="true" align="center" selectedtextcolor="#FF000000" />
+    </HorizontalLayout>
+    <TabLayout name="tabs" bkimage="file='list_bk.png'" height="164" width="320" bordersize="2" bordercolor="#FF0187DC">
+      <VerticalLayout name="emotion_list" padding="4,4,4,4">
+      </VerticalLayout>
+    </TabLayout>
+    <HorizontalLayout height="33" width="320">
+      <Control width="4"/>
+      <Button name="prev_page" width="60" textcolor="#FF0187DC" padding="0,5,0,0" height="23" text="上一页" hotimage="file='btn_hot.png' corner='2,3,2,2'" selectedimage="file='btn_push.png' corner='2,5,2,2'"  />
+      <Control width="4"/>
+      <Button name="next_page" width="60" textcolor="#FF0187DC" padding="0,5,0,0" height="23" text="下一页" hotimage="file='btn_hot.png' corner='2,3,2,2'" selectedimage="file='btn_push.png' corner='2,5,2,2'"  />
+      <Control />
+      <Button name="add_emotion" width="54" textcolor="#FF0187DC" padding="0,5,0,0" height="23" bkimage="file='add_emotion.png' source='1,1,55,23'" hotimage="file='btn_hot.png' corner='2,3,2,2'" selectedimage="file='btn_push.png' corner='2,5,2,2'"/>
+      <Control width="4"/>
+      <Button name="import_emotion" width="54" textcolor="#FF0187DC" padding="0,5,0,0" height="23" bkimage="file='import_emotion.png' source='1,1,55,23'" hotimage="file='btn_hot.png' corner='2,3,2,2'" selectedimage="file='btn_push.png' corner='2,5,2,2'"/>
+      <Control width="4"/>
+      <Button name="export_emotion" width="54" textcolor="#FF0187DC" padding="0,5,0,0" height="23" bkimage="file='export_emotion.png' source='1,1,55,23'" hotimage="file='btn_hot.png' corner='2,3,2,2'" selectedimage="file='btn_push.png' corner='2,5,2,2'"/>
+      <Control width="4"/>
+    </HorizontalLayout>
+  </VerticalLayout>
+</Window>
