@@ -10,6 +10,7 @@ uses
   System.SysUtils,
   System.Classes,
   Winapi.ActiveX,
+  System.Types,
   Winapi.RichEdit,
   System.Generics.Collections,
   Duilib in 'Duilib.pas',
@@ -19,7 +20,9 @@ uses
   DuiApplication in 'DuiApplication.pas',
   UIListCommonDefine in 'UIListCommonDefine.pas',
   DuilibHelper in 'DuilibHelper.pas',
-  DuiConst in 'DuiConst.pas';
+  DuiConst in 'DuiConst.pas',
+  DuiActiveX in 'DuiActiveX.pas',
+  DuiWebBrowser in 'DuiWebBrowser.pas';
 
 const
   kFriendListItemNormalHeight = 32;
@@ -491,7 +494,7 @@ end;
 procedure TXGuiFoundation.UpdateFriendsList;
 var
   item: TFriendListItemInfo;
-  root_parent, new2: TNode;
+  root_parent: TNode;
   I: Integer;
 begin
   if FindControl('friends') <> nil then
