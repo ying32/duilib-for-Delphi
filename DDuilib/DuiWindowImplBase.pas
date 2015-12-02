@@ -17,6 +17,7 @@ interface
 uses
   Winapi.Windows,
   Winapi.Messages,
+  System.Generics.Collections,
   System.SysUtils,
   DuiBase,
   Duilib;
@@ -80,6 +81,27 @@ type
     property InitSize: TSize read GetInitSize;
   end;
 
+  TDuiWindowImplList = TObjectList<TDuiWindowImplBase>;
+
+  TDuiApplication = class
+  private
+    FList: TDuiWindowImplList;
+  public
+    procedure Initialize;
+    procedure Run;
+    procedure Terminate;
+    // 先写好，以后有用的吧
+//    procedure AddDuiWindow(AWindow: TDuiWindowImplBase);
+//    procedure RemoveWindow(AWindow: TDuiWindowImplBase);
+  public
+    constructor Create;
+    destructor Destroy; override;
+  end;
+
+
+var
+  DuiApplication: TDuiApplication;
+
 
 implementation
 
@@ -96,10 +118,6 @@ begin
   FThis.SetResourceType(ARType);
   FThis.SetDelphiSelf(Self);
 
-//  Delphi_PaintManagerUI_GetInitSize(FThis.GetPaintManagerUI);
-//  Writeln(Format('Delphi PaintManagerUI = %p', [Pointer(PaintManagerUI)]));
-//  FThis.GetPaintManagerUI.GetInitSize;
-
   FThis.SetInitWindow(GetMethodAddr('DUI_InitWindow'));
   FThis.SetClick(GetMethodAddr('DUI_Click'));
   FThis.SetNotify(GetMethodAddr('DUI_Notify'));
@@ -108,6 +126,9 @@ begin
   FThis.SetHandleMessage(GetMethodAddr('DUI_HandleMessage'));
   FThis.SetHandleCustomMessage(GetMethodAddr('DUI_HandleCustomMessage'));
   FThis.SetCreateControl(GetMethodAddr('DUI_CreateControl'));
+
+//  if Assigned(DuiApplication) then
+//    DuiApplication.AddDuiWindow(Self);
 end;
 
 constructor TDuiWindowImplBase.Create(ASkinFile, ASkinFolder: string; ARType: TResourceType);
@@ -130,6 +151,8 @@ destructor TDuiWindowImplBase.Destroy;
 begin
   if FThis <> nil then
     FThis.CppDestroy;
+//  if Assigned(DuiApplication) then
+//    DuiApplication.RemoveWindow(Self);
   inherited;
 end;
 
@@ -333,5 +356,63 @@ procedure TDuiWindowImplBase.Close;
 begin
   FThis.Close();
 end;
+
+
+
+{ TDuiApplication }
+
+constructor TDuiApplication.Create;
+begin
+  inherited;
+  FList := TDuiWindowImplList.Create;
+end;
+
+destructor TDuiApplication.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+procedure TDuiApplication.Initialize;
+begin
+  CPaintManagerUI.SetInstance(HInstance);
+end;
+
+//procedure TDuiApplication.RemoveWindow(AWindow: TDuiWindowImplBase);
+//begin
+//  TMonitor.Enter(FList);
+//  try
+//    FList.Remove(AWindow);
+//  finally
+//    TMonitor.Exit(FList);
+//  end;
+//end;
+
+//procedure TDuiApplication.AddDuiWindow(AWindow: TDuiWindowImplBase);
+//begin
+//  TMonitor.Enter(FList);
+//  try
+//    FList.Add(AWindow);
+//  finally
+//    TMonitor.Exit(FList);
+//  end;
+//end;
+
+procedure TDuiApplication.Run;
+begin
+  CPaintManagerUI.MessageLoop;
+end;
+
+procedure TDuiApplication.Terminate;
+begin
+  PostQuitMessage(0);
+end;
+
+initialization
+   DuiApplication := TDuiApplication.Create;
+
+finalization
+   DuiApplication.Free;
+
 
 end.
