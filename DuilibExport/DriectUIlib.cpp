@@ -4906,3 +4906,100 @@ DRIECTUILIB_API HRESULT Delphi_WebBrowserUI_GetProperty(IDispatch* pObj, LPOLEST
 DRIECTUILIB_API HRESULT Delphi_WebBrowserUI_SetProperty(IDispatch* pObj, LPOLESTR pName, VARIANT* pValue) {
     return CWebBrowserUI::SetProperty(pObj, pName, pValue);
 }
+
+
+//================================CRenderClip============================
+
+DRIECTUILIB_API CRenderClip* Delphi_RenderClip_CppCreate() {
+    return new CRenderClip();
+}
+
+DRIECTUILIB_API void Delphi_RenderClip_CppDestroy(CRenderClip* handle) {
+    delete handle;
+}
+
+DRIECTUILIB_API void Delphi_RenderClip_GenerateClip(HDC hDC, RECT rc, CRenderClip& clip) {
+    CRenderClip::GenerateClip(hDC, rc, clip);
+}
+
+DRIECTUILIB_API void Delphi_RenderClip_GenerateRoundClip(HDC hDC, RECT rc, RECT rcItem, int width, int height, CRenderClip& clip) {
+    CRenderClip::GenerateRoundClip(hDC, rc, rcItem, width, height, clip);
+}
+
+DRIECTUILIB_API void Delphi_RenderClip_UseOldClipBegin(HDC hDC, CRenderClip& clip) {
+    CRenderClip::UseOldClipBegin(hDC, clip);
+}
+
+DRIECTUILIB_API void Delphi_RenderClip_UseOldClipEnd(HDC hDC, CRenderClip& clip) {
+    CRenderClip::UseOldClipEnd(hDC, clip);
+}
+
+//================================CRenderEngine============================
+
+DRIECTUILIB_API CRenderEngine* Delphi_RenderEngine_CppCreate() {
+    return new CRenderEngine();
+}
+
+DRIECTUILIB_API void Delphi_RenderEngine_CppDestroy(CRenderEngine* handle) {
+    delete handle;
+}
+
+DRIECTUILIB_API DWORD Delphi_RenderEngine_AdjustColor(DWORD dwColor, short H, short S, short L) {
+    return CRenderEngine::AdjustColor(dwColor, H, S, L);
+}
+
+DRIECTUILIB_API void Delphi_RenderEngine_AdjustImage(bool bUseHSL, TImageInfo* imageInfo, short H, short S, short L) {
+    CRenderEngine::AdjustImage(bUseHSL, imageInfo, H, S, L);
+}
+
+DRIECTUILIB_API TImageInfo* Delphi_RenderEngine_LoadImage(STRINGorID bitmap, LPCTSTR type, DWORD mask) {
+    return CRenderEngine::LoadImage(bitmap, type, mask);
+}
+
+DRIECTUILIB_API void Delphi_RenderEngine_FreeImage(TImageInfo* bitmap, bool bDelete) {
+    CRenderEngine::FreeImage(bitmap, bDelete);
+}
+
+DRIECTUILIB_API void Delphi_RenderEngine_DrawImage_01(HDC hDC, HBITMAP hBitmap, RECT& rc, RECT& rcPaint, RECT& rcBmpPart, RECT& rcCorners, bool alphaChannel, BYTE uFade, bool hole, bool xtiled, bool ytiled) {
+    CRenderEngine::DrawImage(hDC, hBitmap, rc, rcPaint, rcBmpPart, rcCorners, alphaChannel, uFade, hole, xtiled, ytiled);
+}
+
+DRIECTUILIB_API bool Delphi_RenderEngine_DrawImage_02(HDC hDC, CPaintManagerUI* pManager, RECT& rcItem, RECT& rcPaint, TDrawInfo& drawInfo) {
+    return CRenderEngine::DrawImage(hDC, pManager, rcItem, rcPaint, drawInfo);
+}
+
+DRIECTUILIB_API void Delphi_RenderEngine_DrawColor(HDC hDC, RECT& rc, DWORD color) {
+    CRenderEngine::DrawColor(hDC, rc, color);
+}
+
+DRIECTUILIB_API void Delphi_RenderEngine_DrawGradient(HDC hDC, RECT& rc, DWORD dwFirst, DWORD dwSecond, bool bVertical, int nSteps) {
+    CRenderEngine::DrawGradient(hDC, rc, dwFirst, dwSecond, bVertical, nSteps);
+}
+
+DRIECTUILIB_API void Delphi_RenderEngine_DrawLine(HDC hDC, RECT& rc, int nSize, DWORD dwPenColor, int nStyle) {
+    CRenderEngine::DrawLine(hDC, rc, nSize, dwPenColor, nStyle);
+}
+
+DRIECTUILIB_API void Delphi_RenderEngine_DrawRect(HDC hDC, RECT& rc, int nSize, DWORD dwPenColor) {
+    CRenderEngine::DrawRect(hDC, rc, nSize, dwPenColor);
+}
+
+DRIECTUILIB_API void Delphi_RenderEngine_DrawRoundRect(HDC hDC, RECT& rc, int width, int height, int nSize, DWORD dwPenColor) {
+    CRenderEngine::DrawRoundRect(hDC, rc, width, height, nSize, dwPenColor);
+}
+
+DRIECTUILIB_API void Delphi_RenderEngine_DrawText(HDC hDC, CPaintManagerUI* pManager, RECT& rc, LPCTSTR pstrText, DWORD dwTextColor, int iFont, UINT uStyle) {
+    CRenderEngine::DrawText(hDC, pManager, rc, pstrText, dwTextColor, iFont, uStyle);
+}
+
+DRIECTUILIB_API void Delphi_RenderEngine_DrawHtmlText(HDC hDC, CPaintManagerUI* pManager, RECT& rc, LPCTSTR pstrText, DWORD dwTextColor, RECT* pLinks, CDuiString* sLinks, int& nLinkRects, UINT uStyle) {
+    CRenderEngine::DrawHtmlText(hDC, pManager, rc, pstrText, dwTextColor, pLinks, sLinks, nLinkRects, uStyle);
+}
+
+DRIECTUILIB_API HBITMAP Delphi_RenderEngine_GenerateBitmap(CPaintManagerUI* pManager, CControlUI* pControl, RECT rc) {
+    return CRenderEngine::GenerateBitmap(pManager, pControl, rc);
+}
+
+DRIECTUILIB_API void Delphi_RenderEngine_GetTextSize(HDC hDC, CPaintManagerUI* pManager, LPCTSTR pstrText, int iFont, UINT uStyle, SIZE& Result) {
+    Result = CRenderEngine::GetTextSize(hDC, pManager, pstrText, iFont, uStyle);
+}
