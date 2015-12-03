@@ -22,7 +22,11 @@ uses
   System.SysUtils;
 
 const
+{$IFDEF DEBUG}
   DuiLibdll = 'DuiLib_ud.dll';
+{$ELSE}
+  DuiLibdll = 'DuiLib_u.dll';
+{$ENDIF}
 
   UI_WNDSTYLE_CONTAINER   = 0;
   UI_WNDSTYLE_FRAME       = WS_VISIBLE or WS_OVERLAPPEDWINDOW;
@@ -236,7 +240,6 @@ type
     wParam: WPARAM;
     lParam: LPARAM;
   end;
-
 
   CStdStringPtrMap = class
   public
@@ -623,7 +626,7 @@ type
     function RegisterWindowClass: Boolean;
     function RegisterSuperclass: Boolean;
     function Create(hwndParent: HWND; pstrName: LPCTSTR; dwStyle: DWORD; dwExStyle: DWORD; const rc: TRect; hMenu: HMENU = 0): HWND; overload;
-    function Create(hwndParent: HWND; pstrName: LPCTSTR; dwStyle: DWORD; dwExStyle: DWORD; x: Integer = CW_USEDEFAULT; y: Integer = CW_USEDEFAULT; cx: Integer = CW_USEDEFAULT; cy: Integer = CW_USEDEFAULT; hMenu: HMENU = 0): HWND; overload;
+    function Create(hwndParent: HWND; pstrName: LPCTSTR; dwStyle: DWORD; dwExStyle: DWORD; x: Integer = Integer(CW_USEDEFAULT); y: Integer = Integer(CW_USEDEFAULT); cx: Integer = Integer(CW_USEDEFAULT); cy: Integer = Integer(CW_USEDEFAULT); hMenu: HMENU = 0): HWND; overload;
     function CreateDuiWindow(hwndParent: HWND; pstrWindowName: LPCTSTR; dwStyle: DWORD = 0; dwExStyle: DWORD = 0): HWND;
     function Subclass(hWnd: HWND): HWND;
     procedure Unsubclass;
@@ -1401,6 +1404,37 @@ type
     procedure SetAttribute(pstrName: LPCTSTR; pstrValue: LPCTSTR);
   end;
 
+
+  CRenderClip = class
+  public
+    class function CppCreate: CRenderClip;
+    procedure CppDestroy;
+    class procedure GenerateClip(hDC: HDC; rc: TRect; var clip: CRenderClip);
+    class procedure GenerateRoundClip(hDC: HDC; rc: TRect; rcItem: TRect; width: Integer; height: Integer; var clip: CRenderClip);
+    class procedure UseOldClipBegin(hDC: HDC; var clip: CRenderClip);
+    class procedure UseOldClipEnd(hDC: HDC; var clip: CRenderClip);
+  end;
+
+  CRenderEngine = class
+  public
+    class function CppCreate: CRenderEngine;
+    procedure CppDestroy;
+    class function AdjustColor(dwColor: DWORD; H: Short; S: Short; L: Short): DWORD;
+    class procedure AdjustImage(bUseHSL: Boolean; imageInfo: PImageInfo; H: Short; S: Short; L: Short);
+    class function LoadImage(bitmap: STRINGorID; AType: LPCTSTR = nil; mask: DWORD = 0): PImageInfo;
+    class procedure FreeImage(bitmap: PImageInfo; bDelete: Boolean = True);
+    class procedure DrawImage(hDC: HDC; hBitmap: HBITMAP; var rc: TRect; var rcPaint: TRect; var rcBmpPart: TRect; var rcCorners: TRect; alphaChannel: Boolean; uFade: Byte = 255; hole: Boolean = False; xtiled: Boolean = False; ytiled: Boolean = False); overload;
+    class function DrawImage(hDC: HDC; pManager: CPaintManagerUI; var rcItem: TRect; var rcPaint: TRect; var drawInfo: TDrawInfo): Boolean; overload;
+    class procedure DrawColor(hDC: HDC; var rc: TRect; color: DWORD);
+    class procedure DrawGradient(hDC: HDC; var rc: TRect; dwFirst: DWORD; dwSecond: DWORD; bVertical: Boolean; nSteps: Integer);
+    class procedure DrawLine(hDC: HDC; var rc: TRect; nSize: Integer; dwPenColor: DWORD; nStyle: Integer = PS_SOLID);
+    class procedure DrawRect(hDC: HDC; var rc: TRect; nSize: Integer; dwPenColor: DWORD);
+    class procedure DrawRoundRect(hDC: HDC; var rc: TRect; width: Integer; height: Integer; nSize: Integer; dwPenColor: DWORD);
+    class procedure DrawText(hDC: HDC; pManager: CPaintManagerUI; var rc: TRect; pstrText: LPCTSTR; dwTextColor: DWORD; iFont: Integer; uStyle: UINT);
+    class procedure DrawHtmlText(hDC: HDC; pManager: CPaintManagerUI; var rc: TRect; pstrText: LPCTSTR; dwTextColor: DWORD; pLinks: PRect; sLinks: CDuiString; var nLinkRects: Integer; uStyle: UINT);
+    class function GenerateBitmap(pManager: CPaintManagerUI; pControl: CControlUI; rc: TRect): HBITMAP;
+    class function GetTextSize(hDC: HDC; pManager: CPaintManagerUI; pstrText: LPCTSTR; iFont: Integer; uStyle: UINT): TSize;
+  end;
 
 
 //================================CStdStringPtrMap============================
@@ -2517,6 +2551,39 @@ procedure Delphi_ListHeaderUI_CppDestroy(Handle: CListHeaderUI); cdecl;
 function Delphi_ListHeaderUI_GetClass(Handle: CListHeaderUI): LPCTSTR; cdecl;
 function Delphi_ListHeaderUI_GetInterface(Handle: CListHeaderUI; pstrName: LPCTSTR): Pointer; cdecl;
 procedure Delphi_ListHeaderUI_EstimateSize(Handle: CListHeaderUI; szAvailable: TSize; var Result: TSize); cdecl;
+
+
+ //================================CRenderClip============================
+
+function Delphi_RenderClip_CppCreate: CRenderClip; cdecl;
+procedure Delphi_RenderClip_CppDestroy(Handle: CRenderClip); cdecl;
+procedure Delphi_RenderClip_GenerateClip(hDC: HDC; rc: TRect; var clip: CRenderClip); cdecl;
+procedure Delphi_RenderClip_GenerateRoundClip(hDC: HDC; rc: TRect; rcItem: TRect; width: Integer; height: Integer; var clip: CRenderClip); cdecl;
+procedure Delphi_RenderClip_UseOldClipBegin(hDC: HDC; var clip: CRenderClip); cdecl;
+procedure Delphi_RenderClip_UseOldClipEnd(hDC: HDC; var clip: CRenderClip); cdecl;
+
+//================================CRenderEngine============================
+
+function Delphi_RenderEngine_CppCreate: CRenderEngine; cdecl;
+procedure Delphi_RenderEngine_CppDestroy(Handle: CRenderEngine); cdecl;
+function Delphi_RenderEngine_AdjustColor(dwColor: DWORD; H: Short; S: Short; L: Short): DWORD; cdecl;
+procedure Delphi_RenderEngine_AdjustImage(bUseHSL: Boolean; imageInfo: PImageInfo; H: Short; S: Short; L: Short); cdecl;
+function Delphi_RenderEngine_LoadImage(bitmap: STRINGorID; AType: LPCTSTR; mask: DWORD): PImageInfo; cdecl;
+procedure Delphi_RenderEngine_FreeImage(bitmap: PImageInfo; bDelete: Boolean); cdecl;
+procedure Delphi_RenderEngine_DrawImage_01(hDC: HDC; hBitmap: HBITMAP; var rc: TRect; var rcPaint: TRect; var rcBmpPart: TRect; var rcCorners: TRect; alphaChannel: Boolean; uFade: Byte; hole: Boolean; xtiled: Boolean; ytiled: Boolean); cdecl;
+function Delphi_RenderEngine_DrawImage_02(hDC: HDC; pManager: CPaintManagerUI; var rcItem: TRect; var rcPaint: TRect; var drawInfo: TDrawInfo): Boolean; cdecl;
+procedure Delphi_RenderEngine_DrawColor(hDC: HDC; var rc: TRect; color: DWORD); cdecl;
+procedure Delphi_RenderEngine_DrawGradient(hDC: HDC; var rc: TRect; dwFirst: DWORD; dwSecond: DWORD; bVertical: Boolean; nSteps: Integer); cdecl;
+procedure Delphi_RenderEngine_DrawLine(hDC: HDC; var rc: TRect; nSize: Integer; dwPenColor: DWORD; nStyle: Integer); cdecl;
+procedure Delphi_RenderEngine_DrawRect(hDC: HDC; var rc: TRect; nSize: Integer; dwPenColor: DWORD); cdecl;
+procedure Delphi_RenderEngine_DrawRoundRect(hDC: HDC; var rc: TRect; width: Integer; height: Integer; nSize: Integer; dwPenColor: DWORD); cdecl;
+procedure Delphi_RenderEngine_DrawText(hDC: HDC; pManager: CPaintManagerUI; var rc: TRect; pstrText: LPCTSTR; dwTextColor: DWORD; iFont: Integer; uStyle: UINT); cdecl;
+procedure Delphi_RenderEngine_DrawHtmlText(hDC: HDC; pManager: CPaintManagerUI; var rc: TRect; pstrText: LPCTSTR; dwTextColor: DWORD; pLinks: PRect; sLinks: CDuiString; var nLinkRects: Integer; uStyle: UINT); cdecl;
+function Delphi_RenderEngine_GenerateBitmap(pManager: CPaintManagerUI; pControl: CControlUI; rc: TRect): HBITMAP; cdecl;
+procedure Delphi_RenderEngine_GetTextSize(hDC: HDC; pManager: CPaintManagerUI; pstrText: LPCTSTR; iFont: Integer; uStyle: UINT; var Result: TSize); cdecl;
+
+
+
 implementation
 
 
@@ -7763,7 +7830,124 @@ begin
   Delphi_ListHeaderUI_EstimateSize(Self, szAvailable, Result);
 end;
 
+{ CRenderClip }
 
+class function CRenderClip.CppCreate: CRenderClip;
+begin
+  Result := Delphi_RenderClip_CppCreate;
+end;
+
+procedure CRenderClip.CppDestroy;
+begin
+  Delphi_RenderClip_CppDestroy(Self);
+end;
+
+class procedure CRenderClip.GenerateClip(hDC: HDC; rc: TRect; var clip: CRenderClip);
+begin
+  Delphi_RenderClip_GenerateClip(hDC, rc, clip);
+end;
+
+class procedure CRenderClip.GenerateRoundClip(hDC: HDC; rc: TRect; rcItem: TRect; width: Integer; height: Integer; var clip: CRenderClip);
+begin
+  Delphi_RenderClip_GenerateRoundClip(hDC, rc, rcItem, width, height, clip);
+end;
+
+class procedure CRenderClip.UseOldClipBegin(hDC: HDC; var clip: CRenderClip);
+begin
+  Delphi_RenderClip_UseOldClipBegin(hDC, clip);
+end;
+
+class procedure CRenderClip.UseOldClipEnd(hDC: HDC; var clip: CRenderClip);
+begin
+  Delphi_RenderClip_UseOldClipEnd(hDC, clip);
+end;
+
+{ CRenderEngine }
+
+class function CRenderEngine.CppCreate: CRenderEngine;
+begin
+  Result := Delphi_RenderEngine_CppCreate;
+end;
+
+procedure CRenderEngine.CppDestroy;
+begin
+  Delphi_RenderEngine_CppDestroy(Self);
+end;
+
+class function CRenderEngine.AdjustColor(dwColor: DWORD; H: Short; S: Short; L: Short): DWORD;
+begin
+  Result := Delphi_RenderEngine_AdjustColor(dwColor, H, S, L);
+end;
+
+class procedure CRenderEngine.AdjustImage(bUseHSL: Boolean; imageInfo: PImageInfo; H: Short; S: Short; L: Short);
+begin
+  Delphi_RenderEngine_AdjustImage(bUseHSL, imageInfo, H, S, L);
+end;
+
+class function CRenderEngine.LoadImage(bitmap: STRINGorID; AType: LPCTSTR; mask: DWORD): PImageInfo;
+begin
+  Result := Delphi_RenderEngine_LoadImage(bitmap, AType, mask);
+end;
+
+class procedure CRenderEngine.FreeImage(bitmap: PImageInfo; bDelete: Boolean);
+begin
+  Delphi_RenderEngine_FreeImage(bitmap, bDelete);
+end;
+
+class procedure CRenderEngine.DrawImage(hDC: HDC; hBitmap: HBITMAP; var rc: TRect; var rcPaint: TRect; var rcBmpPart: TRect; var rcCorners: TRect; alphaChannel: Boolean; uFade: Byte; hole: Boolean; xtiled: Boolean; ytiled: Boolean);
+begin
+  Delphi_RenderEngine_DrawImage_01(hDC, hBitmap, rc, rcPaint, rcBmpPart, rcCorners, alphaChannel, uFade, hole, xtiled, ytiled);
+end;
+
+class function CRenderEngine.DrawImage(hDC: HDC; pManager: CPaintManagerUI; var rcItem: TRect; var rcPaint: TRect; var drawInfo: TDrawInfo): Boolean;
+begin
+  Result := Delphi_RenderEngine_DrawImage_02(hDC, pManager, rcItem, rcPaint, drawInfo);
+end;
+
+class procedure CRenderEngine.DrawColor(hDC: HDC; var rc: TRect; color: DWORD);
+begin
+  Delphi_RenderEngine_DrawColor(hDC, rc, color);
+end;
+
+class procedure CRenderEngine.DrawGradient(hDC: HDC; var rc: TRect; dwFirst: DWORD; dwSecond: DWORD; bVertical: Boolean; nSteps: Integer);
+begin
+  Delphi_RenderEngine_DrawGradient(hDC, rc, dwFirst, dwSecond, bVertical, nSteps);
+end;
+
+class procedure CRenderEngine.DrawLine(hDC: HDC; var rc: TRect; nSize: Integer; dwPenColor: DWORD; nStyle: Integer);
+begin
+  Delphi_RenderEngine_DrawLine(hDC, rc, nSize, dwPenColor, nStyle);
+end;
+
+class procedure CRenderEngine.DrawRect(hDC: HDC; var rc: TRect; nSize: Integer; dwPenColor: DWORD);
+begin
+  Delphi_RenderEngine_DrawRect(hDC, rc, nSize, dwPenColor);
+end;
+
+class procedure CRenderEngine.DrawRoundRect(hDC: HDC; var rc: TRect; width: Integer; height: Integer; nSize: Integer; dwPenColor: DWORD);
+begin
+  Delphi_RenderEngine_DrawRoundRect(hDC, rc, width, height, nSize, dwPenColor);
+end;
+
+class procedure CRenderEngine.DrawText(hDC: HDC; pManager: CPaintManagerUI; var rc: TRect; pstrText: LPCTSTR; dwTextColor: DWORD; iFont: Integer; uStyle: UINT);
+begin
+  Delphi_RenderEngine_DrawText(hDC, pManager, rc, pstrText, dwTextColor, iFont, uStyle);
+end;
+
+class procedure CRenderEngine.DrawHtmlText(hDC: HDC; pManager: CPaintManagerUI; var rc: TRect; pstrText: LPCTSTR; dwTextColor: DWORD; pLinks: PRect; sLinks: CDuiString; var nLinkRects: Integer; uStyle: UINT);
+begin
+  Delphi_RenderEngine_DrawHtmlText(hDC, pManager, rc, pstrText, dwTextColor, pLinks, sLinks, nLinkRects, uStyle);
+end;
+
+class function CRenderEngine.GenerateBitmap(pManager: CPaintManagerUI; pControl: CControlUI; rc: TRect): HBITMAP;
+begin
+  Result := Delphi_RenderEngine_GenerateBitmap(pManager, pControl, rc);
+end;
+
+class function CRenderEngine.GetTextSize(hDC: HDC; pManager: CPaintManagerUI; pstrText: LPCTSTR; iFont: Integer; uStyle: UINT): TSize;
+begin
+  Delphi_RenderEngine_GetTextSize(hDC, pManager, pstrText, iFont, uStyle, Result);
+end;
 
 //================================CStdStringPtrMap============================
 
@@ -8880,6 +9064,34 @@ function Delphi_ListHeaderUI_GetClass; external DuiLibdll name 'Delphi_ListHeade
 function Delphi_ListHeaderUI_GetInterface; external DuiLibdll name 'Delphi_ListHeaderUI_GetInterface';
 procedure Delphi_ListHeaderUI_EstimateSize; external DuiLibdll name 'Delphi_ListHeaderUI_EstimateSize';
 
-initialization
+//================================CRenderClip============================
+
+function Delphi_RenderClip_CppCreate; external DuiLibdll name 'Delphi_RenderClip_CppCreate';
+procedure Delphi_RenderClip_CppDestroy; external DuiLibdll name 'Delphi_RenderClip_CppDestroy';
+procedure Delphi_RenderClip_GenerateClip; external DuiLibdll name 'Delphi_RenderClip_GenerateClip';
+procedure Delphi_RenderClip_GenerateRoundClip; external DuiLibdll name 'Delphi_RenderClip_GenerateRoundClip';
+procedure Delphi_RenderClip_UseOldClipBegin; external DuiLibdll name 'Delphi_RenderClip_UseOldClipBegin';
+procedure Delphi_RenderClip_UseOldClipEnd; external DuiLibdll name 'Delphi_RenderClip_UseOldClipEnd';
+
+//================================CRenderEngine============================
+
+function Delphi_RenderEngine_CppCreate; external DuiLibdll name 'Delphi_RenderEngine_CppCreate';
+procedure Delphi_RenderEngine_CppDestroy; external DuiLibdll name 'Delphi_RenderEngine_CppDestroy';
+function Delphi_RenderEngine_AdjustColor; external DuiLibdll name 'Delphi_RenderEngine_AdjustColor';
+procedure Delphi_RenderEngine_AdjustImage; external DuiLibdll name 'Delphi_RenderEngine_AdjustImage';
+function Delphi_RenderEngine_LoadImage; external DuiLibdll name 'Delphi_RenderEngine_LoadImage';
+procedure Delphi_RenderEngine_FreeImage; external DuiLibdll name 'Delphi_RenderEngine_FreeImage';
+procedure Delphi_RenderEngine_DrawImage_01; external DuiLibdll name 'Delphi_RenderEngine_DrawImage_01';
+function Delphi_RenderEngine_DrawImage_02; external DuiLibdll name 'Delphi_RenderEngine_DrawImage_02';
+procedure Delphi_RenderEngine_DrawColor; external DuiLibdll name 'Delphi_RenderEngine_DrawColor';
+procedure Delphi_RenderEngine_DrawGradient; external DuiLibdll name 'Delphi_RenderEngine_DrawGradient';
+procedure Delphi_RenderEngine_DrawLine; external DuiLibdll name 'Delphi_RenderEngine_DrawLine';
+procedure Delphi_RenderEngine_DrawRect; external DuiLibdll name 'Delphi_RenderEngine_DrawRect';
+procedure Delphi_RenderEngine_DrawRoundRect; external DuiLibdll name 'Delphi_RenderEngine_DrawRoundRect';
+procedure Delphi_RenderEngine_DrawText; external DuiLibdll name 'Delphi_RenderEngine_DrawText';
+procedure Delphi_RenderEngine_DrawHtmlText; external DuiLibdll name 'Delphi_RenderEngine_DrawHtmlText';
+function Delphi_RenderEngine_GenerateBitmap; external DuiLibdll name 'Delphi_RenderEngine_GenerateBitmap';
+procedure Delphi_RenderEngine_GetTextSize; external DuiLibdll name 'Delphi_RenderEngine_GetTextSize';
+
 
 end.
