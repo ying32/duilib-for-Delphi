@@ -14,6 +14,7 @@ uses
   System.Generics.Collections,
   Duilib,
   DuiListUI,
+  DuiRichEdit,
   DuiWindowImplBase,
   DuiConst,
   DuilibHelper,
