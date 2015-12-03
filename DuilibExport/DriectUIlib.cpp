@@ -6,6 +6,7 @@
 //       本单元由CppConvert工具自动生成于2015-11-28 16:34:01
 //       版权所有 (C) 2015-2015 ying32 All Rights Reserved
 //
+//       注：不要使用文件直接替换了，现后期已经改为手动维护了
 //*******************************************************************
 
 #include "stdafx.h"
@@ -23,9 +24,11 @@ typedef void(*FinalMessageCallBack)(LPVOID, HWND);
 typedef LRESULT(*MessageCallBack)(LPVOID, UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 typedef void(*InitWindowCallBack)(LPVOID);
 typedef CControlUI*(*CreateControlCallBack)(LPVOID, LPCTSTR);
+typedef LPCTSTR(*GetItemTextCallBack)(LPVOID, CControlUI*, int, int);
 
-
-class CDelphi_WindowImplBase : public WindowImplBase
+class CDelphi_WindowImplBase : // 好吧，你赢了,我认输
+	                           public IListCallbackUI, //这个貌似只能放第一个，他取的时候就是取第一个的，要不就另行建立一个类
+							   public WindowImplBase
 {
 protected:
 	LPVOID m_Self;
@@ -42,7 +45,7 @@ protected:
 	MessageCallBack m_MessageHandler;
 	MessageCallBack m_HandleCustomMessage;
 	CreateControlCallBack m_CreateControl;
-
+	GetItemTextCallBack m_GetItemText;
 public:
 	CDelphi_WindowImplBase() :
 		WindowImplBase(),
@@ -58,7 +61,8 @@ public:
 		m_Notify(NULL),
 		m_Click(NULL),
 		m_MessageHandler(NULL),
-		m_HandleCustomMessage(NULL) {
+		m_HandleCustomMessage(NULL),
+		m_GetItemText(NULL){
 	}
 	~CDelphi_WindowImplBase(){ printf("CDelphi_WindowImplBase Destroy\n"); };
 	void InitWindow()
@@ -86,6 +90,11 @@ public:
 	CControlUI* CreateControl(LPCTSTR pstrClass) {
 		if (m_CreateControl)
 			return	m_CreateControl(m_Self, pstrClass);
+		return NULL;
+	}
+    LPCTSTR GetItemText(CControlUI* pControl, int iIndex, int iSubItem) {
+		if (m_GetItemText)
+			return m_GetItemText(m_Self, pControl, iIndex, iSubItem);
 		return NULL;
 	}
 public:
@@ -141,7 +150,11 @@ public:
 	void SetMessageHandler(MessageCallBack Callback) { m_MessageHandler = Callback; }
 	void SetHandleCustomMessage(MessageCallBack Callback) { m_HandleCustomMessage = Callback; }
 	void SetCreateControl(CreateControlCallBack CallBack) { m_CreateControl = CallBack; }
+	void SetGetItemText(GetItemTextCallBack ACallBack) {
+		m_GetItemText = ACallBack;
+	}
 };
+
 
 typedef void(*DoEventCallBack)(LPVOID, TEventUI&);
 class CDelphi_ListUI : public CListUI {
@@ -1094,6 +1107,10 @@ DRIECTUILIB_API void Delphi_Delphi_WindowImplBase_SetHandleCustomMessage(CDelphi
 
 DRIECTUILIB_API void Delphi_Delphi_WindowImplBase_SetCreateControl(CDelphi_WindowImplBase* handle ,CreateControlCallBack CallBack) {
     handle->SetCreateControl(CallBack);
+}
+
+DRIECTUILIB_API void Delphi_Delphi_WindowImplBase_SetGetItemText(CDelphi_WindowImplBase* handle, GetItemTextCallBack ACallBack) {
+	handle->SetGetItemText(ACallBack);
 }
 
 //================================CPaintManagerUI============================
@@ -5003,3 +5020,172 @@ DRIECTUILIB_API HBITMAP Delphi_RenderEngine_GenerateBitmap(CPaintManagerUI* pMan
 DRIECTUILIB_API void Delphi_RenderEngine_GetTextSize(HDC hDC, CPaintManagerUI* pManager, LPCTSTR pstrText, int iFont, UINT uStyle, SIZE& Result) {
     Result = CRenderEngine::GetTextSize(hDC, pManager, pstrText, iFont, uStyle);
 }
+
+
+//================================CListElementUI============================
+
+//DRIECTUILIB_API CListElementUI* Delphi_ListElementUI_CppCreate() {
+//	return new CListElementUI();
+//}
+
+//DRIECTUILIB_API void Delphi_ListElementUI_CppDestroy(CListElementUI* handle) {
+//	delete handle;
+//}
+
+DRIECTUILIB_API LPCTSTR Delphi_ListElementUI_GetClass(CListElementUI* handle) {
+	return handle->GetClass();
+}
+
+DRIECTUILIB_API UINT Delphi_ListElementUI_GetControlFlags(CListElementUI* handle) {
+	return handle->GetControlFlags();
+}
+
+DRIECTUILIB_API LPVOID Delphi_ListElementUI_GetInterface(CListElementUI* handle, LPCTSTR pstrName) {
+	return handle->GetInterface(pstrName);
+}
+
+DRIECTUILIB_API void Delphi_ListElementUI_SetEnabled(CListElementUI* handle, bool bEnable) {
+	handle->SetEnabled(bEnable);
+}
+
+DRIECTUILIB_API int Delphi_ListElementUI_GetIndex(CListElementUI* handle) {
+	return handle->GetIndex();
+}
+
+DRIECTUILIB_API void Delphi_ListElementUI_SetIndex(CListElementUI* handle, int iIndex) {
+	handle->SetIndex(iIndex);
+}
+
+DRIECTUILIB_API IListOwnerUI* Delphi_ListElementUI_GetOwner(CListElementUI* handle) {
+	return handle->GetOwner();
+}
+
+DRIECTUILIB_API void Delphi_ListElementUI_SetOwner(CListElementUI* handle, CControlUI* pOwner) {
+	handle->SetOwner(pOwner);
+}
+
+DRIECTUILIB_API void Delphi_ListElementUI_SetVisible(CListElementUI* handle, bool bVisible) {
+	handle->SetVisible(bVisible);
+}
+
+DRIECTUILIB_API bool Delphi_ListElementUI_IsSelected(CListElementUI* handle) {
+	return handle->IsSelected();
+}
+
+DRIECTUILIB_API bool Delphi_ListElementUI_Select(CListElementUI* handle, bool bSelect) {
+	return handle->Select(bSelect);
+}
+
+DRIECTUILIB_API bool Delphi_ListElementUI_IsExpanded(CListElementUI* handle) {
+	return handle->IsExpanded();
+}
+
+DRIECTUILIB_API bool Delphi_ListElementUI_Expand(CListElementUI* handle, bool bExpand) {
+	return handle->Expand(bExpand);
+}
+
+DRIECTUILIB_API void Delphi_ListElementUI_Invalidate(CListElementUI* handle) {
+	handle->Invalidate();
+}
+
+DRIECTUILIB_API bool Delphi_ListElementUI_Activate(CListElementUI* handle) {
+	return handle->Activate();
+}
+
+DRIECTUILIB_API void Delphi_ListElementUI_DoEvent(CListElementUI* handle, TEventUI& event) {
+	handle->DoEvent(event);
+}
+
+DRIECTUILIB_API void Delphi_ListElementUI_SetAttribute(CListElementUI* handle, LPCTSTR pstrName, LPCTSTR pstrValue) {
+	handle->SetAttribute(pstrName, pstrValue);
+}
+
+DRIECTUILIB_API void Delphi_ListElementUI_DrawItemBk(CListElementUI* handle, HDC hDC, RECT& rcItem) {
+	handle->DrawItemBk(hDC, rcItem);
+}
+
+//================================CListLabelElementUI============================
+
+DRIECTUILIB_API CListLabelElementUI* Delphi_ListLabelElementUI_CppCreate() {
+	return new CListLabelElementUI();
+}
+
+DRIECTUILIB_API void Delphi_ListLabelElementUI_CppDestroy(CListLabelElementUI* handle) {
+	delete handle;
+}
+
+DRIECTUILIB_API LPCTSTR Delphi_ListLabelElementUI_GetClass(CListLabelElementUI* handle) {
+	return handle->GetClass();
+}
+
+DRIECTUILIB_API LPVOID Delphi_ListLabelElementUI_GetInterface(CListLabelElementUI* handle, LPCTSTR pstrName) {
+	return handle->GetInterface(pstrName);
+}
+
+DRIECTUILIB_API void Delphi_ListLabelElementUI_DoEvent(CListLabelElementUI* handle, TEventUI& event) {
+	handle->DoEvent(event);
+}
+
+DRIECTUILIB_API void Delphi_ListLabelElementUI_EstimateSize(CListLabelElementUI* handle, SIZE szAvailable, SIZE& Result) {
+	Result = handle->EstimateSize(szAvailable);
+}
+
+DRIECTUILIB_API void Delphi_ListLabelElementUI_DoPaint(CListLabelElementUI* handle, HDC hDC, RECT& rcPaint) {
+	handle->DoPaint(hDC, rcPaint);
+}
+
+DRIECTUILIB_API void Delphi_ListLabelElementUI_DrawItemText(CListLabelElementUI* handle, HDC hDC, RECT& rcItem) {
+	handle->DrawItemText(hDC, rcItem);
+}
+
+//================================CListTextElementUI============================
+
+DRIECTUILIB_API CListTextElementUI* Delphi_ListTextElementUI_CppCreate() {
+	return new CListTextElementUI();
+}
+
+DRIECTUILIB_API void Delphi_ListTextElementUI_CppDestroy(CListTextElementUI* handle) {
+	delete handle;
+}
+
+DRIECTUILIB_API LPCTSTR Delphi_ListTextElementUI_GetClass(CListTextElementUI* handle) {
+	return handle->GetClass();
+}
+
+DRIECTUILIB_API LPVOID Delphi_ListTextElementUI_GetInterface(CListTextElementUI* handle, LPCTSTR pstrName) {
+	return handle->GetInterface(pstrName);
+}
+
+DRIECTUILIB_API UINT Delphi_ListTextElementUI_GetControlFlags(CListTextElementUI* handle) {
+	return handle->GetControlFlags();
+}
+
+DRIECTUILIB_API LPCTSTR Delphi_ListTextElementUI_GetText(CListTextElementUI* handle, int iIndex) {
+	return handle->GetText(iIndex);
+}
+
+DRIECTUILIB_API void Delphi_ListTextElementUI_SetText(CListTextElementUI* handle, int iIndex, LPCTSTR pstrText) {
+	handle->SetText(iIndex, pstrText);
+}
+
+DRIECTUILIB_API void Delphi_ListTextElementUI_SetOwner(CListTextElementUI* handle, CControlUI* pOwner) {
+	handle->SetOwner(pOwner);
+}
+
+DRIECTUILIB_API CDuiString* Delphi_ListTextElementUI_GetLinkContent(CListTextElementUI* handle, int iIndex) {
+	return handle->GetLinkContent(iIndex);
+}
+
+DRIECTUILIB_API void Delphi_ListTextElementUI_DoEvent(CListTextElementUI* handle, TEventUI& event) {
+	handle->DoEvent(event);
+}
+
+DRIECTUILIB_API void Delphi_ListTextElementUI_EstimateSize(CListTextElementUI* handle, SIZE szAvailable, SIZE& Result) {
+	Result = handle->EstimateSize(szAvailable);
+}
+
+DRIECTUILIB_API void Delphi_ListTextElementUI_DrawItemText(CListTextElementUI* handle, HDC hDC, RECT& rcItem) {
+	handle->DrawItemText(hDC, rcItem);
+}
+
+
