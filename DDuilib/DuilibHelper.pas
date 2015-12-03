@@ -168,7 +168,7 @@ type
     property SelectedBkColor: DWORD read _GetSelectedBkColor write _SetSelectedBkColor;
     property ForeImage: string read _GetForeImage write _SetForeImage;
     property Group: string read _GetGroup write _SetGroup;
-    property _Selected: Boolean read _GetSelected write _SetSelected;
+    property Selected: Boolean read _GetSelected write _SetSelected;
   end;
 
   CCheckBoxUIHelper = class helper for CCheckBoxUI
@@ -645,7 +645,7 @@ end;
 
 procedure COptionUIHelper._SetSelected(const Value: Boolean);
 begin
-  Selected(Value);
+  _Selected(Value);
 end;
 
 procedure COptionUIHelper._SetSelectedBkColor(const Value: DWORD);
