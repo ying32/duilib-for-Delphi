@@ -987,7 +987,7 @@ type
     function GetGroup: LPCTSTR;
     procedure SetGroup(pStrGroupName: LPCTSTR = nil);
     function IsSelected: Boolean;
-    procedure Selected(bSelected: Boolean);
+    procedure _Selected(bSelected: Boolean);
     function EstimateSize(szAvailable: TSize): TSize;
     procedure SetAttribute(pstrName: LPCTSTR; pstrValue: LPCTSTR);
     procedure PaintStatusImage(hDC: HDC);
@@ -5871,7 +5871,7 @@ begin
   Result := Delphi_OptionUI_IsSelected(Self);
 end;
 
-procedure COptionUI.Selected(bSelected: Boolean);
+procedure COptionUI._Selected(bSelected: Boolean);
 begin
   Delphi_OptionUI_Selected(Self, bSelected);
 end;

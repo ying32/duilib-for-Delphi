@@ -22,6 +22,18 @@ uses
 type
 
   CRichEditUI = class(CContainerUI)
+  private
+    FLength: Integer;
+    function _Redo: Boolean;
+    function _Undo: Boolean;
+    function _GetText: string;
+    procedure _SetText(const Value: string);
+    function _GetTextLength: Integer;
+    function _GetSelText: string;
+    function _GetTextRange(nStart, nEnd: Integer): string;
+    function _GetDefaultCharFormat: TCharFormat2;
+    procedure _SetDefaultCharFormat(const Value: TCharFormat2);
+    procedure _SetAutoURLDetect(const Value: Boolean);
   public
     class function CppCreate: CRichEditUI;
     procedure CppDestroy;
@@ -83,8 +95,6 @@ type
     function SetWordCharFormat(var cf: CHARFORMAT2): Boolean;
     function GetParaFormat(var pf: PARAFORMAT2): DWORD;
     function SetParaFormat(var pf: PARAFORMAT2): Boolean;
-    function Redo: Boolean;
-    function Undo: Boolean;
     procedure Clear;
     procedure Copy;
     procedure Cut;
@@ -127,6 +137,26 @@ type
     procedure DoEvent(var event: TEventUI);
     procedure DoPaint(hDC: HDC; var rcPaint: TRect);
     procedure SetAttribute(pstrName: LPCTSTR; pstrValue: LPCTSTR);
+  public
+    property DefaultCharFormat: TCharFormat2 read _GetDefaultCharFormat write _SetDefaultCharFormat;
+    property Redo: Boolean read _Redo;
+    property Undo: Boolean read _Undo;
+    property Rich: Boolean read IsRich write SetRich;
+    property WordWrap: Boolean read GetWordWrap write SetWordWrap;
+    property WinStyle: LONG read GetWinStyle write SetWinStyle;
+    property TextColor: DWORD read GetTextColor write SetTextColor;
+    property WantTab: Boolean read IsWantTab write SetWantTab;
+    property WantReturn: Boolean read IsWantReturn write SetWantCtrlReturn;
+    property WantCtrolReturn: Boolean read IsWantCtrlReturn write SetWantCtrlReturn;
+    property ReadOnly: Boolean read IsReadOnly write SetReadOnly;
+    property LimitText: Integer read GetLimitText write SetLimitText;
+    property Text: string read _GetText write _SetText;
+    property Modify: Boolean read GetModify write SetModify;
+    property Length: Integer read _GetTextLength;
+    property SelText: string read _GetSelText;
+    property AutoURLDetect: Boolean read GetAutoURLDetect write _SetAutoURLDetect;
+    property EventMask: DWORD read GetEventMask write SetEventMask;
+    property TextRange[nStart, nEnd: Integer]: string read _GetTextRange;
   end;
 
 
@@ -543,12 +573,52 @@ begin
   Result := Delphi_RichEditUI_SetParaFormat(Self, pf);
 end;
 
-function CRichEditUI.Redo: Boolean;
+function CRichEditUI._GetDefaultCharFormat: TCharFormat2;
+begin
+  GetDefaultCharFormat(Result);
+end;
+
+function CRichEditUI._GetSelText: string;
+begin
+  Result := GetSelText;
+end;
+
+function CRichEditUI._GetText: string;
+begin
+  Result := GetText;
+end;
+
+function CRichEditUI._GetTextLength: Integer;
+begin
+  Result := GetTextLength;
+end;
+
+function CRichEditUI._GetTextRange(nStart, nEnd: Integer): string;
+begin
+  Result := GetTextRange(nStart, nEnd);
+end;
+
+function CRichEditUI._Redo: Boolean;
 begin
   Result := Delphi_RichEditUI_Redo(Self);
 end;
 
-function CRichEditUI.Undo: Boolean;
+procedure CRichEditUI._SetAutoURLDetect(const Value: Boolean);
+begin
+  SetAutoURLDetect(Value);
+end;
+
+procedure CRichEditUI._SetDefaultCharFormat(const Value: TCharFormat2);
+begin
+  SetDefaultCharFormat(Value);
+end;
+
+procedure CRichEditUI._SetText(const Value: string);
+begin
+  SetText(PChar(Value));
+end;
+
+function CRichEditUI._Undo: Boolean;
 begin
   Result := Delphi_RichEditUI_Undo(Self);
 end;
