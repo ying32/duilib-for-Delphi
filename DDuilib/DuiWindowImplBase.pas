@@ -41,6 +41,7 @@ type
     procedure DUI_FinalMessage(hWd: HWND); cdecl;
     function  DUI_HandleCustomMessage(uMsg: UINT; wParam: WPARAM; lParam: LPARAM; var bHandled: BOOL): LRESULT; cdecl;
     function  DUI_CreateControl(pstrStr: LPCTSTR): CControlUI; cdecl;
+    function DUI_GetItemText(pControl: CControlUI; iIndex, iSubItem: Integer): LPCTSTR; cdecl;
     // DelphiÐéº¯Êý
     procedure DoInitWindow; virtual;
     procedure DoNotify(var Msg: TNotifyUI); virtual;
@@ -50,6 +51,7 @@ type
     procedure DoFinalMessage(hWd: HWND); virtual;
     procedure DoHandleCustomMessage(var Msg: TMessage; var bHandled: BOOL); virtual;
     function DoCreateControl(pstrStr: string): CControlUI; virtual;
+    function DoGetItemText(pControl: CControlUI; iIndex, iSubItem: Integer): string; virtual;
   public
     procedure Show;
     procedure Hide;
@@ -68,10 +70,10 @@ type
     procedure Restore;
     procedure Maximize;
   public
-    constructor Create(ASkinFile, ASkinFolder, AZipFileName: string; ARType: TResourceType);  overload;
-    constructor Create(ASkinFile, ASkinFolder: string; ARType: TResourceType);  overload;
+    constructor Create(ASkinFile, ASkinFolder, AZipFileName: string; ARType: TResourceType); overload;
+    constructor Create(ASkinFile, ASkinFolder: string; ARType: TResourceType); overload;
     constructor Create(ASkinFile, ASkinFolder: string);  overload;
-    constructor Create(ASkinFile, ASkinFolder, AZipFileName: string);  overload;
+    constructor Create(ASkinFile, ASkinFolder, AZipFileName: string); overload;
     destructor Destroy; override;
     procedure OnReceive(Param: Pointer); virtual;
   public
@@ -80,6 +82,8 @@ type
     property PaintManagerUI: CPaintManagerUI read FPaintManagerUI;
     property InitSize: TSize read GetInitSize;
   end;
+
+
 
   TDuiWindowImplList = TObjectList<TDuiWindowImplBase>;
 
@@ -109,15 +113,17 @@ implementation
 
 constructor TDuiWindowImplBase.Create(ASkinFile, ASkinFolder, AZipFileName: string; ARType: TResourceType);
 begin
+  inherited Create;
   FThis := CDelphi_WindowImplBase.CppCreate;
   FPaintManagerUI := FThis.GetPaintManagerUI;
+
   FThis.SetClassName(PChar(ClassName));
   FThis.SetSkinFile(PChar(ASkinFile));
   FThis.SetSkinFolder(PChar(ASkinFolder));
   FThis.SetZipFileName('');
   FThis.SetResourceType(ARType);
-  FThis.SetDelphiSelf(Self);
 
+  FThis.SetDelphiSelf(Self);
   FThis.SetInitWindow(GetMethodAddr('DUI_InitWindow'));
   FThis.SetClick(GetMethodAddr('DUI_Click'));
   FThis.SetNotify(GetMethodAddr('DUI_Notify'));
@@ -126,6 +132,7 @@ begin
   FThis.SetHandleMessage(GetMethodAddr('DUI_HandleMessage'));
   FThis.SetHandleCustomMessage(GetMethodAddr('DUI_HandleCustomMessage'));
   FThis.SetCreateControl(GetMethodAddr('DUI_CreateControl'));
+  FThis.SetGetItemText(GetMethodAddr('DUI_GetItemText'));
 
 //  if Assigned(DuiApplication) then
 //    DuiApplication.AddDuiWindow(Self);
@@ -190,6 +197,12 @@ begin
   // virtual method
 end;
 
+function TDuiWindowImplBase.DoGetItemText(pControl: CControlUI; iIndex,
+  iSubItem: Integer): string;
+begin
+  Result := '';
+end;
+
 procedure TDuiWindowImplBase.DoHandleCustomMessage(var Msg: TMessage; var bHandled: BOOL);
 begin
   // virtual method
@@ -228,6 +241,12 @@ end;
 procedure TDuiWindowImplBase.DUI_FinalMessage(hWd: HWND);
 begin
   DoFinalMessage(hWd);
+end;
+
+function TDuiWindowImplBase.DUI_GetItemText(pControl: CControlUI; iIndex,
+  iSubItem: Integer): LPCTSTR;
+begin
+  Result := PChar(DoGetItemText(pControl, iIndex, iSubItem));
 end;
 
 function TDuiWindowImplBase.DUI_HandleCustomMessage(uMsg: UINT; wParam: WPARAM;

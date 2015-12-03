@@ -58,11 +58,12 @@ type
   TFindControlProc = FINDCONTROLPROC;
   INotifyUI = Pointer;
   IMessageFilterUI = Pointer;
-  IListCallbackUI = Pointer;
+
   CWebBrowserEventHandler = class(TObject) end;
   ITranslateAccelerator = Pointer;
   IDialogBuilderCallback = Pointer;
   IListOwnerUI = Pointer;
+  IListCallbackUI = Pointer;
   STRINGorID = type PWideChar; // ÔÝ¸Ä
   IDropTarget = Pointer;
   PLRESULT = ^LRESULT;
@@ -486,7 +487,6 @@ type
     procedure UsedVirtualWnd(bUsed: Boolean);
   end;
 
-
   CDialogBuilder = class
   public
     class function CppCreate: CDialogBuilder;
@@ -657,7 +657,9 @@ type
     procedure SetMessageHandler(Callback: Pointer);
     procedure SetHandleCustomMessage(Callback: Pointer);
     procedure SetCreateControl(CallBack: Pointer);
+    procedure SetGetItemText(ACallBack: Pointer);
   end;
+
 
   CContainerUI = class(CControlUI)
   public
@@ -1436,6 +1438,58 @@ type
     class function GetTextSize(hDC: HDC; pManager: CPaintManagerUI; pstrText: LPCTSTR; iFont: Integer; uStyle: UINT): TSize;
   end;
 
+  CListElementUI = class(CControlUI)
+  public
+//    class function CppCreate: CListElementUI;
+//    procedure CppDestroy;
+    function GetClass: LPCTSTR;
+    function GetControlFlags: UINT;
+    function GetInterface(pstrName: LPCTSTR): Pointer;
+    procedure SetEnabled(bEnable: Boolean = True);
+    function GetIndex: Integer;
+    procedure SetIndex(iIndex: Integer);
+    function GetOwner: IListOwnerUI;
+    procedure SetOwner(pOwner: CControlUI);
+    procedure SetVisible(bVisible: Boolean = True);
+    function IsSelected: Boolean;
+    function Select(bSelect: Boolean = True): Boolean;
+    function IsExpanded: Boolean;
+    function Expand(bExpand: Boolean = True): Boolean;
+    procedure Invalidate;
+    function Activate: Boolean;
+    procedure DoEvent(var event: TEventUI);
+    procedure SetAttribute(pstrName: LPCTSTR; pstrValue: LPCTSTR);
+    procedure DrawItemBk(hDC: HDC; var rcItem: TRect);
+  end;
+
+  CListLabelElementUI = class(CListElementUI)
+  public
+    class function CppCreate: CListLabelElementUI;
+    procedure CppDestroy;
+    function GetClass: LPCTSTR;
+    function GetInterface(pstrName: LPCTSTR): Pointer;
+    procedure DoEvent(var event: TEventUI);
+    function EstimateSize(szAvailable: TSize): TSize;
+    procedure DoPaint(hDC: HDC; var rcPaint: TRect);
+    procedure DrawItemText(hDC: HDC; var rcItem: TRect);
+  end;
+
+  CListTextElementUI = class(CListLabelElementUI)
+  public
+    class function CppCreate: CListTextElementUI;
+    procedure CppDestroy;
+    function GetClass: LPCTSTR;
+    function GetInterface(pstrName: LPCTSTR): Pointer;
+    function GetControlFlags: UINT;
+    function GetText(iIndex: Integer): LPCTSTR;
+    procedure SetText(iIndex: Integer; pstrText: LPCTSTR);
+    procedure SetOwner(pOwner: CControlUI);
+    function GetLinkContent(iIndex: Integer): CDuiString;
+    procedure DoEvent(var event: TEventUI);
+    function EstimateSize(szAvailable: TSize): TSize;
+    procedure DrawItemText(hDC: HDC; var rcItem: TRect);
+  end;
+
 
 //================================CStdStringPtrMap============================
 
@@ -1691,6 +1745,8 @@ procedure Delphi_Delphi_WindowImplBase_SetClick(Handle: CDelphi_WindowImplBase; 
 procedure Delphi_Delphi_WindowImplBase_SetMessageHandler(Handle: CDelphi_WindowImplBase; Callback: Pointer); cdecl;
 procedure Delphi_Delphi_WindowImplBase_SetHandleCustomMessage(Handle: CDelphi_WindowImplBase; Callback: Pointer); cdecl;
 procedure Delphi_Delphi_WindowImplBase_SetCreateControl(Handle: CDelphi_WindowImplBase; CallBack: Pointer); cdecl;
+procedure Delphi_Delphi_WindowImplBase_SetGetItemText(Handle: CDelphi_WindowImplBase; CallBack: Pointer); cdecl;
+
 
 //================================CPaintManagerUI============================
 
@@ -2582,6 +2638,56 @@ procedure Delphi_RenderEngine_DrawHtmlText(hDC: HDC; pManager: CPaintManagerUI; 
 function Delphi_RenderEngine_GenerateBitmap(pManager: CPaintManagerUI; pControl: CControlUI; rc: TRect): HBITMAP; cdecl;
 procedure Delphi_RenderEngine_GetTextSize(hDC: HDC; pManager: CPaintManagerUI; pstrText: LPCTSTR; iFont: Integer; uStyle: UINT; var Result: TSize); cdecl;
 
+
+
+//================================CListElementUI============================
+
+//function Delphi_ListElementUI_CppCreate: CListElementUI; cdecl;
+//procedure Delphi_ListElementUI_CppDestroy(Handle: CListElementUI); cdecl;
+function Delphi_ListElementUI_GetClass(Handle: CListElementUI): LPCTSTR; cdecl;
+function Delphi_ListElementUI_GetControlFlags(Handle: CListElementUI): UINT; cdecl;
+function Delphi_ListElementUI_GetInterface(Handle: CListElementUI; pstrName: LPCTSTR): Pointer; cdecl;
+procedure Delphi_ListElementUI_SetEnabled(Handle: CListElementUI; bEnable: Boolean); cdecl;
+function Delphi_ListElementUI_GetIndex(Handle: CListElementUI): Integer; cdecl;
+procedure Delphi_ListElementUI_SetIndex(Handle: CListElementUI; iIndex: Integer); cdecl;
+function Delphi_ListElementUI_GetOwner(Handle: CListElementUI): IListOwnerUI; cdecl;
+procedure Delphi_ListElementUI_SetOwner(Handle: CListElementUI; pOwner: CControlUI); cdecl;
+procedure Delphi_ListElementUI_SetVisible(Handle: CListElementUI; bVisible: Boolean); cdecl;
+function Delphi_ListElementUI_IsSelected(Handle: CListElementUI): Boolean; cdecl;
+function Delphi_ListElementUI_Select(Handle: CListElementUI; bSelect: Boolean): Boolean; cdecl;
+function Delphi_ListElementUI_IsExpanded(Handle: CListElementUI): Boolean; cdecl;
+function Delphi_ListElementUI_Expand(Handle: CListElementUI; bExpand: Boolean): Boolean; cdecl;
+procedure Delphi_ListElementUI_Invalidate(Handle: CListElementUI); cdecl;
+function Delphi_ListElementUI_Activate(Handle: CListElementUI): Boolean; cdecl;
+procedure Delphi_ListElementUI_DoEvent(Handle: CListElementUI; var event: TEventUI); cdecl;
+procedure Delphi_ListElementUI_SetAttribute(Handle: CListElementUI; pstrName: LPCTSTR; pstrValue: LPCTSTR); cdecl;
+procedure Delphi_ListElementUI_DrawItemBk(Handle: CListElementUI; hDC: HDC; var rcItem: TRect); cdecl;
+
+//================================CListLabelElementUI============================
+
+function Delphi_ListLabelElementUI_CppCreate: CListLabelElementUI; cdecl;
+procedure Delphi_ListLabelElementUI_CppDestroy(Handle: CListLabelElementUI); cdecl;
+function Delphi_ListLabelElementUI_GetClass(Handle: CListLabelElementUI): LPCTSTR; cdecl;
+function Delphi_ListLabelElementUI_GetInterface(Handle: CListLabelElementUI; pstrName: LPCTSTR): Pointer; cdecl;
+procedure Delphi_ListLabelElementUI_DoEvent(Handle: CListLabelElementUI; var event: TEventUI); cdecl;
+procedure Delphi_ListLabelElementUI_EstimateSize(Handle: CListLabelElementUI; szAvailable: TSize; var Result: TSize); cdecl;
+procedure Delphi_ListLabelElementUI_DoPaint(Handle: CListLabelElementUI; hDC: HDC; var rcPaint: TRect); cdecl;
+procedure Delphi_ListLabelElementUI_DrawItemText(Handle: CListLabelElementUI; hDC: HDC; var rcItem: TRect); cdecl;
+
+//================================CListTextElementUI============================
+
+function Delphi_ListTextElementUI_CppCreate: CListTextElementUI; cdecl;
+procedure Delphi_ListTextElementUI_CppDestroy(Handle: CListTextElementUI); cdecl;
+function Delphi_ListTextElementUI_GetClass(Handle: CListTextElementUI): LPCTSTR; cdecl;
+function Delphi_ListTextElementUI_GetInterface(Handle: CListTextElementUI; pstrName: LPCTSTR): Pointer; cdecl;
+function Delphi_ListTextElementUI_GetControlFlags(Handle: CListTextElementUI): UINT; cdecl;
+function Delphi_ListTextElementUI_GetText(Handle: CListTextElementUI; iIndex: Integer): LPCTSTR; cdecl;
+procedure Delphi_ListTextElementUI_SetText(Handle: CListTextElementUI; iIndex: Integer; pstrText: LPCTSTR); cdecl;
+procedure Delphi_ListTextElementUI_SetOwner(Handle: CListTextElementUI; pOwner: CControlUI); cdecl;
+function Delphi_ListTextElementUI_GetLinkContent(Handle: CListTextElementUI; iIndex: Integer): CDuiString; cdecl;
+procedure Delphi_ListTextElementUI_DoEvent(Handle: CListTextElementUI; var event: TEventUI); cdecl;
+procedure Delphi_ListTextElementUI_EstimateSize(Handle: CListTextElementUI; szAvailable: TSize; var Result: TSize); cdecl;
+procedure Delphi_ListTextElementUI_DrawItemText(Handle: CListTextElementUI; hDC: HDC; var rcItem: TRect); cdecl;
 
 
 implementation
@@ -3785,6 +3891,11 @@ begin
   Delphi_Delphi_WindowImplBase_SetFinalMessage(Self, Callback);
 end;
 
+procedure CDelphi_WindowImplBase.SetGetItemText(ACallBack: Pointer);
+begin
+  Delphi_Delphi_WindowImplBase_SetGetItemText(Self, ACallBack);
+end;
+
 procedure CDelphi_WindowImplBase.SetHandleMessage(Callback: Pointer);
 begin
   Delphi_Delphi_WindowImplBase_SetHandleMessage(Self, Callback);
@@ -3814,6 +3925,8 @@ procedure CDelphi_WindowImplBase.SetCreateControl(CallBack: Pointer);
 begin
   Delphi_Delphi_WindowImplBase_SetCreateControl(Self, CallBack);
 end;
+
+
 
 { CPaintManagerUI }
 
@@ -7949,6 +8062,214 @@ begin
   Delphi_RenderEngine_GetTextSize(hDC, pManager, pstrText, iFont, uStyle, Result);
 end;
 
+
+{ CListElementUI }
+
+//class function CListElementUI.CppCreate: CListElementUI;
+//begin
+//  Result := Delphi_ListElementUI_CppCreate;
+//end;
+
+//procedure CListElementUI.CppDestroy;
+//begin
+//  Delphi_ListElementUI_CppDestroy(Self);
+//end;
+
+function CListElementUI.GetClass: LPCTSTR;
+begin
+  Result := Delphi_ListElementUI_GetClass(Self);
+end;
+
+function CListElementUI.GetControlFlags: UINT;
+begin
+  Result := Delphi_ListElementUI_GetControlFlags(Self);
+end;
+
+function CListElementUI.GetInterface(pstrName: LPCTSTR): Pointer;
+begin
+  Result := Delphi_ListElementUI_GetInterface(Self, pstrName);
+end;
+
+procedure CListElementUI.SetEnabled(bEnable: Boolean);
+begin
+  Delphi_ListElementUI_SetEnabled(Self, bEnable);
+end;
+
+function CListElementUI.GetIndex: Integer;
+begin
+  Result := Delphi_ListElementUI_GetIndex(Self);
+end;
+
+procedure CListElementUI.SetIndex(iIndex: Integer);
+begin
+  Delphi_ListElementUI_SetIndex(Self, iIndex);
+end;
+
+function CListElementUI.GetOwner: IListOwnerUI;
+begin
+  Result := Delphi_ListElementUI_GetOwner(Self);
+end;
+
+procedure CListElementUI.SetOwner(pOwner: CControlUI);
+begin
+  Delphi_ListElementUI_SetOwner(Self, pOwner);
+end;
+
+procedure CListElementUI.SetVisible(bVisible: Boolean);
+begin
+  Delphi_ListElementUI_SetVisible(Self, bVisible);
+end;
+
+function CListElementUI.IsSelected: Boolean;
+begin
+  Result := Delphi_ListElementUI_IsSelected(Self);
+end;
+
+function CListElementUI.Select(bSelect: Boolean): Boolean;
+begin
+  Result := Delphi_ListElementUI_Select(Self, bSelect);
+end;
+
+function CListElementUI.IsExpanded: Boolean;
+begin
+  Result := Delphi_ListElementUI_IsExpanded(Self);
+end;
+
+function CListElementUI.Expand(bExpand: Boolean): Boolean;
+begin
+  Result := Delphi_ListElementUI_Expand(Self, bExpand);
+end;
+
+procedure CListElementUI.Invalidate;
+begin
+  Delphi_ListElementUI_Invalidate(Self);
+end;
+
+function CListElementUI.Activate: Boolean;
+begin
+  Result := Delphi_ListElementUI_Activate(Self);
+end;
+
+procedure CListElementUI.DoEvent(var event: TEventUI);
+begin
+  Delphi_ListElementUI_DoEvent(Self, event);
+end;
+
+procedure CListElementUI.SetAttribute(pstrName: LPCTSTR; pstrValue: LPCTSTR);
+begin
+  Delphi_ListElementUI_SetAttribute(Self, pstrName, pstrValue);
+end;
+
+procedure CListElementUI.DrawItemBk(hDC: HDC; var rcItem: TRect);
+begin
+  Delphi_ListElementUI_DrawItemBk(Self, hDC, rcItem);
+end;
+
+{ CListLabelElementUI }
+
+class function CListLabelElementUI.CppCreate: CListLabelElementUI;
+begin
+  Result := Delphi_ListLabelElementUI_CppCreate;
+end;
+
+procedure CListLabelElementUI.CppDestroy;
+begin
+  Delphi_ListLabelElementUI_CppDestroy(Self);
+end;
+
+function CListLabelElementUI.GetClass: LPCTSTR;
+begin
+  Result := Delphi_ListLabelElementUI_GetClass(Self);
+end;
+
+function CListLabelElementUI.GetInterface(pstrName: LPCTSTR): Pointer;
+begin
+  Result := Delphi_ListLabelElementUI_GetInterface(Self, pstrName);
+end;
+
+procedure CListLabelElementUI.DoEvent(var event: TEventUI);
+begin
+  Delphi_ListLabelElementUI_DoEvent(Self, event);
+end;
+
+function CListLabelElementUI.EstimateSize(szAvailable: TSize): TSize;
+begin
+  Delphi_ListLabelElementUI_EstimateSize(Self, szAvailable, Result);
+end;
+
+procedure CListLabelElementUI.DoPaint(hDC: HDC; var rcPaint: TRect);
+begin
+  Delphi_ListLabelElementUI_DoPaint(Self, hDC, rcPaint);
+end;
+
+procedure CListLabelElementUI.DrawItemText(hDC: HDC; var rcItem: TRect);
+begin
+  Delphi_ListLabelElementUI_DrawItemText(Self, hDC, rcItem);
+end;
+
+{ CListTextElementUI }
+
+class function CListTextElementUI.CppCreate: CListTextElementUI;
+begin
+  Result := Delphi_ListTextElementUI_CppCreate;
+end;
+
+procedure CListTextElementUI.CppDestroy;
+begin
+  Delphi_ListTextElementUI_CppDestroy(Self);
+end;
+
+function CListTextElementUI.GetClass: LPCTSTR;
+begin
+  Result := Delphi_ListTextElementUI_GetClass(Self);
+end;
+
+function CListTextElementUI.GetInterface(pstrName: LPCTSTR): Pointer;
+begin
+  Result := Delphi_ListTextElementUI_GetInterface(Self, pstrName);
+end;
+
+function CListTextElementUI.GetControlFlags: UINT;
+begin
+  Result := Delphi_ListTextElementUI_GetControlFlags(Self);
+end;
+
+function CListTextElementUI.GetText(iIndex: Integer): LPCTSTR;
+begin
+  Result := Delphi_ListTextElementUI_GetText(Self, iIndex);
+end;
+
+procedure CListTextElementUI.SetText(iIndex: Integer; pstrText: LPCTSTR);
+begin
+  Delphi_ListTextElementUI_SetText(Self, iIndex, pstrText);
+end;
+
+procedure CListTextElementUI.SetOwner(pOwner: CControlUI);
+begin
+  Delphi_ListTextElementUI_SetOwner(Self, pOwner);
+end;
+
+function CListTextElementUI.GetLinkContent(iIndex: Integer): CDuiString;
+begin
+  Result := Delphi_ListTextElementUI_GetLinkContent(Self, iIndex);
+end;
+
+procedure CListTextElementUI.DoEvent(var event: TEventUI);
+begin
+  Delphi_ListTextElementUI_DoEvent(Self, event);
+end;
+
+function CListTextElementUI.EstimateSize(szAvailable: TSize): TSize;
+begin
+  Delphi_ListTextElementUI_EstimateSize(Self, szAvailable, Result);
+end;
+
+procedure CListTextElementUI.DrawItemText(hDC: HDC; var rcItem: TRect);
+begin
+  Delphi_ListTextElementUI_DrawItemText(Self, hDC, rcItem);
+end;
+
+
 //================================CStdStringPtrMap============================
 
 function Delphi_StdStringPtrMap_CppCreate; external DuiLibdll name 'Delphi_StdStringPtrMap_CppCreate';
@@ -8203,6 +8524,8 @@ procedure Delphi_Delphi_WindowImplBase_SetClick; external DuiLibdll name 'Delphi
 procedure Delphi_Delphi_WindowImplBase_SetMessageHandler; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_SetMessageHandler';
 procedure Delphi_Delphi_WindowImplBase_SetHandleCustomMessage; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_SetHandleCustomMessage';
 procedure Delphi_Delphi_WindowImplBase_SetCreateControl; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_SetCreateControl';
+procedure Delphi_Delphi_WindowImplBase_SetGetItemText; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_SetGetItemText';
+
 
 //================================CPaintManagerUI============================
 
@@ -9092,6 +9415,56 @@ procedure Delphi_RenderEngine_DrawText; external DuiLibdll name 'Delphi_RenderEn
 procedure Delphi_RenderEngine_DrawHtmlText; external DuiLibdll name 'Delphi_RenderEngine_DrawHtmlText';
 function Delphi_RenderEngine_GenerateBitmap; external DuiLibdll name 'Delphi_RenderEngine_GenerateBitmap';
 procedure Delphi_RenderEngine_GetTextSize; external DuiLibdll name 'Delphi_RenderEngine_GetTextSize';
+
+//================================CListElementUI============================
+
+//function Delphi_ListElementUI_CppCreate; external DuiLibdll name 'Delphi_ListElementUI_CppCreate';
+//procedure Delphi_ListElementUI_CppDestroy; external DuiLibdll name 'Delphi_ListElementUI_CppDestroy';
+function Delphi_ListElementUI_GetClass; external DuiLibdll name 'Delphi_ListElementUI_GetClass';
+function Delphi_ListElementUI_GetControlFlags; external DuiLibdll name 'Delphi_ListElementUI_GetControlFlags';
+function Delphi_ListElementUI_GetInterface; external DuiLibdll name 'Delphi_ListElementUI_GetInterface';
+procedure Delphi_ListElementUI_SetEnabled; external DuiLibdll name 'Delphi_ListElementUI_SetEnabled';
+function Delphi_ListElementUI_GetIndex; external DuiLibdll name 'Delphi_ListElementUI_GetIndex';
+procedure Delphi_ListElementUI_SetIndex; external DuiLibdll name 'Delphi_ListElementUI_SetIndex';
+function Delphi_ListElementUI_GetOwner; external DuiLibdll name 'Delphi_ListElementUI_GetOwner';
+procedure Delphi_ListElementUI_SetOwner; external DuiLibdll name 'Delphi_ListElementUI_SetOwner';
+procedure Delphi_ListElementUI_SetVisible; external DuiLibdll name 'Delphi_ListElementUI_SetVisible';
+function Delphi_ListElementUI_IsSelected; external DuiLibdll name 'Delphi_ListElementUI_IsSelected';
+function Delphi_ListElementUI_Select; external DuiLibdll name 'Delphi_ListElementUI_Select';
+function Delphi_ListElementUI_IsExpanded; external DuiLibdll name 'Delphi_ListElementUI_IsExpanded';
+function Delphi_ListElementUI_Expand; external DuiLibdll name 'Delphi_ListElementUI_Expand';
+procedure Delphi_ListElementUI_Invalidate; external DuiLibdll name 'Delphi_ListElementUI_Invalidate';
+function Delphi_ListElementUI_Activate; external DuiLibdll name 'Delphi_ListElementUI_Activate';
+procedure Delphi_ListElementUI_DoEvent; external DuiLibdll name 'Delphi_ListElementUI_DoEvent';
+procedure Delphi_ListElementUI_SetAttribute; external DuiLibdll name 'Delphi_ListElementUI_SetAttribute';
+procedure Delphi_ListElementUI_DrawItemBk; external DuiLibdll name 'Delphi_ListElementUI_DrawItemBk';
+
+//================================CListLabelElementUI============================
+
+function Delphi_ListLabelElementUI_CppCreate; external DuiLibdll name 'Delphi_ListLabelElementUI_CppCreate';
+procedure Delphi_ListLabelElementUI_CppDestroy; external DuiLibdll name 'Delphi_ListLabelElementUI_CppDestroy';
+function Delphi_ListLabelElementUI_GetClass; external DuiLibdll name 'Delphi_ListLabelElementUI_GetClass';
+function Delphi_ListLabelElementUI_GetInterface; external DuiLibdll name 'Delphi_ListLabelElementUI_GetInterface';
+procedure Delphi_ListLabelElementUI_DoEvent; external DuiLibdll name 'Delphi_ListLabelElementUI_DoEvent';
+procedure Delphi_ListLabelElementUI_EstimateSize; external DuiLibdll name 'Delphi_ListLabelElementUI_EstimateSize';
+procedure Delphi_ListLabelElementUI_DoPaint; external DuiLibdll name 'Delphi_ListLabelElementUI_DoPaint';
+procedure Delphi_ListLabelElementUI_DrawItemText; external DuiLibdll name 'Delphi_ListLabelElementUI_DrawItemText';
+
+//================================CListTextElementUI============================
+
+function Delphi_ListTextElementUI_CppCreate; external DuiLibdll name 'Delphi_ListTextElementUI_CppCreate';
+procedure Delphi_ListTextElementUI_CppDestroy; external DuiLibdll name 'Delphi_ListTextElementUI_CppDestroy';
+function Delphi_ListTextElementUI_GetClass; external DuiLibdll name 'Delphi_ListTextElementUI_GetClass';
+function Delphi_ListTextElementUI_GetInterface; external DuiLibdll name 'Delphi_ListTextElementUI_GetInterface';
+function Delphi_ListTextElementUI_GetControlFlags; external DuiLibdll name 'Delphi_ListTextElementUI_GetControlFlags';
+function Delphi_ListTextElementUI_GetText; external DuiLibdll name 'Delphi_ListTextElementUI_GetText';
+procedure Delphi_ListTextElementUI_SetText; external DuiLibdll name 'Delphi_ListTextElementUI_SetText';
+procedure Delphi_ListTextElementUI_SetOwner; external DuiLibdll name 'Delphi_ListTextElementUI_SetOwner';
+function Delphi_ListTextElementUI_GetLinkContent; external DuiLibdll name 'Delphi_ListTextElementUI_GetLinkContent';
+procedure Delphi_ListTextElementUI_DoEvent; external DuiLibdll name 'Delphi_ListTextElementUI_DoEvent';
+procedure Delphi_ListTextElementUI_EstimateSize; external DuiLibdll name 'Delphi_ListTextElementUI_EstimateSize';
+procedure Delphi_ListTextElementUI_DrawItemText; external DuiLibdll name 'Delphi_ListTextElementUI_DrawItemText';
+
 
 
 end.

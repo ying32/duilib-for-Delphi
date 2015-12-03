@@ -1,13 +1,14 @@
-
 typedef LRESULT(*HandleMessageCallBack)(LPVOID, UINT, WPARAM, LPARAM);
 typedef void(*NotifyCallBack)(LPVOID, TNotifyUI&);
 typedef void(*FinalMessageCallBack)(LPVOID, HWND);
 typedef LRESULT(*MessageCallBack)(LPVOID, UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 typedef void(*InitWindowCallBack)(LPVOID);
 typedef CControlUI*(*CreateControlCallBack)(LPVOID, LPCTSTR);
+typedef LPCTSTR(*GetItemTextCallBack)(LPVOID, CControlUI*, int, int);
 
-
-class CDelphi_WindowImplBase : public WindowImplBase
+class CDelphi_WindowImplBase : // 好吧，你赢了,我认输
+	                           public IListCallbackUI,
+							   public WindowImplBase
 {
 protected:
 	LPVOID m_Self;
@@ -24,7 +25,7 @@ protected:
 	MessageCallBack m_MessageHandler;
 	MessageCallBack m_HandleCustomMessage;
 	CreateControlCallBack m_CreateControl;
-
+	GetItemTextCallBack m_GetItemText;
 public:
 	CDelphi_WindowImplBase() :
 		WindowImplBase(),
@@ -40,7 +41,8 @@ public:
 		m_Notify(NULL),
 		m_Click(NULL),
 		m_MessageHandler(NULL),
-		m_HandleCustomMessage(NULL) {
+		m_HandleCustomMessage(NULL),
+		m_GetItemText(NULL){
 	}
 	~CDelphi_WindowImplBase(){ printf("CDelphi_WindowImplBase Destroy\n"); };
 	void InitWindow()
@@ -68,6 +70,11 @@ public:
 	CControlUI* CreateControl(LPCTSTR pstrClass) {
 		if (m_CreateControl)
 			return	m_CreateControl(m_Self, pstrClass);
+		return NULL;
+	}
+    LPCTSTR GetItemText(CControlUI* pControl, int iIndex, int iSubItem) {
+		if (m_GetItemText)
+			return m_GetItemText(m_Self, pControl, iIndex, iSubItem);
 		return NULL;
 	}
 public:
@@ -123,6 +130,9 @@ public:
 	void SetMessageHandler(MessageCallBack Callback) { m_MessageHandler = Callback; }
 	void SetHandleCustomMessage(MessageCallBack Callback) { m_HandleCustomMessage = Callback; }
 	void SetCreateControl(CreateControlCallBack CallBack) { m_CreateControl = CallBack; }
+	void SetGetItemText(GetItemTextCallBack ACallBack) {
+		m_GetItemText = ACallBack;
+	}
 };
 
 typedef void(*DoEventCallBack)(LPVOID, TEventUI&);
