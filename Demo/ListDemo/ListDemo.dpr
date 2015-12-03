@@ -38,6 +38,20 @@ type
     destructor Destroy; override;
   end;
 
+    // 一个简单的菜单，可看duilib的listDemo里面有一个菜单
+  TDuiPopupMenu = class(TDuiWindowImplBase)
+  private
+    FListUI: CListUI;
+  protected
+    procedure DoNotify(var Msg: TNotifyUI); override;
+    procedure DoHandleMessage(var Msg: TMessage); override;
+    procedure DoFinalMessage(hWd: HWND); override;
+    procedure DoInitWindow; override;
+  public
+    constructor Create(AListUI: CListUI);
+  end;
+
+
 { TListMainForm }
 
 constructor TListMainForm.Create;
@@ -58,7 +72,7 @@ function TListMainForm.DoGetItemText(pControl: CControlUI; iIndex,
 var
   Litem: TListItem;
 begin
-  if (pControl.Tag <> -1) and (pControl.Tag < FList.Count) then
+  if (pControl.Tag <> NativeUInt(-1)) and (pControl.Tag < FList.Count) then
   begin
     Litem := FList[pControl.Tag];
     case iSubItem of
@@ -84,6 +98,8 @@ end;
 procedure TListMainForm.DoNotify(var Msg: TNotifyUI);
 var
   LType, LCtlName: string;
+  iIndex: Integer;
+  pList: CListUI;
 begin
   inherited;
   LType := Msg.sType;
@@ -96,6 +112,29 @@ begin
       Minimize
     else if LCtlName.Equals('btn') then
       OnSearch;
+  end else if LType.Equals(DUI_EVENT_ITEMACTIVATE) then
+  begin
+    iIndex := Msg.pSender.Tag;
+    if (iIndex <> -1) and (iIndex < FList.Count) then
+    begin
+      MessageBox(0, PChar(Format('Col1=%s, Col2=%s, Col3=%s',
+        [FList[iIndex].Col1, FList[iIndex].Col2, FList[iIndex].Col3])), nil, MB_OK);
+    end;
+  end else if LType.Equals(DUI_EVENT_MENU) then
+  begin
+    if LCtlName.Equals('domainlist') then
+    begin
+      TDuiPopupMenu.Create(CListUI(msg.pSender));
+    end;
+  end else if LType.Equals('menu_Delete') then
+  begin
+    pList := CListUI(Msg.pSender);
+    if pList <> nil then
+    begin
+       iIndex := pList.GetCurSel;
+       if (iIndex <> -1) and (iIndex < FList.Count) then
+         pList.RemoveAt(iIndex);
+    end;
   end;
 end;
 
@@ -134,6 +173,69 @@ begin
   FSearch.Enabled := True;
 end;
 
+
+{ TDuiPopupMenu }
+
+constructor TDuiPopupMenu.Create(AListUI: CListUI);
+begin
+  inherited Create('menu.xml', ExtractFilePath(ParamStr(0)) + 'skin\QQRes\');
+  FListUI := AListUI;
+  CreateWindow(0, 'opupMenu', WS_POPUP, WS_EX_TOOLWINDOW);
+  Show;
+end;
+
+procedure TDuiPopupMenu.DoFinalMessage(hWd: HWND);
+begin
+  inherited;
+  Free;
+end;
+
+procedure TDuiPopupMenu.DoHandleMessage(var Msg: TMessage);
+begin
+  inherited;
+  if Msg.Msg = WM_KILLFOCUS then
+  begin
+    Msg.Result := 1;
+    Close;
+  end;
+end;
+
+procedure TDuiPopupMenu.DoInitWindow;
+var
+  P: TPoint;
+  LSize: TSize;
+  pList: CListUI;
+  nSel: Integer;
+  pControl: CControlUI;
+begin
+  inherited;
+  pList := CListUI(FListUI);
+  if pList <> nil then
+  begin
+    nSel := pList.GetCurSel;
+    if nSel < 0 then
+    begin
+      pControl := FindControl('menu_Delete');
+      if pControl <> nil then
+        pControl.Enabled := False;
+    end;
+  end;
+  GetCursorPos(P);
+  LSize := InitSize;
+  MoveWindow(Handle, P.X, P.Y, LSize.cx, LSize.cy, False);
+end;
+
+procedure TDuiPopupMenu.DoNotify(var Msg: TNotifyUI);
+begin
+  inherited;
+  if Msg.sType = 'itemselect' then
+    Close
+  else if Msg.sType = 'itemclick' then
+  begin
+    if Assigned(FListUI) and (Msg.pSender.Name = 'menu_Delete') then
+      FListUI.GetManager.SendNotify(FListUI, 'menu_Delete', 0, 0, True);
+  end;
+end;
 
 
 var
