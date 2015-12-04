@@ -243,7 +243,6 @@ var
   rcWindow: TRect;
 begin
   inherited;
-  //Writeln('DoNotify++++++++++++++++', string(Msg.sType));
 
   LCtlName := msg.pSender.Name;
   LType := Msg.sType;
@@ -880,7 +879,7 @@ begin
     parent := FRootNode;
 
   if not FDlgBuilder.GetMarkup.IsValid then
-    pListElement := CListContainerElementUI(FDlgBuilder.Create('friend_list_item.xml', nil, nil, FPaintManager))
+    pListElement := CListContainerElementUI(FDlgBuilder.Create('friend_list_item.xml', '', nil, FPaintManager))
   else
     pListElement := CListContainerElementUI(FDlgBuilder.Create(nil, FPaintManager));
   if pListElement = nil then

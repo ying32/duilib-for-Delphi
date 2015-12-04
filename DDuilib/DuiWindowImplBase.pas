@@ -118,9 +118,9 @@ begin
   FThis := CDelphi_WindowImplBase.CppCreate;
   FPaintManagerUI := FThis.GetPaintManagerUI;
 
-  FThis.SetClassName(PChar(ClassName));
-  FThis.SetSkinFile(PChar(ASkinFile));
-  FThis.SetSkinFolder(PChar(ASkinFolder));
+  FThis.SetClassName(ClassName);
+  FThis.SetSkinFile(ASkinFile);
+  FThis.SetSkinFolder(ASkinFolder);
   FThis.SetZipFileName('');
   FThis.SetResourceType(ARType);
 
@@ -167,19 +167,19 @@ end;
 procedure TDuiWindowImplBase.CreateDuiWindow(AParent: HWND; ATitle: string);
 begin
   FParentHandle := AParent;
-  FThis.CreateDuiWindow(AParent, PChar(ATitle), UI_WNDSTYLE_FRAME, WS_EX_STATICEDGE);
+  FThis.CreateDuiWindow(AParent, ATitle, UI_WNDSTYLE_FRAME, WS_EX_STATICEDGE);
 end;
 
 procedure TDuiWindowImplBase.CreateWindow(hwndParent: HWND; ATitle: string;
   dwStyle, dwExStyle: DWORD; x, y, cx, cy: Integer; hMenu: HMENU);
 begin
-  FThis.Create(hwndParent, PChar(ATitle), dwStyle, dwExStyle, x, y, cx, cy, hMenu);
+  FThis.Create(hwndParent, ATitle, dwStyle, dwExStyle, x, y, cx, cy, hMenu);
 end;
 
 procedure TDuiWindowImplBase.CreateWindow(hwndParent: HWND; ATitle: string;
   dwStyle, dwExStyle: DWORD; const rc: TRect; hMenu: HMENU);
 begin
-  FThis.Create(hwndParent, PChar(ATitle), dwStyle, dwExStyle, rc, hMenu);
+  FThis.Create(hwndParent, ATitle, dwStyle, dwExStyle, rc, hMenu);
 end;
 
 procedure TDuiWindowImplBase.DoClick(var Msg: TNotifyUI);
@@ -319,7 +319,7 @@ end;
 
 function TDuiWindowImplBase.FindControl(const AName: string): CControlUI;
 begin
-  Result := FPaintManagerUI.FindControl(PChar(AName));
+  Result := FPaintManagerUI.FindControl(AName);
 end;
 
 procedure TDuiWindowImplBase.Hide;
