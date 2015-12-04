@@ -658,6 +658,8 @@ type
     procedure SetHandleCustomMessage(Callback: Pointer);
     procedure SetCreateControl(CallBack: Pointer);
     procedure SetGetItemText(ACallBack: Pointer);
+    procedure SetGetClassStyle(uStyle: UINT);
+    procedure RemoveThisInPaintManager;
   end;
 
 
@@ -1746,7 +1748,8 @@ procedure Delphi_Delphi_WindowImplBase_SetMessageHandler(Handle: CDelphi_WindowI
 procedure Delphi_Delphi_WindowImplBase_SetHandleCustomMessage(Handle: CDelphi_WindowImplBase; Callback: Pointer); cdecl;
 procedure Delphi_Delphi_WindowImplBase_SetCreateControl(Handle: CDelphi_WindowImplBase; CallBack: Pointer); cdecl;
 procedure Delphi_Delphi_WindowImplBase_SetGetItemText(Handle: CDelphi_WindowImplBase; CallBack: Pointer); cdecl;
-
+procedure Delphi_Delphi_WindowImplBase_SetGetClassStyle(Handle: CDelphi_WindowImplBase; uStyle: UINT); cdecl;
+procedure Delphi_Delphi_WindowImplBase_RemoveThisInPaintManager(Handle: CDelphi_WindowImplBase); cdecl;
 
 //================================CPaintManagerUI============================
 
@@ -3831,6 +3834,11 @@ begin
   Result := Delphi_Delphi_WindowImplBase_AddVirtualWnd(Self, strName, pObject);
 end;
 
+procedure CDelphi_WindowImplBase.RemoveThisInPaintManager;
+begin
+  Delphi_Delphi_WindowImplBase_RemoveThisInPaintManager(Self);
+end;
+
 function CDelphi_WindowImplBase.RemoveVirtualWnd(strName: CDuiString): Boolean;
 begin
   Result := Delphi_Delphi_WindowImplBase_RemoveVirtualWnd(Self, strName);
@@ -3889,6 +3897,11 @@ end;
 procedure CDelphi_WindowImplBase.SetFinalMessage(Callback: Pointer);
 begin
   Delphi_Delphi_WindowImplBase_SetFinalMessage(Self, Callback);
+end;
+
+procedure CDelphi_WindowImplBase.SetGetClassStyle(uStyle: UINT);
+begin
+  Delphi_Delphi_WindowImplBase_SetGetClassStyle(Self, uStyle);
 end;
 
 procedure CDelphi_WindowImplBase.SetGetItemText(ACallBack: Pointer);
@@ -8525,8 +8538,8 @@ procedure Delphi_Delphi_WindowImplBase_SetMessageHandler; external DuiLibdll nam
 procedure Delphi_Delphi_WindowImplBase_SetHandleCustomMessage; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_SetHandleCustomMessage';
 procedure Delphi_Delphi_WindowImplBase_SetCreateControl; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_SetCreateControl';
 procedure Delphi_Delphi_WindowImplBase_SetGetItemText; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_SetGetItemText';
-
-
+procedure Delphi_Delphi_WindowImplBase_SetGetClassStyle; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_SetGetClassStyle';
+procedure Delphi_Delphi_WindowImplBase_RemoveThisInPaintManager; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_RemoveThisInPaintManager';
 //================================CPaintManagerUI============================
 
 function Delphi_PaintManagerUI_CppCreate; external DuiLibdll name 'Delphi_PaintManagerUI_CppCreate';

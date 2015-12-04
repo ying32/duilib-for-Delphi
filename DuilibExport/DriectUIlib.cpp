@@ -36,6 +36,7 @@ protected:
 	LPCTSTR m_SkinFile;
 	LPCTSTR m_SkinFolder;
 	LPCTSTR m_ZipFileName;
+	UINT m_GetClassStyle;
 	UILIB_RESOURCETYPE m_RType;
 	InitWindowCallBack m_InitWindow;
 	FinalMessageCallBack m_FinalMessage;
@@ -62,7 +63,8 @@ public:
 		m_Click(NULL),
 		m_MessageHandler(NULL),
 		m_HandleCustomMessage(NULL),
-		m_GetItemText(NULL){
+		m_GetItemText(NULL) {
+		m_GetClassStyle = WindowImplBase::GetClassStyle();
 	}
 	~CDelphi_WindowImplBase(){ printf("CDelphi_WindowImplBase Destroy\n"); };
 	void InitWindow()
@@ -72,7 +74,7 @@ public:
 	}
 	void OnFinalMessage(HWND hWnd)
 	{
-		WindowImplBase::OnFinalMessage(hWnd);
+		//WindowImplBase::OnFinalMessage(hWnd); // 另作处理，不然有些窗口不想关的结果资源被释放了
 		if (m_FinalMessage)
 			m_FinalMessage(m_Self, hWnd);
 	}
@@ -103,6 +105,7 @@ public:
 	CDuiString GetSkinFolder() { return m_SkinFolder; };
 	CDuiString GetZIPFileName() const { return m_ZipFileName; };
 	UILIB_RESOURCETYPE GetResourceType() const { return m_RType; };
+	UINT GetClassStyle() const { return m_GetClassStyle; };
 	LRESULT MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		LRESULT lRes = 0;
@@ -152,6 +155,12 @@ public:
 	void SetCreateControl(CreateControlCallBack CallBack) { m_CreateControl = CallBack; }
 	void SetGetItemText(GetItemTextCallBack ACallBack) {
 		m_GetItemText = ACallBack;
+	}
+	void SetGetClassStyle(UINT uStyle) { m_GetClassStyle = uStyle; };
+	void RemoveThisInPaintManager() {
+		m_PaintManager.RemovePreMessageFilter(this);
+		m_PaintManager.RemoveNotifier(this);
+		m_PaintManager.ReapObjects(m_PaintManager.GetRoot());
 	}
 };
 
@@ -1111,6 +1120,14 @@ DRIECTUILIB_API void Delphi_Delphi_WindowImplBase_SetCreateControl(CDelphi_Windo
 
 DRIECTUILIB_API void Delphi_Delphi_WindowImplBase_SetGetItemText(CDelphi_WindowImplBase* handle, GetItemTextCallBack ACallBack) {
 	handle->SetGetItemText(ACallBack);
+}
+
+DRIECTUILIB_API void Delphi_Delphi_WindowImplBase_SetGetClassStyle(CDelphi_WindowImplBase* handle, UINT uStyle) {
+	handle->SetGetClassStyle(uStyle);
+}
+
+DRIECTUILIB_API void Delphi_Delphi_WindowImplBase_RemoveThisInPaintManager(CDelphi_WindowImplBase* handle) {
+	handle->RemoveThisInPaintManager();
 }
 
 //================================CPaintManagerUI============================
