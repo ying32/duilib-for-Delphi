@@ -15,8 +15,8 @@ unit DuiWebBrowser;
 interface
 
 uses
-  Winapi.Windows,
-  Winapi.ActiveX,
+  Windows,
+  ActiveX,
   SHDocVw,
   Duilib,
   DuiActiveX;

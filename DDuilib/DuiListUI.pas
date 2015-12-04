@@ -15,8 +15,8 @@ unit DuiListUI;
 interface
 
 uses
-  Winapi.Windows,
-  System.SysUtils,
+  Windows,
+  SysUtils,
   DuiBase,
   Duilib;
 

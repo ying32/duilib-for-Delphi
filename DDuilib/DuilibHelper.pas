@@ -15,8 +15,8 @@ unit DuilibHelper;
 interface
 
 uses
-  Winapi.Windows,
-  System.DateUtils,
+  Windows,
+  DateUtils,
   Duilib;
 
 

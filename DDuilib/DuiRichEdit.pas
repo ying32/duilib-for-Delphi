@@ -15,15 +15,14 @@ unit DuiRichEdit;
 interface
 
 uses
-  Winapi.Windows,
-  Winapi.RichEdit,
+  Windows,
+  RichEdit,
   Duilib;
 
 type
 
   CRichEditUI = class(CContainerUI)
   private
-    FLength: Integer;
     function _Redo: Boolean;
     function _Undo: Boolean;
     function _GetText: string;
@@ -34,6 +33,7 @@ type
     function _GetDefaultCharFormat: TCharFormat2;
     procedure _SetDefaultCharFormat(const Value: TCharFormat2);
     procedure _SetAutoURLDetect(const Value: Boolean);
+    procedure _SetEventMask(const Value: DWORD);
   public
     class function CppCreate: CRichEditUI;
     procedure CppDestroy;
@@ -155,7 +155,7 @@ type
     property Length: Integer read _GetTextLength;
     property SelText: string read _GetSelText;
     property AutoURLDetect: Boolean read GetAutoURLDetect write _SetAutoURLDetect;
-    property EventMask: DWORD read GetEventMask write SetEventMask;
+    property EventMask: DWORD read GetEventMask write _SetEventMask;
     property TextRange[nStart, nEnd: Integer]: string read _GetTextRange;
   end;
 
@@ -609,8 +609,16 @@ begin
 end;
 
 procedure CRichEditUI._SetDefaultCharFormat(const Value: TCharFormat2);
+var
+  LFmt: TCharFormat2;
 begin
-  SetDefaultCharFormat(Value);
+  LFmt := Value;
+  SetDefaultCharFormat(LFmt);
+end;
+
+procedure CRichEditUI._SetEventMask(const Value: DWORD);
+begin
+  SetEventMask(Value);
 end;
 
 procedure CRichEditUI._SetText(const Value: string);
