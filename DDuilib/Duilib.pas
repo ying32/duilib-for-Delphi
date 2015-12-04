@@ -305,8 +305,8 @@ type
   public
     class function CppCreate: CNotifyPump;
     procedure CppDestroy;
-    function AddVirtualWnd(strName: CDuiString; pObject: CNotifyPump): Boolean;
-    function RemoveVirtualWnd(strName: CDuiString): Boolean;
+    function AddVirtualWnd(strName: string; pObject: CNotifyPump): Boolean;
+    function RemoveVirtualWnd(strName: string): Boolean;
     procedure NotifyPump(var msg: TNotifyUI);
     function LoopDispatch(var msg: TNotifyUI): Boolean;
   end;
@@ -663,8 +663,8 @@ type
     function SendMessage(uMsg: UINT; wParam: WPARAM = 0; lParam: LPARAM = 0): LRESULT;
     function PostMessage(uMsg: UINT; wParam: WPARAM = 0; lParam: LPARAM = 0): LRESULT;
     procedure ResizeClient(cx: Integer = -1; cy: Integer = -1);
-    function AddVirtualWnd(strName: CDuiString; pObject: CNotifyPump): Boolean;
-    function RemoveVirtualWnd(strName: CDuiString): Boolean;
+    function AddVirtualWnd(strName: string; pObject: CNotifyPump): Boolean;
+    function RemoveVirtualWnd(strName: string): Boolean;
     procedure NotifyPump(var msg: TNotifyUI);
     function LoopDispatch(var msg: TNotifyUI): Boolean;
     function GetPaintManagerUI: CPaintManagerUI;
@@ -1369,7 +1369,7 @@ type
     function GetClass: string;
     function GetControlFlags: UINT;
     function GetInterface(pstrName: string): Pointer;
-    function GetLinkContent(iIndex: Integer): CDuiString;
+    function GetLinkContent(iIndex: Integer): string;
     procedure DoEvent(var event: TEventUI);
     function EstimateSize(szAvailable: TSize): TSize;
     procedure PaintText(hDC: HDC);
@@ -1390,7 +1390,7 @@ type
     procedure SetVisibleTag(_IsVisible: Boolean);
     function GetVisibleTag: Boolean;
     procedure SetItemText(pstrValue: string);
-    function GetItemText: CDuiString;
+    function GetItemText: string;
     procedure CheckBoxSelected(_Selected: Boolean);
     function IsCheckBoxSelected: Boolean;
     function IsHasChild: Boolean;
@@ -3001,12 +3001,12 @@ begin
   Delphi_NotifyPump_CppDestroy(Self);
 end;
 
-function CNotifyPump.AddVirtualWnd(strName: CDuiString; pObject: CNotifyPump): Boolean;
+function CNotifyPump.AddVirtualWnd(strName: string; pObject: CNotifyPump): Boolean;
 begin
   Result := Delphi_NotifyPump_AddVirtualWnd(Self, strName, pObject);
 end;
 
-function CNotifyPump.RemoveVirtualWnd(strName: CDuiString): Boolean;
+function CNotifyPump.RemoveVirtualWnd(strName: string): Boolean;
 begin
   Result := Delphi_NotifyPump_RemoveVirtualWnd(Self, strName);
 end;
@@ -3896,7 +3896,7 @@ begin
   Delphi_Delphi_WindowImplBase_ResizeClient(Self, cx, cy);
 end;
 
-function CDelphi_WindowImplBase.AddVirtualWnd(strName: CDuiString; pObject: CNotifyPump): Boolean;
+function CDelphi_WindowImplBase.AddVirtualWnd(strName: string; pObject: CNotifyPump): Boolean;
 begin
   Result := Delphi_Delphi_WindowImplBase_AddVirtualWnd(Self, strName, pObject);
 end;
@@ -3906,7 +3906,7 @@ begin
   Delphi_Delphi_WindowImplBase_RemoveThisInPaintManager(Self);
 end;
 
-function CDelphi_WindowImplBase.RemoveVirtualWnd(strName: CDuiString): Boolean;
+function CDelphi_WindowImplBase.RemoveVirtualWnd(strName: string): Boolean;
 begin
   Result := Delphi_Delphi_WindowImplBase_RemoveVirtualWnd(Self, strName);
 end;
@@ -7496,7 +7496,7 @@ begin
   Result := Delphi_TextUI_GetInterface(Self, PChar(pstrName));
 end;
 
-function CTextUI.GetLinkContent(iIndex: Integer): CDuiString;
+function CTextUI.GetLinkContent(iIndex: Integer): string;
 begin
   Result := Delphi_TextUI_GetLinkContent(Self, iIndex);
 end;
@@ -7583,7 +7583,7 @@ begin
   Delphi_TreeNodeUI_SetItemText(Self, PChar(pstrValue));
 end;
 
-function CTreeNodeUI.GetItemText: CDuiString;
+function CTreeNodeUI.GetItemText: string;
 begin
   Result := Delphi_TreeNodeUI_GetItemText(Self);
 end;
