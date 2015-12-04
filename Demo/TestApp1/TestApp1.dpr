@@ -21,7 +21,7 @@ type
   protected
     procedure DoInitWindow; override;
     procedure DoNotify(var Msg: TNotifyUI); override;
-    procedure DoHandleMessage(var Msg: TMessage); override;
+    procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
   public
     constructor Create;
     destructor Destroy; override;
@@ -33,20 +33,31 @@ constructor TFrameWindowWnd.Create;
 begin
   inherited Create('test1.xml', 'skin\TestAppRes');
   CreateWindow(0, '这是一个最简单的测试用exe，修改test1.xml就可以看到效果', UI_WNDSTYLE_FRAME, WS_EX_WINDOWEDGE);
-  Writeln('handle=', Handle);
-  SetWindowLongPtr(Handle, GWL_STYLE, GetWindowLongPtr(Handle, GWL_STYLE) or WS_CAPTION or WS_SYSMENU);
+  SetClassStyle(UI_CLASSSTYLE_FRAME or CS_DBLCLKS);
+  // 默认的这个类是去掉标题栏的，所以要重新补回
+  SetWindowLong(Handle, GWL_STYLE, GetWindowLong(Handle, GWL_STYLE) or WS_CAPTION);
+  SetWindowPos(Handle, HWND_TOP, 0, 0, 0, 0, SWP_FRAMECHANGED or SWP_NOSIZE or SWP_NOMOVE);
 end;
 
 destructor TFrameWindowWnd.Destroy;
 begin
-
+  RemoveThisInPaintManager;
   inherited;
 end;
 
-procedure TFrameWindowWnd.DoHandleMessage(var Msg: TMessage);
+procedure TFrameWindowWnd.DoHandleMessage(var Msg: TMessage; var bHandled: BOOL);
 begin
-  inherited;
-
+  case Msg.Msg of
+    // 拦截三个方法,不让标题栏被绘制
+    WM_NCACTIVATE,
+    WM_NCCALCSIZE,
+    WM_NCPAINT:
+      begin
+        bHandled := False;
+      end;
+    WM_ERASEBKGND: Msg.Result := 1;
+    WM_DESTROY: PostQuitMessage(0);
+  end;
 end;
 
 procedure TFrameWindowWnd.DoInitWindow;

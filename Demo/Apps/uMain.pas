@@ -23,7 +23,7 @@ type
   TAppsWindow = class(TDuiWindowImplBase)
   protected
     procedure DoNotify(var Msg: TNotifyUI); override;
-    procedure DoHandleMessage(var Msg: TMessage); override;
+    procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
     function DoCreateControl(pstrStr: string): CControlUI; override;
     procedure DoInitWindow; override;
   public
@@ -55,7 +55,7 @@ begin
   Result := nil;
 end;
 
-procedure TAppsWindow.DoHandleMessage(var Msg: TMessage);
+procedure TAppsWindow.DoHandleMessage(var Msg: TMessage; var bHandled: BOOL);
 begin
   inherited;
 

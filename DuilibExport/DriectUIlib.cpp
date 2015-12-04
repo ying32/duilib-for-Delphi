@@ -18,7 +18,7 @@ using namespace DuiLib;
 
 
 
-typedef LRESULT(*HandleMessageCallBack)(LPVOID, UINT, WPARAM, LPARAM);
+typedef LRESULT(*HandleMessageCallBack)(LPVOID, UINT, WPARAM, LPARAM, BOOL&);
 typedef void(*NotifyCallBack)(LPVOID, TNotifyUI&);
 typedef void(*FinalMessageCallBack)(LPVOID, HWND);
 typedef LRESULT(*MessageCallBack)(LPVOID, UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -66,7 +66,7 @@ public:
 		m_GetItemText(NULL) {
 		m_GetClassStyle = WindowImplBase::GetClassStyle();
 	}
-	~CDelphi_WindowImplBase(){ printf("CDelphi_WindowImplBase Destroy\n"); };
+	~CDelphi_WindowImplBase(){ };
 	void InitWindow()
 	{
 		if (m_InitWindow)
@@ -123,10 +123,22 @@ public:
 	{
 		if (m_HandleMessage)
 		{
-			LRESULT lRes = m_HandleMessage(m_Self, uMsg, wParam, lParam);
+			// 这样是为了规避原来的那个事件问题
+			BOOL bHandled = TRUE;
+			LRESULT lRes = m_HandleMessage(m_Self, uMsg, wParam, lParam, bHandled);
+			if (!bHandled) {
+	
+				lRes = HandleCustomMessage(uMsg, wParam, lParam, bHandled);
+				if (bHandled) return lRes;
+
+				if (m_PaintManager.MessageHandler(uMsg, wParam, lParam, lRes))
+					return lRes;
+				// 绕过父类的HandleMessage直接调用父类的父类方法
+				return CWindowWnd::HandleMessage(uMsg, wParam, lParam);
+			}
 			if (lRes) return lRes;
 		}
-		return  WindowImplBase::HandleMessage(uMsg, wParam, lParam);
+		return WindowImplBase::HandleMessage(uMsg, wParam, lParam);
 	}
 	LRESULT HandleCustomMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{

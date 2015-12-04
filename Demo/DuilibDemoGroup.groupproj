@@ -1,0 +1,72 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{90855AD0-6F43-4FAB-976C-CBB02001B3DA}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Apps\Apps.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="ListDemo\ListDemo.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="QQDemo\DDuilibDemo.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="TestApp1\TestApp1.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="Apps">
+        <MSBuild Projects="Apps\Apps.dproj"/>
+    </Target>
+    <Target Name="Apps:Clean">
+        <MSBuild Projects="Apps\Apps.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Apps:Make">
+        <MSBuild Projects="Apps\Apps.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ListDemo">
+        <MSBuild Projects="ListDemo\ListDemo.dproj"/>
+    </Target>
+    <Target Name="ListDemo:Clean">
+        <MSBuild Projects="ListDemo\ListDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ListDemo:Make">
+        <MSBuild Projects="ListDemo\ListDemo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="DDuilibDemo">
+        <MSBuild Projects="QQDemo\DDuilibDemo.dproj"/>
+    </Target>
+    <Target Name="DDuilibDemo:Clean">
+        <MSBuild Projects="QQDemo\DDuilibDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="DDuilibDemo:Make">
+        <MSBuild Projects="QQDemo\DDuilibDemo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="TestApp1">
+        <MSBuild Projects="TestApp1\TestApp1.dproj"/>
+    </Target>
+    <Target Name="TestApp1:Clean">
+        <MSBuild Projects="TestApp1\TestApp1.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TestApp1:Make">
+        <MSBuild Projects="TestApp1\TestApp1.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="Apps;ListDemo;DDuilibDemo;TestApp1"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="Apps:Clean;ListDemo:Clean;DDuilibDemo:Clean;TestApp1:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="Apps:Make;ListDemo:Make;DDuilibDemo:Make;TestApp1:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

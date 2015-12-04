@@ -32,7 +32,7 @@ type
   protected
     procedure DoInitWindow; override;
     procedure DoNotify(var Msg: TNotifyUI); override;
-    procedure DoHandleMessage(var Msg: TMessage); override;
+    procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
   public
     constructor Create;
     destructor Destroy; override;
@@ -44,7 +44,7 @@ type
     FListUI: CListUI;
   protected
     procedure DoNotify(var Msg: TNotifyUI); override;
-    procedure DoHandleMessage(var Msg: TMessage); override;
+    procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
     procedure DoFinalMessage(hWd: HWND); override;
     procedure DoInitWindow; override;
   public
@@ -83,7 +83,7 @@ begin
   end else Result := '';
 end;
 
-procedure TListMainForm.DoHandleMessage(var Msg: TMessage);
+procedure TListMainForm.DoHandleMessage(var Msg: TMessage; var bHandled: BOOL);
 begin
   inherited;
 
@@ -190,7 +190,7 @@ begin
   Free;
 end;
 
-procedure TDuiPopupMenu.DoHandleMessage(var Msg: TMessage);
+procedure TDuiPopupMenu.DoHandleMessage(var Msg: TMessage; var bHandled: BOOL);
 begin
   inherited;
   if Msg.Msg = WM_KILLFOCUS then

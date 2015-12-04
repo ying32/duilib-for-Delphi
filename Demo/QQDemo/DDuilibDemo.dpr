@@ -124,7 +124,7 @@ type
   protected
     procedure DoNotify(var Msg: TNotifyUI); override;
     procedure DoFinalMessage(hWd: HWND); override;
-    procedure DoHandleMessage(var Msg: TMessage); override;
+    procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
   public
     constructor Create(const bgimage: string; bkcolor: DWORD; myselft_info, friend_info: TFriendListItemInfo);
     procedure OnReceive(Param: Pointer); override;
@@ -138,7 +138,7 @@ type
   protected
     procedure DoNotify(var Msg: TNotifyUI); override;
     procedure DoInitWindow; override;
-    procedure DoHandleMessage(var Msg: TMessage); override;
+    procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
     procedure DoFinalMessage(hWd: HWND); override;
   public
     constructor Create(main_frame: TXGuiFoundation; rcParentWindow: TRect);
@@ -151,7 +151,7 @@ type
   protected
     procedure DoNotify(var Msg: TNotifyUI); override;
     procedure DoInitWindow; override;
-    procedure DoHandleMessage(var Msg: TMessage); override;
+    procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
     procedure DoFinalMessage(hWd: HWND); override;
   public
     constructor Create(ADialog: TChatDialog; APoint: TPoint);
@@ -184,7 +184,7 @@ type
     FChatDialog: TChatDialog;
   protected
     procedure DoNotify(var Msg: TNotifyUI); override;
-    procedure DoHandleMessage(var Msg: TMessage); override;
+    procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
     procedure DoFinalMessage(hWd: HWND); override;
     procedure DoInitWindow; override;
   public
@@ -621,7 +621,7 @@ begin
   Free;
 end;
 
-procedure TChatDialog.DoHandleMessage(var Msg: TMessage);
+procedure TChatDialog.DoHandleMessage(var Msg: TMessage; var bHandled: BOOL);
 var
   LPoint: TPoint;
   LControl: CControlUI;
@@ -1186,7 +1186,7 @@ begin
   Free;
 end;
 
-procedure TColorSkinWindow.DoHandleMessage(var Msg: TMessage);
+procedure TColorSkinWindow.DoHandleMessage(var Msg: TMessage; var bHandled: BOOL);
 begin
   if Msg.Msg = WM_KILLFOCUS then
   begin
@@ -1307,7 +1307,7 @@ begin
   Free;
 end;
 
-procedure TEmotionList.DoHandleMessage(var Msg: TMessage);
+procedure TEmotionList.DoHandleMessage(var Msg: TMessage; var bHandled: BOOL);
 begin
   inherited;
   if Msg.Msg = WM_KILLFOCUS then
@@ -1356,7 +1356,7 @@ begin
   Free;
 end;
 
-procedure TRichEditSampleMenu.DoHandleMessage(var Msg: TMessage);
+procedure TRichEditSampleMenu.DoHandleMessage(var Msg: TMessage; var bHandled: BOOL);
 begin
   inherited;
   if Msg.Msg = WM_KILLFOCUS then

@@ -36,7 +36,7 @@ type
     procedure DUI_InitWindow; cdecl;
     procedure DUI_Click(var Msg: TNotifyUI); cdecl;
     procedure DUI_Notify(var Msg: TNotifyUI); cdecl;
-    function  DUI_HandleMessage(uMsg: UINT; wParam: WPARAM; lParam: LPARAM): LRESULT; cdecl;
+    function  DUI_HandleMessage(uMsg: UINT; wParam: WPARAM; lParam: LPARAM; var bHandled: BOOL): LRESULT; cdecl;
     function  DUI_MessageHandler(uMsg: UINT; wParam: WPARAM; lParam: LPARAM; var bHandled: BOOL): LRESULT; cdecl;
     procedure DUI_FinalMessage(hWd: HWND); cdecl;
     function  DUI_HandleCustomMessage(uMsg: UINT; wParam: WPARAM; lParam: LPARAM; var bHandled: BOOL): LRESULT; cdecl;
@@ -46,7 +46,7 @@ type
     procedure DoInitWindow; virtual;
     procedure DoNotify(var Msg: TNotifyUI); virtual;
     procedure DoClick(var msg: TNotifyUI); virtual;
-    procedure DoHandleMessage(var Msg: TMessage); virtual;
+    procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); virtual;
     procedure DoMessageHandler(var Msg: TMessage; var bHandled: BOOL); virtual;
     procedure DoFinalMessage(hWd: HWND); virtual;
     procedure DoHandleCustomMessage(var Msg: TMessage; var bHandled: BOOL); virtual;
@@ -210,7 +210,7 @@ begin
   // virtual method
 end;
 
-procedure TDuiWindowImplBase.DoHandleMessage(var Msg: TMessage);
+procedure TDuiWindowImplBase.DoHandleMessage(var Msg: TMessage; var bHandled: BOOL);
 begin
   // virtual method
 end;
@@ -265,7 +265,7 @@ begin
 end;
 
 function TDuiWindowImplBase.DUI_HandleMessage(uMsg: UINT; wParam: WPARAM;
-  lParam: LPARAM): LRESULT;
+  lParam: LPARAM; var bHandled: BOOL): LRESULT;
 var
   LMsg: TMessage;
 begin
@@ -273,7 +273,7 @@ begin
   LMsg.WParam := wParam;
   LMsg.LParam := lParam;
   LMsg.Result := 0;
-  DoHandleMessage(LMsg);
+  DoHandleMessage(LMsg, bHandled);
   Result := LMsg.Result;
 end;
 
