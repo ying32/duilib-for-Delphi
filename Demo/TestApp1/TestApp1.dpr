@@ -11,6 +11,7 @@ uses
   Classes,
   DuiConst,
   DuiWindowImplBase,
+  DuiRichEdit,
   Duilib,
   DuilibHelper;
 
@@ -67,9 +68,30 @@ begin
 end;
 
 procedure TFrameWindowWnd.DoNotify(var Msg: TNotifyUI);
+var
+  LType, LCtlName: string;
+  pRich: CRichEditUI;
 begin
   inherited;
-
+  LType := Msg.sType;
+  LCtlName := Msg.pSender.Name;
+  if LType = DUI_EVENT_CLICK then
+  begin
+    if LCtlName = 'insertimagebtn' then
+    begin
+      pRich := CRichEditUI(FindControl('testrichedit'));
+      if Assigned(pRich) then
+        pRich.RemoveAll;
+    end else
+    if LCtlName = 'changeskinbtn' then
+    begin
+      if CPaintManagerUI.GetResourcePath = CPaintManagerUI.GetInstancePath then
+        CPaintManagerUI.SetResourcePath(CPaintManagerUI.GetInstancePath + 'skin\FlashRes')
+      else
+        CPaintManagerUI.SetResourcePath(CPaintManagerUI.GetInstancePath);
+      CPaintManagerUI.ReloadSkin;
+    end;
+  end;
 end;
 
 var

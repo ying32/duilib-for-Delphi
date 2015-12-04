@@ -247,13 +247,13 @@ type
     class function CppCreate: CStdStringPtrMap;
     procedure CppDestroy;
     procedure Resize(nSize: Integer = 83);
-    function Find(key: LPCTSTR; optimize: Boolean = True): Pointer;
-    function Insert(key: LPCTSTR; pData: Pointer): Boolean;
-    function &Set(key: LPCTSTR; pData: Pointer): Pointer;
-    function Remove(key: LPCTSTR): Boolean;
+    function Find(key: string; optimize: Boolean = True): Pointer;
+    function Insert(key: string; pData: Pointer): Boolean;
+    function &Set(key: string; pData: Pointer): Pointer;
+    function Remove(key: string): Boolean;
     procedure RemoveAll;
     function GetSize: Integer;
-    function GetAt(iIndex: Integer): LPCTSTR;
+    function GetAt(iIndex: Integer): string;
   end;
 
   tagTResInfo = packed record
@@ -319,33 +319,33 @@ type
     function GetParent: CMarkupNode;
     function GetSibling: CMarkupNode;
     function GetChild: CMarkupNode; overload;
-    function GetChild(pstrName: LPCTSTR): CMarkupNode; overload;
+    function GetChild(pstrName: string): CMarkupNode; overload;
     function HasSiblings: Boolean;
     function HasChildren: Boolean;
-    function GetName: LPCTSTR;
-    function GetValue: LPCTSTR;
+    function GetName: string;
+    function GetValue: string;
     function HasAttributes: Boolean;
-    function HasAttribute(pstrName: LPCTSTR): Boolean;
+    function HasAttribute(pstrName: string): Boolean;
     function GetAttributeCount: Integer;
-    function GetAttributeName(iIndex: Integer): LPCTSTR;
-    function GetAttributeValue(iIndex: Integer): LPCTSTR; overload;
-    function GetAttributeValue(pstrName: LPCTSTR): LPCTSTR; overload;
-    function GetAttributeValue(iIndex: Integer; pstrValue: LPTSTR; cchMax: SIZE_T): Boolean; overload;
-    function GetAttributeValue(pstrName: LPCTSTR; pstrValue: LPTSTR; cchMax: SIZE_T): Boolean; overload;
+    function GetAttributeName(iIndex: Integer): string;
+    function GetAttributeValue(iIndex: Integer): string; overload;
+    function GetAttributeValue(pstrName: string): string; overload;
+    function GetAttributeValue(iIndex: Integer; pstrValue: string; cchMax: SIZE_T): Boolean; overload;
+    function GetAttributeValue(pstrName: string; pstrValue: string; cchMax: SIZE_T): Boolean; overload;
   end;
 
   CMarkup = class
   public
-    class function CppCreate(pstrXML: LPCTSTR = nil): CMarkup;
+    class function CppCreate(pstrXML: string = ''): CMarkup;
     procedure CppDestroy;
-    function Load(pstrXML: LPCTSTR): Boolean;
+    function Load(pstrXML: string): Boolean;
     function LoadFromMem(pByte: PByte; dwSize: DWORD; encoding: Integer = XMLFILE_ENCODING_UTF8): Boolean;
-    function LoadFromFile(pstrFilename: LPCTSTR; encoding: Integer = XMLFILE_ENCODING_UTF8): Boolean;
+    function LoadFromFile(pstrFilename: string; encoding: Integer = XMLFILE_ENCODING_UTF8): Boolean;
     procedure Release;
     function IsValid: Boolean;
     procedure SetPreserveWhitespace(bPreserve: Boolean = True);
-    procedure GetLastErrorMessage(pstrMessage: LPTSTR; cchMax: SIZE_T);
-    procedure GetLastErrorLocation(pstrSource: LPTSTR; cchMax: SIZE_T);
+    procedure GetLastErrorMessage(pstrMessage: string; cchMax: SIZE_T);
+    procedure GetLastErrorLocation(pstrSource: string; cchMax: SIZE_T);
     function GetRoot: CMarkupNode;
   end;
 
@@ -357,7 +357,7 @@ type
     function IsUpdateNeeded: Boolean;
     procedure NeedUpdate;
     procedure Invalidate; overload;
-    procedure Invalidate(var rcItem: TRect); overload;
+    procedure Invalidate(const rcItem: TRect); overload;
     function GetPaintDC: HDC;
     function GetPaintWindow: HWND;
     function GetTooltipWindow: HWND;
@@ -366,9 +366,9 @@ type
     function GetInitSize: TSize;
     procedure SetInitSize(cx: Integer; cy: Integer);
     function GetSizeBox: PRect;
-    procedure SetSizeBox(var rcSizeBox: TRect);
+    procedure SetSizeBox(const rcSizeBox: TRect);
     function GetCaptionRect: PRect;
-    procedure SetCaptionRect(var rcCaption: TRect);
+    procedure SetCaptionRect(const rcCaption: TRect);
     function GetRoundCorner: TSize;
     procedure SetRoundCorner(cx: Integer; cy: Integer);
     function GetMinInfo: TSize;
@@ -381,22 +381,22 @@ type
     function IsShowUpdateRect: Boolean;
     procedure SetShowUpdateRect(show: Boolean);
     class function GetInstance: HINST;
-    class function GetInstancePath: CDuiString;
-    class function GetCurrentPath: CDuiString;
+    class function GetInstancePath: string;
+    class function GetCurrentPath: string;
     class function GetResourceDll: HINST;
-    class function GetResourcePath: PCDuiString;
-    class function GetResourceZip: PCDuiString;
+    class function GetResourcePath: string;
+    class function GetResourceZip: string;
     class function IsCachedResourceZip: Boolean;
     class function GetResourceZipHandle: THandle;
     class procedure SetInstance(hInst: HINST);
-    class procedure SetCurrentPath(pStrPath: LPCTSTR);
+    class procedure SetCurrentPath(pStrPath: string);
     class procedure SetResourceDll(hInst: HINST);
-    class procedure SetResourcePath(pStrPath: LPCTSTR);
+    class procedure SetResourcePath(pStrPath: string);
     class procedure SetResourceZip(pVoid: Pointer; len: LongInt); overload;
-    class procedure SetResourceZip(pstrZip: LPCTSTR; bCachedResourceZip: Boolean = False); overload;
+    class procedure SetResourceZip(pstrZip: string; bCachedResourceZip: Boolean = False); overload;
     class function GetHSL(H: PShort; S: PShort; L: PShort): Boolean;
     class procedure ReloadSkin;
-    class function LoadPlugin(pstrModuleName: LPCTSTR): Boolean;
+    class function LoadPlugin(pstrModuleName: string): Boolean;
     class function GetPlugins: CStdPtrArray;
     function GetDefaultDisabledColor: DWORD;
     procedure SetDefaultDisabledColor(dwColor: DWORD; bShared: Boolean = False);
@@ -409,41 +409,41 @@ type
     function GetDefaultSelectedBkColor: DWORD;
     procedure SetDefaultSelectedBkColor(dwColor: DWORD; bShared: Boolean = False);
     function GetDefaultFontInfo: PFontInfo;
-    procedure SetDefaultFont(pStrFontName: LPCTSTR; nSize: Integer; bBold: Boolean; bUnderline: Boolean; bItalic: Boolean; bShared: Boolean = False);
+    procedure SetDefaultFont(pStrFontName: string; nSize: Integer; bBold: Boolean; bUnderline: Boolean; bItalic: Boolean; bShared: Boolean = False);
     function GetCustomFontCount(bShared: Boolean = False): DWORD;
-    function AddFont(id: Integer; pStrFontName: LPCTSTR; nSize: Integer; bBold: Boolean; bUnderline: Boolean; bItalic: Boolean; bShared: Boolean = False): HFONT;
+    function AddFont(id: Integer; pStrFontName: string; nSize: Integer; bBold: Boolean; bUnderline: Boolean; bItalic: Boolean; bShared: Boolean = False): HFONT;
     function GetFont(id: Integer): HFONT; overload;
-    function GetFont(pStrFontName: LPCTSTR; nSize: Integer; bBold: Boolean; bUnderline: Boolean; bItalic: Boolean): HFONT; overload;
+    function GetFont(pStrFontName: string; nSize: Integer; bBold: Boolean; bUnderline: Boolean; bItalic: Boolean): HFONT; overload;
     function GetFontIndex(hFont: HFONT; bShared: Boolean = False): Integer; overload;
-    function GetFontIndex(pStrFontName: LPCTSTR; nSize: Integer; bBold: Boolean; bUnderline: Boolean; bItalic: Boolean; bShared: Boolean = False): Integer; overload;
+    function GetFontIndex(pStrFontName: string; nSize: Integer; bBold: Boolean; bUnderline: Boolean; bItalic: Boolean; bShared: Boolean = False): Integer; overload;
     procedure RemoveFont(hFont: HFONT; bShared: Boolean = False); overload;
     procedure RemoveFont(id: Integer; bShared: Boolean = False); overload;
     procedure RemoveAllFonts(bShared: Boolean = False);
     function GetFontInfo(id: Integer): PFontInfo; overload;
     function GetFontInfo(hFont: HFONT): PFontInfo; overload;
-    function GetImage(bitmap: LPCTSTR): PImageInfo;
-    function GetImageEx(bitmap: LPCTSTR; AType: LPCTSTR = nil; mask: DWORD = 0; bUseHSL: Boolean = False): PImageInfo;
-    function AddImage(bitmap: LPCTSTR; AType: LPCTSTR = nil; mask: DWORD = 0; bUseHSL: Boolean = False; bShared: Boolean = False): PImageInfo; overload;
-    function AddImage(bitmap: LPCTSTR; hBitmap: HBITMAP; iWidth: Integer; iHeight: Integer; bAlpha: Boolean; bShared: Boolean = False): PImageInfo; overload;
-    procedure RemoveImage(bitmap: LPCTSTR; bShared: Boolean = False);
+    function GetImage(bitmap: string): PImageInfo;
+    function GetImageEx(bitmap: string; AType: string = ''; mask: DWORD = 0; bUseHSL: Boolean = False): PImageInfo;
+    function AddImage(bitmap: string; AType: string = ''; mask: DWORD = 0; bUseHSL: Boolean = False; bShared: Boolean = False): PImageInfo; overload;
+    function AddImage(bitmap: string; hBitmap: HBITMAP; iWidth: Integer; iHeight: Integer; bAlpha: Boolean; bShared: Boolean = False): PImageInfo; overload;
+    procedure RemoveImage(bitmap: string; bShared: Boolean = False);
     procedure RemoveAllImages(bShared: Boolean = False);
     class procedure ReloadSharedImages;
     procedure ReloadImages;
-    procedure AddDefaultAttributeList(pStrControlName: LPCTSTR; pStrControlAttrList: LPCTSTR; bShared: Boolean = False);
-    function GetDefaultAttributeList(pStrControlName: LPCTSTR): LPCTSTR;
-    function RemoveDefaultAttributeList(pStrControlName: LPCTSTR; bShared: Boolean = False): Boolean;
+    procedure AddDefaultAttributeList(pStrControlName: string; pStrControlAttrList: string; bShared: Boolean = False);
+    function GetDefaultAttributeList(pStrControlName: string): string;
+    function RemoveDefaultAttributeList(pStrControlName: string; bShared: Boolean = False): Boolean;
     procedure RemoveAllDefaultAttributeList(bShared: Boolean = False);
-    class procedure AddMultiLanguageString(id: Integer; pStrMultiLanguage: LPCTSTR);
-    class function GetMultiLanguageString(id: Integer): LPCTSTR;
+    class procedure AddMultiLanguageString(id: Integer; pStrMultiLanguage: string);
+    class function GetMultiLanguageString(id: Integer): string;
     class function RemoveMultiLanguageString(id: Integer): Boolean;
     class procedure RemoveAllMultiLanguageString;
-    class procedure ProcessMultiLanguageTokens(var pStrMultiLanguage: CDuiString);
+    class procedure ProcessMultiLanguageTokens(var pStrMultiLanguage: string);
     function AttachDialog(pControl: CControlUI): Boolean;
     function InitControls(pControl: CControlUI; pParent: CControlUI = nil): Boolean;
     procedure ReapObjects(pControl: CControlUI);
-    function AddOptionGroup(pStrGroupName: LPCTSTR; pControl: CControlUI): Boolean;
-    function GetOptionGroup(pStrGroupName: LPCTSTR): CStdPtrArray;
-    procedure RemoveOptionGroup(pStrGroupName: LPCTSTR; pControl: CControlUI);
+    function AddOptionGroup(pStrGroupName: string; pControl: CControlUI): Boolean;
+    function GetOptionGroup(pStrGroupName: string): CStdPtrArray;
+    procedure RemoveOptionGroup(pStrGroupName: string; pControl: CControlUI);
     procedure RemoveAllOptionGroups;
     function GetFocus: CControlUI;
     procedure SetFocus(pControl: CControlUI);
@@ -459,7 +459,7 @@ type
     function AddNotifier(pControl: INotifyUI): Boolean;
     function RemoveNotifier(pControl: INotifyUI): Boolean;
     procedure SendNotify(var Msg: TNotifyUI; bAsync: Boolean = False); overload;
-    procedure SendNotify(pControl: CControlUI; pstrMessage: LPCTSTR; wParam: WPARAM = 0; lParam: LPARAM = 0; bAsync: Boolean = False); overload;
+    procedure SendNotify(pControl: CControlUI; pstrMessage: string; wParam: WPARAM = 0; lParam: LPARAM = 0; bAsync: Boolean = False); overload;
     function AddPreMessageFilter(pFilter: IMessageFilterUI): Boolean;
     function RemovePreMessageFilter(pFilter: IMessageFilterUI): Boolean;
     function AddMessageFilter(pFilter: IMessageFilterUI): Boolean;
@@ -474,11 +474,11 @@ type
     function TranslateAccelerator(pMsg: PMsg): Boolean;
     function GetRoot: CControlUI;
     function FindControl(pt: TPoint): CControlUI; overload;
-    function FindControl(pstrName: LPCTSTR): CControlUI; overload;
+    function FindControl(pstrName: string): CControlUI; overload;
     function FindSubControlByPoint(pParent: CControlUI; pt: TPoint): CControlUI;
-    function FindSubControlByName(pParent: CControlUI; pstrName: LPCTSTR): CControlUI;
-    function FindSubControlByClass(pParent: CControlUI; pstrClass: LPCTSTR; iIndex: Integer = 0): CControlUI;
-    function FindSubControlsByClass(pParent: CControlUI; pstrClass: LPCTSTR): CStdPtrArray;
+    function FindSubControlByName(pParent: CControlUI; pstrName: string): CControlUI;
+    function FindSubControlByClass(pParent: CControlUI; pstrClass: string; iIndex: Integer = 0): CControlUI;
+    function FindSubControlsByClass(pParent: CControlUI; pstrClass: string): CStdPtrArray;
     class procedure MessageLoop;
     class function TranslateMessage(const pMsg: PMsg): Boolean;
     class procedure Term;
@@ -491,36 +491,36 @@ type
   public
     class function CppCreate: CDialogBuilder;
     procedure CppDestroy;
-    function Create(xml: STRINGorID; AType: LPCTSTR = nil; pCallback: IDialogBuilderCallback = nil; pManager: CPaintManagerUI = nil; pParent: CControlUI = nil): CControlUI; overload;
+    function Create(xml: string; AType: string = ''; pCallback: IDialogBuilderCallback = nil; pManager: CPaintManagerUI = nil; pParent: CControlUI = nil): CControlUI; overload;
     function Create(pCallback: IDialogBuilderCallback = nil; pManager: CPaintManagerUI = nil; pParent: CControlUI = nil): CControlUI; overload;
     function GetMarkup: CMarkup;
-    procedure GetLastErrorMessage(pstrMessage: LPTSTR; cchMax: SIZE_T);
-    procedure GetLastErrorLocation(pstrSource: LPTSTR; cchMax: SIZE_T);
+    procedure GetLastErrorMessage(pstrMessage: string; cchMax: SIZE_T);
+    procedure GetLastErrorLocation(pstrSource: string; cchMax: SIZE_T);
   end;
 
   CControlUI = class
   public
     class function CppCreate: CControlUI;
     procedure CppDestroy;
-    function GetName: CDuiString;
-    procedure SetName(pstrName: LPCTSTR);
-    function GetClass: LPCTSTR;
-    function GetInterface(pstrName: LPCTSTR): Pointer;
+    function GetName: string;
+    procedure SetName(pstrName: string);
+    function GetClass: string;
+    function GetInterface(pstrName: string): Pointer;
     function GetControlFlags: UINT;
     function Activate: Boolean;
     function GetManager: CPaintManagerUI;
     procedure SetManager(pManager: CPaintManagerUI; pParent: CControlUI; bInit: Boolean = True);
     function GetParent: CControlUI;
-    function GetText: CDuiString;
-    procedure SetText(pstrText: LPCTSTR);
+    function GetText: string;
+    procedure SetText(pstrText: string);
     function GetBkColor: DWORD;
     procedure SetBkColor(dwBackColor: DWORD);
     function GetBkColor2: DWORD;
     procedure SetBkColor2(dwBackColor: DWORD);
     function GetBkColor3: DWORD;
     procedure SetBkColor3(dwBackColor: DWORD);
-    function GetBkImage: LPCTSTR;
-    procedure SetBkImage(pStrImage: LPCTSTR);
+    function GetBkImage: string;
+    procedure SetBkImage(pStrImage: string);
     function GetFocusBorderColor: DWORD;
     procedure SetFocusBorderColor(dwBorderColor: DWORD);
     function IsColorHSL: Boolean;
@@ -569,16 +569,16 @@ type
     procedure SetMaxHeight(cy: Integer);
     function GetFloatPercent: TPercentInfo;
     procedure SetFloatPercent(piFloatPercent: TPercentInfo);
-    function GetToolTip: CDuiString;
-    procedure SetToolTip(pstrText: LPCTSTR);
+    function GetToolTip: string;
+    procedure SetToolTip(pstrText: string);
     procedure SetToolTipWidth(nWidth: Integer);
     function GetToolTipWidth: Integer;
     function GetShortcut: Char;
     procedure SetShortcut(ch: Char);
     function IsContextMenuUsed: Boolean;
     procedure SetContextMenuUsed(bMenuUsed: Boolean);
-    function GetUserData: PCDuiString;
-    procedure SetUserData(pstrText: LPCTSTR);
+    function GetUserData: string;
+    procedure SetUserData(pstrText: string);
     function GetTag: UINT_PTR;
     procedure SetTag(pTag: UINT_PTR);
     function IsVisible: Boolean;
@@ -604,8 +604,8 @@ type
     procedure DoInit;
     procedure Event(var event: TEventUI);
     procedure DoEvent(var event: TEventUI);
-    procedure SetAttribute(pstrName: LPCTSTR; pstrValue: LPCTSTR);
-    function ApplyAttributeList(pstrList: LPCTSTR): CControlUI;
+    procedure SetAttribute(pstrName: string; pstrValue: string);
+    function ApplyAttributeList(pstrList: string): CControlUI;
     function EstimateSize(szAvailable: TSize): TSize;
     procedure DoPaint(hDC: HDC; var rcPaint: TRect);
     procedure PaintBkColor(hDC: HDC);
@@ -614,8 +614,33 @@ type
     procedure PaintText(hDC: HDC);
     procedure PaintBorder(hDC: HDC);
     procedure DoPostPaint(hDC: HDC; var rcPaint: TRect);
-    procedure SetVirtualWnd(pstrValue: LPCTSTR);
-    function GetVirtualWnd: CDuiString;
+    procedure SetVirtualWnd(pstrValue: string);
+    function GetVirtualWnd: string;
+  public
+    procedure Hide;
+    procedure Show;
+  public
+    property ClassName: string read GetClass; // reintroduce
+    property Text: string read GetText write SetText;
+    property ToolTip: string read GetToolTip write SetToolTip;
+    property ToolTipWidth: Integer read GetToolTipWidth write SetToolTipWidth;
+    property Name: string read GetName write SetName;
+    property Enabled: Boolean read IsEnabled write SetEnabled;
+    property Parent: CControlUI read GetParent;
+    property BkColor: DWORD read GetBkColor write SetBkColor;
+    property BkColor2: DWORD read GetBkColor2 write SetBkColor2;
+    property BkColor3: DWORD read GetBkColor3 write SetBkColor3;
+    property BkImage: string read GetBkImage write SetBkImage;
+    property FocusBorderColor: DWORD read GetFocusBorderColor write SetFocusBorderColor;
+    property ColorHSL: Boolean read IsColorHSL write SetColorHSL;
+    property BorderRound: TSize read GetBorderRound write SetBorderRound;
+    property BorderSize: Integer read GetBorderSize write SetBorderSize;
+    property Shortcut: Char read GetShortcut write SetShortcut;
+    property ContextMenuUsed: Boolean read IsContextMenuUsed write SetContextMenuUsed;
+    property VirtualWnd: string read GetVirtualWnd write SetVirtualWnd;
+    property Visible: Boolean read IsVisible write SetVisible;
+    property Tag: UIntPtr read GetTag write SetTag;
+    property FixedHeight: Integer read GetFixedHeight write SetFixedHeight;
   end;
 
   CDelphi_WindowImplBase = class
@@ -625,9 +650,9 @@ type
     function GetHWND: HWND;
     function RegisterWindowClass: Boolean;
     function RegisterSuperclass: Boolean;
-    function Create(hwndParent: HWND; pstrName: LPCTSTR; dwStyle: DWORD; dwExStyle: DWORD; const rc: TRect; hMenu: HMENU = 0): HWND; overload;
-    function Create(hwndParent: HWND; pstrName: LPCTSTR; dwStyle: DWORD; dwExStyle: DWORD; x: Integer = Integer(CW_USEDEFAULT); y: Integer = Integer(CW_USEDEFAULT); cx: Integer = Integer(CW_USEDEFAULT); cy: Integer = Integer(CW_USEDEFAULT); hMenu: HMENU = 0): HWND; overload;
-    function CreateDuiWindow(hwndParent: HWND; pstrWindowName: LPCTSTR; dwStyle: DWORD = 0; dwExStyle: DWORD = 0): HWND;
+    function Create(hwndParent: HWND; pstrName: string; dwStyle: DWORD; dwExStyle: DWORD; const rc: TRect; hMenu: HMENU = 0): HWND; overload;
+    function Create(hwndParent: HWND; pstrName: string; dwStyle: DWORD; dwExStyle: DWORD; x: Integer = Integer(CW_USEDEFAULT); y: Integer = Integer(CW_USEDEFAULT); cx: Integer = Integer(CW_USEDEFAULT); cy: Integer = Integer(CW_USEDEFAULT); hMenu: HMENU = 0): HWND; overload;
+    function CreateDuiWindow(hwndParent: HWND; pstrWindowName: string; dwStyle: DWORD = 0; dwExStyle: DWORD = 0): HWND;
     function Subclass(hWnd: HWND): HWND;
     procedure Unsubclass;
     procedure ShowWindow(bShow: Boolean = True; bTakeFocus: Boolean = True);
@@ -644,11 +669,11 @@ type
     function LoopDispatch(var msg: TNotifyUI): Boolean;
     function GetPaintManagerUI: CPaintManagerUI;
     procedure SetDelphiSelf(ASelf: Pointer);
-    procedure SetClassName(ClassName: LPCTSTR);
-    procedure SetSkinFile(SkinFile: LPCTSTR);
-    procedure SetSkinFolder(SkinFolder: LPCTSTR);
-    procedure SetZipFileName(ZipFileName: LPCTSTR);
-    procedure SetResourceType(RType: UILIB_RESOURCETYPE);
+    procedure SetClassName(AClassName: string);
+    procedure SetSkinFile(SkinFile: string);
+    procedure SetSkinFolder(SkinFolder: string);
+    procedure SetZipFileName(ZipFileName: string);
+    procedure SetResourceType(RType: TResourceType);
     procedure SetInitWindow(Callback: Pointer);
     procedure SetFinalMessage(Callback: Pointer);
     procedure SetHandleMessage(Callback: Pointer);
@@ -772,7 +797,6 @@ type
     function GetInterface(pstrName: LPCTSTR): Pointer;
     function EstimateSize(szAvailable: TSize): TSize;
   end;
-
 
   CListUI = class(CVerticalLayoutUI)
   public
@@ -935,26 +959,26 @@ type
   public
     class function CppCreate: CButtonUI;
     procedure CppDestroy;
-    function GetClass: LPCTSTR;
-    function GetInterface(pstrName: LPCTSTR): Pointer;
+    function GetClass: string;
+    function GetInterface(pstrName: string): Pointer;
     function GetControlFlags: UINT;
     function Activate: Boolean;
     procedure SetEnabled(bEnable: Boolean = True);
     procedure DoEvent(var event: TEventUI);
-    function GetNormalImage: LPCTSTR;
-    procedure SetNormalImage(pStrImage: LPCTSTR);
-    function GetHotImage: LPCTSTR;
-    procedure SetHotImage(pStrImage: LPCTSTR);
-    function GetPushedImage: LPCTSTR;
-    procedure SetPushedImage(pStrImage: LPCTSTR);
-    function GetFocusedImage: LPCTSTR;
-    procedure SetFocusedImage(pStrImage: LPCTSTR);
-    function GetDisabledImage: LPCTSTR;
-    procedure SetDisabledImage(pStrImage: LPCTSTR);
-    function GetForeImage: LPCTSTR;
-    procedure SetForeImage(pStrImage: LPCTSTR);
-    function GetHotForeImage: LPCTSTR;
-    procedure SetHotForeImage(pStrImage: LPCTSTR);
+    function GetNormalImage: string;
+    procedure SetNormalImage(pStrImage: string);
+    function GetHotImage: string;
+    procedure SetHotImage(pStrImage: string);
+    function GetPushedImage: string;
+    procedure SetPushedImage(pStrImage: string);
+    function GetFocusedImage: string;
+    procedure SetFocusedImage(pStrImage: string);
+    function GetDisabledImage: string;
+    procedure SetDisabledImage(pStrImage: string);
+    function GetForeImage: string;
+    procedure SetForeImage(pStrImage: string);
+    function GetHotForeImage: string;
+    procedure SetHotForeImage(pStrImage: string);
     procedure SetHotBkColor(dwColor: DWORD);
     function GetHotBkColor: DWORD;
     procedure SetHotTextColor(dwColor: DWORD);
@@ -964,9 +988,21 @@ type
     procedure SetFocusedTextColor(dwColor: DWORD);
     function GetFocusedTextColor: DWORD;
     function EstimateSize(szAvailable: TSize): TSize;
-    procedure SetAttribute(pstrName: LPCTSTR; pstrValue: LPCTSTR);
+    procedure SetAttribute(pstrName: string; pstrValue: string);
     procedure PaintText(hDC: HDC);
     procedure PaintStatusImage(hDC: HDC);
+  public
+    property NormalImage: string read GetNormalImage write SetNormalImage;
+    property HotImage: string read GetHotImage write SetHotImage;
+    property PushedImage: string read GetPushedImage write SetPushedImage;
+    property FocusedImage: string read GetFocusedImage write SetFocusedImage;
+    property DisabledImage: string read GetDisabledImage write SetDisabledImage;
+    property ForeImage: string read GetForeImage write SetForeImage;
+    property HotForeImage: string read GetHotForeImage write SetHotForeImage;
+    property HotBkColor: DWORD read GetHotBkColor write SetHotBkColor;
+    property HotTextColor: DWORD read GetHotTextColor write SetHotTextColor;
+    property PushedTextColor: DWORD read GetPushedTextColor write SetPushedTextColor;
+    property FocusedTextColor: DWORD read GetFocusedTextColor write SetFocusedTextColor;
   end;
 
   COptionUI = class(CButtonUI)
@@ -1759,7 +1795,7 @@ procedure Delphi_PaintManagerUI_Init(Handle: CPaintManagerUI; hWnd: HWND); cdecl
 function Delphi_PaintManagerUI_IsUpdateNeeded(Handle: CPaintManagerUI): Boolean; cdecl;
 procedure Delphi_PaintManagerUI_NeedUpdate(Handle: CPaintManagerUI); cdecl;
 procedure Delphi_PaintManagerUI_Invalidate_01(Handle: CPaintManagerUI); cdecl;
-procedure Delphi_PaintManagerUI_Invalidate_02(Handle: CPaintManagerUI; var rcItem: TRect); cdecl;
+procedure Delphi_PaintManagerUI_Invalidate_02(Handle: CPaintManagerUI; const rcItem: TRect); cdecl;
 function Delphi_PaintManagerUI_GetPaintDC(Handle: CPaintManagerUI): HDC; cdecl;
 function Delphi_PaintManagerUI_GetPaintWindow(Handle: CPaintManagerUI): HWND; cdecl;
 function Delphi_PaintManagerUI_GetTooltipWindow(Handle: CPaintManagerUI): HWND; cdecl;
@@ -1768,9 +1804,9 @@ procedure Delphi_PaintManagerUI_GetClientSize(Handle: CPaintManagerUI; var Resul
 procedure Delphi_PaintManagerUI_GetInitSize(Handle: CPaintManagerUI; var Result: TSize); cdecl;
 procedure Delphi_PaintManagerUI_SetInitSize(Handle: CPaintManagerUI; cx: Integer; cy: Integer); cdecl;
 function Delphi_PaintManagerUI_GetSizeBox(Handle: CPaintManagerUI): PRect; cdecl;
-procedure Delphi_PaintManagerUI_SetSizeBox(Handle: CPaintManagerUI; var rcSizeBox: TRect); cdecl;
+procedure Delphi_PaintManagerUI_SetSizeBox(Handle: CPaintManagerUI; const rcSizeBox: TRect); cdecl;
 function Delphi_PaintManagerUI_GetCaptionRect(Handle: CPaintManagerUI): PRect; cdecl;
-procedure Delphi_PaintManagerUI_SetCaptionRect(Handle: CPaintManagerUI; var rcCaption: TRect); cdecl;
+procedure Delphi_PaintManagerUI_SetCaptionRect(Handle: CPaintManagerUI; const rcCaption: TRect); cdecl;
 procedure Delphi_PaintManagerUI_GetRoundCorner(Handle: CPaintManagerUI; var Result: TSize); cdecl;
 procedure Delphi_PaintManagerUI_SetRoundCorner(Handle: CPaintManagerUI; cx: Integer; cy: Integer); cdecl;
 procedure Delphi_PaintManagerUI_GetMinInfo(Handle: CPaintManagerUI; var Result: TSize); cdecl;
@@ -2783,24 +2819,24 @@ begin
   Delphi_StdStringPtrMap_Resize(Self, nSize);
 end;
 
-function CStdStringPtrMap.Find(key: LPCTSTR; optimize: Boolean): Pointer;
+function CStdStringPtrMap.Find(key: string; optimize: Boolean): Pointer;
 begin
-  Result := Delphi_StdStringPtrMap_Find(Self, key, optimize);
+  Result := Delphi_StdStringPtrMap_Find(Self, PChar(key), optimize);
 end;
 
-function CStdStringPtrMap.Insert(key: LPCTSTR; pData: Pointer): Boolean;
+function CStdStringPtrMap.Insert(key: string; pData: Pointer): Boolean;
 begin
-  Result := Delphi_StdStringPtrMap_Insert(Self, key, pData);
+  Result := Delphi_StdStringPtrMap_Insert(Self, PChar(key), pData);
 end;
 
-function CStdStringPtrMap.&Set(key: LPCTSTR; pData: Pointer): Pointer;
+function CStdStringPtrMap.&Set(key: string; pData: Pointer): Pointer;
 begin
-  Result := Delphi_StdStringPtrMap_Set(Self, key, pData);
+  Result := Delphi_StdStringPtrMap_Set(Self, PChar(key), pData);
 end;
 
-function CStdStringPtrMap.Remove(key: LPCTSTR): Boolean;
+function CStdStringPtrMap.Remove(key: string): Boolean;
 begin
-  Result := Delphi_StdStringPtrMap_Remove(Self, key);
+  Result := Delphi_StdStringPtrMap_Remove(Self, PChar(key));
 end;
 
 procedure CStdStringPtrMap.RemoveAll;
@@ -2813,7 +2849,7 @@ begin
   Result := Delphi_StdStringPtrMap_GetSize(Self);
 end;
 
-function CStdStringPtrMap.GetAt(iIndex: Integer): LPCTSTR;
+function CStdStringPtrMap.GetAt(iIndex: Integer): string;
 begin
   Result := Delphi_StdStringPtrMap_GetAt(Self, iIndex);
 end;
@@ -2976,9 +3012,9 @@ begin
   Delphi_DialogBuilder_CppDestroy(Self);
 end;
 
-function CDialogBuilder.Create(xml: STRINGorID; AType: LPCTSTR; pCallback: IDialogBuilderCallback; pManager: CPaintManagerUI; pParent: CControlUI): CControlUI;
+function CDialogBuilder.Create(xml: string; AType: string; pCallback: IDialogBuilderCallback; pManager: CPaintManagerUI; pParent: CControlUI): CControlUI;
 begin
-  Result := Delphi_DialogBuilder_Create_01(Self, xml, AType, pCallback, pManager, pParent);
+  Result := Delphi_DialogBuilder_Create_01(Self, STRINGorID(xml), PChar(AType), pCallback, pManager, pParent);
 end;
 
 function CDialogBuilder.Create(pCallback: IDialogBuilderCallback; pManager: CPaintManagerUI; pParent: CControlUI): CControlUI;
@@ -2991,21 +3027,21 @@ begin
   Result := Delphi_DialogBuilder_GetMarkup(Self);
 end;
 
-procedure CDialogBuilder.GetLastErrorMessage(pstrMessage: LPTSTR; cchMax: SIZE_T);
+procedure CDialogBuilder.GetLastErrorMessage(pstrMessage: string; cchMax: SIZE_T);
 begin
-  Delphi_DialogBuilder_GetLastErrorMessage(Self, pstrMessage, cchMax);
+  Delphi_DialogBuilder_GetLastErrorMessage(Self, LPTSTR(pstrMessage), cchMax);
 end;
 
-procedure CDialogBuilder.GetLastErrorLocation(pstrSource: LPTSTR; cchMax: SIZE_T);
+procedure CDialogBuilder.GetLastErrorLocation(pstrSource: string; cchMax: SIZE_T);
 begin
-  Delphi_DialogBuilder_GetLastErrorLocation(Self, pstrSource, cchMax);
+  Delphi_DialogBuilder_GetLastErrorLocation(Self, LPTSTR(pstrSource), cchMax);
 end;
 
 { CMarkup }
 
-class function CMarkup.CppCreate(pstrXML: LPCTSTR = nil): CMarkup;
+class function CMarkup.CppCreate(pstrXML: string): CMarkup;
 begin
-  Result := Delphi_Markup_CppCreate(pstrXML);
+  Result := Delphi_Markup_CppCreate(PChar(pstrXML));
 end;
 
 procedure CMarkup.CppDestroy;
@@ -3013,9 +3049,9 @@ begin
   Delphi_Markup_CppDestroy(Self);
 end;
 
-function CMarkup.Load(pstrXML: LPCTSTR): Boolean;
+function CMarkup.Load(pstrXML: string): Boolean;
 begin
-  Result := Delphi_Markup_Load(Self, pstrXML);
+  Result := Delphi_Markup_Load(Self, PChar(pstrXML));
 end;
 
 function CMarkup.LoadFromMem(pByte: PByte; dwSize: DWORD; encoding: Integer): Boolean;
@@ -3023,9 +3059,9 @@ begin
   Result := Delphi_Markup_LoadFromMem(Self, pByte, dwSize, encoding);
 end;
 
-function CMarkup.LoadFromFile(pstrFilename: LPCTSTR; encoding: Integer): Boolean;
+function CMarkup.LoadFromFile(pstrFilename: string; encoding: Integer): Boolean;
 begin
-  Result := Delphi_Markup_LoadFromFile(Self, pstrFilename, encoding);
+  Result := Delphi_Markup_LoadFromFile(Self, PChar(pstrFilename), encoding);
 end;
 
 procedure CMarkup.Release;
@@ -3043,14 +3079,14 @@ begin
   Delphi_Markup_SetPreserveWhitespace(Self, bPreserve);
 end;
 
-procedure CMarkup.GetLastErrorMessage(pstrMessage: LPTSTR; cchMax: SIZE_T);
+procedure CMarkup.GetLastErrorMessage(pstrMessage: string; cchMax: SIZE_T);
 begin
-  Delphi_Markup_GetLastErrorMessage(Self, pstrMessage, cchMax);
+  Delphi_Markup_GetLastErrorMessage(Self, LPTSTR(pstrMessage), cchMax);
 end;
 
-procedure CMarkup.GetLastErrorLocation(pstrSource: LPTSTR; cchMax: SIZE_T);
+procedure CMarkup.GetLastErrorLocation(pstrSource: string; cchMax: SIZE_T);
 begin
-  Delphi_Markup_GetLastErrorLocation(Self, pstrSource, cchMax);
+  Delphi_Markup_GetLastErrorLocation(Self, LPTSTR(pstrSource), cchMax);
 end;
 
 function CMarkup.GetRoot: CMarkupNode;
@@ -3090,9 +3126,9 @@ begin
   Result := Delphi_MarkupNode_GetChild_01(Self);
 end;
 
-function CMarkupNode.GetChild(pstrName: LPCTSTR): CMarkupNode;
+function CMarkupNode.GetChild(pstrName: string): CMarkupNode;
 begin
-  Result := Delphi_MarkupNode_GetChild_02(Self, pstrName);
+  Result := Delphi_MarkupNode_GetChild_02(Self, PChar(pstrName));
 end;
 
 function CMarkupNode.HasSiblings: Boolean;
@@ -3105,12 +3141,12 @@ begin
   Result := Delphi_MarkupNode_HasChildren(Self);
 end;
 
-function CMarkupNode.GetName: LPCTSTR;
+function CMarkupNode.GetName: string;
 begin
   Result := Delphi_MarkupNode_GetName(Self);
 end;
 
-function CMarkupNode.GetValue: LPCTSTR;
+function CMarkupNode.GetValue: string;
 begin
   Result := Delphi_MarkupNode_GetValue(Self);
 end;
@@ -3120,9 +3156,9 @@ begin
   Result := Delphi_MarkupNode_HasAttributes(Self);
 end;
 
-function CMarkupNode.HasAttribute(pstrName: LPCTSTR): Boolean;
+function CMarkupNode.HasAttribute(pstrName: string): Boolean;
 begin
-  Result := Delphi_MarkupNode_HasAttribute(Self, pstrName);
+  Result := Delphi_MarkupNode_HasAttribute(Self, PChar(pstrName));
 end;
 
 function CMarkupNode.GetAttributeCount: Integer;
@@ -3130,29 +3166,29 @@ begin
   Result := Delphi_MarkupNode_GetAttributeCount(Self);
 end;
 
-function CMarkupNode.GetAttributeName(iIndex: Integer): LPCTSTR;
+function CMarkupNode.GetAttributeName(iIndex: Integer): string;
 begin
   Result := Delphi_MarkupNode_GetAttributeName(Self, iIndex);
 end;
 
-function CMarkupNode.GetAttributeValue(iIndex: Integer): LPCTSTR;
+function CMarkupNode.GetAttributeValue(iIndex: Integer): string;
 begin
   Result := Delphi_MarkupNode_GetAttributeValue_01(Self, iIndex);
 end;
 
-function CMarkupNode.GetAttributeValue(pstrName: LPCTSTR): LPCTSTR;
+function CMarkupNode.GetAttributeValue(pstrName: string): string;
 begin
-  Result := Delphi_MarkupNode_GetAttributeValue_02(Self, pstrName);
+  Result := Delphi_MarkupNode_GetAttributeValue_02(Self, PChar(pstrName));
 end;
 
-function CMarkupNode.GetAttributeValue(iIndex: Integer; pstrValue: LPTSTR; cchMax: SIZE_T): Boolean;
+function CMarkupNode.GetAttributeValue(iIndex: Integer; pstrValue: string; cchMax: SIZE_T): Boolean;
 begin
-  Result := Delphi_MarkupNode_GetAttributeValue_03(Self, iIndex, pstrValue, cchMax);
+  Result := Delphi_MarkupNode_GetAttributeValue_03(Self, iIndex, LPTSTR(pstrValue), cchMax);
 end;
 
-function CMarkupNode.GetAttributeValue(pstrName: LPCTSTR; pstrValue: LPTSTR; cchMax: SIZE_T): Boolean;
+function CMarkupNode.GetAttributeValue(pstrName: string; pstrValue: string; cchMax: SIZE_T): Boolean;
 begin
-  Result := Delphi_MarkupNode_GetAttributeValue_04(Self, pstrName, pstrValue, cchMax);
+  Result := Delphi_MarkupNode_GetAttributeValue_04(Self, PChar(pstrName), LPTSTR(pstrValue), cchMax);
 end;
 
 { CControlUI }
@@ -3167,24 +3203,24 @@ begin
   Delphi_ControlUI_CppDestroy(Self);
 end;
 
-function CControlUI.GetName: CDuiString;
+function CControlUI.GetName: string;
 begin
   Result := Delphi_ControlUI_GetName(Self);
 end;
 
-procedure CControlUI.SetName(pstrName: LPCTSTR);
+procedure CControlUI.SetName(pstrName: string);
 begin
-  Delphi_ControlUI_SetName(Self, pstrName);
+  Delphi_ControlUI_SetName(Self, PChar(pstrName));
 end;
 
-function CControlUI.GetClass: LPCTSTR;
+function CControlUI.GetClass: string;
 begin
   Result := Delphi_ControlUI_GetClass(Self);
 end;
 
-function CControlUI.GetInterface(pstrName: LPCTSTR): Pointer;
+function CControlUI.GetInterface(pstrName: string): Pointer;
 begin
-  Result := Delphi_ControlUI_GetInterface(Self, pstrName);
+  Result := Delphi_ControlUI_GetInterface(Self, PChar(pstrName));
 end;
 
 function CControlUI.GetControlFlags: UINT;
@@ -3212,14 +3248,14 @@ begin
   Result := Delphi_ControlUI_GetParent(Self);
 end;
 
-function CControlUI.GetText: CDuiString;
+function CControlUI.GetText: string;
 begin
   Result := Delphi_ControlUI_GetText(Self);
 end;
 
-procedure CControlUI.SetText(pstrText: LPCTSTR);
+procedure CControlUI.SetText(pstrText: string);
 begin
-  Delphi_ControlUI_SetText(Self, pstrText);
+  Delphi_ControlUI_SetText(Self, PChar(pstrText));
 end;
 
 function CControlUI.GetBkColor: DWORD;
@@ -3252,14 +3288,14 @@ begin
   Delphi_ControlUI_SetBkColor3(Self, dwBackColor);
 end;
 
-function CControlUI.GetBkImage: LPCTSTR;
+function CControlUI.GetBkImage: string;
 begin
   Result := Delphi_ControlUI_GetBkImage(Self);
 end;
 
-procedure CControlUI.SetBkImage(pStrImage: LPCTSTR);
+procedure CControlUI.SetBkImage(pStrImage: string);
 begin
-  Delphi_ControlUI_SetBkImage(Self, pStrImage);
+  Delphi_ControlUI_SetBkImage(Self, PChar(pStrImage));
 end;
 
 function CControlUI.GetFocusBorderColor: DWORD;
@@ -3412,6 +3448,11 @@ begin
   Result := Delphi_ControlUI_GetY(Self);
 end;
 
+procedure CControlUI.Hide;
+begin
+  Visible := False;
+end;
+
 function CControlUI.GetPadding: TRect;
 begin
   Delphi_ControlUI_GetPadding(Self, Result);
@@ -3502,14 +3543,14 @@ begin
   Delphi_ControlUI_SetFloatPercent(Self, piFloatPercent);
 end;
 
-function CControlUI.GetToolTip: CDuiString;
+function CControlUI.GetToolTip: string;
 begin
   Result := Delphi_ControlUI_GetToolTip(Self);
 end;
 
-procedure CControlUI.SetToolTip(pstrText: LPCTSTR);
+procedure CControlUI.SetToolTip(pstrText: string);
 begin
-  Delphi_ControlUI_SetToolTip(Self, pstrText);
+  Delphi_ControlUI_SetToolTip(Self, PChar(pstrText));
 end;
 
 procedure CControlUI.SetToolTipWidth(nWidth: Integer);
@@ -3542,14 +3583,14 @@ begin
   Delphi_ControlUI_SetContextMenuUsed(Self, bMenuUsed);
 end;
 
-function CControlUI.GetUserData: PCDuiString;
+function CControlUI.GetUserData: string;
 begin
-  Result := Delphi_ControlUI_GetUserData(Self);
+  Result := Delphi_ControlUI_GetUserData(Self)^;
 end;
 
-procedure CControlUI.SetUserData(pstrText: LPCTSTR);
+procedure CControlUI.SetUserData(pstrText: string);
 begin
-  Delphi_ControlUI_SetUserData(Self, pstrText);
+  Delphi_ControlUI_SetUserData(Self, PChar(pstrText));
 end;
 
 function CControlUI.GetTag: UINT_PTR;
@@ -3570,6 +3611,11 @@ end;
 procedure CControlUI.SetVisible(bVisible: Boolean);
 begin
   Delphi_ControlUI_SetVisible(Self, bVisible);
+end;
+
+procedure CControlUI.Show;
+begin
+  Visible := True;
 end;
 
 procedure CControlUI.SetInternVisible(bVisible: Boolean);
@@ -3677,14 +3723,14 @@ begin
   Delphi_ControlUI_DoEvent(Self, event);
 end;
 
-procedure CControlUI.SetAttribute(pstrName: LPCTSTR; pstrValue: LPCTSTR);
+procedure CControlUI.SetAttribute(pstrName: string; pstrValue: string);
 begin
-  Delphi_ControlUI_SetAttribute(Self, pstrName, pstrValue);
+  Delphi_ControlUI_SetAttribute(Self, PChar(pstrName), PChar(pstrValue));
 end;
 
-function CControlUI.ApplyAttributeList(pstrList: LPCTSTR): CControlUI;
+function CControlUI.ApplyAttributeList(pstrList: string): CControlUI;
 begin
-  Result := Delphi_ControlUI_ApplyAttributeList(Self, pstrList);
+  Result := Delphi_ControlUI_ApplyAttributeList(Self, PChar(pstrList));
 end;
 
 function CControlUI.EstimateSize(szAvailable: TSize): TSize;
@@ -3727,12 +3773,12 @@ begin
   Delphi_ControlUI_DoPostPaint(Self, hDC, rcPaint);
 end;
 
-procedure CControlUI.SetVirtualWnd(pstrValue: LPCTSTR);
+procedure CControlUI.SetVirtualWnd(pstrValue: string);
 begin
-  Delphi_ControlUI_SetVirtualWnd(Self, pstrValue);
+  Delphi_ControlUI_SetVirtualWnd(Self, PChar(pstrValue));
 end;
 
-function CControlUI.GetVirtualWnd: CDuiString;
+function CControlUI.GetVirtualWnd: string;
 begin
   Result := Delphi_ControlUI_GetVirtualWnd(Self);
 end;
@@ -3764,19 +3810,19 @@ begin
   Result := Delphi_Delphi_WindowImplBase_RegisterSuperclass(Self);
 end;
 
-function CDelphi_WindowImplBase.Create(hwndParent: HWND; pstrName: LPCTSTR; dwStyle: DWORD; dwExStyle: DWORD; const rc: TRect; hMenu: HMENU): HWND;
+function CDelphi_WindowImplBase.Create(hwndParent: HWND; pstrName: string; dwStyle: DWORD; dwExStyle: DWORD; const rc: TRect; hMenu: HMENU): HWND;
 begin
-  Result := Delphi_Delphi_WindowImplBase_Create_01(Self, hwndParent, pstrName, dwStyle, dwExStyle, rc, hMenu);
+  Result := Delphi_Delphi_WindowImplBase_Create_01(Self, hwndParent, PChar(pstrName), dwStyle, dwExStyle, rc, hMenu);
 end;
 
-function CDelphi_WindowImplBase.Create(hwndParent: HWND; pstrName: LPCTSTR; dwStyle: DWORD; dwExStyle: DWORD; x: Integer; y: Integer; cx: Integer; cy: Integer; hMenu: HMENU): HWND;
+function CDelphi_WindowImplBase.Create(hwndParent: HWND; pstrName: string; dwStyle: DWORD; dwExStyle: DWORD; x: Integer; y: Integer; cx: Integer; cy: Integer; hMenu: HMENU): HWND;
 begin
-  Result := Delphi_Delphi_WindowImplBase_Create_02(Self, hwndParent, pstrName, dwStyle, dwExStyle, x, y, cx, cy, hMenu);
+  Result := Delphi_Delphi_WindowImplBase_Create_02(Self, hwndParent, PChar(pstrName), dwStyle, dwExStyle, x, y, cx, cy, hMenu);
 end;
 
-function CDelphi_WindowImplBase.CreateDuiWindow(hwndParent: HWND; pstrWindowName: LPCTSTR; dwStyle: DWORD; dwExStyle: DWORD): HWND;
+function CDelphi_WindowImplBase.CreateDuiWindow(hwndParent: HWND; pstrWindowName: string; dwStyle: DWORD; dwExStyle: DWORD): HWND;
 begin
-  Result := Delphi_Delphi_WindowImplBase_CreateDuiWindow(Self, hwndParent, pstrWindowName, dwStyle, dwExStyle);
+  Result := Delphi_Delphi_WindowImplBase_CreateDuiWindow(Self, hwndParent, PChar(pstrWindowName), dwStyle, dwExStyle);
 end;
 
 function CDelphi_WindowImplBase.Subclass(hWnd: HWND): HWND;
@@ -3864,27 +3910,27 @@ begin
   Delphi_Delphi_WindowImplBase_SetDelphiSelf(Self, ASelf);
 end;
 
-procedure CDelphi_WindowImplBase.SetClassName(ClassName: LPCTSTR);
+procedure CDelphi_WindowImplBase.SetClassName(AClassName: string);
 begin
-  Delphi_Delphi_WindowImplBase_SetClassName(Self, ClassName);
+  Delphi_Delphi_WindowImplBase_SetClassName(Self, PChar(AClassName));
 end;
 
-procedure CDelphi_WindowImplBase.SetSkinFile(SkinFile: LPCTSTR);
+procedure CDelphi_WindowImplBase.SetSkinFile(SkinFile: string);
 begin
-  Delphi_Delphi_WindowImplBase_SetSkinFile(Self, SkinFile);
+  Delphi_Delphi_WindowImplBase_SetSkinFile(Self, PChar(SkinFile));
 end;
 
-procedure CDelphi_WindowImplBase.SetSkinFolder(SkinFolder: LPCTSTR);
+procedure CDelphi_WindowImplBase.SetSkinFolder(SkinFolder: string);
 begin
-  Delphi_Delphi_WindowImplBase_SetSkinFolder(Self, SkinFolder);
+  Delphi_Delphi_WindowImplBase_SetSkinFolder(Self, PChar(SkinFolder));
 end;
 
-procedure CDelphi_WindowImplBase.SetZipFileName(ZipFileName: LPCTSTR);
+procedure CDelphi_WindowImplBase.SetZipFileName(ZipFileName: string);
 begin
-  Delphi_Delphi_WindowImplBase_SetZipFileName(Self, ZipFileName);
+  Delphi_Delphi_WindowImplBase_SetZipFileName(Self, PChar(ZipFileName));
 end;
 
-procedure CDelphi_WindowImplBase.SetResourceType(RType: UILIB_RESOURCETYPE);
+procedure CDelphi_WindowImplBase.SetResourceType(RType: TResourceType);
 begin
   Delphi_Delphi_WindowImplBase_SetResourceType(Self, RType);
 end;
@@ -3973,7 +4019,7 @@ begin
   Delphi_PaintManagerUI_Invalidate_01(Self);
 end;
 
-procedure CPaintManagerUI.Invalidate(var rcItem: TRect);
+procedure CPaintManagerUI.Invalidate(const rcItem: TRect);
 begin
   Delphi_PaintManagerUI_Invalidate_02(Self, rcItem);
 end;
@@ -4018,7 +4064,7 @@ begin
   Result := Delphi_PaintManagerUI_GetSizeBox(Self);
 end;
 
-procedure CPaintManagerUI.SetSizeBox(var rcSizeBox: TRect);
+procedure CPaintManagerUI.SetSizeBox(const rcSizeBox: TRect);
 begin
   Delphi_PaintManagerUI_SetSizeBox(Self, rcSizeBox);
 end;
@@ -4028,7 +4074,7 @@ begin
   Result := Delphi_PaintManagerUI_GetCaptionRect(Self);
 end;
 
-procedure CPaintManagerUI.SetCaptionRect(var rcCaption: TRect);
+procedure CPaintManagerUI.SetCaptionRect(const rcCaption: TRect);
 begin
   Delphi_PaintManagerUI_SetCaptionRect(Self, rcCaption);
 end;
@@ -4093,12 +4139,12 @@ begin
   Result := Delphi_PaintManagerUI_GetInstance;
 end;
 
-class function CPaintManagerUI.GetInstancePath: CDuiString;
+class function CPaintManagerUI.GetInstancePath: string;
 begin
   Result := Delphi_PaintManagerUI_GetInstancePath;
 end;
 
-class function CPaintManagerUI.GetCurrentPath: CDuiString;
+class function CPaintManagerUI.GetCurrentPath: string;
 begin
   Result := Delphi_PaintManagerUI_GetCurrentPath;
 end;
@@ -4108,14 +4154,14 @@ begin
   Result := Delphi_PaintManagerUI_GetResourceDll;
 end;
 
-class function CPaintManagerUI.GetResourcePath: PCDuiString;
+class function CPaintManagerUI.GetResourcePath: string;
 begin
-  Result := Delphi_PaintManagerUI_GetResourcePath;
+  Result := Delphi_PaintManagerUI_GetResourcePath^;
 end;
 
-class function CPaintManagerUI.GetResourceZip: PCDuiString;
+class function CPaintManagerUI.GetResourceZip: string;
 begin
-  Result := Delphi_PaintManagerUI_GetResourceZip;
+  Result := Delphi_PaintManagerUI_GetResourceZip^;
 end;
 
 class function CPaintManagerUI.IsCachedResourceZip: Boolean;
@@ -4133,9 +4179,9 @@ begin
   Delphi_PaintManagerUI_SetInstance(hInst);
 end;
 
-class procedure CPaintManagerUI.SetCurrentPath(pStrPath: LPCTSTR);
+class procedure CPaintManagerUI.SetCurrentPath(pStrPath: string);
 begin
-  Delphi_PaintManagerUI_SetCurrentPath(pStrPath);
+  Delphi_PaintManagerUI_SetCurrentPath(PChar(pStrPath));
 end;
 
 class procedure CPaintManagerUI.SetResourceDll(hInst: HINST);
@@ -4143,9 +4189,9 @@ begin
   Delphi_PaintManagerUI_SetResourceDll(hInst);
 end;
 
-class procedure CPaintManagerUI.SetResourcePath(pStrPath: LPCTSTR);
+class procedure CPaintManagerUI.SetResourcePath(pStrPath: string);
 begin
-  Delphi_PaintManagerUI_SetResourcePath(pStrPath);
+  Delphi_PaintManagerUI_SetResourcePath(PChar(pStrPath));
 end;
 
 class procedure CPaintManagerUI.SetResourceZip(pVoid: Pointer; len: LongInt);
@@ -4153,9 +4199,9 @@ begin
   Delphi_PaintManagerUI_SetResourceZip_01(pVoid, len);
 end;
 
-class procedure CPaintManagerUI.SetResourceZip(pstrZip: LPCTSTR; bCachedResourceZip: Boolean);
+class procedure CPaintManagerUI.SetResourceZip(pstrZip: string; bCachedResourceZip: Boolean);
 begin
-  Delphi_PaintManagerUI_SetResourceZip_02(pstrZip, bCachedResourceZip);
+  Delphi_PaintManagerUI_SetResourceZip_02(PChar(pstrZip), bCachedResourceZip);
 end;
 
 class function CPaintManagerUI.GetHSL(H: PShort; S: PShort; L: PShort): Boolean;
@@ -4168,9 +4214,9 @@ begin
   Delphi_PaintManagerUI_ReloadSkin;
 end;
 
-class function CPaintManagerUI.LoadPlugin(pstrModuleName: LPCTSTR): Boolean;
+class function CPaintManagerUI.LoadPlugin(pstrModuleName: string): Boolean;
 begin
-  Result := Delphi_PaintManagerUI_LoadPlugin(pstrModuleName);
+  Result := Delphi_PaintManagerUI_LoadPlugin(PChar(pstrModuleName));
 end;
 
 class function CPaintManagerUI.GetPlugins: CStdPtrArray;
@@ -4233,9 +4279,9 @@ begin
   Result := Delphi_PaintManagerUI_GetDefaultFontInfo(Self);
 end;
 
-procedure CPaintManagerUI.SetDefaultFont(pStrFontName: LPCTSTR; nSize: Integer; bBold: Boolean; bUnderline: Boolean; bItalic: Boolean; bShared: Boolean);
+procedure CPaintManagerUI.SetDefaultFont(pStrFontName: string; nSize: Integer; bBold: Boolean; bUnderline: Boolean; bItalic: Boolean; bShared: Boolean);
 begin
-  Delphi_PaintManagerUI_SetDefaultFont(Self, pStrFontName, nSize, bBold, bUnderline, bItalic, bShared);
+  Delphi_PaintManagerUI_SetDefaultFont(Self, PChar(pStrFontName), nSize, bBold, bUnderline, bItalic, bShared);
 end;
 
 function CPaintManagerUI.GetCustomFontCount(bShared: Boolean): DWORD;
@@ -4243,9 +4289,9 @@ begin
   Result := Delphi_PaintManagerUI_GetCustomFontCount(Self, bShared);
 end;
 
-function CPaintManagerUI.AddFont(id: Integer; pStrFontName: LPCTSTR; nSize: Integer; bBold: Boolean; bUnderline: Boolean; bItalic: Boolean; bShared: Boolean): HFONT;
+function CPaintManagerUI.AddFont(id: Integer; pStrFontName: string; nSize: Integer; bBold: Boolean; bUnderline: Boolean; bItalic: Boolean; bShared: Boolean): HFONT;
 begin
-  Result := Delphi_PaintManagerUI_AddFont(Self, id, pStrFontName, nSize, bBold, bUnderline, bItalic, bShared);
+  Result := Delphi_PaintManagerUI_AddFont(Self, id, PChar(pStrFontName), nSize, bBold, bUnderline, bItalic, bShared);
 end;
 
 function CPaintManagerUI.GetFont(id: Integer): HFONT;
@@ -4253,9 +4299,9 @@ begin
   Result := Delphi_PaintManagerUI_GetFont_01(Self, id);
 end;
 
-function CPaintManagerUI.GetFont(pStrFontName: LPCTSTR; nSize: Integer; bBold: Boolean; bUnderline: Boolean; bItalic: Boolean): HFONT;
+function CPaintManagerUI.GetFont(pStrFontName: string; nSize: Integer; bBold: Boolean; bUnderline: Boolean; bItalic: Boolean): HFONT;
 begin
-  Result := Delphi_PaintManagerUI_GetFont_02(Self, pStrFontName, nSize, bBold, bUnderline, bItalic);
+  Result := Delphi_PaintManagerUI_GetFont_02(Self, PChar(pStrFontName), nSize, bBold, bUnderline, bItalic);
 end;
 
 function CPaintManagerUI.GetFontIndex(hFont: HFONT; bShared: Boolean): Integer;
@@ -4263,9 +4309,9 @@ begin
   Result := Delphi_PaintManagerUI_GetFontIndex_01(Self, hFont, bShared);
 end;
 
-function CPaintManagerUI.GetFontIndex(pStrFontName: LPCTSTR; nSize: Integer; bBold: Boolean; bUnderline: Boolean; bItalic: Boolean; bShared: Boolean): Integer;
+function CPaintManagerUI.GetFontIndex(pStrFontName: string; nSize: Integer; bBold: Boolean; bUnderline: Boolean; bItalic: Boolean; bShared: Boolean): Integer;
 begin
-  Result := Delphi_PaintManagerUI_GetFontIndex_02(Self, pStrFontName, nSize, bBold, bUnderline, bItalic, bShared);
+  Result := Delphi_PaintManagerUI_GetFontIndex_02(Self, PChar(pStrFontName), nSize, bBold, bUnderline, bItalic, bShared);
 end;
 
 procedure CPaintManagerUI.RemoveFont(hFont: HFONT; bShared: Boolean);
@@ -4293,29 +4339,29 @@ begin
   Result := Delphi_PaintManagerUI_GetFontInfo_02(Self, hFont);
 end;
 
-function CPaintManagerUI.GetImage(bitmap: LPCTSTR): PImageInfo;
+function CPaintManagerUI.GetImage(bitmap: string): PImageInfo;
 begin
-  Result := Delphi_PaintManagerUI_GetImage(Self, bitmap);
+  Result := Delphi_PaintManagerUI_GetImage(Self, PChar(bitmap));
 end;
 
-function CPaintManagerUI.GetImageEx(bitmap: LPCTSTR; AType: LPCTSTR; mask: DWORD; bUseHSL: Boolean): PImageInfo;
+function CPaintManagerUI.GetImageEx(bitmap: string; AType: string; mask: DWORD; bUseHSL: Boolean): PImageInfo;
 begin
-  Result := Delphi_PaintManagerUI_GetImageEx(Self, bitmap, AType, mask, bUseHSL);
+  Result := Delphi_PaintManagerUI_GetImageEx(Self, PChar(bitmap), PChar(AType), mask, bUseHSL);
 end;
 
-function CPaintManagerUI.AddImage(bitmap: LPCTSTR; AType: LPCTSTR; mask: DWORD; bUseHSL: Boolean; bShared: Boolean): PImageInfo;
+function CPaintManagerUI.AddImage(bitmap: string; AType: string; mask: DWORD; bUseHSL: Boolean; bShared: Boolean): PImageInfo;
 begin
-  Result := Delphi_PaintManagerUI_AddImage_01(Self, bitmap, AType, mask, bUseHSL, bShared);
+  Result := Delphi_PaintManagerUI_AddImage_01(Self, PChar(bitmap), PChar(AType), mask, bUseHSL, bShared);
 end;
 
-function CPaintManagerUI.AddImage(bitmap: LPCTSTR; hBitmap: HBITMAP; iWidth: Integer; iHeight: Integer; bAlpha: Boolean; bShared: Boolean): PImageInfo;
+function CPaintManagerUI.AddImage(bitmap: string; hBitmap: HBITMAP; iWidth: Integer; iHeight: Integer; bAlpha: Boolean; bShared: Boolean): PImageInfo;
 begin
-  Result := Delphi_PaintManagerUI_AddImage_02(Self, bitmap, hBitmap, iWidth, iHeight, bAlpha, bShared);
+  Result := Delphi_PaintManagerUI_AddImage_02(Self, PChar(bitmap), hBitmap, iWidth, iHeight, bAlpha, bShared);
 end;
 
-procedure CPaintManagerUI.RemoveImage(bitmap: LPCTSTR; bShared: Boolean);
+procedure CPaintManagerUI.RemoveImage(bitmap: string; bShared: Boolean);
 begin
-  Delphi_PaintManagerUI_RemoveImage(Self, bitmap, bShared);
+  Delphi_PaintManagerUI_RemoveImage(Self, PChar(bitmap), bShared);
 end;
 
 procedure CPaintManagerUI.RemoveAllImages(bShared: Boolean);
@@ -4333,19 +4379,19 @@ begin
   Delphi_PaintManagerUI_ReloadImages(Self);
 end;
 
-procedure CPaintManagerUI.AddDefaultAttributeList(pStrControlName: LPCTSTR; pStrControlAttrList: LPCTSTR; bShared: Boolean);
+procedure CPaintManagerUI.AddDefaultAttributeList(pStrControlName: string; pStrControlAttrList: string; bShared: Boolean);
 begin
-  Delphi_PaintManagerUI_AddDefaultAttributeList(Self, pStrControlName, pStrControlAttrList, bShared);
+  Delphi_PaintManagerUI_AddDefaultAttributeList(Self, PChar(pStrControlName), PChar(pStrControlAttrList), bShared);
 end;
 
-function CPaintManagerUI.GetDefaultAttributeList(pStrControlName: LPCTSTR): LPCTSTR;
+function CPaintManagerUI.GetDefaultAttributeList(pStrControlName: string): string;
 begin
-  Result := Delphi_PaintManagerUI_GetDefaultAttributeList(Self, pStrControlName);
+  Result := Delphi_PaintManagerUI_GetDefaultAttributeList(Self, PChar(pStrControlName));
 end;
 
-function CPaintManagerUI.RemoveDefaultAttributeList(pStrControlName: LPCTSTR; bShared: Boolean): Boolean;
+function CPaintManagerUI.RemoveDefaultAttributeList(pStrControlName: string; bShared: Boolean): Boolean;
 begin
-  Result := Delphi_PaintManagerUI_RemoveDefaultAttributeList(Self, pStrControlName, bShared);
+  Result := Delphi_PaintManagerUI_RemoveDefaultAttributeList(Self, PChar(pStrControlName), bShared);
 end;
 
 procedure CPaintManagerUI.RemoveAllDefaultAttributeList(bShared: Boolean);
@@ -4353,12 +4399,12 @@ begin
   Delphi_PaintManagerUI_RemoveAllDefaultAttributeList(Self, bShared);
 end;
 
-class procedure CPaintManagerUI.AddMultiLanguageString(id: Integer; pStrMultiLanguage: LPCTSTR);
+class procedure CPaintManagerUI.AddMultiLanguageString(id: Integer; pStrMultiLanguage: string);
 begin
-  Delphi_PaintManagerUI_AddMultiLanguageString(id, pStrMultiLanguage);
+  Delphi_PaintManagerUI_AddMultiLanguageString(id, PChar(pStrMultiLanguage));
 end;
 
-class function CPaintManagerUI.GetMultiLanguageString(id: Integer): LPCTSTR;
+class function CPaintManagerUI.GetMultiLanguageString(id: Integer): string;
 begin
   Result := Delphi_PaintManagerUI_GetMultiLanguageString(id);
 end;
@@ -4373,9 +4419,12 @@ begin
   Delphi_PaintManagerUI_RemoveAllMultiLanguageString;
 end;
 
-class procedure CPaintManagerUI.ProcessMultiLanguageTokens(var pStrMultiLanguage: CDuiString);
+class procedure CPaintManagerUI.ProcessMultiLanguageTokens(var pStrMultiLanguage: string);
+var
+  DuiStr: CDuiString;
 begin
-  Delphi_PaintManagerUI_ProcessMultiLanguageTokens(pStrMultiLanguage);
+  Delphi_PaintManagerUI_ProcessMultiLanguageTokens(DuiStr);
+  pStrMultiLanguage := DuiStr;
 end;
 
 function CPaintManagerUI.AttachDialog(pControl: CControlUI): Boolean;
@@ -4393,19 +4442,19 @@ begin
   Delphi_PaintManagerUI_ReapObjects(Self, pControl);
 end;
 
-function CPaintManagerUI.AddOptionGroup(pStrGroupName: LPCTSTR; pControl: CControlUI): Boolean;
+function CPaintManagerUI.AddOptionGroup(pStrGroupName: string; pControl: CControlUI): Boolean;
 begin
-  Result := Delphi_PaintManagerUI_AddOptionGroup(Self, pStrGroupName, pControl);
+  Result := Delphi_PaintManagerUI_AddOptionGroup(Self, PChar(pStrGroupName), pControl);
 end;
 
-function CPaintManagerUI.GetOptionGroup(pStrGroupName: LPCTSTR): CStdPtrArray;
+function CPaintManagerUI.GetOptionGroup(pStrGroupName: string): CStdPtrArray;
 begin
-  Result := Delphi_PaintManagerUI_GetOptionGroup(Self, pStrGroupName);
+  Result := Delphi_PaintManagerUI_GetOptionGroup(Self, PChar(pStrGroupName));
 end;
 
-procedure CPaintManagerUI.RemoveOptionGroup(pStrGroupName: LPCTSTR; pControl: CControlUI);
+procedure CPaintManagerUI.RemoveOptionGroup(pStrGroupName: string; pControl: CControlUI);
 begin
-  Delphi_PaintManagerUI_RemoveOptionGroup(Self, pStrGroupName, pControl);
+  Delphi_PaintManagerUI_RemoveOptionGroup(Self, PChar(pStrGroupName), pControl);
 end;
 
 procedure CPaintManagerUI.RemoveAllOptionGroups;
@@ -4483,9 +4532,9 @@ begin
   Delphi_PaintManagerUI_SendNotify_01(Self, Msg, bAsync);
 end;
 
-procedure CPaintManagerUI.SendNotify(pControl: CControlUI; pstrMessage: LPCTSTR; wParam: WPARAM; lParam: LPARAM; bAsync: Boolean);
+procedure CPaintManagerUI.SendNotify(pControl: CControlUI; pstrMessage: string; wParam: WPARAM; lParam: LPARAM; bAsync: Boolean);
 begin
-  Delphi_PaintManagerUI_SendNotify_02(Self, pControl, pstrMessage, wParam, lParam, bAsync);
+  Delphi_PaintManagerUI_SendNotify_02(Self, pControl, PChar(pstrMessage), wParam, lParam, bAsync);
 end;
 
 function CPaintManagerUI.AddPreMessageFilter(pFilter: IMessageFilterUI): Boolean;
@@ -4558,9 +4607,9 @@ begin
   Result := Delphi_PaintManagerUI_FindControl_01(Self, pt);
 end;
 
-function CPaintManagerUI.FindControl(pstrName: LPCTSTR): CControlUI;
+function CPaintManagerUI.FindControl(pstrName: string): CControlUI;
 begin
-  Result := Delphi_PaintManagerUI_FindControl_02(Self, pstrName);
+  Result := Delphi_PaintManagerUI_FindControl_02(Self, PChar(pstrName));
 end;
 
 function CPaintManagerUI.FindSubControlByPoint(pParent: CControlUI; pt: TPoint): CControlUI;
@@ -4568,19 +4617,19 @@ begin
   Result := Delphi_PaintManagerUI_FindSubControlByPoint(Self, pParent, pt);
 end;
 
-function CPaintManagerUI.FindSubControlByName(pParent: CControlUI; pstrName: LPCTSTR): CControlUI;
+function CPaintManagerUI.FindSubControlByName(pParent: CControlUI; pstrName: string): CControlUI;
 begin
-  Result := Delphi_PaintManagerUI_FindSubControlByName(Self, pParent, pstrName);
+  Result := Delphi_PaintManagerUI_FindSubControlByName(Self, pParent, PChar(pstrName));
 end;
 
-function CPaintManagerUI.FindSubControlByClass(pParent: CControlUI; pstrClass: LPCTSTR; iIndex: Integer): CControlUI;
+function CPaintManagerUI.FindSubControlByClass(pParent: CControlUI; pstrClass: string; iIndex: Integer): CControlUI;
 begin
-  Result := Delphi_PaintManagerUI_FindSubControlByClass(Self, pParent, pstrClass, iIndex);
+  Result := Delphi_PaintManagerUI_FindSubControlByClass(Self, pParent, PChar(pstrClass), iIndex);
 end;
 
-function CPaintManagerUI.FindSubControlsByClass(pParent: CControlUI; pstrClass: LPCTSTR): CStdPtrArray;
+function CPaintManagerUI.FindSubControlsByClass(pParent: CControlUI; pstrClass: string): CStdPtrArray;
 begin
-  Result := Delphi_PaintManagerUI_FindSubControlsByClass(Self, pParent, pstrClass);
+  Result := Delphi_PaintManagerUI_FindSubControlsByClass(Self, pParent, PChar(pstrClass));
 end;
 
 class procedure CPaintManagerUI.MessageLoop;
@@ -5735,14 +5784,14 @@ begin
   Delphi_ButtonUI_CppDestroy(Self);
 end;
 
-function CButtonUI.GetClass: LPCTSTR;
+function CButtonUI.GetClass: string;
 begin
   Result := Delphi_ButtonUI_GetClass(Self);
 end;
 
-function CButtonUI.GetInterface(pstrName: LPCTSTR): Pointer;
+function CButtonUI.GetInterface(pstrName: string): Pointer;
 begin
-  Result := Delphi_ButtonUI_GetInterface(Self, pstrName);
+  Result := Delphi_ButtonUI_GetInterface(Self, PChar(pstrName));
 end;
 
 function CButtonUI.GetControlFlags: UINT;
@@ -5765,74 +5814,74 @@ begin
   Delphi_ButtonUI_DoEvent(Self, event);
 end;
 
-function CButtonUI.GetNormalImage: LPCTSTR;
+function CButtonUI.GetNormalImage: string;
 begin
   Result := Delphi_ButtonUI_GetNormalImage(Self);
 end;
 
-procedure CButtonUI.SetNormalImage(pStrImage: LPCTSTR);
+procedure CButtonUI.SetNormalImage(pStrImage: string);
 begin
-  Delphi_ButtonUI_SetNormalImage(Self, pStrImage);
+  Delphi_ButtonUI_SetNormalImage(Self, PChar(pStrImage));
 end;
 
-function CButtonUI.GetHotImage: LPCTSTR;
+function CButtonUI.GetHotImage: string;
 begin
   Result := Delphi_ButtonUI_GetHotImage(Self);
 end;
 
-procedure CButtonUI.SetHotImage(pStrImage: LPCTSTR);
+procedure CButtonUI.SetHotImage(pStrImage: string);
 begin
-  Delphi_ButtonUI_SetHotImage(Self, pStrImage);
+  Delphi_ButtonUI_SetHotImage(Self, PChar(pStrImage));
 end;
 
-function CButtonUI.GetPushedImage: LPCTSTR;
+function CButtonUI.GetPushedImage: string;
 begin
   Result := Delphi_ButtonUI_GetPushedImage(Self);
 end;
 
-procedure CButtonUI.SetPushedImage(pStrImage: LPCTSTR);
+procedure CButtonUI.SetPushedImage(pStrImage: string);
 begin
-  Delphi_ButtonUI_SetPushedImage(Self, pStrImage);
+  Delphi_ButtonUI_SetPushedImage(Self, PChar(pStrImage));
 end;
 
-function CButtonUI.GetFocusedImage: LPCTSTR;
+function CButtonUI.GetFocusedImage: string;
 begin
   Result := Delphi_ButtonUI_GetFocusedImage(Self);
 end;
 
-procedure CButtonUI.SetFocusedImage(pStrImage: LPCTSTR);
+procedure CButtonUI.SetFocusedImage(pStrImage: string);
 begin
-  Delphi_ButtonUI_SetFocusedImage(Self, pStrImage);
+  Delphi_ButtonUI_SetFocusedImage(Self, PChar(pStrImage));
 end;
 
-function CButtonUI.GetDisabledImage: LPCTSTR;
+function CButtonUI.GetDisabledImage: string;
 begin
   Result := Delphi_ButtonUI_GetDisabledImage(Self);
 end;
 
-procedure CButtonUI.SetDisabledImage(pStrImage: LPCTSTR);
+procedure CButtonUI.SetDisabledImage(pStrImage: string);
 begin
-  Delphi_ButtonUI_SetDisabledImage(Self, pStrImage);
+  Delphi_ButtonUI_SetDisabledImage(Self, PChar(pStrImage));
 end;
 
-function CButtonUI.GetForeImage: LPCTSTR;
+function CButtonUI.GetForeImage: string;
 begin
   Result := Delphi_ButtonUI_GetForeImage(Self);
 end;
 
-procedure CButtonUI.SetForeImage(pStrImage: LPCTSTR);
+procedure CButtonUI.SetForeImage(pStrImage: string);
 begin
-  Delphi_ButtonUI_SetForeImage(Self, pStrImage);
+  Delphi_ButtonUI_SetForeImage(Self, PChar(pStrImage));
 end;
 
-function CButtonUI.GetHotForeImage: LPCTSTR;
+function CButtonUI.GetHotForeImage: string;
 begin
   Result := Delphi_ButtonUI_GetHotForeImage(Self);
 end;
 
-procedure CButtonUI.SetHotForeImage(pStrImage: LPCTSTR);
+procedure CButtonUI.SetHotForeImage(pStrImage: string);
 begin
-  Delphi_ButtonUI_SetHotForeImage(Self, pStrImage);
+  Delphi_ButtonUI_SetHotForeImage(Self, PChar(pStrImage));
 end;
 
 procedure CButtonUI.SetHotBkColor(dwColor: DWORD);
@@ -5880,9 +5929,9 @@ begin
   Delphi_ButtonUI_EstimateSize(Self, szAvailable, Result);
 end;
 
-procedure CButtonUI.SetAttribute(pstrName: LPCTSTR; pstrValue: LPCTSTR);
+procedure CButtonUI.SetAttribute(pstrName: string; pstrValue: string);
 begin
-  Delphi_ButtonUI_SetAttribute(Self, pstrName, pstrValue);
+  Delphi_ButtonUI_SetAttribute(Self, PChar(pstrName), PChar(pstrValue));
 end;
 
 procedure CButtonUI.PaintText(hDC: HDC);

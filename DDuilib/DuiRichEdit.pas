@@ -37,8 +37,8 @@ type
   public
     class function CppCreate: CRichEditUI;
     procedure CppDestroy;
-    function GetClass: LPCTSTR;
-    function GetInterface(pstrName: LPCTSTR): Pointer;
+    function GetClass: string;
+    function GetInterface(pstrName: string): Pointer;
     function GetControlFlags: UINT;
     function IsWantTab: Boolean;
     procedure SetWantTab(bWantTab: Boolean = True);
@@ -54,7 +54,7 @@ type
     procedure SetWordWrap(bWordWrap: Boolean = True);
     function GetFont: Integer;
     procedure SetFont(index: Integer); overload;
-    procedure SetFont(pStrFontName: LPCTSTR; nSize: Integer; bBold: Boolean; bUnderline: Boolean; bItalic: Boolean); overload;
+    procedure SetFont(pStrFontName: string; nSize: Integer; bBold: Boolean; bUnderline: Boolean; bItalic: Boolean); overload;
     function GetWinStyle: LONG;
     procedure SetWinStyle(lStyle: LONG);
     function GetTextColor: DWORD;
@@ -62,17 +62,17 @@ type
     function GetLimitText: Integer;
     procedure SetLimitText(iChars: Integer);
     function GetTextLength(dwFlags: DWORD = GTL_DEFAULT): LongInt;
-    function GetText: CDuiString;
-    procedure SetText(pstrText: LPCTSTR);
+    function GetText: string;
+    procedure SetText(pstrText: string);
     function GetModify: Boolean;
     procedure SetModify(bModified: Boolean = True);
     procedure GetSel(var cr: CHARRANGE); overload;
     procedure GetSel(var nStartChar: LongInt; var nEndChar: LongInt); overload;
-    function SetSel(var cr: CHARRANGE): Integer; overload;
+    function SetSel(const cr: CHARRANGE): Integer; overload;
     function SetSel(nStartChar: LongInt; nEndChar: LongInt): Integer; overload;
-    procedure ReplaceSel(lpszNewText: LPCTSTR; bCanUndo: Boolean);
-    procedure ReplaceSelW(lpszNewText: LPCWSTR; bCanUndo: Boolean = False);
-    function GetSelText: CDuiString;
+    procedure ReplaceSel(lpszNewText: string; bCanUndo: Boolean);
+    procedure ReplaceSelW(lpszNewText: string; bCanUndo: Boolean = False);
+    function GetSelText: string;
     function SetSelAll: Integer;
     function SetSelNone: Integer;
     function GetSelectionType: WORD;
@@ -86,21 +86,21 @@ type
     function GetTextRange(nStartChar: LongInt; nEndChar: LongInt): CDuiString;
     procedure HideSelection(bHide: Boolean = True; bChangeStyle: Boolean = False);
     procedure ScrollCaret;
-    function InsertText(nInsertAfterChar: LongInt; lpstrText: LPCTSTR; bCanUndo: Boolean = False): Integer;
-    function AppendText(lpstrText: LPCTSTR; bCanUndo: Boolean = False): Integer;
+    function InsertText(nInsertAfterChar: LongInt; lpstrText: string; bCanUndo: Boolean = False): Integer;
+    function AppendText(lpstrText: string; bCanUndo: Boolean = False): Integer;
     function GetDefaultCharFormat(var cf: CHARFORMAT2): DWORD;
-    function SetDefaultCharFormat(var cf: CHARFORMAT2): Boolean;
+    function SetDefaultCharFormat(const cf: CHARFORMAT2): Boolean;
     function GetSelectionCharFormat(var cf: CHARFORMAT2): DWORD;
-    function SetSelectionCharFormat(var cf: CHARFORMAT2): Boolean;
-    function SetWordCharFormat(var cf: CHARFORMAT2): Boolean;
+    function SetSelectionCharFormat(const cf: CHARFORMAT2): Boolean;
+    function SetWordCharFormat(const cf: CHARFORMAT2): Boolean;
     function GetParaFormat(var pf: PARAFORMAT2): DWORD;
-    function SetParaFormat(var pf: PARAFORMAT2): Boolean;
+    function SetParaFormat(const pf: PARAFORMAT2): Boolean;
     procedure Clear;
     procedure Copy;
     procedure Cut;
     procedure Paste;
     function GetLineCount: Integer;
-    function GetLine(nIndex: Integer; nMaxLength: Integer): CDuiString;
+    function GetLine(nIndex: Integer; nMaxLength: Integer): string;
     function LineIndex(nLine: Integer = -1): Integer;
     function LineLength(nLine: Integer = -1): Integer;
     function LineScroll(nLines: Integer; nChars: Integer = 0): Boolean;
@@ -111,7 +111,7 @@ type
     procedure EmptyUndoBuffer;
     function SetUndoLimit(nLimit: UINT): UINT;
     function StreamIn(nFormat: Integer; var es: EDITSTREAM): LongInt;
-    function StreamOut(nFormat: Integer; var es: EDITSTREAM): LongInt;
+    function StreamOut(nFormat: Integer; const es: EDITSTREAM): LongInt;
     procedure DoInit;
     function SetDropAcceptFile(bAccept: Boolean): Boolean;
     function TxSendMessage(msg: UINT; wparam: WPARAM; lparam: LPARAM; plresult: PLRESULT): HRESULT;
@@ -136,7 +136,7 @@ type
     procedure Move(szOffset: TSize; bNeedInvalidate: Boolean = True);
     procedure DoEvent(var event: TEventUI);
     procedure DoPaint(hDC: HDC; var rcPaint: TRect);
-    procedure SetAttribute(pstrName: LPCTSTR; pstrValue: LPCTSTR);
+    procedure SetAttribute(pstrName: string; pstrValue: string);
   public
     property DefaultCharFormat: TCharFormat2 read _GetDefaultCharFormat write _SetDefaultCharFormat;
     property Redo: Boolean read _Redo;
@@ -196,7 +196,7 @@ function Delphi_RichEditUI_GetModify(Handle: CRichEditUI): Boolean; cdecl;
 procedure Delphi_RichEditUI_SetModify(Handle: CRichEditUI; bModified: Boolean); cdecl;
 procedure Delphi_RichEditUI_GetSel_01(Handle: CRichEditUI; var cr: CHARRANGE); cdecl;
 procedure Delphi_RichEditUI_GetSel_02(Handle: CRichEditUI; var nStartChar: LongInt; var nEndChar: LongInt); cdecl;
-function Delphi_RichEditUI_SetSel_01(Handle: CRichEditUI; var cr: CHARRANGE): Integer; cdecl;
+function Delphi_RichEditUI_SetSel_01(Handle: CRichEditUI; const cr: CHARRANGE): Integer; cdecl;
 function Delphi_RichEditUI_SetSel_02(Handle: CRichEditUI; nStartChar: LongInt; nEndChar: LongInt): Integer; cdecl;
 procedure Delphi_RichEditUI_ReplaceSel(Handle: CRichEditUI; lpszNewText: LPCTSTR; bCanUndo: Boolean); cdecl;
 procedure Delphi_RichEditUI_ReplaceSelW(Handle: CRichEditUI; lpszNewText: LPCWSTR; bCanUndo: Boolean); cdecl;
@@ -217,12 +217,12 @@ procedure Delphi_RichEditUI_ScrollCaret(Handle: CRichEditUI); cdecl;
 function Delphi_RichEditUI_InsertText(Handle: CRichEditUI; nInsertAfterChar: LongInt; lpstrText: LPCTSTR; bCanUndo: Boolean): Integer; cdecl;
 function Delphi_RichEditUI_AppendText(Handle: CRichEditUI; lpstrText: LPCTSTR; bCanUndo: Boolean): Integer; cdecl;
 function Delphi_RichEditUI_GetDefaultCharFormat(Handle: CRichEditUI; var cf: CHARFORMAT2): DWORD; cdecl;
-function Delphi_RichEditUI_SetDefaultCharFormat(Handle: CRichEditUI; var cf: CHARFORMAT2): Boolean; cdecl;
+function Delphi_RichEditUI_SetDefaultCharFormat(Handle: CRichEditUI; const cf: CHARFORMAT2): Boolean; cdecl;
 function Delphi_RichEditUI_GetSelectionCharFormat(Handle: CRichEditUI; var cf: CHARFORMAT2): DWORD; cdecl;
-function Delphi_RichEditUI_SetSelectionCharFormat(Handle: CRichEditUI; var cf: CHARFORMAT2): Boolean; cdecl;
-function Delphi_RichEditUI_SetWordCharFormat(Handle: CRichEditUI; var cf: CHARFORMAT2): Boolean; cdecl;
+function Delphi_RichEditUI_SetSelectionCharFormat(Handle: CRichEditUI; const cf: CHARFORMAT2): Boolean; cdecl;
+function Delphi_RichEditUI_SetWordCharFormat(Handle: CRichEditUI; const cf: CHARFORMAT2): Boolean; cdecl;
 function Delphi_RichEditUI_GetParaFormat(Handle: CRichEditUI; var pf: PARAFORMAT2): DWORD; cdecl;
-function Delphi_RichEditUI_SetParaFormat(Handle: CRichEditUI; var pf: PARAFORMAT2): Boolean; cdecl;
+function Delphi_RichEditUI_SetParaFormat(Handle: CRichEditUI; const pf: PARAFORMAT2): Boolean; cdecl;
 function Delphi_RichEditUI_Redo(Handle: CRichEditUI): Boolean; cdecl;
 function Delphi_RichEditUI_Undo(Handle: CRichEditUI): Boolean; cdecl;
 procedure Delphi_RichEditUI_Clear(Handle: CRichEditUI); cdecl;
@@ -241,7 +241,7 @@ function Delphi_RichEditUI_CharFromPos(Handle: CRichEditUI; pt: TPoint): Integer
 procedure Delphi_RichEditUI_EmptyUndoBuffer(Handle: CRichEditUI); cdecl;
 function Delphi_RichEditUI_SetUndoLimit(Handle: CRichEditUI; nLimit: UINT): UINT; cdecl;
 function Delphi_RichEditUI_StreamIn(Handle: CRichEditUI; nFormat: Integer; var es: EDITSTREAM): LongInt; cdecl;
-function Delphi_RichEditUI_StreamOut(Handle: CRichEditUI; nFormat: Integer; var es: EDITSTREAM): LongInt; cdecl;
+function Delphi_RichEditUI_StreamOut(Handle: CRichEditUI; nFormat: Integer; const es: EDITSTREAM): LongInt; cdecl;
 procedure Delphi_RichEditUI_DoInit(Handle: CRichEditUI); cdecl;
 function Delphi_RichEditUI_SetDropAcceptFile(Handle: CRichEditUI; bAccept: Boolean): Boolean; cdecl;
 function Delphi_RichEditUI_TxSendMessage(Handle: CRichEditUI; msg: UINT; wparam: WPARAM; lparam: LPARAM; plresult: PLRESULT): HRESULT; cdecl;
@@ -283,14 +283,14 @@ begin
   Delphi_RichEditUI_CppDestroy(Self);
 end;
 
-function CRichEditUI.GetClass: LPCTSTR;
+function CRichEditUI.GetClass: string;
 begin
   Result := Delphi_RichEditUI_GetClass(Self);
 end;
 
-function CRichEditUI.GetInterface(pstrName: LPCTSTR): Pointer;
+function CRichEditUI.GetInterface(pstrName: string): Pointer;
 begin
-  Result := Delphi_RichEditUI_GetInterface(Self, pstrName);
+  Result := Delphi_RichEditUI_GetInterface(Self, PChar(pstrName));
 end;
 
 function CRichEditUI.GetControlFlags: UINT;
@@ -368,9 +368,9 @@ begin
   Delphi_RichEditUI_SetFont_01(Self, index);
 end;
 
-procedure CRichEditUI.SetFont(pStrFontName: LPCTSTR; nSize: Integer; bBold: Boolean; bUnderline: Boolean; bItalic: Boolean);
+procedure CRichEditUI.SetFont(pStrFontName: string; nSize: Integer; bBold: Boolean; bUnderline: Boolean; bItalic: Boolean);
 begin
-  Delphi_RichEditUI_SetFont_02(Self, pStrFontName, nSize, bBold, bUnderline, bItalic);
+  Delphi_RichEditUI_SetFont_02(Self, PChar(pStrFontName), nSize, bBold, bUnderline, bItalic);
 end;
 
 function CRichEditUI.GetWinStyle: LONG;
@@ -408,14 +408,14 @@ begin
   Result := Delphi_RichEditUI_GetTextLength(Self, dwFlags);
 end;
 
-function CRichEditUI.GetText: CDuiString;
+function CRichEditUI.GetText: string;
 begin
   Result := Delphi_RichEditUI_GetText(Self);
 end;
 
-procedure CRichEditUI.SetText(pstrText: LPCTSTR);
+procedure CRichEditUI.SetText(pstrText: string);
 begin
-  Delphi_RichEditUI_SetText(Self, pstrText);
+  Delphi_RichEditUI_SetText(Self, PChar(pstrText));
 end;
 
 function CRichEditUI.GetModify: Boolean;
@@ -438,7 +438,7 @@ begin
   Delphi_RichEditUI_GetSel_02(Self, nStartChar, nEndChar);
 end;
 
-function CRichEditUI.SetSel(var cr: CHARRANGE): Integer;
+function CRichEditUI.SetSel(const cr: CHARRANGE): Integer;
 begin
   Result := Delphi_RichEditUI_SetSel_01(Self, cr);
 end;
@@ -448,17 +448,17 @@ begin
   Result := Delphi_RichEditUI_SetSel_02(Self, nStartChar, nEndChar);
 end;
 
-procedure CRichEditUI.ReplaceSel(lpszNewText: LPCTSTR; bCanUndo: Boolean);
+procedure CRichEditUI.ReplaceSel(lpszNewText: string; bCanUndo: Boolean);
 begin
-  Delphi_RichEditUI_ReplaceSel(Self, lpszNewText, bCanUndo);
+  Delphi_RichEditUI_ReplaceSel(Self, PChar(lpszNewText), bCanUndo);
 end;
 
-procedure CRichEditUI.ReplaceSelW(lpszNewText: LPCWSTR; bCanUndo: Boolean);
+procedure CRichEditUI.ReplaceSelW(lpszNewText: string; bCanUndo: Boolean);
 begin
-  Delphi_RichEditUI_ReplaceSelW(Self, lpszNewText, bCanUndo);
+  Delphi_RichEditUI_ReplaceSelW(Self, PChar(lpszNewText), bCanUndo);
 end;
 
-function CRichEditUI.GetSelText: CDuiString;
+function CRichEditUI.GetSelText: string;
 begin
   Result := Delphi_RichEditUI_GetSelText(Self);
 end;
@@ -528,14 +528,14 @@ begin
   Delphi_RichEditUI_ScrollCaret(Self);
 end;
 
-function CRichEditUI.InsertText(nInsertAfterChar: LongInt; lpstrText: LPCTSTR; bCanUndo: Boolean): Integer;
+function CRichEditUI.InsertText(nInsertAfterChar: LongInt; lpstrText: string; bCanUndo: Boolean): Integer;
 begin
-  Result := Delphi_RichEditUI_InsertText(Self, nInsertAfterChar, lpstrText, bCanUndo);
+  Result := Delphi_RichEditUI_InsertText(Self, nInsertAfterChar, PChar(lpstrText), bCanUndo);
 end;
 
-function CRichEditUI.AppendText(lpstrText: LPCTSTR; bCanUndo: Boolean): Integer;
+function CRichEditUI.AppendText(lpstrText: string; bCanUndo: Boolean): Integer;
 begin
-  Result := Delphi_RichEditUI_AppendText(Self, lpstrText, bCanUndo);
+  Result := Delphi_RichEditUI_AppendText(Self, PChar(lpstrText), bCanUndo);
 end;
 
 function CRichEditUI.GetDefaultCharFormat(var cf: CHARFORMAT2): DWORD;
@@ -543,7 +543,7 @@ begin
   Result := Delphi_RichEditUI_GetDefaultCharFormat(Self, cf);
 end;
 
-function CRichEditUI.SetDefaultCharFormat(var cf: CHARFORMAT2): Boolean;
+function CRichEditUI.SetDefaultCharFormat(const cf: CHARFORMAT2): Boolean;
 begin
   Result := Delphi_RichEditUI_SetDefaultCharFormat(Self, cf);
 end;
@@ -553,12 +553,12 @@ begin
   Result := Delphi_RichEditUI_GetSelectionCharFormat(Self, cf);
 end;
 
-function CRichEditUI.SetSelectionCharFormat(var cf: CHARFORMAT2): Boolean;
+function CRichEditUI.SetSelectionCharFormat(const cf: CHARFORMAT2): Boolean;
 begin
   Result := Delphi_RichEditUI_SetSelectionCharFormat(Self, cf);
 end;
 
-function CRichEditUI.SetWordCharFormat(var cf: CHARFORMAT2): Boolean;
+function CRichEditUI.SetWordCharFormat(const cf: CHARFORMAT2): Boolean;
 begin
   Result := Delphi_RichEditUI_SetWordCharFormat(Self, cf);
 end;
@@ -568,7 +568,7 @@ begin
   Result := Delphi_RichEditUI_GetParaFormat(Self, pf);
 end;
 
-function CRichEditUI.SetParaFormat(var pf: PARAFORMAT2): Boolean;
+function CRichEditUI.SetParaFormat(const pf: PARAFORMAT2): Boolean;
 begin
   Result := Delphi_RichEditUI_SetParaFormat(Self, pf);
 end;
@@ -656,7 +656,7 @@ begin
   Result := Delphi_RichEditUI_GetLineCount(Self);
 end;
 
-function CRichEditUI.GetLine(nIndex: Integer; nMaxLength: Integer): CDuiString;
+function CRichEditUI.GetLine(nIndex: Integer; nMaxLength: Integer): string;
 begin
   Result := Delphi_RichEditUI_GetLine(Self, nIndex, nMaxLength);
 end;
@@ -711,7 +711,7 @@ begin
   Result := Delphi_RichEditUI_StreamIn(Self, nFormat, es);
 end;
 
-function CRichEditUI.StreamOut(nFormat: Integer; var es: EDITSTREAM): LongInt;
+function CRichEditUI.StreamOut(nFormat: Integer; const es: EDITSTREAM): LongInt;
 begin
   Result := Delphi_RichEditUI_StreamOut(Self, nFormat, es);
 end;
@@ -836,9 +836,9 @@ begin
   Delphi_RichEditUI_DoPaint(Self, hDC, rcPaint);
 end;
 
-procedure CRichEditUI.SetAttribute(pstrName: LPCTSTR; pstrValue: LPCTSTR);
+procedure CRichEditUI.SetAttribute(pstrName: string; pstrValue: string);
 begin
-  Delphi_RichEditUI_SetAttribute(Self, pstrName, pstrValue);
+  Delphi_RichEditUI_SetAttribute(Self, PChar(pstrName), PChar(pstrValue));
 end;
 
 //================================CRichEditUI============================

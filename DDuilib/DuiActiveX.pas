@@ -24,33 +24,30 @@ type
   CActiveXUI = class(CControlUI)
   private
     function GetClisd: TCLSID;
-    function GetModuleName: CDuiString;
-    procedure SetModuleName(pstrText: LPCTSTR);
+    function GetModuleName: string;
+    procedure SetModuleName(pstrText: string);
     function GetHostWindow: HWND;
     function IsDelayCreate: Boolean;
     procedure SetDelayCreate(bDelayCreate: Boolean = True);
   public
     class function CppCreate: CActiveXUI;
     procedure CppDestroy;
-    function GetClass: LPCTSTR;
-    function GetInterface(pstrName: LPCTSTR): Pointer;
+    function GetClass: string;
+    function GetInterface(pstrName: string): Pointer;
     function CreateControl(const clsid: TCLSID): Boolean; overload;
-    function CreateControl(pstrCLSID: LPCTSTR): Boolean; overload;
+    function CreateControl(pstrCLSID: string): Boolean; overload;
     function GetControl(const iid: TIID; ppRet: PPointer): HRESULT;
     procedure SetVisible(bVisible: Boolean = True);
     procedure SetInternVisible(bVisible: Boolean = True);
     procedure SetPos(rc: TRect; bNeedInvalidate: Boolean = True);
     procedure Move(szOffset: TSize; bNeedInvalidate: Boolean = True);
     procedure DoPaint(hDC: HDC; var rcPaint: TRect);
-    procedure SetAttribute(pstrName: LPCTSTR; pstrValue: LPCTSTR);
-  private
-    function _GetModuleName: string;
-    procedure _SetModuleName(const Value: string);
+    procedure SetAttribute(pstrName: string; pstrValue: string);
   public
     property Clisd: TCLSID read GetClisd;
     property DelayCreate: Boolean read IsDelayCreate write SetDelayCreate;
     property HostWindow: HWND read GetHostWindow;
-    property ModuleName: string read _GetModuleName write _SetModuleName;
+    property ModuleName: string read GetModuleName write SetModuleName;
   end;
 
 
@@ -91,14 +88,14 @@ begin
   Delphi_ActiveXUI_CppDestroy(Self);
 end;
 
-function CActiveXUI.GetClass: LPCTSTR;
+function CActiveXUI.GetClass: string;
 begin
   Result := Delphi_ActiveXUI_GetClass(Self);
 end;
 
-function CActiveXUI.GetInterface(pstrName: LPCTSTR): Pointer;
+function CActiveXUI.GetInterface(pstrName: string): Pointer;
 begin
-  Result := Delphi_ActiveXUI_GetInterface(Self, pstrName);
+  Result := Delphi_ActiveXUI_GetInterface(Self, PChar(pstrName));
 end;
 
 function CActiveXUI.GetHostWindow: HWND;
@@ -121,9 +118,9 @@ begin
   Result := Delphi_ActiveXUI_CreateControl_01(Self, clsid);
 end;
 
-function CActiveXUI.CreateControl(pstrCLSID: LPCTSTR): Boolean;
+function CActiveXUI.CreateControl(pstrCLSID: string): Boolean;
 begin
-  Result := Delphi_ActiveXUI_CreateControl_02(Self, pstrCLSID);
+  Result := Delphi_ActiveXUI_CreateControl_02(Self, PChar(pstrCLSID));
 end;
 
 function CActiveXUI.GetControl(const iid: TIID; ppRet: PPointer): HRESULT;
@@ -136,29 +133,19 @@ begin
   Delphi_ActiveXUI_GetClisd(Self, Result);
 end;
 
-function CActiveXUI.GetModuleName: CDuiString;
+function CActiveXUI.GetModuleName: string;
 begin
   Result := Delphi_ActiveXUI_GetModuleName(Self);
 end;
 
-procedure CActiveXUI.SetModuleName(pstrText: LPCTSTR);
+procedure CActiveXUI.SetModuleName(pstrText: string);
 begin
-  Delphi_ActiveXUI_SetModuleName(Self, pstrText);
+  Delphi_ActiveXUI_SetModuleName(Self, PChar(pstrText));
 end;
 
 procedure CActiveXUI.SetVisible(bVisible: Boolean);
 begin
   Delphi_ActiveXUI_SetVisible(Self, bVisible);
-end;
-
-function CActiveXUI._GetModuleName: string;
-begin
-  Result := GetModuleName;
-end;
-
-procedure CActiveXUI._SetModuleName(const Value: string);
-begin
-  SetModuleName(PChar(Value));
 end;
 
 procedure CActiveXUI.SetInternVisible(bVisible: Boolean);
@@ -181,9 +168,9 @@ begin
   Delphi_ActiveXUI_DoPaint(Self, hDC, rcPaint);
 end;
 
-procedure CActiveXUI.SetAttribute(pstrName: LPCTSTR; pstrValue: LPCTSTR);
+procedure CActiveXUI.SetAttribute(pstrName: string; pstrValue: string);
 begin
-  Delphi_ActiveXUI_SetAttribute(Self, pstrName, pstrValue);
+  Delphi_ActiveXUI_SetAttribute(Self, PChar(pstrName), PChar(pstrValue));
 end;
 
 

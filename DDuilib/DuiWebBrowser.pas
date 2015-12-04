@@ -25,37 +25,32 @@ type
 
   CWebBrowserUI = class(CActiveXUI)
   private
-    procedure NavigateUrl(lpszUrl: LPCTSTR); overload;
-    procedure Navigate2(lpszUrl: LPCTSTR); overload;
-    procedure SetHomePage(lpszUrl: LPCTSTR);
-    function GetHomePage: LPCTSTR;
+    procedure SetHomePage(lpszUrl: string);
+    function GetHomePage: string;
     function GetWebBrowser2: IWebBrowser2;
     function GetHtmlWindow: IDispatch;
   public
     class function CppCreate: CWebBrowserUI;
     procedure CppDestroy;
-    function GetClass: LPCTSTR;
-    function GetInterface(pstrName: LPCTSTR): Pointer;
+    function GetClass: string;
+    function GetInterface(pstrName: string): Pointer;
     procedure SetAutoNavigation(bAuto: Boolean = TRUE);
     function IsAutoNavigation: Boolean;
     procedure SetWebBrowserEventHandler(pEventHandler: CWebBrowserEventHandler);
-    procedure Navigate2(AURL: string); overload;
     procedure Refresh;
     procedure Refresh2(Level: Integer);
     procedure GoBack;
     procedure GoForward;
     procedure NavigateHomePage;
-    procedure NavigateUrl(AURL: string); overload;
+    procedure NavigateUrl(lpszUrl: string);
+    procedure Navigate2(lpszUrl: string);
     function DoCreateControl: Boolean;
     class function FindId(pObj: IDispatch; pName: POleStr): LONG;
     class function InvokeMethod(pObj: IDispatch; pMehtod: POleStr; pVarResult: PVARIANT; ps: PVARIANT; cArgs: Integer): HRESULT;
     class function GetProperty(pObj: IDispatch; pName: POleStr; pValue: PVARIANT): HRESULT;
     class function SetProperty(pObj: IDispatch; pName: POleStr; pValue: PVARIANT): HRESULT;
-  private
-    function _GetHomePage: string;
-    procedure _SetHomePage(const Value: string);
   public
-    property HomePage: string read _GetHomePage write _SetHomePage;
+    property HomePage: string read GetHomePage write SetHomePage;
     property WebBrowser2: IWebBrowser2 read GetWebBrowser2;
     property HtmlWindow: IDispatch read GetHtmlWindow;
   end;
@@ -103,22 +98,22 @@ begin
   Delphi_WebBrowserUI_CppDestroy(Self);
 end;
 
-function CWebBrowserUI.GetClass: LPCTSTR;
+function CWebBrowserUI.GetClass: string;
 begin
   Result := Delphi_WebBrowserUI_GetClass(Self);
 end;
 
-function CWebBrowserUI.GetInterface(pstrName: LPCTSTR): Pointer;
+function CWebBrowserUI.GetInterface(pstrName: string): Pointer;
 begin
-  Result := Delphi_WebBrowserUI_GetInterface(Self, pstrName);
+  Result := Delphi_WebBrowserUI_GetInterface(Self, PChar(pstrName));
 end;
 
-procedure CWebBrowserUI.SetHomePage(lpszUrl: LPCTSTR);
+procedure CWebBrowserUI.SetHomePage(lpszUrl: string);
 begin
-  Delphi_WebBrowserUI_SetHomePage(Self, lpszUrl);
+  Delphi_WebBrowserUI_SetHomePage(Self, PChar(lpszUrl));
 end;
 
-function CWebBrowserUI.GetHomePage: LPCTSTR;
+function CWebBrowserUI.GetHomePage: string;
 begin
   Result := Delphi_WebBrowserUI_GetHomePage(Self);
 end;
@@ -138,19 +133,9 @@ begin
   Delphi_WebBrowserUI_SetWebBrowserEventHandler(Self, pEventHandler);
 end;
 
-function CWebBrowserUI._GetHomePage: string;
+procedure CWebBrowserUI.Navigate2(lpszUrl: string);
 begin
-  Result := GetHomePage;
-end;
-
-procedure CWebBrowserUI._SetHomePage(const Value: string);
-begin
-  SetHomePage(PChar(Value));
-end;
-
-procedure CWebBrowserUI.Navigate2(lpszUrl: LPCTSTR);
-begin
-  Delphi_WebBrowserUI_Navigate2(Self, lpszUrl);
+  Delphi_WebBrowserUI_Navigate2(Self, PChar(lpszUrl));
 end;
 
 procedure CWebBrowserUI.Refresh;
@@ -173,24 +158,14 @@ begin
   Delphi_WebBrowserUI_GoForward(Self);
 end;
 
-procedure CWebBrowserUI.Navigate2(AURL: string);
-begin
-  Navigate2(PChar(AURL));
-end;
-
 procedure CWebBrowserUI.NavigateHomePage;
 begin
   Delphi_WebBrowserUI_NavigateHomePage(Self);
 end;
 
-procedure CWebBrowserUI.NavigateUrl(AURL: string);
+procedure CWebBrowserUI.NavigateUrl(lpszUrl: string);
 begin
-  NavigateUrl(PChar(AURL));
-end;
-
-procedure CWebBrowserUI.NavigateUrl(lpszUrl: LPCTSTR);
-begin
-  Delphi_WebBrowserUI_NavigateUrl(Self, lpszUrl);
+  Delphi_WebBrowserUI_NavigateUrl(Self, PChar(lpszUrl));
 end;
 
 function CWebBrowserUI.DoCreateControl: Boolean;
