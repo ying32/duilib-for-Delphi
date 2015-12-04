@@ -61,7 +61,7 @@ type
     procedure CreateDuiWindow(AParent: HWND; ATitle: string);
     procedure CreateWindow(hwndParent: HWND; ATitle: string; dwStyle: DWORD; dwExStyle: DWORD; const rc: TRect; hMenu: HMENU); overload;
     procedure CreateWindow(hwndParent: HWND; ATitle: string; dwStyle: DWORD; dwExStyle: DWORD; x: Integer = Integer(CW_USEDEFAULT); y: Integer = Integer(CW_USEDEFAULT); cx: Integer = Integer(CW_USEDEFAULT); cy: Integer = Integer(CW_USEDEFAULT); hMenu: HMENU = 0); overload;
-
+    procedure SetClassStyle(nStyle: UINT);
     procedure SetIcon(nRes: UINT);
     function FindControl(const AName: string): CControlUI; overload;
     function FindControl(const pt: TPoint): CControlUI; overload;
@@ -69,6 +69,7 @@ type
     procedure Minimize;
     procedure Restore;
     procedure Maximize;
+    procedure RemoveThisInPaintManager;
   public
     constructor Create(ASkinFile, ASkinFolder, AZipFileName: string; ARType: TResourceType); overload;
     constructor Create(ASkinFile, ASkinFolder: string; ARType: TResourceType); overload;
@@ -195,6 +196,7 @@ end;
 procedure TDuiWindowImplBase.DoFinalMessage(hWd: HWND);
 begin
   // virtual method
+  RemoveThisInPaintManager;
 end;
 
 function TDuiWindowImplBase.DoGetItemText(pControl: CControlUI; iIndex,
@@ -346,9 +348,19 @@ begin
   Result := SendMessage(Handle, uMsg, wParam, lParam);
 end;
 
+procedure TDuiWindowImplBase.RemoveThisInPaintManager;
+begin
+  FThis.RemoveThisInPaintManager;
+end;
+
 procedure TDuiWindowImplBase.Restore;
 begin
   Perform(WM_SYSCOMMAND, SC_RESTORE);
+end;
+
+procedure TDuiWindowImplBase.SetClassStyle(nStyle: UINT);
+begin
+  FThis.SetGetClassStyle(nStyle);
 end;
 
 procedure TDuiWindowImplBase.SetIcon(nRes: UINT);
