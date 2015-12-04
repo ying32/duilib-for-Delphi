@@ -15,10 +15,10 @@ unit DuiWindowImplBase;
 interface
 
 uses
-  Winapi.Windows,
-  Winapi.Messages,
-  System.Generics.Collections,
-  System.SysUtils,
+  Windows,
+  Messages,
+  Generics.Collections,
+  SysUtils,
   DuiBase,
   Duilib;
 

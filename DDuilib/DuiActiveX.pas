@@ -15,8 +15,8 @@ unit DuiActiveX;
 interface
 
 uses
-  Winapi.Windows,
-  Winapi.ActiveX,
+  Windows,
+  ActiveX,
   Duilib;
 
 type

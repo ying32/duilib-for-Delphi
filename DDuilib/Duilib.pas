@@ -16,10 +16,10 @@ unit Duilib;
 interface
 
 uses
-  Winapi.Windows,
-  System.Types,
-  System.Classes,
-  System.SysUtils;
+  Windows,
+  Types,
+  Classes,
+  SysUtils;
 
 const
 {$IFDEF DEBUG}

@@ -15,8 +15,8 @@ unit DuiBase;
 interface
 
 uses
-  System.TypInfo,
-  System.Rtti,
+  TypInfo,
+  Rtti,
   Duilib;
 
 type
