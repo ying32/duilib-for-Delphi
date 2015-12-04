@@ -1,4 +1,4 @@
-typedef LRESULT(*HandleMessageCallBack)(LPVOID, UINT, WPARAM, LPARAM);
+typedef LRESULT(*HandleMessageCallBack)(LPVOID, UINT, WPARAM, LPARAM, BOOL&);
 typedef void(*NotifyCallBack)(LPVOID, TNotifyUI&);
 typedef void(*FinalMessageCallBack)(LPVOID, HWND);
 typedef LRESULT(*MessageCallBack)(LPVOID, UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -7,7 +7,7 @@ typedef CControlUI*(*CreateControlCallBack)(LPVOID, LPCTSTR);
 typedef LPCTSTR(*GetItemTextCallBack)(LPVOID, CControlUI*, int, int);
 
 class CDelphi_WindowImplBase : // 好吧，你赢了,我认输
-	                           public IListCallbackUI,
+	                           public IListCallbackUI, //这个貌似只能放第一个，他取的时候就是取第一个的，要不就另行建立一个类
 							   public WindowImplBase
 {
 protected:
@@ -16,6 +16,7 @@ protected:
 	LPCTSTR m_SkinFile;
 	LPCTSTR m_SkinFolder;
 	LPCTSTR m_ZipFileName;
+	UINT m_GetClassStyle;
 	UILIB_RESOURCETYPE m_RType;
 	InitWindowCallBack m_InitWindow;
 	FinalMessageCallBack m_FinalMessage;
@@ -42,9 +43,10 @@ public:
 		m_Click(NULL),
 		m_MessageHandler(NULL),
 		m_HandleCustomMessage(NULL),
-		m_GetItemText(NULL){
+		m_GetItemText(NULL) {
+		m_GetClassStyle = WindowImplBase::GetClassStyle();
 	}
-	~CDelphi_WindowImplBase(){ printf("CDelphi_WindowImplBase Destroy\n"); };
+	~CDelphi_WindowImplBase(){ };
 	void InitWindow()
 	{
 		if (m_InitWindow)
@@ -52,7 +54,7 @@ public:
 	}
 	void OnFinalMessage(HWND hWnd)
 	{
-		WindowImplBase::OnFinalMessage(hWnd);
+		//WindowImplBase::OnFinalMessage(hWnd); // 另作处理，不然有些窗口不想关的结果资源被释放了
 		if (m_FinalMessage)
 			m_FinalMessage(m_Self, hWnd);
 	}
@@ -83,6 +85,7 @@ public:
 	CDuiString GetSkinFolder() { return m_SkinFolder; };
 	CDuiString GetZIPFileName() const { return m_ZipFileName; };
 	UILIB_RESOURCETYPE GetResourceType() const { return m_RType; };
+	UINT GetClassStyle() const { return m_GetClassStyle; };
 	LRESULT MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		LRESULT lRes = 0;
@@ -100,10 +103,22 @@ public:
 	{
 		if (m_HandleMessage)
 		{
-			LRESULT lRes = m_HandleMessage(m_Self, uMsg, wParam, lParam);
+			// 这样是为了规避原来的那个事件问题
+			BOOL bHandled = TRUE;
+			LRESULT lRes = m_HandleMessage(m_Self, uMsg, wParam, lParam, bHandled);
+			if (!bHandled) {
+	
+				lRes = HandleCustomMessage(uMsg, wParam, lParam, bHandled);
+				if (bHandled) return lRes;
+
+				if (m_PaintManager.MessageHandler(uMsg, wParam, lParam, lRes))
+					return lRes;
+				// 绕过父类的HandleMessage直接调用父类的父类方法
+				return CWindowWnd::HandleMessage(uMsg, wParam, lParam);
+			}
 			if (lRes) return lRes;
 		}
-		return  WindowImplBase::HandleMessage(uMsg, wParam, lParam);
+		return WindowImplBase::HandleMessage(uMsg, wParam, lParam);
 	}
 	LRESULT HandleCustomMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
@@ -133,7 +148,14 @@ public:
 	void SetGetItemText(GetItemTextCallBack ACallBack) {
 		m_GetItemText = ACallBack;
 	}
+	void SetGetClassStyle(UINT uStyle) { m_GetClassStyle = uStyle; };
+	void RemoveThisInPaintManager() {
+		m_PaintManager.RemovePreMessageFilter(this);
+		m_PaintManager.RemoveNotifier(this);
+		m_PaintManager.ReapObjects(m_PaintManager.GetRoot());
+	}
 };
+
 
 typedef void(*DoEventCallBack)(LPVOID, TEventUI&);
 class CDelphi_ListUI : public CListUI {
