@@ -1,8 +1,9 @@
-﻿当前duilib版本为 2015/10/20 13:37:41由 wangchyz提交
+��ǰduilib�汾Ϊ 2015/12/3 15:22:32��wangchyz�ύ
 
+ 
 
-原Duilib几个需要修改的地方
-UIMarkup.h 行72
-private: // 替换为public
+ԭDuilib������Ҫ�޸ĵĵط�
+UIMarkup.h ��72
+private: // �滻Ϊpublic
     CMarkupNode();
     CMarkupNode(CMarkup* pOwner, int iPos);

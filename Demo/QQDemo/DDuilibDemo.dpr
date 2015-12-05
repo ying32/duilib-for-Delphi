@@ -1345,7 +1345,7 @@ constructor TRichEditSampleMenu.Create(ADialog: TChatDialog);
 begin
   inherited Create('menu.xml', ExtractFilePath(ParamStr(0)) + 'skin\QQRes\');
   FChatDialog := ADialog;
-  CreateWindow(0, 'RichPopupMenu', WS_POPUP, WS_EX_TOOLWINDOW);
+  CreateWindow(ADialog.Handle, 'RichPopupMenu', WS_VISIBLE or WS_POPUP or WS_CLIPSIBLINGS or WS_CLIPCHILDREN, WS_EX_TOOLWINDOW);
   Show;
 end;
 
@@ -1398,9 +1398,9 @@ begin
   try
     ReportMemoryLeaksOnShutdown := True;
 
-//    hInstRich := LoadLibrary('Riched20.dll');
-//    CoInitialize(nil);
-//    OleInitialize(nil);
+    hInstRich := LoadLibrary('Riched20.dll');
+    CoInitialize(nil);
+    OleInitialize(nil);
 
     SkinChangedList := TList<TDuiWindowImplBase>.Create;
 
@@ -1413,9 +1413,9 @@ begin
 
     SkinChangedList.Free;
 
-//    OleUninitialize();
-//    CoUninitialize();
-//    FreeLibrary(hInstRich);
+    OleUninitialize();
+    CoUninitialize();
+    FreeLibrary(hInstRich);
 
   except
     on E: Exception do
