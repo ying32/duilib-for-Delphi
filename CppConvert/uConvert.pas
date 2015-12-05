@@ -78,8 +78,8 @@ type
     procedure AddDelphiRecord(const Str: string); overload;
     procedure AddDelphiDefualtHeader;
     procedure AddDelphi(const AClass, AClassNoC: string; AM: TMember);
-    function GetDelphiParams(AM: TMember; NoDefualt: Boolean): string;
-    function GetDelphiParamsNoType(AM: TMember): string;
+    function GetDelphiParams(AM: TMember; NoDefualt, CVDelphiStr: Boolean): string;
+    function GetDelphiParamsNoType(AM: TMember; ACVDelphi: Boolean = False): string;
     procedure AddDelphiClassAMethod(const Fmt: string; Args: array of const);
     procedure AddDelphiClassBMethod(const Fmt: string; Args: array of const;
       const CallFmt: string; CallArgs: array of const; AM: TMember);
@@ -154,6 +154,32 @@ implementation
 uses
   uOthers;
 
+
+//　是否CDuiString
+function isDuiStrType(AType: string): Boolean;
+begin
+  Result := AType.Equals('CDuiString') or AType.Equals('CDuiString&') or AType.Equals('PCDuiString');
+end;
+// PWideChar 啥的
+function isStringType(AType: string): Boolean;
+begin
+   Result := AType.Equals('STRINGorID') or AType.Equals('LPCTSTR') or
+             AType.Equals('LPTSTR');
+end;
+// 转为string
+function Typestring(AType: string; CVDelphiStr: Boolean): string;
+begin
+  if (isStringType(AType) or isDuiStrType(AType)) and CVDelphiStr then
+    Result := 'string'
+  else Result := AType;
+end;
+// 参数的强制转换像 LPTSTR这样的，string需强制转换为对应
+function ParamTypeCV(AType, AParam: string; CVDelphiStr: Boolean): string;
+begin
+  if isStringType(AType) and CVDelphiStr then
+    Result := Format('%s(%s)', [AType, AParam])
+  else Result := AParam;
+end;
 
 
 constructor TCppConvert.Create;
@@ -287,13 +313,13 @@ var
   LReturnStr  : string;
 begin
   LOverload := '';
-  LParams2 := GetDelphiParams(AM, False);
-  LParams21 := GetDelphiParams(AM, True); // 不要默认参数
-  LParams3 := GetDelphiParamsNoType(AM);
+  LParams2 := GetDelphiParams(AM, False, True);
+  LParams21 := GetDelphiParams(AM, True, True); // 不要默认参数
+  LParams3 := GetDelphiParamsNoType(AM, True);
   // 有重载类型 或者 构造函数
   if AM.OverloadName <> '' then
     LOverload := ' overload;';
-  LParams := GetDelphiParams(AM, True);//LParams2;
+  LParams := GetDelphiParams(AM, True, False);//LParams2;
 
   if AM.IsNeedParamReturn then
   begin
@@ -405,6 +431,12 @@ begin
             [LFuncFullName, LFuncFullName]);
         LReturnStr := 'Result := ';
       end;
+      // 取指针cduistring
+      if LReturnType = 'PCDuiString' then
+        LParams3 := LParams3 + '^';
+      // 几个改为string类型
+      LReturnType := Typestring(LReturnType, True);
+
       // class a
       AddDelphiClassAMethod('    %sfunction %s%s: %s;%s', [LClassFuncFlags, LFuncName, LParams2,
         LReturnType, LOverload]);
@@ -1242,7 +1274,8 @@ begin
   Result := LeftStrOf(':', Str).Trim;
 end;
 
-function TCppConvert.GetDelphiParams(AM: TMember; NoDefualt: Boolean): string;
+function TCppConvert.GetDelphiParams(AM: TMember; NoDefualt, CVDelphiStr: Boolean): string;
+
 var
   L: TParam;
   LD, LVar, LConst, LName: string;
@@ -1285,8 +1318,9 @@ begin
     LConst := '';
     if not IsVar(L.ParamType) and L.IsConst then
       LConst := 'const ';
-    Result := Result + Format('%s%s%s: %s%s; ', [LConst, LVar, LName,
-      GetRealType(TypeOf(L.ParamType)), LD]);
+    Result := Result + Format('%s%s%s: %s%s; ', [LConst, LVar,
+      LName,
+      Typestring(GetRealType(TypeOf(L.ParamType)), CVDelphiStr), LD]);
   end;
   if Result.Length <> 0 then
   begin
@@ -1295,7 +1329,7 @@ begin
   end;
 end;
 
-function TCppConvert.GetDelphiParamsNoType(AM: TMember): string;
+function TCppConvert.GetDelphiParamsNoType(AM: TMember; ACVDelphi: Boolean): string;
 var
   L: TParam;
 begin
@@ -1306,7 +1340,7 @@ begin
       Exit;
   end;
   for L in AM.Params do
-    Result := Result + Format('%s, ', [ParamNameOf(L.Name)]);
+    Result := Result + Format('%s, ', [ParamTypeCV(L.ParamType, ParamNameOf(L.Name), ACVDelphi)]);
   if Result.Length <> 0 then
   begin
     Result := Result.Trim;
