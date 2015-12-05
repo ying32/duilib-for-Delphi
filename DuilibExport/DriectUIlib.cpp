@@ -1152,8 +1152,12 @@ DRIECTUILIB_API void Delphi_PaintManagerUI_CppDestroy(CPaintManagerUI* handle) {
     delete handle;
 }
 
-DRIECTUILIB_API void Delphi_PaintManagerUI_Init(CPaintManagerUI* handle ,HWND hWnd) {
-    handle->Init(hWnd);
+DRIECTUILIB_API void Delphi_PaintManagerUI_Init(CPaintManagerUI* handle, HWND hWnd, LPCTSTR pstrName) {
+	handle->Init(hWnd, pstrName);
+}
+
+DRIECTUILIB_API LPCTSTR Delphi_PaintManagerUI_GetName(CPaintManagerUI* handle) {
+	return handle->GetName();
 }
 
 DRIECTUILIB_API bool Delphi_PaintManagerUI_IsUpdateNeeded(CPaintManagerUI* handle) {
@@ -1238,18 +1242,6 @@ DRIECTUILIB_API void Delphi_PaintManagerUI_GetMaxInfo(CPaintManagerUI* handle, S
 
 DRIECTUILIB_API void Delphi_PaintManagerUI_SetMaxInfo(CPaintManagerUI* handle ,int cx, int cy) {
     handle->SetMaxInfo(cx, cy);
-}
-
-DRIECTUILIB_API int Delphi_PaintManagerUI_GetTransparent(CPaintManagerUI* handle) {
-    return handle->GetTransparent();
-}
-
-DRIECTUILIB_API void Delphi_PaintManagerUI_SetTransparent(CPaintManagerUI* handle ,int nOpacity) {
-    handle->SetTransparent(nOpacity);
-}
-
-DRIECTUILIB_API void Delphi_PaintManagerUI_SetBackgroundTransparent(CPaintManagerUI* handle ,bool bTrans) {
-    handle->SetBackgroundTransparent(bTrans);
 }
 
 DRIECTUILIB_API bool Delphi_PaintManagerUI_IsShowUpdateRect(CPaintManagerUI* handle) {
@@ -1680,6 +1672,86 @@ DRIECTUILIB_API void Delphi_PaintManagerUI_UsedVirtualWnd(CPaintManagerUI* handl
     handle->UsedVirtualWnd(bUsed);
 }
 
+DRIECTUILIB_API int Delphi_PaintManagerUI_GetTooltipWindowWidth(CPaintManagerUI* handle) {
+	return handle->GetTooltipWindowWidth();
+}
+
+DRIECTUILIB_API void Delphi_PaintManagerUI_SetTooltipWindowWidth(CPaintManagerUI* handle, int iWidth) {
+	handle->SetTooltipWindowWidth(iWidth);
+}
+
+DRIECTUILIB_API int Delphi_PaintManagerUI_GetHoverTime(CPaintManagerUI* handle) {
+	return handle->GetHoverTime();
+}
+
+DRIECTUILIB_API void Delphi_PaintManagerUI_SetHoverTime(CPaintManagerUI* handle, int iTime) {
+	handle->SetHoverTime(iTime);
+}
+
+DRIECTUILIB_API BYTE Delphi_PaintManagerUI_GetOpacity(CPaintManagerUI* handle) {
+	return handle->GetOpacity();
+}
+
+DRIECTUILIB_API void Delphi_PaintManagerUI_SetOpacity(CPaintManagerUI* handle, BYTE nOpacity) {
+	handle->SetOpacity(nOpacity);
+}
+
+DRIECTUILIB_API bool Delphi_PaintManagerUI_IsLayered(CPaintManagerUI* handle) {
+	return handle->IsLayered();
+}
+
+DRIECTUILIB_API void Delphi_PaintManagerUI_SetLayered(CPaintManagerUI* handle, bool bLayered) {
+	handle->SetLayered(bLayered);
+}
+
+DRIECTUILIB_API RECT& Delphi_PaintManagerUI_GetLayeredInset(CPaintManagerUI* handle) {
+	return handle->GetLayeredInset();
+}
+
+DRIECTUILIB_API void Delphi_PaintManagerUI_SetLayeredInset(CPaintManagerUI* handle, RECT& rcLayeredInset) {
+	handle->SetLayeredInset(rcLayeredInset);
+}
+
+DRIECTUILIB_API BYTE Delphi_PaintManagerUI_GetLayeredOpacity(CPaintManagerUI* handle) {
+	return handle->GetLayeredOpacity();
+}
+
+DRIECTUILIB_API void Delphi_PaintManagerUI_SetLayeredOpacity(CPaintManagerUI* handle, BYTE nOpacity) {
+	handle->SetLayeredOpacity(nOpacity);
+}
+
+DRIECTUILIB_API LPCTSTR Delphi_PaintManagerUI_GetLayeredImage(CPaintManagerUI* handle) {
+	return handle->GetLayeredImage();
+}
+
+DRIECTUILIB_API void Delphi_PaintManagerUI_SetLayeredImage(CPaintManagerUI* handle, LPCTSTR pstrImage) {
+	handle->SetLayeredImage(pstrImage);
+}
+
+DRIECTUILIB_API CPaintManagerUI* Delphi_PaintManagerUI_GetPaintManager(LPCTSTR pstrName) {
+	return CPaintManagerUI::GetPaintManager(pstrName);
+}
+
+DRIECTUILIB_API CStdPtrArray* Delphi_PaintManagerUI_GetPaintManagers() {
+	return CPaintManagerUI::GetPaintManagers();
+}
+
+DRIECTUILIB_API void Delphi_PaintManagerUI_AddWindowCustomAttribute(CPaintManagerUI* handle, LPCTSTR pstrName, LPCTSTR pstrAttr) {
+	handle->AddWindowCustomAttribute(pstrName, pstrAttr);
+}
+
+DRIECTUILIB_API LPCTSTR Delphi_PaintManagerUI_GetWindowCustomAttribute(CPaintManagerUI* handle, LPCTSTR pstrName) {
+	return handle->GetWindowCustomAttribute(pstrName);
+}
+
+DRIECTUILIB_API bool Delphi_PaintManagerUI_RemoveWindowCustomAttribute(CPaintManagerUI* handle, LPCTSTR pstrName) {
+	return handle->RemoveWindowCustomAttribute(pstrName);
+}
+
+DRIECTUILIB_API void Delphi_PaintManagerUI_RemoveAllWindowCustomAttribute(CPaintManagerUI* handle) {
+	handle->RemoveAllWindowCustomAttribute();
+}
+
 //================================CContainerUI============================
 
 DRIECTUILIB_API CContainerUI* Delphi_ContainerUI_CppCreate() {
@@ -2018,9 +2090,10 @@ DRIECTUILIB_API int Delphi_ListUI_GetCurSel(CListUI* handle) {
     return handle->GetCurSel();
 }
 
-DRIECTUILIB_API bool Delphi_ListUI_SelectItem(CListUI* handle ,int iIndex, bool bTakeFocus) {
-    return handle->SelectItem(iIndex, bTakeFocus);
+DRIECTUILIB_API bool Delphi_ListUI_SelectItem(CListUI* handle, int iIndex, bool bTakeFocus, bool bTriggerEvent) {
+	return handle->SelectItem(iIndex, bTakeFocus, bTriggerEvent);
 }
+
 
 DRIECTUILIB_API CListHeaderUI* Delphi_ListUI_GetHeader(CListUI* handle) {
     return handle->GetHeader();
@@ -2708,6 +2781,18 @@ DRIECTUILIB_API void Delphi_ButtonUI_PaintStatusImage(CButtonUI* handle ,HDC hDC
     handle->PaintStatusImage(hDC);
 }
 
+DRIECTUILIB_API void Delphi_ButtonUI_SetFiveStatusImage(CButtonUI* handle, LPCTSTR pStrImage) {
+	handle->SetFiveStatusImage(pStrImage);
+}
+
+DRIECTUILIB_API void Delphi_ButtonUI_SetFadeAlphaDelta(CButtonUI* handle, BYTE uDelta) {
+	handle->SetFadeAlphaDelta(uDelta);
+}
+
+DRIECTUILIB_API bool Delphi_ButtonUI_GetFadeAlphaDelta(CButtonUI* handle) {
+	return handle->GetFadeAlphaDelta();
+}
+
 //================================COptionUI============================
 
 DRIECTUILIB_API COptionUI* Delphi_OptionUI_CppCreate() {
@@ -2790,8 +2875,8 @@ DRIECTUILIB_API bool Delphi_OptionUI_IsSelected(COptionUI* handle) {
     return handle->IsSelected();
 }
 
-DRIECTUILIB_API void Delphi_OptionUI_Selected(COptionUI* handle ,bool bSelected) {
-    handle->Selected(bSelected);
+DRIECTUILIB_API void Delphi_OptionUI_Selected(COptionUI* handle, bool bSelected, bool bTriggerEvent) {
+	handle->Selected(bSelected, bTriggerEvent);
 }
 
 DRIECTUILIB_API void Delphi_OptionUI_EstimateSize(COptionUI* handle ,SIZE szAvailable, SIZE& Result) {
@@ -2828,8 +2913,8 @@ DRIECTUILIB_API LPVOID Delphi_CheckBoxUI_GetInterface(CCheckBoxUI* handle ,LPCTS
     return handle->GetInterface(pstrName);
 }
 
-DRIECTUILIB_API void Delphi_CheckBoxUI_SetCheck(CCheckBoxUI* handle ,bool bCheck) {
-    handle->SetCheck(bCheck);
+DRIECTUILIB_API void Delphi_CheckBoxUI_SetCheck(CCheckBoxUI* handle, bool bCheck, bool bTriggerEvent) {
+	handle->SetCheck(bCheck, bTriggerEvent);
 }
 
 DRIECTUILIB_API bool Delphi_CheckBoxUI_GetCheck(CCheckBoxUI* handle) {
@@ -2988,8 +3073,8 @@ DRIECTUILIB_API void Delphi_ComboUI_SetSelectCloseFlag(CComboUI* handle ,bool fl
     handle->SetSelectCloseFlag(flag);
 }
 
-DRIECTUILIB_API bool Delphi_ComboUI_SelectItem(CComboUI* handle ,int iIndex, bool bTakeFocus) {
-    return handle->SelectItem(iIndex, bTakeFocus);
+DRIECTUILIB_API bool Delphi_ComboUI_SelectItem(CComboUI* handle, int iIndex, bool bTakeFocus, bool bTriggerEvent) {
+	return handle->SelectItem(iIndex, bTakeFocus, bTriggerEvent);
 }
 
 DRIECTUILIB_API bool Delphi_ComboUI_SetItemIndex(CComboUI* handle ,CControlUI* pControl, int iIndex) {
@@ -4396,8 +4481,8 @@ DRIECTUILIB_API void Delphi_TreeNodeUI_Invalidate(CTreeNodeUI* handle) {
     handle->Invalidate();
 }
 
-DRIECTUILIB_API bool Delphi_TreeNodeUI_Select(CTreeNodeUI* handle ,bool bSelect) {
-    return handle->Select(bSelect);
+DRIECTUILIB_API bool Delphi_TreeNodeUI_Select(CTreeNodeUI* handle, bool bSelect, bool bTriggerEvent) {
+	return handle->Select(bSelect, bTriggerEvent);
 }
 
 DRIECTUILIB_API bool Delphi_TreeNodeUI_Add(CTreeNodeUI* handle ,CControlUI* _pTreeNodeUI) {
@@ -4684,12 +4769,12 @@ DRIECTUILIB_API int Delphi_TabLayoutUI_GetCurSel(CTabLayoutUI* handle) {
     return handle->GetCurSel();
 }
 
-DRIECTUILIB_API bool Delphi_TabLayoutUI_SelectItem_01(CTabLayoutUI* handle ,int iIndex) {
-    return handle->SelectItem(iIndex);
+DRIECTUILIB_API bool Delphi_TabLayoutUI_SelectItem_01(CTabLayoutUI* handle, int iIndex, bool bTriggerEvent) {
+	return handle->SelectItem(iIndex, bTriggerEvent);
 }
 
-DRIECTUILIB_API bool Delphi_TabLayoutUI_SelectItem_02(CTabLayoutUI* handle ,CControlUI* pControl) {
-    return handle->SelectItem(pControl);
+DRIECTUILIB_API bool Delphi_TabLayoutUI_SelectItem_02(CTabLayoutUI* handle, CControlUI* pControl, bool bTriggerEvent) {
+	return handle->SelectItem(pControl, bTriggerEvent);
 }
 
 DRIECTUILIB_API void Delphi_TabLayoutUI_SetPos(CTabLayoutUI* handle ,RECT rc, bool bNeedInvalidate) {
@@ -5218,3 +5303,76 @@ DRIECTUILIB_API void Delphi_ListTextElementUI_DrawItemText(CListTextElementUI* h
 }
 
 
+//================================CGifAnimUI============================
+
+DRIECTUILIB_API CGifAnimUI* Delphi_GifAnimUI_CppCreate() {
+	return new CGifAnimUI();
+}
+
+DRIECTUILIB_API void Delphi_GifAnimUI_CppDestroy(CGifAnimUI* handle) {
+	delete handle;
+}
+
+DRIECTUILIB_API LPCTSTR Delphi_GifAnimUI_GetClass(CGifAnimUI* handle) {
+	return handle->GetClass();
+}
+
+DRIECTUILIB_API LPVOID Delphi_GifAnimUI_GetInterface(CGifAnimUI* handle, LPCTSTR pstrName) {
+	return handle->GetInterface(pstrName);
+}
+
+DRIECTUILIB_API void Delphi_GifAnimUI_DoInit(CGifAnimUI* handle) {
+	handle->DoInit();
+}
+
+DRIECTUILIB_API void Delphi_GifAnimUI_DoPaint(CGifAnimUI* handle, HDC hDC, RECT& rcPaint) {
+	handle->DoPaint(hDC, rcPaint);
+}
+
+DRIECTUILIB_API void Delphi_GifAnimUI_DoEvent(CGifAnimUI* handle, TEventUI& event) {
+	handle->DoEvent(event);
+}
+
+DRIECTUILIB_API void Delphi_GifAnimUI_SetVisible(CGifAnimUI* handle, bool bVisible) {
+	handle->SetVisible(bVisible);
+}
+
+DRIECTUILIB_API void Delphi_GifAnimUI_SetAttribute(CGifAnimUI* handle, LPCTSTR pstrName, LPCTSTR pstrValue) {
+	handle->SetAttribute(pstrName, pstrValue);
+}
+
+DRIECTUILIB_API void Delphi_GifAnimUI_SetBkImage(CGifAnimUI* handle, LPCTSTR pStrImage) {
+	handle->SetBkImage(pStrImage);
+}
+
+DRIECTUILIB_API LPCTSTR Delphi_GifAnimUI_GetBkImage(CGifAnimUI* handle) {
+	return handle->GetBkImage();
+}
+
+DRIECTUILIB_API void Delphi_GifAnimUI_SetAutoPlay(CGifAnimUI* handle, bool bIsAuto) {
+	handle->SetAutoPlay(bIsAuto);
+}
+
+DRIECTUILIB_API bool Delphi_GifAnimUI_IsAutoPlay(CGifAnimUI* handle) {
+	return handle->IsAutoPlay();
+}
+
+DRIECTUILIB_API void Delphi_GifAnimUI_SetAutoSize(CGifAnimUI* handle, bool bIsAuto) {
+	handle->SetAutoSize(bIsAuto);
+}
+
+DRIECTUILIB_API bool Delphi_GifAnimUI_IsAutoSize(CGifAnimUI* handle) {
+	return handle->IsAutoSize();
+}
+
+DRIECTUILIB_API void Delphi_GifAnimUI_PlayGif(CGifAnimUI* handle) {
+	handle->PlayGif();
+}
+
+DRIECTUILIB_API void Delphi_GifAnimUI_PauseGif(CGifAnimUI* handle) {
+	handle->PauseGif();
+}
+
+DRIECTUILIB_API void Delphi_GifAnimUI_StopGif(CGifAnimUI* handle) {
+	handle->StopGif();
+}
