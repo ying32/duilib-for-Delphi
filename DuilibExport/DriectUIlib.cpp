@@ -5218,3 +5218,80 @@ DRIECTUILIB_API void Delphi_ListTextElementUI_DrawItemText(CListTextElementUI* h
 }
 
 
+//================================CChildLayoutUI============================
+
+DRIECTUILIB_API CChildLayoutUI* Delphi_ChildLayoutUI_CppCreate() {
+    return new CChildLayoutUI();
+}
+
+DRIECTUILIB_API void Delphi_ChildLayoutUI_CppDestroy(CChildLayoutUI* handle) {
+    delete handle;
+}
+
+DRIECTUILIB_API void Delphi_ChildLayoutUI_Init(CChildLayoutUI* handle) {
+    handle->Init();
+}
+
+DRIECTUILIB_API void Delphi_ChildLayoutUI_SetAttribute(CChildLayoutUI* handle ,LPCTSTR pstrName, LPCTSTR pstrValue) {
+    handle->SetAttribute(pstrName, pstrValue);
+}
+
+DRIECTUILIB_API void Delphi_ChildLayoutUI_SetChildLayoutXML(CChildLayoutUI* handle ,CDuiString pXML) {
+    handle->SetChildLayoutXML(pXML);
+}
+
+DRIECTUILIB_API CDuiString Delphi_ChildLayoutUI_GetChildLayoutXML(CChildLayoutUI* handle) {
+    return handle->GetChildLayoutXML();
+}
+
+DRIECTUILIB_API LPVOID Delphi_ChildLayoutUI_GetInterface(CChildLayoutUI* handle ,LPCTSTR pstrName) {
+    return handle->GetInterface(pstrName);
+}
+
+DRIECTUILIB_API LPCTSTR Delphi_ChildLayoutUI_GetClass(CChildLayoutUI* handle) {
+    return handle->GetClass();
+}
+
+//================================CTileLayoutUI============================
+
+DRIECTUILIB_API CTileLayoutUI* Delphi_TileLayoutUI_CppCreate() {
+    return new CTileLayoutUI();
+}
+
+DRIECTUILIB_API void Delphi_TileLayoutUI_CppDestroy(CTileLayoutUI* handle) {
+    delete handle;
+}
+
+DRIECTUILIB_API LPCTSTR Delphi_TileLayoutUI_GetClass(CTileLayoutUI* handle) {
+    return handle->GetClass();
+}
+
+DRIECTUILIB_API LPVOID Delphi_TileLayoutUI_GetInterface(CTileLayoutUI* handle ,LPCTSTR pstrName) {
+    return handle->GetInterface(pstrName);
+}
+
+DRIECTUILIB_API void Delphi_TileLayoutUI_SetPos(CTileLayoutUI* handle ,RECT rc, bool bNeedInvalidate) {
+    handle->SetPos(rc, bNeedInvalidate);
+}
+
+DRIECTUILIB_API void Delphi_TileLayoutUI_GetItemSize(CTileLayoutUI* handle, SIZE& Result) {
+    Result = handle->GetItemSize();
+}
+
+DRIECTUILIB_API void Delphi_TileLayoutUI_SetItemSize(CTileLayoutUI* handle ,SIZE szItem) {
+    handle->SetItemSize(szItem);
+}
+
+DRIECTUILIB_API int Delphi_TileLayoutUI_GetColumns(CTileLayoutUI* handle) {
+    return handle->GetColumns();
+}
+
+DRIECTUILIB_API void Delphi_TileLayoutUI_SetColumns(CTileLayoutUI* handle ,int nCols) {
+    handle->SetColumns(nCols);
+}
+
+DRIECTUILIB_API void Delphi_TileLayoutUI_SetAttribute(CTileLayoutUI* handle ,LPCTSTR pstrName, LPCTSTR pstrValue) {
+    handle->SetAttribute(pstrName, pstrValue);
+}
+
+
