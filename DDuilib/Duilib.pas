@@ -1549,6 +1549,32 @@ type
     procedure DrawItemText(hDC: HDC; const rcItem: TRect);
   end;
 
+  CChildLayoutUI = class(CContainerUI)
+  public
+    class function CppCreate: CChildLayoutUI;
+    procedure CppDestroy;
+    procedure Init;
+    procedure SetAttribute(pstrName: string; pstrValue: string);
+    procedure SetChildLayoutXML(pXML: string);
+    function GetChildLayoutXML: string;
+    function GetInterface(pstrName: string): Pointer;
+    function GetClass: string;
+  end;
+
+  CTileLayoutUI = class(CContainerUI)
+  public
+    class function CppCreate: CTileLayoutUI;
+    procedure CppDestroy;
+    function GetClass: string;
+    function GetInterface(pstrName: string): Pointer;
+    procedure SetPos(rc: TRect; bNeedInvalidate: Boolean = True);
+    function GetItemSize: TSize;
+    procedure SetItemSize(szItem: TSize);
+    function GetColumns: Integer;
+    procedure SetColumns(nCols: Integer);
+    procedure SetAttribute(pstrName: string; pstrValue: string);
+  end;
+
 
 //================================CStdStringPtrMap============================
 
@@ -2749,6 +2775,30 @@ procedure Delphi_ListTextElementUI_DoEvent(Handle: CListTextElementUI; var event
 procedure Delphi_ListTextElementUI_EstimateSize(Handle: CListTextElementUI; szAvailable: TSize; var Result: TSize); cdecl;
 procedure Delphi_ListTextElementUI_DrawItemText(Handle: CListTextElementUI; hDC: HDC; const rcItem: TRect); cdecl;
 
+
+//================================CChildLayoutUI============================
+
+function Delphi_ChildLayoutUI_CppCreate: CChildLayoutUI; cdecl;
+procedure Delphi_ChildLayoutUI_CppDestroy(Handle: CChildLayoutUI); cdecl;
+procedure Delphi_ChildLayoutUI_Init(Handle: CChildLayoutUI); cdecl;
+procedure Delphi_ChildLayoutUI_SetAttribute(Handle: CChildLayoutUI; pstrName: LPCTSTR; pstrValue: LPCTSTR); cdecl;
+procedure Delphi_ChildLayoutUI_SetChildLayoutXML(Handle: CChildLayoutUI; pXML: CDuiString); cdecl;
+function Delphi_ChildLayoutUI_GetChildLayoutXML(Handle: CChildLayoutUI): CDuiString; cdecl;
+function Delphi_ChildLayoutUI_GetInterface(Handle: CChildLayoutUI; pstrName: LPCTSTR): Pointer; cdecl;
+function Delphi_ChildLayoutUI_GetClass(Handle: CChildLayoutUI): LPCTSTR; cdecl;
+
+//================================CTileLayoutUI============================
+
+function Delphi_TileLayoutUI_CppCreate: CTileLayoutUI; cdecl;
+procedure Delphi_TileLayoutUI_CppDestroy(Handle: CTileLayoutUI); cdecl;
+function Delphi_TileLayoutUI_GetClass(Handle: CTileLayoutUI): LPCTSTR; cdecl;
+function Delphi_TileLayoutUI_GetInterface(Handle: CTileLayoutUI; pstrName: LPCTSTR): Pointer; cdecl;
+procedure Delphi_TileLayoutUI_SetPos(Handle: CTileLayoutUI; rc: TRect; bNeedInvalidate: Boolean); cdecl;
+procedure Delphi_TileLayoutUI_GetItemSize(Handle: CTileLayoutUI; var Result: TSize); cdecl;
+procedure Delphi_TileLayoutUI_SetItemSize(Handle: CTileLayoutUI; szItem: TSize); cdecl;
+function Delphi_TileLayoutUI_GetColumns(Handle: CTileLayoutUI): Integer; cdecl;
+procedure Delphi_TileLayoutUI_SetColumns(Handle: CTileLayoutUI; nCols: Integer); cdecl;
+procedure Delphi_TileLayoutUI_SetAttribute(Handle: CTileLayoutUI; pstrName: LPCTSTR; pstrValue: LPCTSTR); cdecl;
 
 implementation
 
@@ -8342,6 +8392,101 @@ begin
   Delphi_ListTextElementUI_DrawItemText(Self, hDC, rcItem);
 end;
 
+{ CChildLayoutUI }
+
+class function CChildLayoutUI.CppCreate: CChildLayoutUI;
+begin
+  Result := Delphi_ChildLayoutUI_CppCreate;
+end;
+
+procedure CChildLayoutUI.CppDestroy;
+begin
+  Delphi_ChildLayoutUI_CppDestroy(Self);
+end;
+
+procedure CChildLayoutUI.Init;
+begin
+  Delphi_ChildLayoutUI_Init(Self);
+end;
+
+procedure CChildLayoutUI.SetAttribute(pstrName: string; pstrValue: string);
+begin
+  Delphi_ChildLayoutUI_SetAttribute(Self, LPCTSTR(pstrName), LPCTSTR(pstrValue));
+end;
+
+procedure CChildLayoutUI.SetChildLayoutXML(pXML: string);
+begin
+  Delphi_ChildLayoutUI_SetChildLayoutXML(Self, pXML);
+end;
+
+function CChildLayoutUI.GetChildLayoutXML: string;
+begin
+  Result := Delphi_ChildLayoutUI_GetChildLayoutXML(Self);
+end;
+
+function CChildLayoutUI.GetInterface(pstrName: string): Pointer;
+begin
+  Result := Delphi_ChildLayoutUI_GetInterface(Self, LPCTSTR(pstrName));
+end;
+
+function CChildLayoutUI.GetClass: string;
+begin
+  Result := Delphi_ChildLayoutUI_GetClass(Self);
+end;
+
+{ CTileLayoutUI }
+
+class function CTileLayoutUI.CppCreate: CTileLayoutUI;
+begin
+  Result := Delphi_TileLayoutUI_CppCreate;
+end;
+
+procedure CTileLayoutUI.CppDestroy;
+begin
+  Delphi_TileLayoutUI_CppDestroy(Self);
+end;
+
+function CTileLayoutUI.GetClass: string;
+begin
+  Result := Delphi_TileLayoutUI_GetClass(Self);
+end;
+
+function CTileLayoutUI.GetInterface(pstrName: string): Pointer;
+begin
+  Result := Delphi_TileLayoutUI_GetInterface(Self, LPCTSTR(pstrName));
+end;
+
+procedure CTileLayoutUI.SetPos(rc: TRect; bNeedInvalidate: Boolean);
+begin
+  Delphi_TileLayoutUI_SetPos(Self, rc, bNeedInvalidate);
+end;
+
+function CTileLayoutUI.GetItemSize: TSize;
+begin
+  Delphi_TileLayoutUI_GetItemSize(Self, Result);
+end;
+
+procedure CTileLayoutUI.SetItemSize(szItem: TSize);
+begin
+  Delphi_TileLayoutUI_SetItemSize(Self, szItem);
+end;
+
+function CTileLayoutUI.GetColumns: Integer;
+begin
+  Result := Delphi_TileLayoutUI_GetColumns(Self);
+end;
+
+procedure CTileLayoutUI.SetColumns(nCols: Integer);
+begin
+  Delphi_TileLayoutUI_SetColumns(Self, nCols);
+end;
+
+procedure CTileLayoutUI.SetAttribute(pstrName: string; pstrValue: string);
+begin
+  Delphi_TileLayoutUI_SetAttribute(Self, LPCTSTR(pstrName), LPCTSTR(pstrValue));
+end;
+
+
 
 //================================CStdStringPtrMap============================
 
@@ -9538,6 +9683,29 @@ procedure Delphi_ListTextElementUI_DoEvent; external DuiLibdll name 'Delphi_List
 procedure Delphi_ListTextElementUI_EstimateSize; external DuiLibdll name 'Delphi_ListTextElementUI_EstimateSize';
 procedure Delphi_ListTextElementUI_DrawItemText; external DuiLibdll name 'Delphi_ListTextElementUI_DrawItemText';
 
+//================================CChildLayoutUI============================
+
+function Delphi_ChildLayoutUI_CppCreate; external DuiLibdll name 'Delphi_ChildLayoutUI_CppCreate';
+procedure Delphi_ChildLayoutUI_CppDestroy; external DuiLibdll name 'Delphi_ChildLayoutUI_CppDestroy';
+procedure Delphi_ChildLayoutUI_Init; external DuiLibdll name 'Delphi_ChildLayoutUI_Init';
+procedure Delphi_ChildLayoutUI_SetAttribute; external DuiLibdll name 'Delphi_ChildLayoutUI_SetAttribute';
+procedure Delphi_ChildLayoutUI_SetChildLayoutXML; external DuiLibdll name 'Delphi_ChildLayoutUI_SetChildLayoutXML';
+function Delphi_ChildLayoutUI_GetChildLayoutXML; external DuiLibdll name 'Delphi_ChildLayoutUI_GetChildLayoutXML';
+function Delphi_ChildLayoutUI_GetInterface; external DuiLibdll name 'Delphi_ChildLayoutUI_GetInterface';
+function Delphi_ChildLayoutUI_GetClass; external DuiLibdll name 'Delphi_ChildLayoutUI_GetClass';
+
+//================================CTileLayoutUI============================
+
+function Delphi_TileLayoutUI_CppCreate; external DuiLibdll name 'Delphi_TileLayoutUI_CppCreate';
+procedure Delphi_TileLayoutUI_CppDestroy; external DuiLibdll name 'Delphi_TileLayoutUI_CppDestroy';
+function Delphi_TileLayoutUI_GetClass; external DuiLibdll name 'Delphi_TileLayoutUI_GetClass';
+function Delphi_TileLayoutUI_GetInterface; external DuiLibdll name 'Delphi_TileLayoutUI_GetInterface';
+procedure Delphi_TileLayoutUI_SetPos; external DuiLibdll name 'Delphi_TileLayoutUI_SetPos';
+procedure Delphi_TileLayoutUI_GetItemSize; external DuiLibdll name 'Delphi_TileLayoutUI_GetItemSize';
+procedure Delphi_TileLayoutUI_SetItemSize; external DuiLibdll name 'Delphi_TileLayoutUI_SetItemSize';
+function Delphi_TileLayoutUI_GetColumns; external DuiLibdll name 'Delphi_TileLayoutUI_GetColumns';
+procedure Delphi_TileLayoutUI_SetColumns; external DuiLibdll name 'Delphi_TileLayoutUI_SetColumns';
+procedure Delphi_TileLayoutUI_SetAttribute; external DuiLibdll name 'Delphi_TileLayoutUI_SetAttribute';
 
 
 end.
