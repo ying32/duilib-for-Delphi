@@ -3,7 +3,7 @@
 	<VerticalLayout width="379" height="551" bkcolor="#FFF0F0F0" bkcolor2="#FFAAAAA0">
 		<HorizontalLayout height="32" bkcolor="#FFE6E6DC" bkcolor2="#FFAAAAA0">
 			<VerticalLayout height="32">
-			  <Label text="Apps" height="32" textcolor="#FFFFFFFF"/>
+			  <Label text="Apps" height="32" textcolor="#FFFFFFFF" padding="10, 0, 0, 0" />
 			</VerticalLayout>
 			<VerticalLayout width="140" height="32">
 				<Button name="minbtn" tooltip="最小化" float="true" pos="47,3,0,0" width="30" height="27" normalimage="file='sysbtn_min_normal.png'" hotimage="file='sysbtn_min_hover.png'" pushedimage="file='sysbtn_min_down.png'" />
@@ -11,6 +11,18 @@
 				<Button name="restorebtn" tooltip="恢复" visible="false" float="true" pos="77,3,0,0" width="30" height="27" normalimage="file='sysbtn_restore_normal.png'" hotimage="file='sysbtn_restore_hover.png'" pushedimage="file='sysbtn_restore_down.png'" />
 				<Button name="closebtn" tooltip="关闭" float="true" pos="107,3,0,0" width="30" height="27" normalimage="file='sysbtn_close_normal.png'" hotimage="file='sysbtn_close_hover.png'" pushedimage="file='sysbtn_close_down.png'" />
 			</VerticalLayout>
+		</HorizontalLayout>
+		<HorizontalLayout bkcolor="#00000001">
+		  <TileLayout name="listctrl" inset="20,20,0,20" childpadding="20" vscrollbar="true" columns="5" >
+		  </TileLayout>
+		</HorizontalLayout>
+		<!--这里打算做个dotTab的样式-->
+		<HorizontalLayout bkcolor="#0xffffffff" height="30">
+	      <Label text="这里打算做dotTab样式" align="center" />
+		</HorizontalLayout>
+		<!--留着做状态栏得了-->
+		<HorizontalLayout bkcolor="#0xffffffff" height="30">
+           <Label text="留着做状态栏得了" align="center" />
 		</HorizontalLayout>
 	</VerticalLayout>
 </Window>
