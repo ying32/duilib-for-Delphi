@@ -9,6 +9,7 @@ uses
 begin
   DuiApplication.Initialize;
   AppsWindow := TAppsWindow.Create;
+  AppsWindow.CenterWindow;
   AppsWindow.Show;
   DuiApplication.Run;
   AppsWindow.Free;
