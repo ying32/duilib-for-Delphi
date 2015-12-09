@@ -50,6 +50,8 @@ type
     FInitOK: Boolean;
     FIcons: TList<TIconInfo>;
     FTrayData: TNotifyIconData;
+    FIsMouseHover: Boolean;
+    FIsNcMouseEnter: Boolean; // 没办法多加个判断
     procedure CreateRadioButton(const AName: string);
     procedure ShowPage(AIndex: Integer);
     procedure AddIcon(AIcon: TIconInfo);
@@ -115,11 +117,13 @@ var
   I: Integer;
 begin
   inherited Create('MainWindow.xml', 'skin\Apps');
+  FIsMouseHover := True;
+
   CreateWindow(0, 'Apps', UI_WNDSTYLE_EX_DIALOG, WS_EX_WINDOWEDGE or WS_EX_ACCEPTFILES);
   FDlgBuilder := CDialogBuilder.CppCreate;
   FIcons := TList<TIconInfo>.Create;
   for I := 0 to 34 do
-    FIcons.Add(TIconInfo.Create('测试' + I.ToString, 'xiaoshuo.png'));
+    AddIcon(TIconInfo.Create('测试' + I.ToString, 'xiaoshuo.png'));
   FTrayData.Wnd := Handle;
   FTrayData.uID := FTrayData.Wnd;
   FTrayData.cbSize := Sizeof(TNotifyIconData);
@@ -128,6 +132,7 @@ begin
   FTrayData.hIcon := LoadIcon(HInstance, 'MAINICON');
   StrPLCopy(FTrayData.szTip, '测试托盘显示', Length(FTrayData.szTip) - 1);
   Shell_NotifyIcon(NIM_ADD, @FTrayData);
+
 end;
 
 procedure TAppsWindow.CreateRadioButton(const AName: string);
@@ -185,14 +190,16 @@ begin
 end;
 
 procedure TAppsWindow.DoHandleMessage(var Msg: TMessage; var bHandled: BOOL);
+var
+  R: TRect;
 begin
-  inherited;
   case Msg.Msg of
     WM_DROPFILES:
      begin
        //TDropStruct
        // 文件拖放
      end;
+
     WM_TRAYICON_MESSAGE:
      begin
        case Msg.LParam of
@@ -201,13 +208,56 @@ begin
          WM_LBUTTONDBLCLK:;
        end;
      end;
+
+    WM_EXITSIZEMOVE:
+      begin
+        GetWindowRect(Handle, R);
+        if R.Top < 0 then
+          SetWindowPos(Handle, HWND_NOTOPMOST, R.Left, 0, 0, 0,  SWP_NOREDRAW or SWP_NOSIZE)
+        else if R.Right > GetScreenSize.cx then
+          SetWindowPos(Handle, HWND_NOTOPMOST, GetScreenSize.cx - R.Width, R.Top, 0, 0,  SWP_NOREDRAW or SWP_NOSIZE)
+        else if R.Left < 0 then
+          SetWindowPos(Handle, HWND_NOTOPMOST, 0, R.Top, 0, 0,  SWP_NOREDRAW or SWP_NOSIZE);
+      end;
+
+    WM_NCMOUSELEAVE: FIsNcMouseEnter := False;
+    WM_MOUSEHOVER, WM_NCMOUSEMOVE :
+     begin
+       // 消息收到有点慢啊，奇怪了
+       if Msg.Msg = WM_NCMOUSEMOVE then
+         FIsNcMouseEnter := True;
+       if not FIsMouseHover then
+       begin
+         FIsMouseHover := True;
+         Perform(WM_EXITSIZEMOVE);
+       end;
+     end;
+
+    WM_MOUSELEAVE :
+     begin
+       if FIsMouseHover and not FIsNcMouseEnter then
+       begin
+         GetWindowRect(Handle, R);
+         if R.Top = 0 then
+           SetWindowPos(Handle, HWND_TOPMOST, R.Left, -(R.Height - 5), 0, 0, SWP_NOREDRAW or SWP_NOSIZE)
+         else if R.Right = GetScreenSize.cx then
+           SetWindowPos(Handle, HWND_NOTOPMOST, GetScreenSize.cx - 5, R.Top, 0, 0, SWP_NOREDRAW or SWP_NOSIZE)
+         else if R.Left = 0 then
+          SetWindowPos(Handle, HWND_NOTOPMOST, -(R.Width - 5), R.Top, 0, 0,  SWP_NOREDRAW or SWP_NOSIZE);
+         FIsMouseHover := False;
+       end;
+       if FIsNcMouseEnter then
+         FIsNcMouseEnter := False;
+     end;
   end;
+  inherited;
 end;
 
 procedure TAppsWindow.DoInitWindow;
 begin
   inherited;
 end;
+
 
 procedure TAppsWindow.DoNotify(var Msg: TNotifyUI);
 var
