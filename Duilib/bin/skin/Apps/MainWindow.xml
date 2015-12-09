@@ -1,28 +1,38 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<Window size="379,551" sizebox="4,4,4,4" caption="0,0,0,32" roundcorner="3,3">
-	<VerticalLayout width="379" height="551" bkcolor="#FFF0F0F0" bkcolor2="#FFAAAAA0">
-		<HorizontalLayout height="32" bkcolor="#FFE6E6DC" bkcolor2="#FFAAAAA0">
-			<VerticalLayout height="32">
-			  <Label text="Apps" height="32" textcolor="#FFFFFFFF" padding="10, 0, 0, 0" />
-			</VerticalLayout>
-			<VerticalLayout width="140" height="32">
-				<Button name="minbtn" tooltip="最小化" float="true" pos="47,3,0,0" width="30" height="27" normalimage="file='sysbtn_min_normal.png'" hotimage="file='sysbtn_min_hover.png'" pushedimage="file='sysbtn_min_down.png'" />
-				<Button name="maxbtn" tooltip="最大化" float="true" pos="77,3,0,0" width="30" height="27" normalimage="file='sysbtn_max_normal.png'" hotimage="file=&apos;sysbtn_max_hover.png'" pushedimage="file='sysbtn_max_down.png'" />
-				<Button name="restorebtn" tooltip="恢复" visible="false" float="true" pos="77,3,0,0" width="30" height="27" normalimage="file='sysbtn_restore_normal.png'" hotimage="file='sysbtn_restore_hover.png'" pushedimage="file='sysbtn_restore_down.png'" />
-				<Button name="closebtn" tooltip="关闭" float="true" pos="107,3,0,0" width="30" height="27" normalimage="file='sysbtn_close_normal.png'" hotimage="file='sysbtn_close_hover.png'" pushedimage="file='sysbtn_close_down.png'" />
-			</VerticalLayout>
-		</HorizontalLayout>
-		<HorizontalLayout bkcolor="#00000001">
-		  <TileLayout name="listctrl" inset="20,20,0,20" childpadding="20" vscrollbar="true" columns="5" >
-		  </TileLayout>
-		</HorizontalLayout>
-		<!--这里打算做个dotTab的样式-->
-		<HorizontalLayout bkcolor="#0xffffffff" height="30">
-	      <Label text="这里打算做dotTab样式" align="center" />
-		</HorizontalLayout>
-		<!--留着做状态栏得了-->
-		<HorizontalLayout bkcolor="#0xffffffff" height="30">
-           <Label text="留着做状态栏得了" align="center" />
-		</HorizontalLayout>
-	</VerticalLayout>
+<Window size="324,600" caption="0,0,0,24" mininfo="324,600" maxinfo="324,600" roundcorner="2,2">
+    <Font name="微软雅黑" size="13" bold="false" italic="false" />
+    <HorizontalLayout name="bg" width="379" height="551" bkimage="file=&apos;{00000000-0000-0000-0000-00000000000f}.jpg&apos; corner=&apos;780,620,1,1&apos;">
+        <VerticalLayout bkimage="file=&apos;mainwindow.png&apos; corner=&apos;1,1,1,1&apos; hole=&apos;true&apos;" inset="1,1,1,0">
+            <HorizontalLayout height="24">
+                <VerticalLayout height="24">
+                    <Label text="Apps" height="24" padding="10,0,0,0" textcolor="#FFFFFFFF" disabledtextcolor="#FFA7A6AA" font="0" />
+                </VerticalLayout>
+                <VerticalLayout width="140" height="24">
+                    <Button name="minbtn" tooltip="最小化" float="true" pos="90,0,0,0" width="25" height="18" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;titlebuttonmin.png&apos; source=&apos;0,0,25,18&apos;" hotimage="file=&apos;titlebuttonmin.png&apos; source=&apos;0,18,25,36&apos;" pushedimage="file=&apos;titlebuttonmin.png&apos; source=&apos;0,54,25,72&apos;" />
+                    <Button name="closebtn" tooltip="关闭" float="true" pos="115,0,0,0" width="25" height="18" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;titlebuttonclose.png&apos; source=&apos;0,0,32,18&apos;" hotimage="file=&apos;titlebuttonclose.png&apos; source=&apos;0,18,32,36&apos;" pushedimage="file=&apos;titlebuttonclose.png&apos; source=&apos;0,54,32,72&apos;" />
+                </VerticalLayout>
+            </HorizontalLayout>
+            <HorizontalLayout width="322" height="42">
+                <VerticalLayout width="197" height="25" padding="25,10,75,10" bkimage="file=&apos;searchboxnormal.png&apos; corner=&apos;8,2,8,2&apos;">
+                    <RichEdit name="edt_Search" text="搜索应用" float="true" pos="8,6,0,0" width="240" height="23" multiline="false" vscrollbar="false" autovscroll="false" rich="true" readonly="false" textcolor="#FF94AAB5" />
+                    <Button name="btn_Search" tooltip="搜索" float="true" pos="252,6,0,0" width="14" height="14" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;search.png&apos; source=&apos;0,0,14,14&apos;" hotimage="file=&apos;search.png&apos; source=&apos;0,14,14,28&apos;" pushedimage="file=&apos;search.png&apos; source=&apos;0,42,14,56&apos;" />
+                </VerticalLayout>
+            </HorizontalLayout>
+            <HorizontalLayout bkcolor="#00000001">
+                <TileLayout name="IconsList" />
+            </HorizontalLayout>
+            <HorizontalLayout name="TabStyleDock" width="322" height="18">
+            </HorizontalLayout>
+            <HorizontalLayout width="322" height="70" bkimage="file=&apos;shortcutborder.png&apos; dest=&apos;0,43,350,70&apos;">
+                <Button name="openmycomputer" float="true" pos="29,20,0,0" width="48" height="32" bkimage="mainmycomputer1.png" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="mainmycomputer1.png" hotimage="mainmycomputer2.png" pushedimage="mainmycomputer2.png" />
+                <Label float="true" pos="29,50,0,0" width="48" height="32" bkimage="mainmycomputershadow.png" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" />
+                <Button name="openbrowser" float="true" pos="100,20,0,0" width="48" height="32" bkimage="mainbrowser1.png" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="mainbrowser1.png" hotimage="mainbrowser2.png" pushedimage="mainbrowser2.png" />
+                <Button name="openyule" float="true" pos="173,20,0,0" width="48" height="32" bkimage="mainyule1.png" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="mainyule1.png" hotimage="mainyule2.png" pushedimage="mainyule2.png" />
+                <Button name="openappmarket" float="true" pos="246,20,0,0" width="48" height="32" bkimage="mainappmarket1.png" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="mainappmarket1.png" hotimage="mainappmarket2.png" pushedimage="mainappmarket2.png" />
+                <Label float="true" pos="100,49,0,0" width="48" height="32" bkimage="mainbrowsershadow.png" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" />
+                <Label float="true" pos="173,50,0,0" width="48" height="32" bkimage="mainyuleshadow.png" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" />
+                <Label float="true" pos="246,50,0,0" width="48" height="32" bkimage="mainappmarketshadow.png" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" />
+            </HorizontalLayout>
+        </VerticalLayout>
+    </HorizontalLayout>
 </Window>
