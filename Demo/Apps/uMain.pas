@@ -7,6 +7,7 @@ uses
   Winapi.Messages,
   System.SysUtils,
   System.Math,
+  Winapi.ShellAPI,
   System.Generics.Collections,
   Duilib,
   DuiWindowImplBase,
@@ -25,10 +26,14 @@ const
   kitemtitle = 'title';
   kIconsList = 'IconsList';
 
+  kedt_Search = 'edt_Search';
+
   /// <summary>
   ///   4行，5列 (LTileLayout.GetWidth div 80 * (LTitleLayout.GetHeight div 80)
   /// </summary>
   PAGE_MAX_CHIND = 20;
+
+  WM_TRAYICON_MESSAGE = WM_USER + $128;
 
 type
   TIconInfo = record
@@ -44,18 +49,45 @@ type
     FDlgBuilder: CDialogBuilder;
     FInitOK: Boolean;
     FIcons: TList<TIconInfo>;
+    FTrayData: TNotifyIconData;
+    procedure CreateRadioButton(const AName: string);
+    procedure ShowPage(AIndex: Integer);
+    procedure AddIcon(AIcon: TIconInfo);
+    procedure InitRadios;
   protected
     procedure DoNotify(var Msg: TNotifyUI); override;
     procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
     function DoCreateControl(pstrStr: string): CControlUI; override;
     procedure DoInitWindow; override;
-    procedure CreateRadioButton(const AName: string);
-    procedure ShowPage(AIndex: Integer);
-    procedure AddIcon(AIcon: TIconInfo);
-    procedure InitRadios;
+  public
+    procedure ShowBalloonTips(ATitle, AInfo: string; ATimeout: Integer = 1000);
   public
     constructor Create;
     destructor Destroy; override;
+  end;
+
+  TRichEditMenu = class(TDuiWindowImplBase)
+  private
+    FRichEdit: CRichEditUI;
+  protected
+    procedure DoNotify(var Msg: TNotifyUI); override;
+    procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
+    procedure DoInitWindow; override;
+    procedure DoFinalMessage(hWd: HWND); override;
+  public
+    constructor Create(ARichEdit: CRichEditUI);
+  end;
+
+  TTrayMenu = class(TDuiWindowImplBase)
+  private
+    FPaintManager: CPaintManagerUI;
+  protected
+    procedure DoNotify(var Msg: TNotifyUI); override;
+    procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
+    procedure DoInitWindow; override;
+    procedure DoFinalMessage(hWd: HWND); override;
+  public
+    constructor Create(APaintManager: CPaintManagerUI);
   end;
 
 var
@@ -79,7 +111,15 @@ begin
   FDlgBuilder := CDialogBuilder.CppCreate;
   FIcons := TList<TIconInfo>.Create;
   for I := 0 to 34 do
-    FIcons.Add(TIconInfo.Create('测试' + I.ToString, 'xiaoshuo.png'))
+    FIcons.Add(TIconInfo.Create('测试' + I.ToString, 'xiaoshuo.png'));
+  FTrayData.Wnd := Handle;
+  FTrayData.uID := FTrayData.Wnd;
+  FTrayData.cbSize := Sizeof(TNotifyIconData);
+  FTrayData.uFlags := NIF_MESSAGE or NIF_ICON or NIF_TIP or NIF_INFO;
+  FTrayData.ucallbackmessage := WM_TRAYICON_MESSAGE;
+  FTrayData.hIcon := LoadIcon(HInstance, 'MAINICON');
+  StrPLCopy(FTrayData.szTip, '测试托盘显示', Length(FTrayData.szTip) - 1);
+  Shell_NotifyIcon(NIM_ADD, @FTrayData);
 end;
 
 procedure TAppsWindow.CreateRadioButton(const AName: string);
@@ -127,6 +167,7 @@ begin
     LTileLayout.RemoveAll;
   FDlgBuilder.CppDestroy;
   FIcons.Free;
+  Shell_NotifyIcon(NIM_DELETE, @FTrayData);
   inherited;
 end;
 
@@ -143,6 +184,14 @@ begin
      begin
        //TDropStruct
        // 文件拖放
+     end;
+    WM_TRAYICON_MESSAGE:
+     begin
+       case Msg.LParam of
+         WM_LBUTTONDOWN: ;
+         WM_RBUTTONDOWN: TTrayMenu.Create(PaintManagerUI);
+         WM_LBUTTONDBLCLK:;
+       end;
      end;
   end;
 end;
@@ -195,7 +244,7 @@ begin
     end else
     if LCtlName.Equals('btn_Search') then
     begin
-      LEdit := CRichEditUI(FindControl('edt_Search'));
+      LEdit := CRichEditUI(FindControl(kedt_Search));
       if LEdit <> nil then
       begin
         MessageBox(0, PChar(LEdit.Text), nil, 0);
@@ -205,13 +254,12 @@ begin
     begin
       OutputDebugString(PChar(Format('XXX=%s, Tag=%d', [LCtlName, Msg.pSender.Tag])));
     end;
-
   end else
   if LType.Equals(DUI_EVENT_KILLFOCUS) then
   begin
     if LCtlName.Equals('edt_Search') then
     begin
-      LEdit := CRichEditUI(FindControl('edt_Search'));
+      LEdit := CRichEditUI(Msg.pSender);
       if LEdit <> nil then
       begin
         if LEdit.Text = '' then
@@ -224,9 +272,9 @@ begin
   end else
   if LType.Equals(DUI_EVENT_SETFOCUS) then
   begin
-    if LCtlName.Equals('edt_Search') then
+    if LCtlName.Equals(kedt_Search) then
     begin
-      LEdit := CRichEditUI(FindControl('edt_Search'));
+      LEdit := CRichEditUI(Msg.pSender);
       if LEdit <> nil then
       begin
         if LEdit.Text = '搜索应用' then
@@ -240,6 +288,31 @@ begin
   if LType.Equals(DUI_EVENT_DROPDOWN) then
   begin
     MessageBox(0, 'dropdown', 'drop', 0);
+  end else
+  if LType.Equals(DUI_EVENT_MENU) then
+  begin
+    if LCtlName.Equals(kedt_Search) then
+      TRichEditMenu.Create(CRichEditUI(Msg.pSender));
+  end else
+  if LType.Equals('RichMenuItemClick') then
+  begin
+    LEdit := CRichEditUI(FindControl(kedt_Search));
+    if LEdit <> nil then
+    begin
+      if LCtlName.Equals('menu_copy') then
+        LEdit.Copy
+      else if LCtlName.Equals('menu_cut') then
+        LEdit.Cut
+      else if LCtlName.Equals('menu_paste') then
+        LEdit.Paste
+      else if LCtlName.Equals('menu_selall') then
+        LEdit.SetSelAll;
+    end;
+  end else
+  if LType.Equals('TrayMenuItemClick') then
+  begin
+    if LCtlName.Equals('menu_exit') then
+      DuiApplication.Terminate;
   end;
 end;
 
@@ -253,7 +326,15 @@ begin
      CreateRadioButton(Format('TabDotButton_%d', [I]));
 end;
 
-// 从0开始的索引
+procedure TAppsWindow.ShowBalloonTips(ATitle, AInfo: string; ATimeout: Integer);
+begin
+  FTrayData.uTimeout := ATimeout;
+  FTrayData.dwInfoFlags := NIIF_INFO;
+  StrPLCopy(FTrayData.szInfoTitle, ATitle, Length(FTrayData.szInfoTitle) - 1);
+  StrPLCopy(FTrayData.szInfo, AInfo, Length(FTrayData.szInfo) - 1);
+  Shell_NotifyIcon(NIM_MODIFY, @FTrayData);
+end;
+
 procedure TAppsWindow.ShowPage(AIndex: Integer);
 var
   LTileLayout: CTileLayoutUI;
@@ -291,7 +372,6 @@ begin
         LTitle.Text := LItem.Text;
       LTileLayout.Add(LVerticalLayout);
     end;
-
   end;
 end;
 
@@ -302,6 +382,98 @@ begin
   Self.Text := AText;
   Self.IconPath := AIconPath;
   Self.AppFileName := '';
+end;
+
+{ TRichEditMenu }
+
+constructor TRichEditMenu.Create(ARichEdit: CRichEditUI);
+begin
+  inherited Create('richeditmenu.xml', ExtractFilePath(ParamStr(0)) + 'skin\Apps');
+  FRichEdit := ARichEdit;
+  CreateWindow(0, '', WS_POPUP, WS_EX_TOOLWINDOW);
+  Show;
+end;
+
+procedure TRichEditMenu.DoFinalMessage(hWd: HWND);
+begin
+  inherited;
+  Free;
+end;
+
+procedure TRichEditMenu.DoHandleMessage(var Msg: TMessage; var bHandled: BOOL);
+begin
+  inherited;
+  if Msg.Msg = WM_KILLFOCUS then
+  begin
+    Msg.Result := 1;
+    Close;
+  end;
+end;
+
+procedure TRichEditMenu.DoInitWindow;
+var
+  LSize: TSize;
+  LP: TPoint;
+begin
+  inherited;
+  LSize := InitSize;
+  GetCursorPos(LP);
+  MoveWindow(Handle, LP.X, LP.Y, LSize.cx, LSize.cy, False);
+end;
+
+procedure TRichEditMenu.DoNotify(var Msg: TNotifyUI);
+begin
+  inherited;
+  if Msg.sType = DUI_EVENT_ITEMSELECT then
+    Close
+  else if Msg.sType = DUI_EVENT_ITEMCLICK then
+    FRichEdit.GetManager.SendNotify(Msg.pSender, 'RichMenuItemClick');
+end;
+
+{ TTrayMenu }
+
+constructor TTrayMenu.Create(APaintManager: CPaintManagerUI);
+begin
+  inherited Create('traymenu.xml', ExtractFilePath(ParamStr(0)) + 'skin\Apps');
+  FPaintManager := APaintManager;
+  CreateWindow(0, '', WS_POPUP, WS_EX_TOOLWINDOW or WS_EX_TOPMOST);
+  Show;
+end;
+
+procedure TTrayMenu.DoFinalMessage(hWd: HWND);
+begin
+  inherited;
+  Free;
+end;
+
+procedure TTrayMenu.DoHandleMessage(var Msg: TMessage; var bHandled: BOOL);
+begin
+  inherited;
+  if Msg.Msg = WM_KILLFOCUS then
+  begin
+    Msg.Result := 1;
+    Close;
+  end;
+end;
+
+procedure TTrayMenu.DoInitWindow;
+var
+  LSize: TSize;
+  LP: TPoint;
+begin
+  inherited;
+  LSize := InitSize;
+  GetCursorPos(LP);
+  MoveWindow(Handle, LP.X, LP.Y, LSize.cx, LSize.cy, False);
+end;
+
+procedure TTrayMenu.DoNotify(var Msg: TNotifyUI);
+begin
+  inherited;
+  if Msg.sType = DUI_EVENT_ITEMSELECT then
+    Close
+  else if Msg.sType = DUI_EVENT_ITEMCLICK then
+    FPaintManager.SendNotify(Msg.pSender, 'TrayMenuItemClick');
 end;
 
 end.
