@@ -273,7 +273,7 @@ begin
   TOthers.AddCppHeaderCommentHeader(FCppHeadFile);
   FCppHeadFile.Add('#include "../UIlib.h"');
   FCppHeadFile.Add('');
-  FCppHeadFile.Add('#define DRIECTUILIB_API extern "C" __declspec(dllexport)');
+  FCppHeadFile.Add('#define DIRECTUILIB_API extern "C" __declspec(dllexport)');
   FCppHeadFile.Add('');
 end;
 
@@ -282,7 +282,7 @@ begin
   TOthers.AddCppSourceCommentHeader(FCppSourceFile);
   FCppSourceFile.Add('');
   FCppSourceFile.Add('#include "stdafx.h"');
-  FCppSourceFile.Add('#include "DriectUIlib.h"');
+  FCppSourceFile.Add('#include "DirectUIlib.h"');
   FCppSourceFile.AddBlankLine;
   FCppSourceFile.Add('using namespace DuiLib;');
   FCppSourceFile.Add('');
@@ -506,12 +506,12 @@ begin
 
   if AM.IsConstructor then
   begin
-    AddCppTempMethod('DRIECTUILIB_API %s* Delphi_%s_CppCreate%s(%s) {', [AClass, AClassNoC, AM.OverloadName, LCppParams]);
+    AddCppTempMethod('DIRECTUILIB_API %s* Delphi_%s_CppCreate%s(%s) {', [AClass, AClassNoC, AM.OverloadName, LCppParams]);
     AddCppTempMethod('    return new %s(%s);', [AClass, GetCppParamsNoType(AM)]);
   end else
   if AM.IsDestructor then
   begin
-    AddCppTempMethod('DRIECTUILIB_API void Delphi_%s_CppDestroy(%s* handle) {', [AClassNoC, AClass]);
+    AddCppTempMethod('DIRECTUILIB_API void Delphi_%s_CppDestroy(%s* handle) {', [AClassNoC, AClass]);
     AddCppTempMethod('    delete handle;');
   end else
   begin
@@ -530,14 +530,14 @@ begin
 
     if not AM.IsStatic then
     begin
-      AddCppTempMethod('DRIECTUILIB_API %s%s Delphi_%s_%s%s(%s* handle%s) {', [LConstFlags, LReturnType,
+      AddCppTempMethod('DIRECTUILIB_API %s%s Delphi_%s_%s%s(%s* handle%s) {', [LConstFlags, LReturnType,
         AClassNoC, AM.Name, AM.OverloadName, AClass, LCppParams]);
       AddCppTempMethod(Format('    %shandle->%s(%s);', [LReturnStr, AM.Name, GetCppParamsNoType(AM)]));
     end
     else
     begin
       // 静态函数的处理
-      AddCppTempMethod('DRIECTUILIB_API %s%s Delphi_%s_%s%s(%s) {', [LConstFlags, LReturnType, AClassNoC, AM.Name,
+      AddCppTempMethod('DIRECTUILIB_API %s%s Delphi_%s_%s%s(%s) {', [LConstFlags, LReturnType, AClassNoC, AM.Name,
         AM.OverloadName, LCppParams]);
       AddCppTempMethod(Format('    %s%s::%s(%s);', [LReturnStr, AClass, AM.Name, GetCppParamsNoType(AM)]));
     end;
@@ -1024,7 +1024,7 @@ begin
 //      AddCppTempMethod('}');
 //      AddCppTempMethod('');
 
-      //AddCppExport('DRIECTUILIB_API void Export_Delphi_%s(TDelphi_%sMethods& methods) {',
+      //AddCppExport('DIRECTUILIB_API void Export_Delphi_%s(TDelphi_%sMethods& methods) {',
       //  [LClassNoC, LClassNoC]);
 //      AddCppExport('    methods.default._Create = &Delphi_%s_Create;', [LClassNoC]);
 //      AddCppExport('    methods.default._Destroy = &Delphi_%s_Destroy;', [LClassNoC]);
@@ -1357,7 +1357,7 @@ procedure TCppConvert.SaveCppFile;
 begin
   AddDefualtCppHeader;
   FCppHeadFile.Add('');
-  FCppHeadFile.SaveToFile(ExtractFilePath(ParamStr(0)) + 'DriectUIlib.h');
+  FCppHeadFile.SaveToFile(ExtractFilePath(ParamStr(0)) + 'DirectUIlib.h');
 
   AddDefualtCppSource;
   FCppSourceFile.AddBlankLine;
@@ -1372,7 +1372,7 @@ begin
   FCppSourceFile.Add('');
   FCppSourceFile.AddStrings(FCppMethods);
   FCppSourceFile.Add('');
-  FCppSourceFile.SaveToFile(ExtractFilePath(ParamStr(0)) + 'DriectUIlib.cpp');
+  FCppSourceFile.SaveToFile(ExtractFilePath(ParamStr(0)) + 'DirectUIlib.cpp');
 end;
 
 procedure TCppConvert.SaveDelphiFile;
