@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<Window>
+<Window size="361,261">
     <VerticalLayout width="80" height="80">
         <HorizontalLayout />
-        <HorizontalLayout height="48">
-            <VerticalLayout />
-            <VerticalLayout width="48" height="48" bkimage="applicationbackgournd.png">
-                <Button name="btnopenapp" float="true" pos="4,4,0,0" width="40" height="40" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" hotimage="applicationbackgournd.png" pushedimage="applicationbackgourndhover.png" />
+        <HorizontalLayout height="56">
+            <VerticalLayout height="56" />
+            <VerticalLayout width="56" height="56" bkimage="applicationbackgournd.png">
+                <Button name="btnopenapp" float="true" pos="4,4,0,0" width="48" height="48" hotimage="applicationbackgournd.png" pushedimage="applicationbackgourndhover.png" />
             </VerticalLayout>
-            <VerticalLayout />
+            <VerticalLayout height="56" />
         </HorizontalLayout>
-        <HorizontalLayout width="80" height="22">
+        <HorizontalLayout height="22">
             <Label name="title" float="true" pos="0,0,0,0" width="80" height="22" textcolor="#00FFFFFF" disabledtextcolor="#FFA7A6AA" font="0" align="center" />
         </HorizontalLayout>
     </VerticalLayout>
