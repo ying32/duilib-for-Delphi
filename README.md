@@ -36,21 +36,16 @@
    * 5.1、 bin
       * 存放编译后的二进制及图片和xml资源，里面有的包含原duilib的资源文件 
 
-### 根目录文件信息
-***
-
-* Duilib-for-Delphi.master.zip.20151127.bak与Duilib-for-Delphi.zip.bak是作者经过无数的坑之前的代码，这里只是留作备份，保存下而已。
-
-
 ### 说明
 ***
-  **需要将DuilibExport下的DriectUIlib.cpp和DriectUIlib.h加入原[duilib](https://github.com/duilib/duilib)工程中，然后查看ReadMe.txt修改一处duilib的源代码，然后重编译duilib工程, 主意vs中设置为Unicode工程** 
+  **需要将DuilibExport下的DirectUIlib.cpp和DirectUIlib.h加入原[duilib](https://github.com/duilib/duilib)工程中，然后查看ReadMe.txt修改一处duilib的源代码，然后重编译duilib工程, 主意vs中设置为Unicode工程** 
 
 
 ### 截图
 ***
 ![截图1](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot1.png)  
 ![截图2](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot2.png)  
+![截图2](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot3.png) 
 
 ### 作者信息
 ***
