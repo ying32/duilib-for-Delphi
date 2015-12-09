@@ -9,6 +9,6 @@
 //*******************************************************************
 #include "../UIlib.h"
 
-#define DRIECTUILIB_API extern "C" __declspec(dllexport)
+#define DIRECTUILIB_API extern "C" __declspec(dllexport)
 
 
