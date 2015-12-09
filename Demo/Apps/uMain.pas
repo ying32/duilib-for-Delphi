@@ -90,10 +90,18 @@ type
     constructor Create(APaintManager: CPaintManagerUI);
   end;
 
+
+
 var
   AppsWindow: TAppsWindow;
 
 implementation
+
+function GetScreenSize: TSize;
+begin
+  Result.cx := GetSystemMetrics(SM_CXSCREEN);
+  Result.cy := GetSystemMetrics(SM_CYSCREEN);
+end;
 
 { TAppsWindow }
 
@@ -412,12 +420,17 @@ end;
 
 procedure TRichEditMenu.DoInitWindow;
 var
-  LSize: TSize;
+  LSize, LScreenSize: TSize;
   LP: TPoint;
 begin
   inherited;
   LSize := InitSize;
   GetCursorPos(LP);
+  LScreenSize := GetScreenSize;
+  if LP.X + LSize.cx >= LScreenSize.cx then
+    LP.X := LP.X - LSize.cx;
+  if LP.Y + LSize.cy >= LScreenSize.cy then
+    LP.Y := LP.Y - LSize.cy;
   MoveWindow(Handle, LP.X, LP.Y, LSize.cx, LSize.cy, False);
 end;
 
@@ -458,12 +471,17 @@ end;
 
 procedure TTrayMenu.DoInitWindow;
 var
-  LSize: TSize;
+  LSize, LScreenSize: TSize;
   LP: TPoint;
 begin
   inherited;
   LSize := InitSize;
   GetCursorPos(LP);
+  LScreenSize := GetScreenSize;
+  if LP.X + LSize.cx >= LScreenSize.cx then
+    LP.X := LP.X - LSize.cx;
+  if LP.Y + LSize.cy >= LScreenSize.cy then
+    LP.Y := LP.Y - LSize.cy;
   MoveWindow(Handle, LP.X, LP.Y, LSize.cx, LSize.cy, False);
 end;
 
@@ -475,5 +493,7 @@ begin
   else if Msg.sType = DUI_EVENT_ITEMCLICK then
     FPaintManager.SendNotify(Msg.pSender, 'TrayMenuItemClick');
 end;
+
+
 
 end.
