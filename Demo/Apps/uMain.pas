@@ -28,6 +28,8 @@ const
 
   kedt_Search = 'edt_Search';
 
+  kbtnaddapp = 'btnaddapp';
+
   /// <summary>
   ///   4行，5列 (LTileLayout.GetWidth div 80 * (LTitleLayout.GetHeight div 80)
   /// </summary>
@@ -56,6 +58,7 @@ type
     procedure ShowPage(AIndex: Integer);
     procedure AddIcon(AIcon: TIconInfo);
     procedure InitRadios;
+    function CreateAddItemButton: CVerticalLayoutUI;
   protected
     procedure DoNotify(var Msg: TNotifyUI); override;
     procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
@@ -133,6 +136,23 @@ begin
   StrPLCopy(FTrayData.szTip, '测试托盘显示', Length(FTrayData.szTip) - 1);
   Shell_NotifyIcon(NIM_ADD, @FTrayData);
 
+end;
+
+function TAppsWindow.CreateAddItemButton: CVerticalLayoutUI;
+var
+  LButton: CButtonUI;
+  LDlgBuilder: CDialogBuilder;
+begin
+  LDlgBuilder := CDialogBuilder.CppCreate;
+  try
+    if not LDlgBuilder.GetMarkup.IsValid then
+      Result := CVerticalLayoutUI(LDlgBuilder.Create('buttonitemadd.xml', '', nil, PaintManagerUI))
+    else Result := CVerticalLayoutUI(LDlgBuilder.Create(nil, PaintManagerUI));
+    if Result <> nil then
+      LButton := CButtonUI(PaintManagerUI.FindSubControlByName(Result, kbtnaddapp));
+  finally
+    LDlgBuilder.CppDestroy;
+  end;
 end;
 
 procedure TAppsWindow.CreateRadioButton(const AName: string);
@@ -310,7 +330,14 @@ begin
     end else
     if LCtlName.Equals('btnopenapp') then
     begin
-      OutputDebugString(PChar(Format('XXX=%s, Tag=%d', [LCtlName, Msg.pSender.Tag])));
+      if Msg.pSender.Tag > 0 then
+      begin
+
+      end;
+    end else
+    if LCtlName.Equals(kbtnaddapp) then
+    begin
+       MessageBox(0, '添加app', nil, 0);
     end;
   end else
   if LType.Equals(DUI_EVENT_KILLFOCUS) then
@@ -409,7 +436,8 @@ begin
     LTileLayout.RemoveAll;
     if LTileLayout.GetColumns <> 4 then
       LTileLayout.SetColumns(4);
-    for I := (AIndex * PAGE_MAX_CHIND) to  Min((AIndex + 1) * PAGE_MAX_CHIND, FIcons.Count) - 1 do
+    // 减2个，最后个作为添加的按钮
+    for I := (AIndex * PAGE_MAX_CHIND) to  Min((AIndex + 1) * PAGE_MAX_CHIND, FIcons.Count) - 2 do
     begin
       LItem := FIcons[I];
       if not FDlgBuilder.GetMarkup.IsValid then
@@ -430,6 +458,9 @@ begin
         LTitle.Text := LItem.Text;
       LTileLayout.Add(LVerticalLayout);
     end;
+    LVerticalLayout := CreateAddItemButton;
+    if LVerticalLayout <> nil then
+      LTileLayout.Add(LVerticalLayout);
   end;
 end;
 
