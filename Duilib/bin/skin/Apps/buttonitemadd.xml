@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <Window>
-    <VerticalLayout width="80" height="80">
+    <VerticalLayout name="addappLayout" width="80" height="80">
         <HorizontalLayout />
         <HorizontalLayout height="48">
             <VerticalLayout />
