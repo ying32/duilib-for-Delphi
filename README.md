@@ -20,7 +20,7 @@
 ### 目录祥情
 ***
 * 1、 CppConvert  
-   * 一个特定的转换工具，根据MakeList.txt与MakeCppSourceDef.txt的配置生成duilib.pas和DriectUIlib.cpp，DriectUIlib.h三个文件。
+   * 一个特定的转换工具，根据MakeList.txt与MakeCppSourceDef.txt的配置生成duilib.pas和DirectUIlib.cpp，DirectUIlib.h三个文件。
 
 * 2、 DDuilib
    * duilib for Delphi源目录。
@@ -43,9 +43,10 @@
 
 ### 截图
 ***
+![截图2](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot3.png) 
 ![截图1](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot1.png)  
 ![截图2](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot2.png)  
-![截图2](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot3.png) 
+
 
 ### 作者信息
 ***
