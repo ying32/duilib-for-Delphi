@@ -3,12 +3,13 @@ unit uMain;
 interface
 
 uses
-  Winapi.Windows,
-  Winapi.Messages,
-  System.SysUtils,
-  System.Math,
-  Winapi.ShellAPI,
-  System.Generics.Collections,
+  Windows,
+  Messages,
+  SysUtils,
+  Classes,
+  Math,
+  ShellAPI,
+  Generics.Collections,
   Duilib,
   DuiWindowImplBase,
   DuiListUI,
@@ -54,7 +55,6 @@ type
     constructor Create(AText, AIconPath: string);
   end;
 
-  TNotifyEvent = procedure(var Msg: TNotifyUI) of object;
 
   TAppsWindow = class(TDuiWindowImplBase)
   private
@@ -80,18 +80,18 @@ type
     procedure SelectRadioItem(AIndex: Integer);
     function GetRadionSelectedIndex(ATabDock: CHorizontalLayoutUI): Integer;
     procedure InitEvents;
-    procedure ProcesNotifyEvent(var Msg: TNotifyUI);
+    procedure ProcesNotifyEvent(Sender: TObject);
 
 
-    procedure openmycomputer(var Msg: TNotifyUI);
-    procedure openbrowser(var Msg: TNotifyUI);
-    procedure openyule(var Msg: TNotifyUI);
-    procedure openappmarket(var Msg: TNotifyUI);
-    procedure btnSearchClick(var Msg: TNotifyUI);
-    procedure closebtnClick(var Msg: TNotifyUI);
-    procedure minbtnClick(var Msg: TNotifyUI);
-    procedure btnopenappClick(var Msg: TNotifyUI);
-    procedure btnaddappClick(var Msg: TNotifyUI);
+    procedure openmycomputer(Sender: TObject);
+    procedure openbrowser(Sender: TObject);
+    procedure openyule(Sender: TObject);
+    procedure openappmarket(Sender: TObject);
+    procedure btnSearchClick(Sender: TObject);
+    procedure closebtnClick(Sender: TObject);
+    procedure minbtnClick(Sender: TObject);
+    procedure btnopenappClick(Sender: TObject);
+    procedure btnaddappClick(Sender: TObject);
 
 //    procedure menuCopyClick(var Msg: TNotifyUI);
 //    procedure menuCutClick(var Msg: TNotifyUI);
@@ -243,19 +243,19 @@ begin
   end;
 end;
 
-procedure TAppsWindow.btnaddappClick(var Msg: TNotifyUI);
+procedure TAppsWindow.btnaddappClick(Sender: TObject);
 begin
   AddIcon(TIconInfo.Create('≤‚ ‘' + (FIcons.Count - 1).ToString, 'xiaoshuo.png'));
   ReInitRadios;
   AddItemToLastPage;
 end;
 
-procedure TAppsWindow.btnopenappClick(var Msg: TNotifyUI);
+procedure TAppsWindow.btnopenappClick(Sender: TObject);
 begin
 
 end;
 
-procedure TAppsWindow.btnSearchClick(var Msg: TNotifyUI);
+procedure TAppsWindow.btnSearchClick(Sender: TObject);
 var
   LEdit: CRichEditUI;
 begin
@@ -269,7 +269,7 @@ begin
   end;
 end;
 
-procedure TAppsWindow.closebtnClick(var Msg: TNotifyUI);
+procedure TAppsWindow.closebtnClick(Sender: TObject);
 begin
   DuiApplication.Terminate;
 end;
@@ -424,7 +424,7 @@ begin
         FSelectedRadioIndex := Msg.pSender.Tag;
         ShowPage(FSelectedRadioIndex);
       end;
-    end else ProcesNotifyEvent(Msg);
+    end else ProcesNotifyEvent(Msg.pSender);
   end else
   if LType.Equals(DUI_EVENT_KILLFOCUS) then
   begin
@@ -498,7 +498,7 @@ end;
 
 function TAppsWindow.GetListMaxPage: Integer;
 begin
-  Result := System.Math.Ceil(FIcons.Count / PAGE_MAX_CHIND);
+  Result := Math.Ceil(FIcons.Count / PAGE_MAX_CHIND);
 end;
 
 function TAppsWindow.GetRadionSelectedIndex(ATabDock: CHorizontalLayoutUI): Integer;
@@ -539,37 +539,37 @@ begin
   SelectRadioItem(FSelectedRadioIndex);
 end;
 
-procedure TAppsWindow.minbtnClick(var Msg: TNotifyUI);
+procedure TAppsWindow.minbtnClick(Sender: TObject);
 begin
   Minimize;
 end;
 
-procedure TAppsWindow.openappmarket(var Msg: TNotifyUI);
+procedure TAppsWindow.openappmarket(Sender: TObject);
 begin
   MessageBox(0, 'appmarket', nil, 0);
 end;
 
-procedure TAppsWindow.openbrowser(var Msg: TNotifyUI);
+procedure TAppsWindow.openbrowser(Sender: TObject);
 begin
   MessageBox(0, 'browser', nil, 0);
 end;
 
-procedure TAppsWindow.openmycomputer(var Msg: TNotifyUI);
+procedure TAppsWindow.openmycomputer(Sender: TObject);
 begin
   MessageBox(0, 'computer', nil, 0);
 end;
 
-procedure TAppsWindow.openyule(var Msg: TNotifyUI);
+procedure TAppsWindow.openyule(Sender: TObject);
 begin
   MessageBox(0, 'yule', nil, 0);
 end;
 
-procedure TAppsWindow.ProcesNotifyEvent(var Msg: TNotifyUI);
+procedure TAppsWindow.ProcesNotifyEvent(Sender: TObject);
 var
   LEvent: TNotifyEvent;
 begin
-  if FEvents.TryGetValue(Msg.pSender.Name, LEvent) then
-    LEvent(Msg);
+  if FEvents.TryGetValue(CControlUI(Sender).Name, LEvent) then
+    LEvent(Sender);
 end;
 
 procedure TAppsWindow.ReInitRadios;
