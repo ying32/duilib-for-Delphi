@@ -66,12 +66,16 @@ type
     FIsNcMouseEnter: Boolean; // 没办法多加个判断
     FMouseTracking: Boolean;
     FSelectedRadioIndex: Integer;
+    FTileLayout: CTileLayoutUI;
+    FTabStyleDock: CHorizontalLayoutUI;
+
     procedure ReInitRadios;
     procedure CreateRadioButton(const AName: string);
     procedure ShowPage(AIndex: Integer);
     procedure AddItemToLastPage;
     procedure AddIcon(AIcon: TIconInfo);
     procedure InitRadios;
+    function GetListMaxPage: Integer;
     function CreateAddItemButton: CVerticalLayoutUI;
     procedure SelectRadioItem(AIndex: Integer);
     function GetRadionSelectedIndex(ATabDock: CHorizontalLayoutUI): Integer;
@@ -98,7 +102,8 @@ type
     procedure DoNotify(var Msg: TNotifyUI); override;
     procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
     function DoCreateControl(pstrStr: string): CControlUI; override;
-    procedure DoInitWindow; override;
+    // 这里单独提取不使用原来的那个
+    procedure DuiWindowInit;
   public
     procedure ShowBalloonTips(ATitle, AInfo: string; ATimeout: Integer = 1000);
   public
@@ -137,6 +142,11 @@ var
 
 implementation
 
+procedure ShowMessage(const AMsg: string);
+begin
+  MessageBox(0, PChar(AMsg), 'Message', MB_OK or MB_ICONINFORMATION);
+end;
+
 function GetScreenSize: TSize;
 begin
   Result.cx := GetSystemMetrics(SM_CXSCREEN);
@@ -153,11 +163,14 @@ begin
   FIsMouseHover := True;
   FEvents := TDictionary<string, TNotifyEvent>.Create;
   InitEvents;
-  CreateWindow(0, 'Apps', UI_WNDSTYLE_EX_DIALOG, WS_EX_WINDOWEDGE or WS_EX_ACCEPTFILES);
   FDlgBuilder := CDialogBuilder.CppCreate;
   FIcons := TList<TIconInfo>.Create;
-  for I := 0 to 34 do
+  for I := 0 to 200 do
     AddIcon(TIconInfo.Create('测试' + I.ToString, 'xiaoshuo.png'));
+
+  // 初始化一些数据后再创建窗口
+  CreateWindow(0, 'Apps', UI_WNDSTYLE_EX_DIALOG, WS_EX_WINDOWEDGE or WS_EX_ACCEPTFILES);
+
   FTrayData.Wnd := Handle;
   FTrayData.uID := FTrayData.Wnd;
   FTrayData.cbSize := Sizeof(TNotifyIconData);
@@ -166,7 +179,6 @@ begin
   FTrayData.hIcon := LoadIcon(HInstance, 'MAINICON');
   StrPLCopy(FTrayData.szTip, '测试托盘显示', Length(FTrayData.szTip) - 1);
   Shell_NotifyIcon(NIM_ADD, @FTrayData);
-
 end;
 
 destructor TAppsWindow.Destroy;
@@ -184,18 +196,26 @@ end;
 
 procedure TAppsWindow.AddItemToLastPage;
 var
-  LTileLayout: CTileLayoutUI;
   LVerticalLayout: CVerticalLayoutUI;
   LTitle: CLabelUI;
   LItem: TIconInfo;
   LButton: CButtonUI;
   LLastIndex: Integer;
+  LIsLast: Boolean;
 begin
-  LTileLayout := CTileLayoutUI(FindControl(kIconsList));
-  if LTileLayout <> nil then
+  if FTileLayout <> nil then
   begin
+    LIsLast := False;
     // 每页最大数
-    if LTileLayout.GetCount >= PAGE_MAX_CHIND then Exit;
+    if FTileLayout.GetCount >= PAGE_MAX_CHIND then
+    begin
+      // 当前页已经满了，移除掉添加按钮
+      if FTileLayout.GetItemAt(FTileLayout.GetCount - 1).Name = 'addappLayout' then
+      begin
+        FTileLayout.RemoveAt(FTileLayout.GetCount - 1);
+        LIsLast := True;
+      end else Exit;
+    end;
     LLastIndex := FIcons.Count - 1;
     LItem := FIcons[LLastIndex];
     if not FDlgBuilder.GetMarkup.IsValid then
@@ -214,10 +234,12 @@ begin
     LTitle := CLabelUI(PaintManagerUI.FindSubControlByName(LVerticalLayout, kitemtitle));
     if LTitle <> nil then
       LTitle.Text := LItem.Text;
-    LTileLayout.AddAt(LVerticalLayout, LTileLayout.GetCount - 1);
-    // 当前页已经满了，移除掉添加按钮
-    if LTileLayout.GetCount > PAGE_MAX_CHIND then
-      LTileLayout.RemoveAt(LTileLayout.GetCount - 1);
+    if LIsLast then
+    begin
+      FTileLayout.Add(LVerticalLayout);
+      // 然后整除了，下一页要预算出来
+    end else
+      FTileLayout.AddAt(LVerticalLayout, FTileLayout.GetCount - 1);
   end;
 end;
 
@@ -265,23 +287,24 @@ begin
 end;
 
 procedure TAppsWindow.CreateRadioButton(const AName: string);
+const
+  RadioSize = 18;
+  OffsetSize = 6;
 var
   LRadio: COptionUI;
-  LTabStyleDock: CHorizontalLayoutUI;
   I: Integer;
   LWidth, LLeft: Integer;
 begin
-  LTabStyleDock := CHorizontalLayoutUI(FindControl('TabStyleDock'));
-  if LTabStyleDock <> nil then
+  if FTabStyleDock <> nil then
   begin
-    if PaintManagerUI.FindSubControlByName(LTabStyleDock, AName) = nil then
+    if PaintManagerUI.FindSubControlByName(FTabStyleDock, AName) = nil then
     begin
       LRadio := COptionUI.CppCreate;
-      LRadio.Tag := LTabStyleDock.GetCount;
-      LTabStyleDock.Add(LRadio);
+      LRadio.Tag := FTabStyleDock.GetCount;
+      FTabStyleDock.Add(LRadio);
       LRadio.Name := AName;
-      LRadio.SetFixedWidth(18);
-      LRadio.SetFixedHeight(18);
+      LRadio.SetFixedWidth(RadioSize);
+      LRadio.SetFixedHeight(RadioSize);
       LRadio.NormalImage := 'file=''indicator2.png'' source=''0,0,18,18''';
       LRadio.HotImage := 'file=''indicator2.png'' source=''0,18,18,36''';
       LRadio.PushedImage := 'file=''indicator2.png'' source=''0,54,18,72''';
@@ -289,11 +312,11 @@ begin
       LRadio.Group := 'TabDotStyleGroup';
       LRadio.SetFloat(True);
       // 总宽度，包括偏移位置
-      LWidth := LTabStyleDock.GetCount * 18 + (LTabStyleDock.GetCount - 1) * 12;
-      LLeft := LTabStyleDock.GetWidth div 2 - LWidth div 2;
-      // 30 = Radio.Width + 12 Offset
-      for I := 0 to LTabStyleDock.GetCount - 1 do
-        LTabStyleDock.GetItemAt(I).SetFixedXY(TSize.Create(LLeft + I * 30, 0))
+      LWidth := FTabStyleDock.GetCount * RadioSize + (FTabStyleDock.GetCount - 1) * OffsetSize;
+      LLeft := FTabStyleDock.GetWidth div 2 - LWidth div 2;
+
+      for I := 0 to FTabStyleDock.GetCount - 1 do
+        FTabStyleDock.GetItemAt(I).SetFixedXY(TSize.Create(LLeft + I * (RadioSize + OffsetSize), 0))
     end;
   end;
 end;
@@ -381,12 +404,6 @@ begin
   inherited;
 end;
 
-procedure TAppsWindow.DoInitWindow;
-begin
-  inherited;
-end;
-
-
 procedure TAppsWindow.DoNotify(var Msg: TNotifyUI);
 var
   LType, LCtlName: string;
@@ -396,10 +413,8 @@ begin
   LType := Msg.sType;
   LCtlName := Msg.pSender.Name;
   if LType.Equals(DUI_EVENT_WINDOWINIT) then
-  begin
-    ShowPage(0);
-    InitRadios;
-  end else
+    DuiWindowInit
+  else
   if LType.Equals(DUI_EVENT_CLICK) then
   begin
     if LCtlName.Contains('TabDotButton_') then
@@ -473,6 +488,19 @@ begin
 end;
 
 
+procedure TAppsWindow.DuiWindowInit;
+begin
+  FTileLayout := CTileLayoutUI(FindControl(kIconsList));
+  FTabStyleDock := CHorizontalLayoutUI(FindControl('TabStyleDock'));
+  ShowPage(0);
+  InitRadios;
+end;
+
+function TAppsWindow.GetListMaxPage: Integer;
+begin
+  Result := System.Math.Ceil(FIcons.Count / PAGE_MAX_CHIND);
+end;
+
 function TAppsWindow.GetRadionSelectedIndex(ATabDock: CHorizontalLayoutUI): Integer;
 var
   I: Integer;
@@ -501,10 +529,12 @@ end;
 
 procedure TAppsWindow.InitRadios;
 var
-  I: Integer;
+  I, LMaxPage: Integer;
 begin
+  if FTabStyleDock = nil then Exit;
+  LMaxPage := GetListMaxPage;
   // 创建对应的TabDot样式按钮
-  for I := 0 to System.Math.Ceil(FIcons.Count / PAGE_MAX_CHIND) - 1 do
+  for I := 0 to IfThen(FIcons.Count mod PAGE_MAX_CHIND = 0, LMaxPage + 1, LMaxPage) - 1 do
      CreateRadioButton(Format('TabDotButton_%d', [I]));
   SelectRadioItem(FSelectedRadioIndex);
 end;
@@ -543,27 +573,24 @@ begin
 end;
 
 procedure TAppsWindow.ReInitRadios;
-var
-  LTabStyleDock: CHorizontalLayoutUI;
 begin
-  LTabStyleDock := CHorizontalLayoutUI(FindControl('TabStyleDock'));
-  if LTabStyleDock <> nil then
+  if FTabStyleDock <> nil then
   begin
-    LTabStyleDock.RemoveAll;
-    InitRadios;
+    if (FTabStyleDock.GetCount <> GetListMaxPage) or (FIcons.Count mod PAGE_MAX_CHIND = 0) then
+    begin
+      FTabStyleDock.RemoveAll;
+      InitRadios;
+    end;
   end;
 end;
 
 procedure TAppsWindow.SelectRadioItem(AIndex: Integer);
-var
-  LTabStyleDock: CHorizontalLayoutUI;
 begin
   if AIndex <= -1 then Exit;
-  LTabStyleDock := CHorizontalLayoutUI(FindControl('TabStyleDock'));
-  if LTabStyleDock <> nil then
+  if FTabStyleDock <> nil then
   begin
-    if AIndex > LTabStyleDock.GetCount then Exit;
-    COptionUI(LTabStyleDock.GetItemAt(AIndex)).Selected := True;
+    if AIndex > FTabStyleDock.GetCount then Exit;
+    COptionUI(FTabStyleDock.GetItemAt(AIndex)).Selected := True;
   end;
 end;
 
@@ -578,20 +605,18 @@ end;
 
 procedure TAppsWindow.ShowPage(AIndex: Integer);
 var
-  LTileLayout: CTileLayoutUI;
   I, LCurPageCount, LStartIndex, LEndIndex: Integer;
   LVerticalLayout: CVerticalLayoutUI;
   LTitle: CLabelUI;
   LItem: TIconInfo;
   LButton: CButtonUI;
 begin
-  LTileLayout := CTileLayoutUI(FindControl(kIconsList));
-  if LTileLayout <> nil then
+  if FTileLayout <> nil then
   begin
     // 清除之前的控件
-    LTileLayout.RemoveAll;
-    if LTileLayout.GetColumns <> 4 then
-      LTileLayout.SetColumns(4);
+    FTileLayout.RemoveAll;
+    if FTileLayout.GetColumns <> 4 then
+      FTileLayout.SetColumns(4);
 
     LStartIndex := AIndex * PAGE_MAX_CHIND;
     LEndIndex := Min((AIndex + 1) * PAGE_MAX_CHIND, FIcons.Count);
@@ -616,14 +641,14 @@ begin
       LTitle := CLabelUI(PaintManagerUI.FindSubControlByName(LVerticalLayout, kitemtitle));
       if LTitle <> nil then
         LTitle.Text := LItem.Text;
-      LTileLayout.Add(LVerticalLayout);
+      FTileLayout.Add(LVerticalLayout);
     end;
     // 这里应该是哪个页少就出现添加按钮，当满了就移除添加按钮
     if LCurPageCount < PAGE_MAX_CHIND then
     begin
       LVerticalLayout := CreateAddItemButton;
       if LVerticalLayout <> nil then
-        LTileLayout.Add(LVerticalLayout);
+        FTileLayout.Add(LVerticalLayout);
     end;
   end;
 end;
