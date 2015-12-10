@@ -26,9 +26,16 @@ const
   kitemtitle = 'title';
   kIconsList = 'IconsList';
 
-  kedt_Search = 'edt_Search';
+  kSearchedt = 'edt_Search';
 
   kbtnaddapp = 'btnaddapp';
+  kbtnSearch = 'btn_Search';
+  kbtnopenapp = 'btnopenapp';
+
+  kSearchEditTextHint = '搜索应用';
+
+  kRichMenuItemClick = 'RichMenuItemClick';
+  kTrayMenuItemClick = 'TrayMenuItemClick';
 
   /// <summary>
   ///   4行，5列 (LTileLayout.GetWidth div 80 * (LTitleLayout.GetHeight div 80)
@@ -54,6 +61,7 @@ type
     FTrayData: TNotifyIconData;
     FIsMouseHover: Boolean;
     FIsNcMouseEnter: Boolean; // 没办法多加个判断
+    procedure ReInitRadios;
     procedure CreateRadioButton(const AName: string);
     procedure ShowPage(AIndex: Integer);
     procedure AddIcon(AIcon: TIconInfo);
@@ -158,19 +166,19 @@ end;
 procedure TAppsWindow.CreateRadioButton(const AName: string);
 var
   LRadio: COptionUI;
-  LVer: CHorizontalLayoutUI;
+  LTabStyleDock: CHorizontalLayoutUI;
   I: Integer;
   LWidth, LLeft: Integer;
 begin
-  LVer := CHorizontalLayoutUI(FindControl('TabStyleDock'));
-  if LVer <> nil then
+  LTabStyleDock := CHorizontalLayoutUI(FindControl('TabStyleDock'));
+  if LTabStyleDock <> nil then
   begin
-    if PaintManagerUI.FindSubControlByName(LVer, AName) = nil then
+    if PaintManagerUI.FindSubControlByName(LTabStyleDock, AName) = nil then
     begin
       LRadio := COptionUI.CppCreate;
-      LRadio.Tag := LVer.GetCount;
-      LVer.Add(LRadio);
-      if LVer.GetCount = 1 then
+      LRadio.Tag := LTabStyleDock.GetCount;
+      LTabStyleDock.Add(LRadio);
+      if LTabStyleDock.GetCount = 1 then
         LRadio.Selected := True;
       LRadio.Name := AName;
       LRadio.SetFixedWidth(18);
@@ -182,11 +190,11 @@ begin
       LRadio.Group := 'TabDotStyleGroup';
       LRadio.SetFloat(True);
       // 总宽度，包括偏移位置
-      LWidth := LVer.GetCount * 18 + (LVer.GetCount - 1) * 12;
-      LLeft := LVer.GetWidth div 2 - LWidth div 2;
+      LWidth := LTabStyleDock.GetCount * 18 + (LTabStyleDock.GetCount - 1) * 12;
+      LLeft := LTabStyleDock.GetWidth div 2 - LWidth div 2;
       // 30 = Radio.Width + 12 Offset
-      for I := 0 to LVer.GetCount - 1 do
-        LVer.GetItemAt(I).SetFixedXY(TSize.Create(LLeft + I * 30, 0))
+      for I := 0 to LTabStyleDock.GetCount - 1 do
+        LTabStyleDock.GetItemAt(I).SetFixedXY(TSize.Create(LLeft + I * 30, 0))
     end;
   end;
 end;
@@ -320,15 +328,18 @@ begin
     begin
       MessageBox(0, 'appmarket', nil, 0);
     end else
-    if LCtlName.Equals('btn_Search') then
+    if LCtlName.Equals(kbtnSearch) then
     begin
-      LEdit := CRichEditUI(FindControl(kedt_Search));
+      LEdit := CRichEditUI(FindControl(kSearchedt));
       if LEdit <> nil then
       begin
-        MessageBox(0, PChar(LEdit.Text), nil, 0);
+        if LEdit.Text.Equals(kSearchEditTextHint) or LEdit.Text.IsEmpty then
+          MessageBox(0, '请输入搜索的文字', '', 0)
+        else
+          MessageBox(0, PChar(LEdit.Text), nil, 0);
       end;
     end else
-    if LCtlName.Equals('btnopenapp') then
+    if LCtlName.Equals(kbtnopenapp) then
     begin
       if Msg.pSender.Tag > 0 then
       begin
@@ -342,14 +353,14 @@ begin
   end else
   if LType.Equals(DUI_EVENT_KILLFOCUS) then
   begin
-    if LCtlName.Equals('edt_Search') then
+    if LCtlName.Equals(kSearchedt) then
     begin
       LEdit := CRichEditUI(Msg.pSender);
       if LEdit <> nil then
       begin
         if LEdit.Text = '' then
         begin
-          LEdit.Text := '搜索应用';
+          LEdit.Text := kSearchEditTextHint;
           LEdit.TextColor := $FF94AAB5;
         end;
       end;
@@ -357,12 +368,12 @@ begin
   end else
   if LType.Equals(DUI_EVENT_SETFOCUS) then
   begin
-    if LCtlName.Equals(kedt_Search) then
+    if LCtlName.Equals(kSearchedt) then
     begin
       LEdit := CRichEditUI(Msg.pSender);
       if LEdit <> nil then
       begin
-        if LEdit.Text = '搜索应用' then
+        if LEdit.Text = kSearchEditTextHint then
         begin
           LEdit.Text := '';
           LEdit.TextColor := $FFFFFFFF;
@@ -376,12 +387,12 @@ begin
   end else
   if LType.Equals(DUI_EVENT_MENU) then
   begin
-    if LCtlName.Equals(kedt_Search) then
+    if LCtlName.Equals(kSearchedt) then
       TRichEditMenu.Create(CRichEditUI(Msg.pSender));
   end else
-  if LType.Equals('RichMenuItemClick') then
+  if LType.Equals(kRichMenuItemClick) then
   begin
-    LEdit := CRichEditUI(FindControl(kedt_Search));
+    LEdit := CRichEditUI(FindControl(kSearchedt));
     if LEdit <> nil then
     begin
       if LCtlName.Equals('menu_copy') then
@@ -394,7 +405,7 @@ begin
         LEdit.SetSelAll;
     end;
   end else
-  if LType.Equals('TrayMenuItemClick') then
+  if LType.Equals(kTrayMenuItemClick) then
   begin
     if LCtlName.Equals('menu_exit') then
       DuiApplication.Terminate;
@@ -409,6 +420,18 @@ begin
   // 创建对应的TabDot样式按钮
   for I := 0 to System.Math.Ceil(FIcons.Count / PAGE_MAX_CHIND) - 1 do
      CreateRadioButton(Format('TabDotButton_%d', [I]));
+end;
+
+procedure TAppsWindow.ReInitRadios;
+var
+  LTabStyleDock: CHorizontalLayoutUI;
+begin
+  LTabStyleDock := CHorizontalLayoutUI(FindControl('TabStyleDock'));
+  if LTabStyleDock <> nil then
+  begin
+    LTabStyleDock.RemoveAll;
+    InitRadios;
+  end;
 end;
 
 procedure TAppsWindow.ShowBalloonTips(ATitle, AInfo: string; ATimeout: Integer);
