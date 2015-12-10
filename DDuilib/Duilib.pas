@@ -1576,6 +1576,18 @@ type
   end;
 
 
+  CNativeControlUI = class(CContainerUI)
+  public
+    class function CppCreate(hWnd: HWND): CNativeControlUI;
+    procedure CppDestroy;
+    procedure SetInternVisible(bVisible: Boolean = True);
+    procedure SetPos(rc: TRect; bNeedInvalidate: Boolean);
+    function GetClass: string;
+    function GetText: string;
+    procedure SetText(pstrText: string);
+  end;
+
+
 //================================CStdStringPtrMap============================
 
 function Delphi_StdStringPtrMap_CppCreate: CStdStringPtrMap; cdecl;
@@ -2799,6 +2811,16 @@ procedure Delphi_TileLayoutUI_SetItemSize(Handle: CTileLayoutUI; szItem: TSize);
 function Delphi_TileLayoutUI_GetColumns(Handle: CTileLayoutUI): Integer; cdecl;
 procedure Delphi_TileLayoutUI_SetColumns(Handle: CTileLayoutUI; nCols: Integer); cdecl;
 procedure Delphi_TileLayoutUI_SetAttribute(Handle: CTileLayoutUI; pstrName: LPCTSTR; pstrValue: LPCTSTR); cdecl;
+
+//================================CNativeControlUI============================
+
+function Delphi_NativeControlUI_CppCreate(hWnd: HWND): CNativeControlUI; cdecl;
+procedure Delphi_NativeControlUI_CppDestroy(Handle: CNativeControlUI); cdecl;
+procedure Delphi_NativeControlUI_SetInternVisible(Handle: CNativeControlUI; bVisible: Boolean); cdecl;
+procedure Delphi_NativeControlUI_SetPos(Handle: CNativeControlUI; rc: TRect; bNeedInvalidate: Boolean); cdecl;
+function Delphi_NativeControlUI_GetClass(Handle: CNativeControlUI): LPCTSTR; cdecl;
+function Delphi_NativeControlUI_GetText(Handle: CNativeControlUI): CDuiString; cdecl;
+procedure Delphi_NativeControlUI_SetText(Handle: CNativeControlUI; pstrText: LPCTSTR); cdecl;
 
 implementation
 
@@ -8486,7 +8508,42 @@ begin
   Delphi_TileLayoutUI_SetAttribute(Self, LPCTSTR(pstrName), LPCTSTR(pstrValue));
 end;
 
+{ CNativeControlUI }
 
+class function CNativeControlUI.CppCreate(hWnd: HWND): CNativeControlUI;
+begin
+  Result := Delphi_NativeControlUI_CppCreate(hWnd);
+end;
+
+procedure CNativeControlUI.CppDestroy;
+begin
+  Delphi_NativeControlUI_CppDestroy(Self);
+end;
+
+procedure CNativeControlUI.SetInternVisible(bVisible: Boolean);
+begin
+  Delphi_NativeControlUI_SetInternVisible(Self, bVisible);
+end;
+
+procedure CNativeControlUI.SetPos(rc: TRect; bNeedInvalidate: Boolean);
+begin
+  Delphi_NativeControlUI_SetPos(Self, rc, bNeedInvalidate);
+end;
+
+function CNativeControlUI.GetClass: string;
+begin
+  Result := Delphi_NativeControlUI_GetClass(Self);
+end;
+
+function CNativeControlUI.GetText: string;
+begin
+  Result := Delphi_NativeControlUI_GetText(Self);
+end;
+
+procedure CNativeControlUI.SetText(pstrText: string);
+begin
+  Delphi_NativeControlUI_SetText(Self, LPCTSTR(pstrText));
+end;
 
 //================================CStdStringPtrMap============================
 
@@ -9707,5 +9764,15 @@ function Delphi_TileLayoutUI_GetColumns; external DuiLibdll name 'Delphi_TileLay
 procedure Delphi_TileLayoutUI_SetColumns; external DuiLibdll name 'Delphi_TileLayoutUI_SetColumns';
 procedure Delphi_TileLayoutUI_SetAttribute; external DuiLibdll name 'Delphi_TileLayoutUI_SetAttribute';
 
+
+//================================CNativeControlUI============================
+
+function Delphi_NativeControlUI_CppCreate; external DuiLibdll name 'Delphi_NativeControlUI_CppCreate';
+procedure Delphi_NativeControlUI_CppDestroy; external DuiLibdll name 'Delphi_NativeControlUI_CppDestroy';
+procedure Delphi_NativeControlUI_SetInternVisible; external DuiLibdll name 'Delphi_NativeControlUI_SetInternVisible';
+procedure Delphi_NativeControlUI_SetPos; external DuiLibdll name 'Delphi_NativeControlUI_SetPos';
+function Delphi_NativeControlUI_GetClass; external DuiLibdll name 'Delphi_NativeControlUI_GetClass';
+function Delphi_NativeControlUI_GetText; external DuiLibdll name 'Delphi_NativeControlUI_GetText';
+procedure Delphi_NativeControlUI_SetText; external DuiLibdll name 'Delphi_NativeControlUI_SetText';
 
 end.

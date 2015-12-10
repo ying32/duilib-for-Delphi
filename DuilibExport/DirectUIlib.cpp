@@ -199,6 +199,38 @@ public:
 };
 
 
+class CNativeControlUI: public CControlUI
+{
+   public: 	 
+	  CNativeControlUI(HWND hWnd):
+		   m_hWnd(hWnd){}
+
+      void SetInternVisible(bool bVisible = true) {
+           CControlUI::SetInternVisible(bVisible);
+           ::ShowWindow(m_hWnd, bVisible);
+      }
+	  
+	  void SetPos(RECT rc, bool bNeedInvalidate) {
+        CControlUI::SetPos(rc, bNeedInvalidate);
+		::SetWindowPos(m_hWnd, HWND_TOP, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, SWP_NOZORDER | SWP_NOACTIVATE);
+      }
+   
+	  LPCTSTR GetClass() const {
+	     return _T("NativeControlUI");
+	  }
+
+	  CDuiString GetText() const {
+		  CHAR text[MAX_PATH] = {0};
+		  ::GetWindowText(m_hWnd, (LPWSTR)text, MAX_PATH);
+		  return (LPCTSTR)text;
+	  }
+	  void SetText(LPCTSTR pstrText){
+		  ::SetWindowText(m_hWnd, pstrText);
+	  }
+   protected:
+      HWND m_hWnd;
+};
+
 
 //================================CStdStringPtrMap============================
 
@@ -5294,4 +5326,34 @@ DIRECTUILIB_API void Delphi_TileLayoutUI_SetAttribute(CTileLayoutUI* handle ,LPC
     handle->SetAttribute(pstrName, pstrValue);
 }
 
+
+//================================CNativeControlUI============================
+
+DIRECTUILIB_API CNativeControlUI* Delphi_NativeControlUI_CppCreate(HWND hWnd) {
+    return new CNativeControlUI(hWnd);
+}
+
+DIRECTUILIB_API void Delphi_NativeControlUI_CppDestroy(CNativeControlUI* handle) {
+    delete handle;
+}
+
+DIRECTUILIB_API void Delphi_NativeControlUI_SetInternVisible(CNativeControlUI* handle ,bool bVisible) {
+    handle->SetInternVisible(bVisible);
+}
+
+DIRECTUILIB_API void Delphi_NativeControlUI_SetPos(CNativeControlUI* handle ,RECT rc, bool bNeedInvalidate) {
+    handle->SetPos(rc, bNeedInvalidate);
+}
+
+DIRECTUILIB_API LPCTSTR Delphi_NativeControlUI_GetClass(CNativeControlUI* handle) {
+    return handle->GetClass();
+}
+
+DIRECTUILIB_API CDuiString Delphi_NativeControlUI_GetText(CNativeControlUI* handle) {
+    return handle->GetText();
+}
+
+DIRECTUILIB_API void Delphi_NativeControlUI_SetText(CNativeControlUI* handle ,LPCTSTR pstrText) {
+    handle->SetText(pstrText);
+}
 

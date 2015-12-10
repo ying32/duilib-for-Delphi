@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window size="398,256" sizebox="4,4,4,4" caption="0,0,0,32">
+    <VerticalLayout width="400" height="400" bkcolor="#FFC0C0C0">
+        <NativeControl name="test1" />
+    </VerticalLayout>
+</Window>
