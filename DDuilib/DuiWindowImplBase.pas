@@ -20,6 +20,7 @@ uses
   Generics.Collections,
   SysUtils,
   DuiBase,
+  DuiConst,
   Duilib;
 
 type
@@ -31,6 +32,7 @@ type
     FPaintManagerUI: CPaintManagerUI;
     function GetHandle: HWND;
     function GetInitSize: TSize;
+    function GetScreenSize: TSize;
   protected
     // 回调函数
     procedure DUI_InitWindow; cdecl;
@@ -77,13 +79,32 @@ type
     constructor Create(ASkinFile, ASkinFolder, AZipFileName: string); overload;
     destructor Destroy; override;
     procedure OnReceive(Param: Pointer); virtual;
+    procedure MsgBox(const Fmt: string; Args: array of const); overload;
+    procedure MsgBox(const Msg: string); overload;
+
   public
     property Handle: HWND read GetHandle;
     property ParentHandle: HWND read FParentHandle;
     property PaintManagerUI: CPaintManagerUI read FPaintManagerUI;
     property InitSize: TSize read GetInitSize;
+    property ScreenSize: TSize read GetScreenSize;
   end;
 
+
+  TSimplePopupMenu = class(TDuiWindowImplBase)
+  private
+    FMsg: string;
+    FParentPaintManager: CPaintManagerUI;
+  protected
+    procedure DoNotify(var Msg: TNotifyUI); override;
+    procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
+    procedure DoInitWindow; override;
+    procedure DoFinalMessage(hWd: HWND); override;
+  public
+    constructor Create(ASkinFile, ASkinFolder, AZipFileName: string; ARType: TResourceType; const AParentPaintManager: CPaintManagerUI; const AMsg: string);
+  public
+    property Msg: string read FMsg;
+  end;
 
 
   TDuiWindowImplList = TObjectList<TDuiWindowImplBase>;
@@ -98,6 +119,7 @@ type
     // 先写好，以后有用的吧
 //    procedure AddDuiWindow(AWindow: TDuiWindowImplBase);
 //    procedure RemoveWindow(AWindow: TDuiWindowImplBase);
+
   public
     constructor Create;
     destructor Destroy; override;
@@ -106,7 +128,6 @@ type
 
 var
   DuiApplication: TDuiApplication;
-
 
 implementation
 
@@ -317,6 +338,12 @@ begin
   Result := FPaintManagerUI.GetInitSize;
 end;
 
+function TDuiWindowImplBase.GetScreenSize: TSize;
+begin
+  Result.cx := GetSystemMetrics(SM_CXSCREEN);
+  Result.cy := GetSystemMetrics(SM_CYSCREEN);
+end;
+
 function TDuiWindowImplBase.FindControl(const AName: string): CControlUI;
 begin
   Result := FPaintManagerUI.FindControl(AName);
@@ -335,6 +362,16 @@ end;
 procedure TDuiWindowImplBase.Minimize;
 begin
   Perform(WM_SYSCOMMAND, SC_MINIMIZE);
+end;
+
+procedure TDuiWindowImplBase.MsgBox(const Fmt: string; Args: array of const);
+begin
+  MessageBox(Handle, PChar(Format(Fmt, Args)), '消息', MB_OK or MB_ICONINFORMATION);
+end;
+
+procedure TDuiWindowImplBase.MsgBox(const Msg: string);
+begin
+  MsgBox(Msg, []);
 end;
 
 procedure TDuiWindowImplBase.OnReceive(Param: Pointer);
@@ -409,6 +446,7 @@ begin
   CPaintManagerUI.SetInstance(HInstance);
 end;
 
+
 //procedure TDuiApplication.RemoveWindow(AWindow: TDuiWindowImplBase);
 //begin
 //  TMonitor.Enter(FList);
@@ -437,6 +475,60 @@ end;
 procedure TDuiApplication.Terminate;
 begin
   PostQuitMessage(0);
+end;
+
+{ TSimplePopupMenu }
+
+constructor TSimplePopupMenu.Create(ASkinFile, ASkinFolder, AZipFileName: string; ARType: TResourceType;
+  const AParentPaintManager: CPaintManagerUI; const AMsg: string);
+begin
+  FMsg := AMsg;
+  FParentPaintManager := AParentPaintManager;
+  inherited Create(ASkinFile, ASkinFolder, AZipFileName, ARType);
+  CreateWindow(0, ClassName, WS_POPUP, WS_EX_TOOLWINDOW or WS_EX_TOPMOST);
+  ShowWindow(Handle, SW_SHOWNOACTIVATE);
+end;
+
+procedure TSimplePopupMenu.DoFinalMessage(hWd: HWND);
+begin
+  inherited;
+  Free;
+end;
+
+procedure TSimplePopupMenu.DoHandleMessage(var Msg: TMessage;
+  var bHandled: BOOL);
+begin
+  inherited;
+  if Msg.Msg = WM_KILLFOCUS then
+  begin
+    Close;
+    Msg.Result := 1;
+  end;
+end;
+
+procedure TSimplePopupMenu.DoInitWindow;
+var
+  LSize, LScreenSize: TSize;
+  LP: TPoint;
+begin
+  inherited;
+  LSize := InitSize;
+  GetCursorPos(LP);
+  LScreenSize := ScreenSize;
+  if LP.X + LSize.cx >= LScreenSize.cx then
+    LP.X := LP.X - LSize.cx;
+  if LP.Y + LSize.cy >= LScreenSize.cy then
+    LP.Y := LP.Y - LSize.cy;
+  MoveWindow(Handle, LP.X, LP.Y, LSize.cx, LSize.cy, False);
+end;
+
+procedure TSimplePopupMenu.DoNotify(var Msg: TNotifyUI);
+begin
+  inherited;
+  if Msg.sType = DUI_EVENT_ITEMSELECT then
+    Close
+  else if Msg.sType = DUI_EVENT_ITEMCLICK then
+    FParentPaintManager.SendNotify(Msg.pSender, FMsg);
 end;
 
 initialization

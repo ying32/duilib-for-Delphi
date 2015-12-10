@@ -8,7 +8,11 @@ uses
   SysUtils,
   Classes,
   Math,
+  Dialogs,
+  Graphics,
+  pngimage,
   ShellAPI,
+  JSON,
   Generics.Collections,
   Duilib,
   DuiWindowImplBase,
@@ -38,6 +42,8 @@ const
   kRichMenuItemClick = 'RichMenuItemClick';
   kTrayMenuItemClick = 'TrayMenuItemClick';
 
+  kResDir = 'skin\Apps';
+
 
   /// <summary>
   ///   4行，5列 (LTileLayout.GetWidth div 80 * (LTitleLayout.GetHeight div 80)
@@ -55,12 +61,34 @@ type
     constructor Create(AText, AIconPath: string);
   end;
 
+  TAppsJSONObject = class
+  private
+    FItems: TList<TIconInfo>;
+    function GetCount: Integer;
+    function GetItemByIndex(Index: Integer): TIconInfo;
+    procedure ParseJSON(const AStr: string);
+  public
+    constructor Create;
+    destructor Destroy; override;
+  public
+    function Add(AItem: TIconInfo): Integer;
+    procedure Remove(AItem: TIconInfo);
+    procedure Delete(AIndex: Integer);
+    procedure LoadFromFile(const AFileName: string);
+    procedure LoadFromStream(const AStream: TStream);
+    procedure SaveToFile(const AFileName: string);
+    procedure SaveToStream(const AStream: TStream);
+  public
+    property Count: Integer read GetCount;
+    property Items[Index: Integer]: TIconInfo read GetItemByIndex;
+  end;
+
 
   TAppsWindow = class(TDuiWindowImplBase)
   private
     FDlgBuilder: CDialogBuilder;
     FEvents: TDictionary<string, TNotifyEvent>;
-    FIcons: TList<TIconInfo>;
+    FApps: TAppsJSONObject;
     FTrayData: TNotifyIconData;
     FIsMouseHover: Boolean;
     FIsNcMouseEnter: Boolean; // 没办法多加个判断
@@ -68,6 +96,8 @@ type
     FSelectedRadioIndex: Integer;
     FTileLayout: CTileLayoutUI;
     FTabStyleDock: CHorizontalLayoutUI;
+
+    FOpenDialog: TOpenDialog;
 
     procedure ReInitRadios;
     procedure CreateRadioButton(const AName: string);
@@ -81,7 +111,9 @@ type
     function GetRadionSelectedIndex(ATabDock: CHorizontalLayoutUI): Integer;
     procedure InitEvents;
     procedure ProcesNotifyEvent(Sender: TObject);
+    procedure AddAppToList(AItem: TIconInfo);
 
+    function ExtractFileIconToPngAndReturnNewPath(const AFileName: string): string;
 
     procedure openmycomputer(Sender: TObject);
     procedure openbrowser(Sender: TObject);
@@ -93,11 +125,11 @@ type
     procedure btnopenappClick(Sender: TObject);
     procedure btnaddappClick(Sender: TObject);
 
-//    procedure menuCopyClick(var Msg: TNotifyUI);
-//    procedure menuCutClick(var Msg: TNotifyUI);
-//    procedure menuPasteClick(var Msg: TNotifyUI);
-//    procedure menuSelAllClick(var Msg: TNotifyUI);
-//    procedure menuExitAppClick(var Msg: TNotifyUI);
+//    procedure menuCopyClick(Sender: TObject);
+//    procedure menuCutClick(Sender: TObject);
+//    procedure menuPasteClick(Sender: TObject);
+//    procedure menuSelAllClick(Sender: TObject);
+//    procedure menuExitAppClick(Sender: TObject);
   protected
     procedure DoNotify(var Msg: TNotifyUI); override;
     procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
@@ -111,28 +143,14 @@ type
     destructor Destroy; override;
   end;
 
-  TRichEditMenu = class(TDuiWindowImplBase)
-  private
-    FRichEdit: CRichEditUI;
-  protected
-    procedure DoNotify(var Msg: TNotifyUI); override;
-    procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
-    procedure DoInitWindow; override;
-    procedure DoFinalMessage(hWd: HWND); override;
+  TRichEditMenu = class(TSimplePopupMenu)
   public
-    constructor Create(ARichEdit: CRichEditUI);
+    constructor Create(APaintManger: CPaintManagerUI);
   end;
 
-  TTrayMenu = class(TDuiWindowImplBase)
-  private
-    FPaintManager: CPaintManagerUI;
-  protected
-    procedure DoNotify(var Msg: TNotifyUI); override;
-    procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
-    procedure DoInitWindow; override;
-    procedure DoFinalMessage(hWd: HWND); override;
+  TTrayMenu = class(TSimplePopupMenu)
   public
-    constructor Create(APaintManager: CPaintManagerUI);
+    constructor Create(APaintManger: CPaintManagerUI);
   end;
 
 
@@ -140,18 +158,62 @@ type
 var
   AppsWindow: TAppsWindow;
 
+
 implementation
 
-procedure ShowMessage(const AMsg: string);
+{
+UINT WINAPI PrivateExtractIcons(
+  _In_      LPCTSTR lpszFile,
+  _In_      int     nIconIndex,
+  _In_      int     cxIcon,
+  _In_      int     cyIcon,
+  _Out_opt_ HICON   *phicon,
+  _Out_opt_ UINT    *piconid,
+  _In_      UINT    nIcons,
+  _In_      UINT    flags
+);
+}
+function PrivateExtractIcons(lpszFile: LPCTSTR; nIconIndex, cxIcon, cyIcon: Integer;
+   var phicon:HICON; var piconid: UINT; nIcons, flags: UINT): UINT; stdcall;
+    external user32 name 'PrivateExtractIconsW';
+
+
+function GetAppPath: string; inline;
 begin
-  MessageBox(0, PChar(AMsg), 'Message', MB_OK or MB_ICONINFORMATION);
+  Result := ExtractFilePath(ParamStr(0));
 end;
 
-function GetScreenSize: TSize;
+function GetResFullDir: string; inline;
 begin
-  Result.cx := GetSystemMetrics(SM_CXSCREEN);
-  Result.cy := GetSystemMetrics(SM_CYSCREEN);
+  Result := GetAppPath + kResDir;
 end;
+
+function GetIconsPath: string; inline;
+begin
+  Result := GetAppPath + 'Icons\';
+end;
+
+function GetAppsConfigFileName: string; inline;
+begin
+  Result := GetAppPath + 'Apps.json';
+end;
+
+function ExtractFileWithoutExt(const AFileName: string): string;
+begin
+  Result := Copy(ExtractFileName(AFileName), 1, Length(ExtractFileName(AFileName)) - Length(ExtractFileExt(AFileName)));
+end;
+
+function GetSaveAbsIconFileName(const AFileName: string): string;
+begin
+  Result := GetIconsPath + ExtractFileWithoutExt(AFileName) + '.png';
+end;
+
+function GetIconRelIconFileName(const AFileName: string): string;
+begin
+   // 暂定的目录，测试用
+   Result := '..\..\Icons\' + ExtractFileWithoutExt(AFileName) + '.png';
+end;
+
 
 { TAppsWindow }
 
@@ -159,14 +221,18 @@ constructor TAppsWindow.Create;
 var
   I: Integer;
 begin
-  inherited Create('MainWindow.xml', 'skin\Apps');
+  inherited Create('MainWindow.xml', kResDir);
   FIsMouseHover := True;
   FEvents := TDictionary<string, TNotifyEvent>.Create;
   InitEvents;
   FDlgBuilder := CDialogBuilder.CppCreate;
-  FIcons := TList<TIconInfo>.Create;
-  for I := 0 to 200 do
-    AddIcon(TIconInfo.Create('测试' + I.ToString, 'xiaoshuo.png'));
+  FApps := TAppsJSONObject.Create;
+
+  if FileExists(GetAppsConfigFileName) then
+    FApps.LoadFromFile(GetAppsConfigFileName);
+
+  //for I := 0 to 15 do
+  //  AddIcon(TIconInfo.Create('测试' + I.ToString, 'xiaoshuo.png'));
 
   // 初始化一些数据后再创建窗口
   CreateWindow(0, 'Apps', UI_WNDSTYLE_EX_DIALOG, WS_EX_WINDOWEDGE or WS_EX_ACCEPTFILES);
@@ -179,19 +245,34 @@ begin
   FTrayData.hIcon := LoadIcon(HInstance, 'MAINICON');
   StrPLCopy(FTrayData.szTip, '测试托盘显示', Length(FTrayData.szTip) - 1);
   Shell_NotifyIcon(NIM_ADD, @FTrayData);
+
+  FOpenDialog := TOpenDialog.Create(nil);
+  FOpenDialog.Filter := '应用程序(*.exe)|*.exe';
+
+  if not DirectoryExists(GetIconsPath) then
+    CreateDir(GetIconsPath);
 end;
 
 destructor TAppsWindow.Destroy;
 begin
+  FApps.SaveToFile(GetAppsConfigFileName);
+  FOpenDialog.Free;
   FDlgBuilder.CppDestroy;
-  FIcons.Free;
+  FApps.Free;
   Shell_NotifyIcon(NIM_DELETE, @FTrayData);
   inherited;
 end;
 
+procedure TAppsWindow.AddAppToList(AItem: TIconInfo);
+begin
+  AddIcon(AItem);
+  ReInitRadios;
+  AddItemToLastPage;
+end;
+
 procedure TAppsWindow.AddIcon(AIcon: TIconInfo);
 begin
-  FIcons.Add(AIcon);
+  FApps.Add(AIcon);
 end;
 
 procedure TAppsWindow.AddItemToLastPage;
@@ -216,8 +297,8 @@ begin
         LIsLast := True;
       end else Exit;
     end;
-    LLastIndex := FIcons.Count - 1;
-    LItem := FIcons[LLastIndex];
+    LLastIndex := FApps.Count - 1;
+    LItem := FApps.Items[LLastIndex];
     if not FDlgBuilder.GetMarkup.IsValid then
       LVerticalLayout := CVerticalLayoutUI(FDlgBuilder.Create('buttonitem.xml', '', nil, PaintManagerUI))
     else
@@ -244,15 +325,26 @@ begin
 end;
 
 procedure TAppsWindow.btnaddappClick(Sender: TObject);
+var
+  LItem: TIconInfo;
 begin
-  AddIcon(TIconInfo.Create('测试' + (FIcons.Count - 1).ToString, 'xiaoshuo.png'));
-  ReInitRadios;
-  AddItemToLastPage;
+  if FOpenDialog.Execute(Handle) then
+  begin
+    LItem.AppFileName := FOpenDialog.FileName;
+    LItem.Text := ExtractFileWithoutExt(LItem.AppFileName);
+    LItem.IconPath := ExtractFileIconToPngAndReturnNewPath(LItem.AppFileName);
+    AddAppToList(LItem);
+  end;
 end;
 
 procedure TAppsWindow.btnopenappClick(Sender: TObject);
+var
+  LIndex: Integer;
 begin
-
+  LIndex := CControlUI(Sender).Tag;
+  if (LIndex <> -1) and (LIndex < FApps.Count) then
+    ShellExecute(0, nil, PChar(FApps.Items[LIndex].AppFileName), nil,
+      PChar(ExtractFileDir(FApps.Items[LIndex].AppFileName)), SW_HIDE);
 end;
 
 procedure TAppsWindow.btnSearchClick(Sender: TObject);
@@ -352,8 +444,8 @@ begin
         GetWindowRect(Handle, R);
         if R.Top < 0 then
           SetWindowPos(Handle, HWND_NOTOPMOST, R.Left, 0, 0, 0,  SWP_NOREDRAW or SWP_NOSIZE)
-        else if R.Right > GetScreenSize.cx then
-          SetWindowPos(Handle, HWND_NOTOPMOST, GetScreenSize.cx - R.Width, R.Top, 0, 0,  SWP_NOREDRAW or SWP_NOSIZE)
+        else if R.Right > ScreenSize.cx then
+          SetWindowPos(Handle, HWND_NOTOPMOST, ScreenSize.cx - R.Width, R.Top, 0, 0,  SWP_NOREDRAW or SWP_NOSIZE)
         else if R.Left < 0 then
           SetWindowPos(Handle, HWND_NOTOPMOST, 0, R.Top, 0, 0,  SWP_NOREDRAW or SWP_NOSIZE);
       end;
@@ -390,8 +482,8 @@ begin
          GetWindowRect(Handle, R);
          if R.Top = 0 then
            SetWindowPos(Handle, HWND_TOPMOST, R.Left, -(R.Height - 5), 0, 0, SWP_NOREDRAW or SWP_NOSIZE)
-         else if R.Right = GetScreenSize.cx then
-           SetWindowPos(Handle, HWND_NOTOPMOST, GetScreenSize.cx - 5, R.Top, 0, 0, SWP_NOREDRAW or SWP_NOSIZE)
+         else if R.Right = ScreenSize.cx then
+           SetWindowPos(Handle, HWND_NOTOPMOST, ScreenSize.cx - 5, R.Top, 0, 0, SWP_NOREDRAW or SWP_NOSIZE)
          else if R.Left = 0 then
           SetWindowPos(Handle, HWND_NOTOPMOST, -(R.Width - 5), R.Top, 0, 0,  SWP_NOREDRAW or SWP_NOSIZE);
          FIsMouseHover := False;
@@ -463,7 +555,7 @@ begin
   if LType.Equals(DUI_EVENT_MENU) then
   begin
     if LCtlName.Equals(kSearchedt) then
-      TRichEditMenu.Create(CRichEditUI(Msg.pSender));
+      TRichEditMenu.Create(PaintManagerUI);
   end else
   if LType.Equals(kRichMenuItemClick) then
   begin
@@ -487,7 +579,6 @@ begin
   end;
 end;
 
-
 procedure TAppsWindow.DuiWindowInit;
 begin
   FTileLayout := CTileLayoutUI(FindControl(kIconsList));
@@ -496,9 +587,48 @@ begin
   InitRadios;
 end;
 
+function TAppsWindow.ExtractFileIconToPngAndReturnNewPath(
+  const AFileName: string): string;
+var
+  LIcon: HICON;
+  LIconId: UINT;
+  LSaveIcon: TIcon;
+  LBmp: TBitmap;
+  LPng: TPngImage;
+begin
+  Result := '';
+  if PrivateExtractIcons(PChar(AFileName), 0, 48, 48, LIcon, LIconId, 1, LR_LOADFROMFILE) <> 0 then
+  begin
+    LSaveIcon := TIcon.Create;
+    try
+      LSaveIcon.Handle := LIcon;
+      LBmp := TBitmap.Create;
+      try
+//        LBmp.Assign(LSaveIcon);
+        LBmp.SetSize(LSaveIcon.Width, LSaveIcon.Height);
+        LBmp.Transparent := True;
+        LBmp.Canvas.Draw(0, 0, LSaveIcon);
+        LPng := TPngImage.Create;
+        try
+          LPng.Assign(LBmp);
+          LPng.SaveToFile(GetSaveAbsIconFileName(AFileName));
+          Result := GetIconRelIconFileName(AFileName);
+        finally
+          LPng.Free;
+        end;
+      finally
+        LBmp.Free;
+      end;
+    finally
+      LSaveIcon.Free;
+      DestroyIcon(LIcon);
+    end;
+  end;
+end;
+
 function TAppsWindow.GetListMaxPage: Integer;
 begin
-  Result := Math.Ceil(FIcons.Count / PAGE_MAX_CHIND);
+  Result := Math.Ceil(FApps.Count / PAGE_MAX_CHIND);
 end;
 
 function TAppsWindow.GetRadionSelectedIndex(ATabDock: CHorizontalLayoutUI): Integer;
@@ -534,7 +664,7 @@ begin
   if FTabStyleDock = nil then Exit;
   LMaxPage := GetListMaxPage;
   // 创建对应的TabDot样式按钮
-  for I := 0 to IfThen(FIcons.Count mod PAGE_MAX_CHIND = 0, LMaxPage + 1, LMaxPage) - 1 do
+  for I := 0 to IfThen(FApps.Count mod PAGE_MAX_CHIND = 0, LMaxPage + 1, LMaxPage) - 1 do
      CreateRadioButton(Format('TabDotButton_%d', [I]));
   SelectRadioItem(FSelectedRadioIndex);
 end;
@@ -576,7 +706,7 @@ procedure TAppsWindow.ReInitRadios;
 begin
   if FTabStyleDock <> nil then
   begin
-    if (FTabStyleDock.GetCount <> GetListMaxPage) or (FIcons.Count mod PAGE_MAX_CHIND = 0) then
+    if (FTabStyleDock.GetCount <> GetListMaxPage) or (FApps.Count mod PAGE_MAX_CHIND = 0) then
     begin
       FTabStyleDock.RemoveAll;
       InitRadios;
@@ -619,12 +749,12 @@ begin
       FTileLayout.SetColumns(4);
 
     LStartIndex := AIndex * PAGE_MAX_CHIND;
-    LEndIndex := Min((AIndex + 1) * PAGE_MAX_CHIND, FIcons.Count);
+    LEndIndex := Min((AIndex + 1) * PAGE_MAX_CHIND, FApps.Count);
     LCurPageCount := LEndIndex - LStartIndex;
     OutputDebugString(PChar(Format('++++++++++++++++++++++++LCurPageCount=%d', [LCurPageCount])));
     for I := LStartIndex to LEndIndex - 1 do
     begin
-      LItem := FIcons[I];
+      LItem := FApps.Items[I];
       if not FDlgBuilder.GetMarkup.IsValid then
         LVerticalLayout := CVerticalLayoutUI(FDlgBuilder.Create('buttonitem.xml', '', nil, PaintManagerUI))
       else
@@ -662,109 +792,156 @@ begin
   Self.AppFileName := '';
 end;
 
+
 { TRichEditMenu }
 
-constructor TRichEditMenu.Create(ARichEdit: CRichEditUI);
+constructor TRichEditMenu.Create(APaintManger: CPaintManagerUI);
 begin
-  inherited Create('richeditmenu.xml', ExtractFilePath(ParamStr(0)) + 'skin\Apps');
-  FRichEdit := ARichEdit;
-  CreateWindow(0, '', WS_POPUP, WS_EX_TOOLWINDOW);
-  ShowWindow(Handle, SW_SHOWNOACTIVATE);
-end;
-
-procedure TRichEditMenu.DoFinalMessage(hWd: HWND);
-begin
-  inherited;
-  Free;
-end;
-
-procedure TRichEditMenu.DoHandleMessage(var Msg: TMessage; var bHandled: BOOL);
-begin
-  inherited;
-  if Msg.Msg = WM_KILLFOCUS then
-  begin
-    Msg.Result := 1;
-    Close;
-  end else if Msg.Msg = WM_MOUSEACTIVATE then
-    Msg.Result := MA_NOACTIVATE;
-end;
-
-procedure TRichEditMenu.DoInitWindow;
-var
-  LSize, LScreenSize: TSize;
-  LP: TPoint;
-begin
-  inherited;
-  LSize := InitSize;
-  GetCursorPos(LP);
-  LScreenSize := GetScreenSize;
-  if LP.X + LSize.cx >= LScreenSize.cx then
-    LP.X := LP.X - LSize.cx;
-  if LP.Y + LSize.cy >= LScreenSize.cy then
-    LP.Y := LP.Y - LSize.cy;
-  MoveWindow(Handle, LP.X, LP.Y, LSize.cx, LSize.cy, False);
-end;
-
-procedure TRichEditMenu.DoNotify(var Msg: TNotifyUI);
-begin
-  inherited;
-  if Msg.sType = DUI_EVENT_ITEMSELECT then
-    Close
-  else if Msg.sType = DUI_EVENT_ITEMCLICK then
-    FRichEdit.GetManager.SendNotify(Msg.pSender, 'RichMenuItemClick');
+  inherited Create('richeditmenu.xml', GetResFullDir,
+    '', UILIB_FILE, APaintManger, 'RichMenuItemClick');
 end;
 
 { TTrayMenu }
 
-constructor TTrayMenu.Create(APaintManager: CPaintManagerUI);
+constructor TTrayMenu.Create(APaintManger: CPaintManagerUI);
 begin
-  inherited Create('traymenu.xml', ExtractFilePath(ParamStr(0)) + 'skin\Apps');
-  FPaintManager := APaintManager;
-  CreateWindow(0, '', WS_POPUP, WS_EX_TOOLWINDOW or WS_EX_TOPMOST);
-  Show;
+  inherited Create('traymenu.xml', GetResFullDir,
+    '', UILIB_FILE, APaintManger, 'TrayMenuItemClick');
 end;
 
-procedure TTrayMenu.DoFinalMessage(hWd: HWND);
+{ TAppsJSONObject }
+
+constructor TAppsJSONObject.Create;
 begin
-  inherited;
-  Free;
+  inherited Create;
+  FItems := TList<TIconInfo>.Create;
 end;
 
-procedure TTrayMenu.DoHandleMessage(var Msg: TMessage; var bHandled: BOOL);
+destructor TAppsJSONObject.Destroy;
 begin
+  FItems.Free;
   inherited;
-  if Msg.Msg = WM_KILLFOCUS then
-  begin
-    Msg.Result := 1;
-    Close;
+end;
+
+procedure TAppsJSONObject.Delete(AIndex: Integer);
+begin
+  FItems.Delete(AIndex);;
+end;
+
+function TAppsJSONObject.Add(AItem: TIconInfo): Integer;
+begin
+  Result := FItems.Add(AItem);
+end;
+
+function TAppsJSONObject.GetCount: Integer;
+begin
+  Result := FItems.Count;
+end;
+
+function TAppsJSONObject.GetItemByIndex(Index: Integer): TIconInfo;
+begin
+  Result := FItems[Index];
+end;
+
+procedure TAppsJSONObject.LoadFromFile(const AFileName: string);
+var
+  LFileStream: TFileStream;
+begin
+  LFileStream := TFileStream.Create(AFileName, fmOpenRead);
+  try
+    LoadFromStream(LFileStream);
+  finally
+    LFileStream.Free;
   end;
 end;
 
-procedure TTrayMenu.DoInitWindow;
+procedure TAppsJSONObject.LoadFromStream(const AStream: TStream);
 var
-  LSize, LScreenSize: TSize;
-  LP: TPoint;
+  LStrStream: TStringStream;
 begin
-  inherited;
-  LSize := InitSize;
-  GetCursorPos(LP);
-  LScreenSize := GetScreenSize;
-  if LP.X + LSize.cx >= LScreenSize.cx then
-    LP.X := LP.X - LSize.cx;
-  if LP.Y + LSize.cy >= LScreenSize.cy then
-    LP.Y := LP.Y - LSize.cy;
-  MoveWindow(Handle, LP.X, LP.Y, LSize.cx, LSize.cy, False);
+  LStrStream := TStringStream.Create('', TEncoding.UTF8);
+  try
+    LStrStream.LoadFromStream(AStream);
+    ParseJSON(LStrStream.DataString);
+  finally
+    LStrStream.Free;
+  end;
 end;
 
-procedure TTrayMenu.DoNotify(var Msg: TNotifyUI);
+procedure TAppsJSONObject.ParseJSON(const AStr: string);
+var
+  LJV: TJSONValue;
+  LJA: TJSONArray;
+  I: Integer;
+  LItem: TIconInfo;
 begin
-  inherited;
-  if Msg.sType = DUI_EVENT_ITEMSELECT then
-    Close
-  else if Msg.sType = DUI_EVENT_ITEMCLICK then
-    FPaintManager.SendNotify(Msg.pSender, 'TrayMenuItemClick');
+  LJV := TJSONObject.ParseJSONValue(AStr);
+  if Assigned(LJV) then
+  begin
+    try
+      if LJV.TryGetValue<TJSONArray>(LJA) then
+      begin
+        for I := 0 to LJA.Count - 1 do
+        begin
+          LJA.Items[I].TryGetValue<string>('text', LItem.Text);
+          LJA.Items[I].TryGetValue<string>('iconpath', LItem.IconPath);
+          LJA.Items[I].TryGetValue<string>('appfilename', LItem.AppFileName);
+          FItems.Add(LItem);
+        end;
+      end;
+    finally
+      LJV.Free;
+    end;
+  end;
 end;
 
+procedure TAppsJSONObject.Remove(AItem: TIconInfo);
+begin
+  FItems.Remove(AItem);
+end;
 
+procedure TAppsJSONObject.SaveToFile(const AFileName: string);
+var
+  LFileStream: TFileStream;
+begin
+  LFileStream := TFileStream.Create(AFileName, fmCreate);
+  try
+    SaveToStream(LFileStream);
+  finally
+    LFileStream.Free;
+  end;
+end;
+
+procedure TAppsJSONObject.SaveToStream(const AStream: TStream);
+var
+  I: Integer;
+  LItem: TIconInfo;
+  LData: TStringStream;
+  LJA: TJSONArray;
+  LJO: TJSONObject;
+begin
+  LData := TStringStream.Create('', TEncoding.UTF8);
+  try
+    LJA := TJSONArray.Create;
+    try
+      for I := 0 to FItems.Count - 1 do
+      begin
+        LItem := FItems[I];
+        LJO := TJSONObject.Create;
+        // .Replace('\', '\\')　要这样，TJSONString竟然不起作用了？　
+        LJO.AddPair('text', TJSONString.Create(LItem.Text.Replace('\', '\\')));
+        LJO.AddPair('iconpath', TJSONString.Create(LItem.IconPath.Replace('\', '\\')));
+        LJO.AddPair('appfilename', TJSONString.Create(LItem.AppFileName.Replace('\', '\\')));
+        LJA.Add(LJO);
+      end;
+      LData.WriteString(LJA.ToString);
+    finally
+      LJA.Free;
+    end;
+    LData.SaveToStream(AStream);
+  finally
+    LData.Free;
+  end;
+end;
 
 end.
