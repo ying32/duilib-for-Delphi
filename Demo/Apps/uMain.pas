@@ -37,6 +37,7 @@ const
   kRichMenuItemClick = 'RichMenuItemClick';
   kTrayMenuItemClick = 'TrayMenuItemClick';
 
+
   /// <summary>
   ///   4行，5列 (LTileLayout.GetWidth div 80 * (LTitleLayout.GetHeight div 80)
   /// </summary>
@@ -53,20 +54,46 @@ type
     constructor Create(AText, AIconPath: string);
   end;
 
+  TNotifyEvent = procedure(var Msg: TNotifyUI) of object;
+
   TAppsWindow = class(TDuiWindowImplBase)
   private
     FDlgBuilder: CDialogBuilder;
-    FInitOK: Boolean;
+    FEvents: TDictionary<string, TNotifyEvent>;
     FIcons: TList<TIconInfo>;
     FTrayData: TNotifyIconData;
     FIsMouseHover: Boolean;
     FIsNcMouseEnter: Boolean; // 没办法多加个判断
+    FMouseTracking: Boolean;
+    FSelectedRadioIndex: Integer;
     procedure ReInitRadios;
     procedure CreateRadioButton(const AName: string);
     procedure ShowPage(AIndex: Integer);
+    procedure AddItemToLastPage;
     procedure AddIcon(AIcon: TIconInfo);
     procedure InitRadios;
     function CreateAddItemButton: CVerticalLayoutUI;
+    procedure SelectRadioItem(AIndex: Integer);
+    function GetRadionSelectedIndex(ATabDock: CHorizontalLayoutUI): Integer;
+    procedure InitEvents;
+    procedure ProcesNotifyEvent(var Msg: TNotifyUI);
+
+
+    procedure openmycomputer(var Msg: TNotifyUI);
+    procedure openbrowser(var Msg: TNotifyUI);
+    procedure openyule(var Msg: TNotifyUI);
+    procedure openappmarket(var Msg: TNotifyUI);
+    procedure btnSearchClick(var Msg: TNotifyUI);
+    procedure closebtnClick(var Msg: TNotifyUI);
+    procedure minbtnClick(var Msg: TNotifyUI);
+    procedure btnopenappClick(var Msg: TNotifyUI);
+    procedure btnaddappClick(var Msg: TNotifyUI);
+
+//    procedure menuCopyClick(var Msg: TNotifyUI);
+//    procedure menuCutClick(var Msg: TNotifyUI);
+//    procedure menuPasteClick(var Msg: TNotifyUI);
+//    procedure menuSelAllClick(var Msg: TNotifyUI);
+//    procedure menuExitAppClick(var Msg: TNotifyUI);
   protected
     procedure DoNotify(var Msg: TNotifyUI); override;
     procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
@@ -118,18 +145,14 @@ end;
 
 { TAppsWindow }
 
-procedure TAppsWindow.AddIcon(AIcon: TIconInfo);
-begin
-  FIcons.Add(AIcon);
-end;
-
 constructor TAppsWindow.Create;
 var
   I: Integer;
 begin
   inherited Create('MainWindow.xml', 'skin\Apps');
   FIsMouseHover := True;
-
+  FEvents := TDictionary<string, TNotifyEvent>.Create;
+  InitEvents;
   CreateWindow(0, 'Apps', UI_WNDSTYLE_EX_DIALOG, WS_EX_WINDOWEDGE or WS_EX_ACCEPTFILES);
   FDlgBuilder := CDialogBuilder.CppCreate;
   FIcons := TList<TIconInfo>.Create;
@@ -146,18 +169,96 @@ begin
 
 end;
 
+destructor TAppsWindow.Destroy;
+begin
+  FDlgBuilder.CppDestroy;
+  FIcons.Free;
+  Shell_NotifyIcon(NIM_DELETE, @FTrayData);
+  inherited;
+end;
+
+procedure TAppsWindow.AddIcon(AIcon: TIconInfo);
+begin
+  FIcons.Add(AIcon);
+end;
+
+procedure TAppsWindow.AddItemToLastPage;
+var
+  LTileLayout: CTileLayoutUI;
+  LVerticalLayout: CVerticalLayoutUI;
+  LTitle: CLabelUI;
+  LItem: TIconInfo;
+  LButton: CButtonUI;
+  LLastIndex: Integer;
+begin
+  LTileLayout := CTileLayoutUI(FindControl(kIconsList));
+  if LTileLayout <> nil then
+  begin
+    // 每页最大数
+    if LTileLayout.GetCount >= PAGE_MAX_CHIND then Exit;
+    LLastIndex := FIcons.Count - 1;
+    LItem := FIcons[LLastIndex];
+    if not FDlgBuilder.GetMarkup.IsValid then
+      LVerticalLayout := CVerticalLayoutUI(FDlgBuilder.Create('buttonitem.xml', '', nil, PaintManagerUI))
+    else
+      LVerticalLayout := CVerticalLayoutUI(FDlgBuilder.Create(nil, PaintManagerUI));
+    if LVerticalLayout = nil then Exit;
+    LVerticalLayout.Tag := LLastIndex;
+    LButton := CButtonUI(PaintManagerUI.FindSubControlByName(LVerticalLayout, kitemopenappbtn));
+    if LButton <> nil then
+    begin
+      LButton.Tag := LLastIndex;
+      LButton.NormalImage := LItem.IconPath;
+      LButton.BkImage :=  LItem.IconPath;
+    end;
+    LTitle := CLabelUI(PaintManagerUI.FindSubControlByName(LVerticalLayout, kitemtitle));
+    if LTitle <> nil then
+      LTitle.Text := LItem.Text;
+    LTileLayout.AddAt(LVerticalLayout, LTileLayout.GetCount - 1);
+    // 当前页已经满了，移除掉添加按钮
+    if LTileLayout.GetCount > PAGE_MAX_CHIND then
+      LTileLayout.RemoveAt(LTileLayout.GetCount - 1);
+  end;
+end;
+
+procedure TAppsWindow.btnaddappClick(var Msg: TNotifyUI);
+begin
+  AddIcon(TIconInfo.Create('测试' + (FIcons.Count - 1).ToString, 'xiaoshuo.png'));
+  ReInitRadios;
+  AddItemToLastPage;
+end;
+
+procedure TAppsWindow.btnopenappClick(var Msg: TNotifyUI);
+begin
+
+end;
+
+procedure TAppsWindow.btnSearchClick(var Msg: TNotifyUI);
+var
+  LEdit: CRichEditUI;
+begin
+  LEdit := CRichEditUI(FindControl(kSearchedt));
+  if LEdit <> nil then
+  begin
+    if LEdit.Text.Equals(kSearchEditTextHint) or LEdit.Text.IsEmpty then
+      MessageBox(0, '请输入搜索的文字', '', 0)
+    else
+      MessageBox(0, PChar(LEdit.Text), nil, 0);
+  end;
+end;
+
+procedure TAppsWindow.closebtnClick(var Msg: TNotifyUI);
+begin
+  DuiApplication.Terminate;
+end;
+
 function TAppsWindow.CreateAddItemButton: CVerticalLayoutUI;
 var
-  LButton: CButtonUI;
   LDlgBuilder: CDialogBuilder;
 begin
   LDlgBuilder := CDialogBuilder.CppCreate;
   try
-    if not LDlgBuilder.GetMarkup.IsValid then
-      Result := CVerticalLayoutUI(LDlgBuilder.Create('buttonitemadd.xml', '', nil, PaintManagerUI))
-    else Result := CVerticalLayoutUI(LDlgBuilder.Create(nil, PaintManagerUI));
-    if Result <> nil then
-      LButton := CButtonUI(PaintManagerUI.FindSubControlByName(Result, kbtnaddapp));
+    Result := CVerticalLayoutUI(LDlgBuilder.Create('buttonitemadd.xml', '', nil, PaintManagerUI));
   finally
     LDlgBuilder.CppDestroy;
   end;
@@ -178,8 +279,6 @@ begin
       LRadio := COptionUI.CppCreate;
       LRadio.Tag := LTabStyleDock.GetCount;
       LTabStyleDock.Add(LRadio);
-      if LTabStyleDock.GetCount = 1 then
-        LRadio.Selected := True;
       LRadio.Name := AName;
       LRadio.SetFixedWidth(18);
       LRadio.SetFixedHeight(18);
@@ -199,19 +298,6 @@ begin
   end;
 end;
 
-destructor TAppsWindow.Destroy;
-var
-  LTileLayout: CTileLayoutUI;
-begin
-  LTileLayout := CTileLayoutUI(FindControl(kIconsList));
-  if LTileLayout <> nil then
-    LTileLayout.RemoveAll;
-  FDlgBuilder.CppDestroy;
-  FIcons.Free;
-  Shell_NotifyIcon(NIM_DELETE, @FTrayData);
-  inherited;
-end;
-
 function TAppsWindow.DoCreateControl(pstrStr: string): CControlUI;
 begin
   Result := nil;
@@ -220,6 +306,7 @@ end;
 procedure TAppsWindow.DoHandleMessage(var Msg: TMessage; var bHandled: BOOL);
 var
   R: TRect;
+//  LTrackMouse: TTrackMouseEvent;
 begin
   case Msg.Msg of
     WM_DROPFILES:
@@ -248,10 +335,22 @@ begin
           SetWindowPos(Handle, HWND_NOTOPMOST, 0, R.Top, 0, 0,  SWP_NOREDRAW or SWP_NOSIZE);
       end;
 
+//    WM_MOUSEMOVE :
+//      begin
+//        if not FMouseTracking then
+//        begin
+//          LTrackMouse.cbSize := Sizeof(TTrackMouseEvent);
+//          LTrackMouse.hwndTrack := Handle;
+//          LTrackMouse.dwFlags := TME_LEAVE or TME_HOVER;
+//          LTrackMouse.dwHoverTime := 1;
+//          FMouseTracking := TrackMouseEvent(LTrackMouse);
+//        end;
+//      end;
+
     WM_NCMOUSELEAVE: FIsNcMouseEnter := False;
     WM_MOUSEHOVER, WM_NCMOUSEMOVE :
      begin
-       // 消息收到有点慢啊，奇怪了
+
        if Msg.Msg = WM_NCMOUSEMOVE then
          FIsNcMouseEnter := True;
        if not FIsMouseHover then
@@ -276,6 +375,7 @@ begin
        end;
        if FIsNcMouseEnter then
          FIsNcMouseEnter := False;
+       FMouseTracking := False;
      end;
   end;
   inherited;
@@ -297,59 +397,19 @@ begin
   LCtlName := Msg.pSender.Name;
   if LType.Equals(DUI_EVENT_WINDOWINIT) then
   begin
-    FInitOK := True;
     ShowPage(0);
     InitRadios;
   end else
   if LType.Equals(DUI_EVENT_CLICK) then
   begin
-    if LCtlName.Equals(kclosebtn) then
-      DuiApplication.Terminate
-    else if LCtlName.Equals(kminbtn) then
-      Minimize
-    else if LCtlName.Contains('TabDotButton_') then
+    if LCtlName.Contains('TabDotButton_') then
     begin
       if not COptionUI(Msg.pSender).IsSelected then
-        ShowPage(Msg.pSender.Tag);
-    end else
-    if LCtlName.Equals('openmycomputer') then
-    begin
-      MessageBox(0, 'computer', nil, 0);
-    end else
-    if LCtlName.Equals('openbrowser') then
-    begin
-      MessageBox(0, 'browser', nil, 0);
-    end else
-    if LCtlName.Equals('openyule') then
-    begin
-      MessageBox(0, 'yule', nil, 0);
-    end else
-    if LCtlName.Equals('openappmarket') then
-    begin
-      MessageBox(0, 'appmarket', nil, 0);
-    end else
-    if LCtlName.Equals(kbtnSearch) then
-    begin
-      LEdit := CRichEditUI(FindControl(kSearchedt));
-      if LEdit <> nil then
       begin
-        if LEdit.Text.Equals(kSearchEditTextHint) or LEdit.Text.IsEmpty then
-          MessageBox(0, '请输入搜索的文字', '', 0)
-        else
-          MessageBox(0, PChar(LEdit.Text), nil, 0);
+        FSelectedRadioIndex := Msg.pSender.Tag;
+        ShowPage(FSelectedRadioIndex);
       end;
-    end else
-    if LCtlName.Equals(kbtnopenapp) then
-    begin
-      if Msg.pSender.Tag > 0 then
-      begin
-
-      end;
-    end else
-    if LCtlName.Equals(kbtnaddapp) then
-    begin
-       MessageBox(0, '添加app', nil, 0);
-    end;
+    end else ProcesNotifyEvent(Msg);
   end else
   if LType.Equals(DUI_EVENT_KILLFOCUS) then
   begin
@@ -413,6 +473,32 @@ begin
 end;
 
 
+function TAppsWindow.GetRadionSelectedIndex(ATabDock: CHorizontalLayoutUI): Integer;
+var
+  I: Integer;
+begin
+  Result := -1;
+  for I := 0 to ATabDock.GetCount - 1 do
+    if COptionUI(ATabDock.GetItemAt(I)).Selected then
+    begin
+      Result := I;
+      Break;
+    end;
+end;
+
+procedure TAppsWindow.InitEvents;
+begin
+  FEvents.Add('openmycomputer', openmycomputer);
+  FEvents.Add('openbrowser', openbrowser);
+  FEvents.Add('openyule', openyule);
+  FEvents.Add('openappmarket', openappmarket);
+  FEvents.Add(kbtnSearch, btnSearchClick);
+  FEvents.Add(kclosebtn, closebtnClick);
+  FEvents.Add(kminbtn, minbtnClick);
+  FEvents.Add(kbtnopenapp, btnopenappClick);
+  FEvents.Add(kbtnaddapp, btnaddappClick);
+end;
+
 procedure TAppsWindow.InitRadios;
 var
   I: Integer;
@@ -420,6 +506,40 @@ begin
   // 创建对应的TabDot样式按钮
   for I := 0 to System.Math.Ceil(FIcons.Count / PAGE_MAX_CHIND) - 1 do
      CreateRadioButton(Format('TabDotButton_%d', [I]));
+  SelectRadioItem(FSelectedRadioIndex);
+end;
+
+procedure TAppsWindow.minbtnClick(var Msg: TNotifyUI);
+begin
+  Minimize;
+end;
+
+procedure TAppsWindow.openappmarket(var Msg: TNotifyUI);
+begin
+  MessageBox(0, 'appmarket', nil, 0);
+end;
+
+procedure TAppsWindow.openbrowser(var Msg: TNotifyUI);
+begin
+  MessageBox(0, 'browser', nil, 0);
+end;
+
+procedure TAppsWindow.openmycomputer(var Msg: TNotifyUI);
+begin
+  MessageBox(0, 'computer', nil, 0);
+end;
+
+procedure TAppsWindow.openyule(var Msg: TNotifyUI);
+begin
+  MessageBox(0, 'yule', nil, 0);
+end;
+
+procedure TAppsWindow.ProcesNotifyEvent(var Msg: TNotifyUI);
+var
+  LEvent: TNotifyEvent;
+begin
+  if FEvents.TryGetValue(Msg.pSender.Name, LEvent) then
+    LEvent(Msg);
 end;
 
 procedure TAppsWindow.ReInitRadios;
@@ -431,6 +551,19 @@ begin
   begin
     LTabStyleDock.RemoveAll;
     InitRadios;
+  end;
+end;
+
+procedure TAppsWindow.SelectRadioItem(AIndex: Integer);
+var
+  LTabStyleDock: CHorizontalLayoutUI;
+begin
+  if AIndex <= -1 then Exit;
+  LTabStyleDock := CHorizontalLayoutUI(FindControl('TabStyleDock'));
+  if LTabStyleDock <> nil then
+  begin
+    if AIndex > LTabStyleDock.GetCount then Exit;
+    COptionUI(LTabStyleDock.GetItemAt(AIndex)).Selected := True;
   end;
 end;
 
@@ -446,7 +579,7 @@ end;
 procedure TAppsWindow.ShowPage(AIndex: Integer);
 var
   LTileLayout: CTileLayoutUI;
-  I: Integer;
+  I, LCurPageCount, LStartIndex, LEndIndex: Integer;
   LVerticalLayout: CVerticalLayoutUI;
   LTitle: CLabelUI;
   LItem: TIconInfo;
@@ -459,8 +592,12 @@ begin
     LTileLayout.RemoveAll;
     if LTileLayout.GetColumns <> 4 then
       LTileLayout.SetColumns(4);
-    // 减2个，最后个作为添加的按钮
-    for I := (AIndex * PAGE_MAX_CHIND) to  Min((AIndex + 1) * PAGE_MAX_CHIND, FIcons.Count) - 2 do
+
+    LStartIndex := AIndex * PAGE_MAX_CHIND;
+    LEndIndex := Min((AIndex + 1) * PAGE_MAX_CHIND, FIcons.Count);
+    LCurPageCount := LEndIndex - LStartIndex;
+    OutputDebugString(PChar(Format('++++++++++++++++++++++++LCurPageCount=%d', [LCurPageCount])));
+    for I := LStartIndex to LEndIndex - 1 do
     begin
       LItem := FIcons[I];
       if not FDlgBuilder.GetMarkup.IsValid then
@@ -481,9 +618,13 @@ begin
         LTitle.Text := LItem.Text;
       LTileLayout.Add(LVerticalLayout);
     end;
-    LVerticalLayout := CreateAddItemButton;
-    if LVerticalLayout <> nil then
-      LTileLayout.Add(LVerticalLayout);
+    // 这里应该是哪个页少就出现添加按钮，当满了就移除添加按钮
+    if LCurPageCount < PAGE_MAX_CHIND then
+    begin
+      LVerticalLayout := CreateAddItemButton;
+      if LVerticalLayout <> nil then
+        LTileLayout.Add(LVerticalLayout);
+    end;
   end;
 end;
 
@@ -503,7 +644,7 @@ begin
   inherited Create('richeditmenu.xml', ExtractFilePath(ParamStr(0)) + 'skin\Apps');
   FRichEdit := ARichEdit;
   CreateWindow(0, '', WS_POPUP, WS_EX_TOOLWINDOW);
-  Show;
+  ShowWindow(Handle, SW_SHOWNOACTIVATE);
 end;
 
 procedure TRichEditMenu.DoFinalMessage(hWd: HWND);
@@ -519,7 +660,8 @@ begin
   begin
     Msg.Result := 1;
     Close;
-  end;
+  end else if Msg.Msg = WM_MOUSEACTIVATE then
+    Msg.Result := MA_NOACTIVATE;
 end;
 
 procedure TRichEditMenu.DoInitWindow;
