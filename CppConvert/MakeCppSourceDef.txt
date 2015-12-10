@@ -177,3 +177,35 @@ public:
 	void SetDelphiSelf(LPVOID ASelf) { m_Self = ASelf; }
 	void SetDoEvent(DoEventCallBack ADoEvent) { m_DoEvent = ADoEvent; }
 };
+
+class CNativeControlUI: public CControlUI
+{
+   public: 	 
+	  CNativeControlUI(HWND hWnd):
+		   m_hWnd(hWnd){}
+
+      void SetInternVisible(bool bVisible = true) {
+           CControlUI::SetInternVisible(bVisible);
+           ::ShowWindow(m_hWnd, bVisible);
+      }
+	  
+	  void SetPos(RECT rc, bool bNeedInvalidate) {
+        CControlUI::SetPos(rc, bNeedInvalidate);
+		::SetWindowPos(m_hWnd, HWND_TOP, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, SWP_NOZORDER | SWP_NOACTIVATE);
+      }
+   
+	  LPCTSTR GetClass() const {
+	     return _T("NativeControlUI");
+	  }
+
+	  CDuiString GetText() const {
+		  CHAR text[MAX_PATH] = {0};
+		  ::GetWindowText(m_hWnd, (LPWSTR)text, MAX_PATH);
+		  return (LPCTSTR)text;
+	  }
+	  void SetText(LPCTSTR pstrText){
+		  ::SetWindowText(m_hWnd, pstrText);
+	  }
+   protected:
+      HWND m_hWnd;
+};
