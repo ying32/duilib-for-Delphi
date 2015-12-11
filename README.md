@@ -9,7 +9,7 @@
 **关于Duilib for Delphi的详情，可见[我的博客](http://blog.csdn.net/zyjying520/article/details/49976667)**
 ### 重要说明
 ***
-代码基于DelphiXE6编写，其中有用到了不少新我的新特性，使用最少需要符合以下条件：    
+代码基于DelphiXE6编写，其中有用到了不少新的新特性，使用最少需要符合以下条件：    
 
 * 1、支持`Unicode`;
 * 2、支持class的`helper`语法;

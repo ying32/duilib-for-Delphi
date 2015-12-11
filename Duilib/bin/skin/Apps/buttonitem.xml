@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<Window size="361,261">
+<Window>
     <VerticalLayout width="80" height="80">
         <HorizontalLayout />
         <HorizontalLayout height="56">
             <VerticalLayout height="56" />
             <VerticalLayout width="56" height="56" bkimage="applicationbackgournd.png">
-                <Button name="btnopenapp" float="true" pos="4,4,0,0" width="48" height="48" hotimage="applicationbackgournd.png" pushedimage="applicationbackgourndhover.png" />
+                <Button name="btnopenapp" menu="true" float="true" pos="4,4,0,0" width="48" height="48" hotimage="applicationbackgournd.png" pushedimage="applicationbackgourndhover.png" />
             </VerticalLayout>
             <VerticalLayout height="56" />
         </HorizontalLayout>

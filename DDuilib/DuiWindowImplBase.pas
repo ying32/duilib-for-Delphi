@@ -17,6 +17,7 @@ interface
 uses
   Windows,
   Messages,
+  Types,
   Generics.Collections,
   SysUtils,
   DuiBase,
@@ -41,6 +42,7 @@ type
     function GetLeft: Integer;
     function GetTop: Integer;
     function GetWidth: Integer;
+    procedure SetParentHandle(const Value: HWND);
   protected
     // »Øµ÷º¯Êý
     procedure DUI_InitWindow; cdecl;
@@ -100,7 +102,7 @@ type
     property Height: Integer read GetHeight;
     property ClientRect: TRect read GetClientRect;
     property Handle: HWND read GetHandle;
-    property ParentHandle: HWND read FParentHandle;
+    property ParentHandle: HWND read FParentHandle write SetParentHandle;
     property PaintManagerUI: CPaintManagerUI read FPaintManagerUI;
     property InitSize: TSize read GetInitSize;
     property ScreenSize: TSize read GetScreenSize;
@@ -110,16 +112,19 @@ type
 
   TSimplePopupMenu = class(TDuiWindowImplBase)
   private
-    FMsg: string;
-    FParentPaintManager: CPaintManagerUI;
+    FLostFocusFree: Boolean;
+    procedure Popup(X: Integer = -1; Y: Integer = -1);
   protected
+    FParentPaintManager: CPaintManagerUI;
+    FMsg: string;
     procedure DoNotify(var Msg: TNotifyUI); override;
     procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
     procedure DoInitWindow; override;
     procedure DoFinalMessage(hWd: HWND); override;
   public
     constructor Create(ASkinFile, ASkinFolder, AZipFileName: string; ARType: TResourceType;
-       const AParentPaintManager: CPaintManagerUI; const AMsg: string);
+       const AParentPaintManager: CPaintManagerUI; const AMsg: string; ALostFocusFree: Boolean = True);
+    destructor Destroy; override;
   public
     property Msg: string read FMsg;
   end;
@@ -201,12 +206,14 @@ end;
 procedure TDuiWindowImplBase.CreateWindow(hwndParent: HWND; ATitle: string;
   dwStyle, dwExStyle: DWORD; x, y, cx, cy: Integer; hMenu: HMENU);
 begin
+  FParentHandle := hwndParent;
   FThis.Create(hwndParent, ATitle, dwStyle, dwExStyle, x, y, cx, cy, hMenu);
 end;
 
 procedure TDuiWindowImplBase.CreateWindow(hwndParent: HWND; ATitle: string;
   dwStyle, dwExStyle: DWORD; const rc: TRect; hMenu: HMENU);
 begin
+  FParentHandle := hwndParent;
   FThis.Create(hwndParent, ATitle, dwStyle, dwExStyle, rc, hMenu);
 end;
 
@@ -447,6 +454,15 @@ begin
   FThis.SetIcon(nRes);
 end;
 
+procedure TDuiWindowImplBase.SetParentHandle(const Value: HWND);
+begin
+  if FParentHandle <> Value then
+  begin
+    FParentHandle := Value;
+    SetParent(Handle, FParentHandle);
+  end;
+end;
+
 procedure TDuiWindowImplBase.Show;
 begin
   FThis.ShowWindow(True, False);
@@ -458,13 +474,21 @@ begin
 end;
 
 procedure TDuiWindowImplBase.CenterWindow;
+var
+  LParnetRect: TRect;
 begin
-  FThis.CenterWindow;
+  if (FParentHandle <> 0) and IsWindow(FParentHandle) then
+  begin
+    GetWindowRect(FParentHandle, LParnetRect);
+    SetWindowPos(Handle, HWND_TOP, LParnetRect.Left + (LParnetRect.Width div 2 - Width div 2),
+      LParnetRect.Top + (LParnetRect.Height div 2 - Height div 2), 0, 0, SWP_NOSIZE or SWP_NOREDRAW);
+  end else
+    FThis.CenterWindow;
 end;
 
 procedure TDuiWindowImplBase.Close;
 begin
-  FThis.Close();
+  FThis.Close;
 end;
 
 
@@ -500,19 +524,29 @@ end;
 { TSimplePopupMenu }
 
 constructor TSimplePopupMenu.Create(ASkinFile, ASkinFolder, AZipFileName: string; ARType: TResourceType;
-  const AParentPaintManager: CPaintManagerUI; const AMsg: string);
+  const AParentPaintManager: CPaintManagerUI; const AMsg: string; ALostFocusFree: Boolean);
 begin
   FMsg := AMsg;
   FParentPaintManager := AParentPaintManager;
+  FLostFocusFree := ALostFocusFree;
   inherited Create(ASkinFile, ASkinFolder, AZipFileName, ARType);
   CreateWindow(0, ClassName, WS_POPUP, WS_EX_TOOLWINDOW or WS_EX_TOPMOST);
-  ShowWindow(Handle, SW_SHOWNOACTIVATE);
+end;
+
+destructor TSimplePopupMenu.Destroy;
+begin
+  if not FLostFocusFree then
+    RemoveThisInPaintManager;
+  inherited;
 end;
 
 procedure TSimplePopupMenu.DoFinalMessage(hWd: HWND);
 begin
-  inherited;
-  Free;
+  if FLostFocusFree then
+  begin
+    inherited;
+    Free;
+  end;
 end;
 
 procedure TSimplePopupMenu.DoHandleMessage(var Msg: TMessage;
@@ -521,25 +555,17 @@ begin
   inherited;
   if Msg.Msg = WM_KILLFOCUS then
   begin
-    Close;
+    if FLostFocusFree then
+      Close
+    else Hide;
     Msg.Result := 1;
   end;
 end;
 
 procedure TSimplePopupMenu.DoInitWindow;
-var
-  LSize, LScreenSize: TSize;
-  LP: TPoint;
 begin
   inherited;
-  LSize := InitSize;
-  GetCursorPos(LP);
-  LScreenSize := ScreenSize;
-  if LP.X + LSize.cx >= LScreenSize.cx then
-    LP.X := LP.X - LSize.cx;
-  if LP.Y + LSize.cy >= LScreenSize.cy then
-    LP.Y := LP.Y - LSize.cy;
-  MoveWindow(Handle, LP.X, LP.Y, LSize.cx, LSize.cy, False);
+  Popup;
 end;
 
 procedure TSimplePopupMenu.DoNotify(var Msg: TNotifyUI);
@@ -549,6 +575,25 @@ begin
     Close
   else if Msg.sType = DUI_EVENT_ITEMCLICK then
     FParentPaintManager.SendNotify(Msg.pSender, FMsg);
+end;
+
+procedure TSimplePopupMenu.Popup(X, Y: Integer);
+var
+  LSize, LScreenSize: TSize;
+  LP: TPoint;
+begin
+  LSize := InitSize;
+  if (X = -1) and (Y = -1) then
+    LP := MousePos
+  else LP := Point(X, Y);
+  LScreenSize := ScreenSize;
+  if LP.X + LSize.cx >= LScreenSize.cx then
+    LP.X := LP.X - LSize.cx;
+  if LP.Y + LSize.cy >= LScreenSize.cy then
+    LP.Y := LP.Y - LSize.cy;
+  SetWindowPos(Handle, HWND_TOPMOST, LP.X, LP.Y, 0, 0, SWP_NOSIZE);
+  if IsWindow(Handle) and not IsWindowVisible(Handle) then
+    ShowWindow(Handle, SW_SHOWNORMAL or SWP_NOREDRAW);
 end;
 
 initialization

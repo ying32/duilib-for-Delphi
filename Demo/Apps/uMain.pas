@@ -41,6 +41,7 @@ const
 
   kRichMenuItemClick = 'RichMenuItemClick';
   kTrayMenuItemClick = 'TrayMenuItemClick';
+  kButtonMenuItemClick = 'ButtonMenuItemClick';
 
   kResDir = 'skin\Apps';
 
@@ -67,6 +68,7 @@ type
     function GetCount: Integer;
     function GetItemByIndex(Index: Integer): TIconInfo;
     procedure ParseJSON(const AStr: string);
+    procedure SetItemByIndex(Index: Integer; const Value: TIconInfo);
   public
     constructor Create;
     destructor Destroy; override;
@@ -80,9 +82,8 @@ type
     procedure SaveToStream(const AStream: TStream);
   public
     property Count: Integer read GetCount;
-    property Items[Index: Integer]: TIconInfo read GetItemByIndex;
+    property Items[Index: Integer]: TIconInfo read GetItemByIndex write SetItemByIndex;
   end;
-
 
   TAppsWindow = class(TDuiWindowImplBase)
   private
@@ -98,7 +99,7 @@ type
     FTabStyleDock: CHorizontalLayoutUI;
 
     FOpenDialog: TOpenDialog;
-
+  
     procedure ReInitRadios;
     procedure CreateRadioButton(const AName: string);
     procedure ShowPage(AIndex: Integer);
@@ -124,12 +125,7 @@ type
     procedure minbtnClick(Sender: TObject);
     procedure btnopenappClick(Sender: TObject);
     procedure btnaddappClick(Sender: TObject);
-
-//    procedure menuCopyClick(Sender: TObject);
-//    procedure menuCutClick(Sender: TObject);
-//    procedure menuPasteClick(Sender: TObject);
-//    procedure menuSelAllClick(Sender: TObject);
-//    procedure menuExitAppClick(Sender: TObject);
+    procedure OpenAppByItemIndex(AIndex: Integer);
   protected
     procedure DoNotify(var Msg: TNotifyUI); override;
     procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
@@ -153,6 +149,29 @@ type
     constructor Create(APaintManger: CPaintManagerUI);
   end;
 
+  TButtonItemMenu = class(TSimplePopupMenu)
+  private
+    FTitleControl: CControlUI;
+    FIndex: Integer;
+  protected
+    procedure DoNotify(var Msg: TNotifyUI); override;
+  public
+    constructor Create(ATitleControl: CControlUI; APaintManger: CPaintManagerUI);
+  end;
+
+  TModifyInfoWindow = class(TDuiWindowImplBase)
+  private
+    FApps: TAppsJSONObject;
+    FTitleControl: CControlUI;
+    FEdtTitle: CEditUI;
+  protected
+    procedure DoInitWindow; override;
+    procedure DoNotify(var Msg: TNotifyUI); override;
+    procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
+  public
+    constructor Create(AParent: HWND; ATitleControl: CControlUI;  AApps: TAppsJSONObject);
+  end;
+
 
 
 var
@@ -174,7 +193,7 @@ UINT WINAPI PrivateExtractIcons(
 );
 }
 function PrivateExtractIcons(lpszFile: LPCTSTR; nIconIndex, cxIcon, cyIcon: Integer;
-   var phicon:HICON; var piconid: UINT; nIcons, flags: UINT): UINT; stdcall;
+   var phicon: HICON; var piconid: UINT; nIcons, flags: UINT): UINT; stdcall;
     external user32 name 'PrivateExtractIconsW';
 
 
@@ -336,13 +355,8 @@ begin
 end;
 
 procedure TAppsWindow.btnopenappClick(Sender: TObject);
-var
-  LIndex: Integer;
 begin
-  LIndex := CControlUI(Sender).Tag;
-  if (LIndex <> -1) and (LIndex < FApps.Count) then
-    ShellExecute(0, nil, PChar(FApps.Items[LIndex].AppFileName), nil,
-      PChar(ExtractFileDir(FApps.Items[LIndex].AppFileName)), SW_HIDE);
+  OpenAppByItemIndex(CControlUI(Sender).Tag);
 end;
 
 procedure TAppsWindow.btnSearchClick(Sender: TObject);
@@ -510,6 +524,7 @@ procedure TAppsWindow.DoNotify(var Msg: TNotifyUI);
 var
   LType, LCtlName: string;
   LEdit: CRichEditUI;
+  LTitleCtl: CLabelUI;
 begin
   inherited;
   LType := Msg.sType;
@@ -565,7 +580,13 @@ begin
   if LType.Equals(DUI_EVENT_MENU) then
   begin
     if LCtlName.Equals(kSearchedt) then
-      TRichEditMenu.Create(PaintManagerUI);
+      TRichEditMenu.Create(PaintManagerUI)
+    else if LCtlName.Equals(kbtnopenapp) then
+    begin
+      LTitleCtl := CLabelUI(PaintManagerUI.FindSubControlByName(FTileLayout.GetItemAt(Msg.pSender.Tag), 'title'));
+      LTitleCtl.Tag := Msg.pSender.Tag;
+      TButtonItemMenu.Create(LTitleCtl, PaintManagerUI);
+    end;
   end else
   if LType.Equals(kRichMenuItemClick) then
   begin
@@ -586,6 +607,22 @@ begin
   begin
     if LCtlName.Equals('menu_exit') then
       DuiApplication.Terminate;
+  end else
+  if LType.Equals(kButtonMenuItemClick) then
+  begin
+    if LCtlName.Equals('menu_open') then
+      OpenAppByItemIndex(Msg.pSender.Tag)
+    else if LCtlName.Equals('menu_modify') then
+    begin
+      with TModifyInfoWindow.Create(Handle, CButtonUI(Pointer(Msg.pSender.Tag)), FApps) do
+      begin
+        CenterWindow;
+        ShowModal;
+        Free;
+      end;
+    end else
+    if LCtlName.Equals('menu_delete') then
+
   end;
 end;
 
@@ -605,6 +642,7 @@ var
   LSaveIcon: TIcon;
   LBmp: TBitmap;
   LPng: TPngImage;
+
 begin
   Result := '';
   if PrivateExtractIcons(PChar(AFileName), 0, 48, 48, LIcon, LIconId, 1, LR_LOADFROMFILE) <> 0 then
@@ -612,11 +650,14 @@ begin
     LSaveIcon := TIcon.Create;
     try
       LSaveIcon.Handle := LIcon;
+      LSaveIcon.Transparent := True;
       LBmp := TBitmap.Create;
       try
+        // 关于透明问题以后再去解决
+//        LSaveIcon.SaveToFile(GetSaveAbsIconFileName(AFileName).Replace('.png', '.ico'));
 //        LBmp.Assign(LSaveIcon);
         LBmp.SetSize(LSaveIcon.Width, LSaveIcon.Height);
-        LBmp.Transparent := True;
+//        LBmp.Transparent := True;
         LBmp.Canvas.Draw(0, 0, LSaveIcon);
         LPng := TPngImage.Create;
         try
@@ -682,6 +723,13 @@ end;
 procedure TAppsWindow.minbtnClick(Sender: TObject);
 begin
   Minimize;
+end;
+
+procedure TAppsWindow.OpenAppByItemIndex(AIndex: Integer);
+begin
+  if (AIndex <> -1) and (AIndex < FApps.Count) then
+    ShellExecute(0, nil, PChar(FApps.Items[AIndex].AppFileName), nil,
+      PChar(ExtractFileDir(FApps.Items[AIndex].AppFileName)), SW_HIDE);
 end;
 
 procedure TAppsWindow.openappmarket(Sender: TObject);
@@ -819,6 +867,28 @@ begin
     '', UILIB_FILE, APaintManger, 'TrayMenuItemClick');
 end;
 
+{ TButtonItemMenu }
+
+constructor TButtonItemMenu.Create(ATitleControl: CControlUI; APaintManger: CPaintManagerUI);
+begin
+  FTitleControl := ATitleControl;
+  inherited Create('buttonitemmenu.xml', GetResFullDir,
+    '', UILIB_FILE, APaintManger, 'ButtonMenuItemClick', False);
+end;
+
+procedure TButtonItemMenu.DoNotify(var Msg: TNotifyUI);
+begin
+  // 重写这个方法，以便自定义，不要继续的
+  if Msg.sType = DUI_EVENT_ITEMSELECT then
+    Close
+  else if Msg.sType = DUI_EVENT_ITEMCLICK then
+  begin
+    // 将打开的索引再进一步传递回去
+    Msg.pSender.Tag := UIntPtr(FTitleControl);
+    FParentPaintManager.SendNotify(Msg.pSender, FMsg);
+  end;
+end;
+
 { TAppsJSONObject }
 
 constructor TAppsJSONObject.Create;
@@ -953,5 +1023,74 @@ begin
     LData.Free;
   end;
 end;
+
+procedure TAppsJSONObject.SetItemByIndex(Index: Integer;
+  const Value: TIconInfo);
+begin
+  FItems[Index] := Value;
+end;
+
+{ TModifyInfoWindow }
+
+constructor TModifyInfoWindow.Create(AParent: HWND; ATitleControl: CControlUI; AApps: TAppsJSONObject);
+begin
+  FApps := AApps;
+  FTitleControl := ATitleControl;
+  inherited Create('modifyinfo.xml', GetResFullDir);
+  CreateWindow(AParent, '修改信息', WS_POPUP, WS_EX_TOOLWINDOW);
+end;
+
+procedure TModifyInfoWindow.DoHandleMessage(var Msg: TMessage;
+  var bHandled: BOOL);
+begin
+  inherited;
+end;
+
+procedure TModifyInfoWindow.DoInitWindow;
+var
+  LblTitle: CLabelUI;
+begin
+  inherited;
+  FEdtTitle := CEditUI(FindControl('edtTitle'));
+  if FEdtTitle <> nil then
+  begin
+    LblTitle := CLabelUI(Pointer(FTitleControl));
+    if LblTitle <> nil then
+      FEdtTitle.Text := FApps.Items[LblTitle.Tag].Text;
+    FEdtTitle.SetFocus;
+  end;
+end;
+
+procedure TModifyInfoWindow.DoNotify(var Msg: TNotifyUI);
+var
+  LblTitle: CLabelUI;
+  LItem: TIconInfo;
+begin
+  inherited;
+  if Msg.sType = DUI_EVENT_CLICK then
+  begin
+    if Msg.pSender.Name = kclosebtn then
+      Close
+    else if Msg.pSender.Name = 'btnOK' then
+    begin
+      if FEdtTitle.Text = '' then
+      begin
+        MsgBox('请输入一个名称！');
+        Exit;
+      end;
+      LblTitle := CLabelUI(Pointer(FTitleControl));
+      if LblTitle <> nil then
+      begin
+        LItem := FApps.Items[LblTitle.Tag];
+        LItem.Text := FEdtTitle.Text;
+        LblTitle.Text := LItem.Text;
+        FApps.Items[LblTitle.Tag] := LItem;
+      end;
+      Close;
+    end;
+  end
+end;
+
+
 
 end.
