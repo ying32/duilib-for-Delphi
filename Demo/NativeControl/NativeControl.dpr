@@ -12,8 +12,7 @@ uses
   Vcl.StdCtrls,
   Duilib,
   DuiConst,
-  DuiWindowImplBase,
-  DuilibHelper;
+  DuiWindowImplBase;
 
 type
   TDuiNativeControlTest = class(TDuiWindowImplBase)

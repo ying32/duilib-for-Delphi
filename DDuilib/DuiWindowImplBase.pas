@@ -571,9 +571,9 @@ end;
 procedure TSimplePopupMenu.DoNotify(var Msg: TNotifyUI);
 begin
   inherited;
-  if Msg.sType = DUI_EVENT_ITEMSELECT then
+  if Msg.sType = DUI_MSGTYPE_ITEMSELECT then
     Close
-  else if Msg.sType = DUI_EVENT_ITEMCLICK then
+  else if Msg.sType = DUI_MSGTYPE_ITEMCLICK then
     FParentPaintManager.SendNotify(Msg.pSender, FMsg);
 end;
 

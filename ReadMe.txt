@@ -1,8 +1,10 @@
-ï»¿å½“å‰duilibç‰ˆæœ¬ä¸º 2015/10/20 13:37:41ç”± wangchyzæäº¤
+µ±Ç°duilib°æ±¾Îª 2015/12/10 22:33:50ÓÉwangchyzÌá½»
 
 
-åŸDuilibå‡ ä¸ªéœ€è¦ä¿®æ”¹çš„åœ°æ–¹
-UIMarkup.h è¡Œ72
-private: // æ›¿æ¢ä¸ºpublic
+Ô­Duilib¼¸¸öĞèÒªĞŞ¸ÄµÄµØ·½
+UIMarkup.h ĞĞ72
+private: // Ìæ»»Îªpublic
     CMarkupNode();
     CMarkupNode(CMarkup* pOwner, int iPos);
+
+×¢ÊÍµô1321ĞĞ£¬if( IsCaptured() ) break;£¬ ²»ÖªµÀ×÷ÕßĞÂÌí¼ÓÕâ¾äÊÇÎªÊ²Ã´£¬ÕâÑù¾ÍÔì³ÉÉÏÏÂÎÄ²Ëµ¥ÎŞ·¨µ¯³öÁË£¬ËûÓÒ¼ü°´ÏÂ£¬ÒÑ¾­ÉèÖÃÁËSetCapture£¬ÕâÑùÊÇ²»ÊÇÂß¼­¾Í´íÁË

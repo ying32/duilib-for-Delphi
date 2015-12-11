@@ -18,8 +18,7 @@ uses
   DuiWindowImplBase,
   DuiListUI,
   DuiRichEdit,
-  DuiConst,
-  DuilibHelper;
+  DuiConst;
 
 const
   kclosebtn = 'closebtn';
@@ -153,7 +152,6 @@ type
   TButtonItemMenu = class(TSimplePopupMenu)
   private
     FTitleControl: CControlUI;
-    FIndex: Integer;
   protected
     procedure DoNotify(var Msg: TNotifyUI); override;
   public
@@ -565,10 +563,10 @@ begin
   inherited;
   LType := Msg.sType;
   LCtlName := Msg.pSender.Name;
-  if LType.Equals(DUI_EVENT_WINDOWINIT) then
+  if LType.Equals(DUI_MSGTYPE_WINDOWINIT) then
     DuiWindowInit
   else
-  if LType.Equals(DUI_EVENT_CLICK) then
+  if LType.Equals(DUI_MSGTYPE_CLICK) then
   begin
     if LCtlName.Contains('TabDotButton_') then
     begin
@@ -579,7 +577,7 @@ begin
       end;
     end else ProcesNotifyEvent(Msg.pSender);
   end else
-  if LType.Equals(DUI_EVENT_KILLFOCUS) then
+  if LType.Equals(DUI_MSGTYPE_KILLFOCUS) then
   begin
     if LCtlName.Equals(kSearchedt) then
     begin
@@ -594,7 +592,7 @@ begin
       end;
     end;
   end else
-  if LType.Equals(DUI_EVENT_SETFOCUS) then
+  if LType.Equals(DUI_MSGTYPE_SETFOCUS) then
   begin
     if LCtlName.Equals(kSearchedt) then
     begin
@@ -609,11 +607,11 @@ begin
       end;
     end;
   end else
-  if LType.Equals(DUI_EVENT_DROPDOWN) then
+  if LType.Equals(DUI_MSGTYPE_DROPDOWN) then
   begin
     MessageBox(0, 'dropdown', 'drop', 0);
   end else
-  if LType.Equals(DUI_EVENT_MENU) then
+  if LType.Equals(DUI_MSGTYPE_MENU) then
   begin
     if LCtlName.Equals(kSearchedt) then
       TRichEditMenu.Create(PaintManagerUI)
@@ -917,9 +915,9 @@ end;
 procedure TButtonItemMenu.DoNotify(var Msg: TNotifyUI);
 begin
   // 重写这个方法，以便自定义，不要继续的
-  if Msg.sType = DUI_EVENT_ITEMSELECT then
+  if Msg.sType = DUI_MSGTYPE_ITEMSELECT then
     Close
-  else if Msg.sType = DUI_EVENT_ITEMCLICK then
+  else if Msg.sType = DUI_MSGTYPE_ITEMCLICK then
   begin
     // 将打开的索引再进一步传递回去
     Msg.pSender.Tag := UIntPtr(FTitleControl);
@@ -1105,7 +1103,7 @@ var
   LItem: TIconInfo;
 begin
   inherited;
-  if Msg.sType = DUI_EVENT_CLICK then
+  if Msg.sType = DUI_MSGTYPE_CLICK then
   begin
     if Msg.pSender.Name = kclosebtn then
       Close

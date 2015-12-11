@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{B1859B0F-DB45-4519-9809-3EAB5982EAFE}</ProjectGuid>
-        <MainSource>DDuilibDemo.dpr</MainSource>
+        <MainSource>QQDemo.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
         <TargetedPlatforms>1</TargetedPlatforms>
@@ -37,7 +37,7 @@
     <PropertyGroup Condition="'$(Base)'!=''">
         <DCC_F>false</DCC_F>
         <DCC_K>false</DCC_K>
-        <SanitizedProjectName>DDuilibDemo</SanitizedProjectName>
+        <SanitizedProjectName>QQDemo</SanitizedProjectName>
         <DCC_E>false</DCC_E>
         <DCC_S>false</DCC_S>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
@@ -96,7 +96,7 @@
         <BorlandProject>
             <Delphi.Personality>
                 <Source>
-                    <Source Name="MainSource">DDuilibDemo.dpr</Source>
+                    <Source Name="MainSource">QQDemo.dpr</Source>
                 </Source>
                 <Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dcloffice2k200.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
