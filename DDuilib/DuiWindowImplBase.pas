@@ -93,8 +93,8 @@ type
     constructor Create(ASkinFile, ASkinFolder, AZipFileName: string); overload;
     destructor Destroy; override;
     procedure OnReceive(Param: Pointer); virtual;
-    procedure MsgBox(const Fmt: string; Args: array of const); overload;
-    procedure MsgBox(const Msg: string); overload;
+    procedure ShowMessage(const Fmt: string; Args: array of const); overload;
+    procedure ShowMessage(const Msg: string); overload;
   public
     property Left: Integer read GetLeft;
     property Top: Integer read GetTop;
@@ -413,14 +413,14 @@ begin
   Perform(WM_SYSCOMMAND, SC_MINIMIZE);
 end;
 
-procedure TDuiWindowImplBase.MsgBox(const Fmt: string; Args: array of const);
+procedure TDuiWindowImplBase.ShowMessage(const Fmt: string; Args: array of const);
 begin
   MessageBox(Handle, PChar(Format(Fmt, Args)), 'ÏûÏ¢', MB_OK or MB_ICONINFORMATION);
 end;
 
-procedure TDuiWindowImplBase.MsgBox(const Msg: string);
+procedure TDuiWindowImplBase.ShowMessage(const Msg: string);
 begin
-  MsgBox(Msg, []);
+  ShowMessage(Msg, []);
 end;
 
 procedure TDuiWindowImplBase.OnReceive(Param: Pointer);
