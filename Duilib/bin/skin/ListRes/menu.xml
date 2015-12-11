@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Window bktrans="true" size="120,82">
+<Window bktrans="true" size="120,82" layeredimage="file='menu_bk.png' corner='40,8,8,8'">
  <Font name="宋体" size="13" bold="false"/>
  <Font name="宋体" size="12"/>
 <VerticalLayout bkimage="file='menu_bk.png' corner='40,8,8,8'" hole="false">

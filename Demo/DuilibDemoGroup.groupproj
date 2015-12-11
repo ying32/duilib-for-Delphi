@@ -9,7 +9,7 @@
         <Projects Include="ListDemo\ListDemo.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="QQDemo\DDuilibDemo.dproj">
+        <Projects Include="QQDemo\QQDemo.dproj">
             <Dependencies/>
         </Projects>
         <Projects Include="TestApp1\TestApp1.dproj">
@@ -44,14 +44,14 @@
     <Target Name="ListDemo:Make">
         <MSBuild Projects="ListDemo\ListDemo.dproj" Targets="Make"/>
     </Target>
-    <Target Name="DDuilibDemo">
-        <MSBuild Projects="QQDemo\DDuilibDemo.dproj"/>
+    <Target Name="QQDemo">
+        <MSBuild Projects="QQDemo\QQDemo.dproj"/>
     </Target>
-    <Target Name="DDuilibDemo:Clean">
-        <MSBuild Projects="QQDemo\DDuilibDemo.dproj" Targets="Clean"/>
+    <Target Name="QQDemo:Clean">
+        <MSBuild Projects="QQDemo\QQDemo.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="DDuilibDemo:Make">
-        <MSBuild Projects="QQDemo\DDuilibDemo.dproj" Targets="Make"/>
+    <Target Name="QQDemo:Make">
+        <MSBuild Projects="QQDemo\QQDemo.dproj" Targets="Make"/>
     </Target>
     <Target Name="TestApp1">
         <MSBuild Projects="TestApp1\TestApp1.dproj"/>
@@ -72,13 +72,13 @@
         <MSBuild Projects="NativeControl\NativeControl.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="Apps;ListDemo;DDuilibDemo;TestApp1;NativeControl"/>
+        <CallTarget Targets="Apps;ListDemo;QQDemo;TestApp1;NativeControl"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="Apps:Clean;ListDemo:Clean;DDuilibDemo:Clean;TestApp1:Clean;NativeControl:Clean"/>
+        <CallTarget Targets="Apps:Clean;ListDemo:Clean;QQDemo:Clean;TestApp1:Clean;NativeControl:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="Apps:Make;ListDemo:Make;DDuilibDemo:Make;TestApp1:Make;NativeControl:Make"/>
+        <CallTarget Targets="Apps:Make;ListDemo:Make;QQDemo:Make;TestApp1:Make;NativeControl:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

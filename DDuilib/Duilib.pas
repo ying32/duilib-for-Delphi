@@ -13,12 +13,16 @@
 //***************************************************************************
 unit Duilib;
 
+// 根据选择禁用有些提示，最好是确定单元后再这样做
+{$HINTS OFF}
+
 interface
 
 uses
   Windows,
   Types,
   Classes,
+  DateUtils,
   SysUtils;
 
 const
@@ -272,6 +276,10 @@ type
   TResInfo = tagTResInfo;
 
   CStdValArray = class
+  private
+    function GetSize: Integer;
+    function GetData: Pointer;
+    function GetAt(iIndex: Integer): Pointer;
   public
     class function CppCreate(iElementSize: Integer; iPreallocSize: Integer = 0): CStdValArray;
     procedure CppDestroy;
@@ -279,9 +287,10 @@ type
     function IsEmpty: Boolean;
     function Add(pData: LPCVOID): Boolean;
     function Remove(iIndex: Integer): Boolean;
-    function GetSize: Integer;
-    function GetData: Pointer;
-    function GetAt(iIndex: Integer): Pointer;
+  public
+    property Size: Integer read GetSize;
+    property Data: Pointer read GetData;
+    property Items[iIndex: Integer]: Pointer read GetAt;
   end;
 
   CStdPtrArray = class
@@ -300,6 +309,35 @@ type
     function GetData: Pointer;
     function GetAt(iIndex: Integer): Pointer;
   end;
+
+  // 特殊来对待
+  // typedef bool (*FnType)(void*);
+  FnType = function(P1: Pointer): Boolean; cdecl;
+  PEventSource = ^CEventSource;
+  CEventSource = record
+  private
+    // CStdPtrArray size = 12, CStdPtrArray三个成员
+    // 不要使用这三个变量,只是用来占位用
+    m_ppVoid: PPointer;
+		m_nCount: Integer;
+		m_nAllocated: Integer;
+  public
+    /// <summary>
+    ///   m_aDelegates: CStdPtrArray;
+    ///   此时指向了变量的首地址，所就是返回了一个CStdPtrArray的指针
+    /// </summary>
+    function Delegates: CStdPtrArray; inline;
+  public
+    //  operator bool();
+    function IsEmpty: Boolean; inline;
+    //  void operator+= (const CDelegateBase& d); // add const for gcc
+    //  void operator+= (FnType pFn);
+    //  void operator-= (const CDelegateBase& d);
+    //  void operator-= (FnType pFn);
+    //  bool operator() (void* param);
+    // function (param: Pointer): Boolean;
+  end;
+
 
   CNotifyPump = class
   public
@@ -332,6 +370,13 @@ type
     function GetAttributeValue(pstrName: string): string; overload;
     function GetAttributeValue(iIndex: Integer; pstrValue: string; cchMax: SIZE_T): Boolean; overload;
     function GetAttributeValue(pstrName: string; pstrValue: string; cchMax: SIZE_T): Boolean; overload;
+  public
+    property Parent: CMarkupNode read GetParent;
+    property Sibling: CMarkupNode read GetSibling;
+    property Name: string read GetName;
+    property Value: string read GetValue;
+    property AttributeCount: Integer read GetAttributeCount;
+    property AttributeName[iIndex: Integer]: string read GetAttributeName;
   end;
 
   CMarkup = class
@@ -347,6 +392,9 @@ type
     procedure GetLastErrorMessage(pstrMessage: string; cchMax: SIZE_T);
     procedure GetLastErrorLocation(pstrSource: string; cchMax: SIZE_T);
     function GetRoot: CMarkupNode;
+  public
+    property Valid: Boolean read IsValid;
+    property Root: CMarkupNode read GetRoot;
   end;
 
   CPaintManagerUI = class
@@ -365,9 +413,9 @@ type
     function GetClientSize: TSize;
     function GetInitSize: TSize;
     procedure SetInitSize(cx: Integer; cy: Integer);
-    function GetSizeBox: PRect;
+    function GetSizeBox: TRect;
     procedure SetSizeBox(const rcSizeBox: TRect);
-    function GetCaptionRect: PRect;
+    function GetCaptionRect: TRect;
     procedure SetCaptionRect(const rcCaption: TRect);
     function GetRoundCorner: TSize;
     procedure SetRoundCorner(cx: Integer; cy: Integer);
@@ -495,7 +543,7 @@ type
     procedure SetOpacity(nOpacity: Byte);
     function IsLayered: Boolean;
     procedure SetLayered(bLayered: Boolean);
-    function GetLayeredInset: PRect;
+    function GetLayeredInset: TRect;
     procedure SetLayeredInset(const rcLayeredInset: TRect);
     function GetLayeredOpacity: Byte;
     procedure SetLayeredOpacity(nOpacity: Byte);
@@ -508,8 +556,16 @@ type
     function RemoveWindowCustomAttribute(pstrName: string): Boolean;
     procedure RemoveAllWindowCustomAttribute;
   public
+    property Name: string read GetName;
   	property ForceUseSharedRes: Boolean read IsForceUseSharedRes write SetForceUseSharedRes;
     property Painting: Boolean read IsPainting write SetPainting;
+    property LayeredImage: string read GetLayeredImage write SetLayeredImage;
+    property LayeredOpacity: Byte read GetLayeredOpacity write SetLayeredOpacity;
+    property LayeredInset: TRect read GetLayeredInset write SetLayeredInset;
+    property Layered: Boolean read IsLayered write SetLayered;
+    property Opacity: Byte read GetOpacity write SetOpacity;
+    property HoverTime: Integer read GetHoverTime write SetHoverTime;
+    property TooltipWindowWidth: Integer read GetTooltipWindowWidth write SetTooltipWindowWidth;
   end;
 
   CDialogBuilder = class
@@ -521,9 +577,23 @@ type
     function GetMarkup: CMarkup;
     procedure GetLastErrorMessage(pstrMessage: string; cchMax: SIZE_T);
     procedure GetLastErrorLocation(pstrSource: string; cchMax: SIZE_T);
+  public
+    property Markup: CMarkup read GetMarkup;
   end;
 
   CControlUI = class
+  strict private
+    // 占位用
+    ____: Pointer;
+  public
+    // 根据c++初始化的规则，此时对应的地址会被填充到变量中
+    OnInit: CEventSource;
+    OnDestroy: CEventSource;
+    OnSize: CEventSource;
+    OnEvent: CEventSource;
+    OnNotify: CEventSource;
+    OnPaint: CEventSource;
+    OnPostPaint: CEventSource;
   public
     class function CppCreate: CControlUI;
     procedure CppDestroy;
@@ -568,7 +638,7 @@ type
     procedure SetBottomBorderSize(nSize: Integer);
     function GetBorderStyle: Integer;
     procedure SetBorderStyle(nStyle: Integer);
-    function GetPos: PRect;
+    function GetPos: TRect;
     function GetRelativePos: TRect;
     procedure SetPos(rc: TRect; bNeedInvalidate: Boolean = True);
     procedure Move(szOffset: TSize; bNeedInvalidate: Boolean = True);
@@ -647,6 +717,10 @@ type
     procedure Hide;
     procedure Show;
   public
+    property X: Integer read GetX;
+    property Y: Integer read GetY;
+    property Width: Integer read GetWidth;
+    property Height: Integer read GetHeight;
     property Text: string read GetText write SetText;
     property ToolTip: string read GetToolTip write SetToolTip;
     property ToolTipWidth: Integer read GetToolTipWidth write SetToolTipWidth;
@@ -789,6 +863,8 @@ type
     property AutoDestroy: Boolean read IsAutoDestroy write SetAutoDestroy;
     property DelayedDestroy: Boolean read IsDelayedDestroy write SetDelayedDestroy;
     property MouseChildEnabled: Boolean read IsMouseChildEnabled write SetMouseChildEnabled;
+    property ScrollPos: TSize read GetScrollPos write SetScrollPos;
+    property ScrollRange: TSize read GetScrollRange;
   end;
 
   CVerticalLayoutUI = class(CContainerUI)
@@ -807,6 +883,9 @@ type
     procedure SetPos(rc: TRect; bNeedInvalidate: Boolean = True);
     procedure DoPostPaint(hDC: HDC; var rcPaint: TRect);
     function GetThumbRect(bUseNew: Boolean = False): TRect;
+  public
+    property SepImmMode: Boolean read IsSepImmMode write SetSepImmMode;
+    property SepHeight: Integer read GetSepHeight write SetSepHeight;
   end;
 
   CHorizontalLayoutUI = class(CContainerUI)
@@ -992,7 +1071,29 @@ type
     procedure SetEnabledShadow(_EnabledShadowe: Boolean);
     function GetEnabledShadow: Boolean;
   public
+    property TextStyle: UINT read GetTextStyle write SetTextStyle;
+    property TextColor: DWORD read GetTextColor write SetTextColor;
+   	property DisabledTextColor: DWORD read GetDisabledTextColor write SetDisabledTextColor;
+    property Font: Integer read GetFont write SetFont;
+	  property TextPadding: TRect read GetTextPadding write SetTextPadding;
     property ShowHtml: Boolean read IsShowHtml write SetShowHtml;
+    property EnabledEffect: Boolean read GetEnabledEffect write SetEnabledEffect;
+    property Text: string read GetText write SetText;
+	  property TransShadow: Integer read GetTransShadow write SetTransShadow;
+    property TransShadow1: Integer read GetTransShadow1 write SetTransShadow1;
+    property TransText: Integer read GetTransText write SetTransText;
+    property TransText1: Integer read GetTransText1 write SetTransText1;
+    property TransStroke: Integer read GetTransStroke write SetTransStroke;
+    property GradientLength: Integer read GetGradientLength write SetGradientLength;
+    property TextRenderingHintAntiAlias: Integer read GetTextRenderingHintAntiAlias write SetTextRenderingHintAntiAlias;
+   	property ShadowOffset: TRectF read GetShadowOffset;
+    property TextColor1: DWORD read GetTextColor1 write SetTextColor1;
+    property TextShadowColorA: DWORD read GetTextShadowColorA write SetTextShadowColorA;
+    property TextShadowColorB: DWORD read GetTextShadowColorB write SetTextShadowColorB;
+    property StrokeColor: DWORD read GetStrokeColor write SetStrokeColor;
+    property GradientAngle: Integer read GetGradientAngle write SetGradientAngle;
+    property EnabledStroke: Boolean read GetEnabledStroke write SetEnabledStroke;
+    property EnabledShadow: Boolean read GetEnabledShadow write SetEnabledShadow;
   end;
 
   CButtonUI = class(CLabelUI)
@@ -1095,8 +1196,10 @@ type
     function GetInterface(pstrName: string): Pointer;
     procedure SetCheck(bCheck: Boolean; bTriggerEvent: Boolean = True);
     function GetCheck: Boolean;
+  private
+    procedure SetChecked(const Value: Boolean);
   public
-    //property Checked: Boolean read GetCheck write SetCheck;
+    property Checked: Boolean read GetCheck write SetChecked;
   end;
 
   CListContainerElementUI = class(CContainerUI)
@@ -1123,6 +1226,13 @@ type
     procedure DoPaint(hDC: HDC; var rcPaint: TRect);
     procedure DrawItemText(hDC: HDC; const rcItem: TRect);
     procedure DrawItemBk(hDC: HDC; const rcItem: TRect);
+  private
+    procedure SetExpand(const Value: Boolean);
+    procedure SetSelect(const Value: Boolean);
+  public
+  	property Index: Integer read GetIndex write SetIndex;
+   	property Selected: Boolean read IsSelected write SetSelect;
+   	property Expanded: Boolean read IsExpanded write SetExpand;
   end;
 
   CComboUI = class(CContainerUI)
@@ -1207,6 +1317,34 @@ type
     procedure DoPaint(hDC: HDC; var rcPaint: TRect);
     procedure PaintText(hDC: HDC);
     procedure PaintStatusImage(hDC: HDC);
+  public
+    property DropBoxAttributeList: string read GetDropBoxAttributeList write SetDropBoxAttributeList;
+	  property DropBoxSize: TSize read GetDropBoxSize write SetDropBoxSize;
+    property CurSel: Integer read GetCurSel;
+    property SelectCloseFlag: Boolean read GetSelectCloseFlag write SetSelectCloseFlag;
+    property ShowText: Boolean read GetShowText write SetShowText;
+    property TextPadding: TRect read GetTextPadding write SetTextPadding;
+    property NormalImage: string read GetNormalImage write SetNormalImage;
+    property HotImage: string  read GetHotImage write SetHotImage;
+    property PushedImage: string read GetPushedImage write SetPushedImage;
+	  property FocusedImage: string read GetFocusedImage write SetFocusedImage;
+    property DisabledImage: string read GetDisabledImage write SetDisabledImage;
+    property ItemTextPadding: TRect read GetItemTextPadding write SetItemTextPadding;
+    property ItemTextColor: DWORD read GetItemTextColor write SetItemTextColor;
+    property ItemBkColor: DWORD read GetItemBkColor write SetItemBkColor;
+    property ItemBkImage: string read GetItemBkImage write SetItemBkImage;
+    property AlternateBk: Boolean read IsAlternateBk write SetAlternateBk;
+    property SelectedItemTextColor: DWORD read GetSelectedItemTextColor write SetSelectedItemTextColor;
+    property SelectedItemBkColor: DWORD read GetSelectedItemBkColor write SetSelectedItemBkColor;
+    property SelectedItemImage: string read GetSelectedItemImage write SetSelectedItemImage;
+    property HotItemTextColor: DWORD read GetHotItemTextColor write SetHotItemTextColor;
+    property HotItemBkColor: DWORD read GetHotItemBkColor write SetHotItemBkColor;
+    property HotItemImage: string read GetHotItemImage write SetHotItemImage;
+    property DisabledItemTextColor: DWORD read GetDisabledItemTextColor write SetDisabledItemTextColor;
+    property DisabledItemBkColor: DWORD read GetDisabledItemBkColor write SetDisabledItemBkColor;
+    property DisabledItemImage: string read GetDisabledItemImage write SetDisabledItemImage;
+    property ItemLineColor: DWORD read GetItemLineColor write SetItemLineColor;
+    property ItemShowHtml: Boolean read IsItemShowHtml write SetItemShowHtml;
   end;
 
   CDateTimeUI = class(CLabelUI)
@@ -1215,14 +1353,15 @@ type
     procedure CppDestroy;
     function GetClass: string;
     function GetInterface(pstrName: string): Pointer;
-    function GetTime: PSystemTime;
-    procedure SetTime(pst: PSystemTime);
+    function GetTime: TDateTime;
+    procedure SetTime(pst: TDateTime);
     procedure SetReadOnly(bReadOnly: Boolean);
     function IsReadOnly: Boolean;
     procedure UpdateText;
     procedure DoEvent(var event: TEventUI);
   public
     property ReadOnly: Boolean read IsReadOnly write SetReadOnly;
+  	property Time: TDateTime read GetTime write SetTime;
   end;
 
   CEditUI = class(CLabelUI)
@@ -1268,6 +1407,19 @@ type
     procedure SetAttribute(pstrName: string; pstrValue: string);
     procedure PaintStatusImage(hDC: HDC);
     procedure PaintText(hDC: HDC);
+  public
+    property MaxChar: UINT read GetMaxChar write SetMaxChar;
+    property ReadOnly: Boolean read IsReadOnly write SetReadOnly;
+    property PasswordMode: Boolean read IsPasswordMode write SetPasswordMode;
+    property PasswordChar: Char read GetPasswordChar write SetPasswordChar;
+    property NumberOnly: Boolean read IsNumberOnly write SetNumberOnly;
+    property WindowStyls: Integer read GetWindowStyls;
+    property NativeEditHWND: HWND read GetNativeEditHWND;
+    property NormalImage: string read GetNormalImage write SetNormalImage;
+    property HotImage: string read GetHotImage write SetHotImage;
+    property FocusedImage: string read GetFocusedImage write SetFocusedImage;
+    property DisabledImage: string read GetDisabledImage write SetDisabledImage;
+    property NativeEditBkColor: DWORD read GetNativeEditBkColor write SetNativeEditBkColor;
   end;
 
   CProgressUI = class(CLabelUI)
@@ -1291,6 +1443,8 @@ type
     procedure SetAttribute(pstrName: string; pstrValue: string);
     procedure PaintStatusImage(hDC: HDC);
   public
+    property Horizontal: Boolean read IsHorizontal write SetHorizontal;
+    property StretchForeImage: Boolean read IsStretchForeImage write SetStretchForeImage;
     property Value: Integer read GetValue write SetValue;
     property MinValue: Integer read GetMinValue write SetMinValue;
     property MaxValue: Integer read GetMaxValue write SetMaxValue;
@@ -1375,6 +1529,37 @@ type
     procedure PaintButton2(hDC: HDC);
     procedure PaintThumb(hDC: HDC);
     procedure PaintRail(hDC: HDC);
+  public
+    property Owner: CContainerUI read GetOwner write SetOwner;
+    property Horizontal: Boolean read IsHorizontal write SetHorizontal;
+    property ScrollRange: Integer read GetScrollRange write SetScrollRange;
+    property ScrollPos: Integer read GetScrollPos write SetScrollPos;
+    property LineSize: Integer read GetLineSize write SetLineSize;
+    property ShowButton1: Boolean read GetShowButton1 write SetShowButton1;
+    property Button1Color: DWORD read GetButton1Color write SetButton1Color;
+    property Button1NormalImage: string read GetButton1NormalImage write SetButton1NormalImage;
+    property Button1HotImage: string read GetButton1HotImage write SetButton1HotImage;
+    property Button1PushedImage: string read GetButton1PushedImage write SetButton1PushedImage;
+    property Button1DisabledImage: string read GetButton1DisabledImage write SetButton1DisabledImage;
+    property ShowButton2: Boolean read GetShowButton2 write SetShowButton2;
+    property Button2Color: DWORD read GetButton2Color write SetButton2Color;
+    property Button2NormalImage: string read GetButton2NormalImage write SetButton2NormalImage;
+    property Button2HotImage: string read GetButton2HotImage write SetButton2HotImage;
+    property Button2PushedImage: string read GetButton2PushedImage write SetButton2PushedImage;
+    property Button2DisabledImage: string read GetButton2DisabledImage write SetButton2DisabledImage;
+    property ThumbColor: DWORD read GetThumbColor write SetThumbColor;
+    property ThumbNormalImage: string read GetThumbNormalImage write SetThumbNormalImage;
+    property ThumbHotImage: string read GetThumbHotImage write SetThumbHotImage;
+    property ThumbPushedImage: string read GetThumbPushedImage write SetThumbPushedImage;
+    property ThumbDisabledImage: string read GetThumbDisabledImage write SetThumbDisabledImage;
+    property RailNormalImage: string read GetRailNormalImage write SetRailNormalImage;
+    property RailHotImage: string read GetRailHotImage write SetRailHotImage;
+    property RailPushedImage: string read GetRailPushedImage write SetRailPushedImage;
+    property RailDisabledImage: string read GetRailDisabledImage write SetRailDisabledImage;
+    property BkNormalImage: string read GetBkNormalImage write SetBkNormalImage;
+    property BkHotImage: string read GetBkHotImage write SetBkHotImage;
+    property BkPushedImage: string read GetBkPushedImage write SetBkPushedImage;
+    property BkDisabledImage: string read GetBkDisabledImage write SetBkDisabledImage;
   end;
 
   CSliderUI = class(CProgressUI)
@@ -1435,7 +1620,7 @@ type
     function GetVisibleTag: Boolean;
     procedure SetItemText(pstrValue: string);
     function GetItemText: string;
-    procedure CheckBoxSelected(_Selected: Boolean);
+    procedure SetCheckBoxSelected(_Selected: Boolean);
     function IsCheckBoxSelected: Boolean;
     function IsHasChild: Boolean;
     function AddChildNode(_pTreeNodeUI: CTreeNodeUI): Boolean;
@@ -1462,6 +1647,24 @@ type
     function GetTreeNodes: CStdPtrArray;
     function GetTreeIndex: Integer;
     function GetNodeIndex: Integer;
+  public
+    property VisibleTag: Boolean read GetVisibleTag write SetVisibleTag;
+    property ItemText: string read GetItemText write SetItemText;
+    property CheckBoxSelected: Boolean read IsCheckBoxSelected write SetCheckBoxSelected;
+    property HasChild: Boolean read IsHasChild;
+    property ParentNode: CTreeNodeUI read GetParentNode write SetParentNode;
+    property ChildCount: LongInt read GetCountChild;
+    property TreeView: CTreeViewUI read GetTreeView write SetTreeView;
+    property ChildNode[index: Integer]: CTreeNodeUI read GetChildNode;
+    property VisibleFolderBtn: Boolean read GetVisibleFolderBtn write SetVisibleFolderBtn;
+    property VisibleCheckBtn: Boolean read GetVisibleCheckBtn write SetVisibleCheckBtn;
+    property ItemTextColor: DWORD read GetItemTextColor write SetItemTextColor;
+    property ItemHotTextColor: DWORD read GetItemHotTextColor write SetItemHotTextColor;
+    property SelItemTextColor: DWORD read GetSelItemTextColor write SetSelItemTextColor;
+    property SelItemHotTextColor: DWORD read GetSelItemHotTextColor write SetSelItemHotTextColor;
+    property TreeNodes: CStdPtrArray read GetTreeNodes;
+    property TreeIndex: Integer read GetTreeIndex;
+    property NodeIndex: Integer read GetNodeIndex;
   end;
 
   CTreeViewUI = class(CListUI)
@@ -1493,6 +1696,10 @@ type
     procedure SetSelItemTextColor(_dwSelItemTextColor: DWORD);
     procedure SetSelItemHotTextColor(_dwSelHotItemTextColor: DWORD);
     procedure SetAttribute(pstrName: string; pstrValue: string);
+  public
+    property VisibleFolderBtn: Boolean read GetVisibleFolderBtn write SetVisibleFolderBtn;
+    property VisibleCheckBtn: Boolean read GetVisibleCheckBtn write SetVisibleCheckBtn;
+    property ItemMinWidth: UINT read GetItemMinWidth write SetItemMinWidth;
   end;
 
   CTabLayoutUI = class(CContainerUI)
@@ -1510,6 +1717,10 @@ type
     function SelectItem(pControl: CControlUI; bTriggerEvent: Boolean = True): Boolean; overload;
     procedure SetPos(rc: TRect; bNeedInvalidate: Boolean = True);
     procedure SetAttribute(pstrName: string; pstrValue: string);
+  private
+    procedure SetSelectItem(const Value: Integer);
+  public
+    property SelectIndex: Integer read GetCurSel write SetSelectItem;
   end;
 
   CRenderClip = class
@@ -1563,6 +1774,13 @@ type
     procedure DoEvent(var event: TEventUI);
     procedure SetAttribute(pstrName: string; pstrValue: string);
     procedure DrawItemBk(hDC: HDC; const rcItem: TRect);
+  private
+    procedure SetExpanded(const Value: Boolean);
+    procedure SetSelect(const Value: Boolean);
+  public
+    property Index: Integer read GetIndex write SetIndex;
+    property Selected: Boolean read IsSelected write SetSelect;
+    property Expanded: Boolean read IsExpanded write SetExpanded;
   end;
 
   CListLabelElementUI = class(CListElementUI)
@@ -1591,6 +1809,8 @@ type
     procedure DoEvent(var event: TEventUI);
     function EstimateSize(szAvailable: TSize): TSize;
     procedure DrawItemText(hDC: HDC; const rcItem: TRect);
+  public
+    property Texts[iIndex: Integer]: string read GetText write SetText;
   end;
 
   CGifAnimUI = class(CControlUI)
@@ -1613,6 +1833,10 @@ type
     procedure PlayGif;
     procedure PauseGif;
     procedure StopGif;
+  public
+    property BkImage: string read GetBkImage write SetBkImage;
+    property AutoPlay: Boolean read IsAutoPlay write SetAutoPlay;
+    property AutoSize: Boolean read IsAutoSize write SetAutoSize;
   end;
 
 
@@ -1626,6 +1850,8 @@ type
     function GetChildLayoutXML: string;
     function GetInterface(pstrName: string): Pointer;
     function GetClass: string;
+  public
+    property ChildLayoutXML: string read GetChildLayoutXML write SetChildLayoutXML;
   end;
 
   CTileLayoutUI = class(CContainerUI)
@@ -1640,6 +1866,9 @@ type
     function GetColumns: Integer;
     procedure SetColumns(nCols: Integer);
     procedure SetAttribute(pstrName: string; pstrValue: string);
+  public
+    property ItemSize: TSize read GetItemSize write SetItemSize;
+    property Columns: Integer read GetColumns write SetColumns;
   end;
 
 
@@ -1652,6 +1881,8 @@ type
     function GetClass: string;
     function GetText: string;
     procedure SetText(pstrText: string);
+  public
+    property Text: string read GetText write SetText;
   end;
 
 
@@ -3180,6 +3411,18 @@ begin
   Result := Delphi_StdPtrArray_GetAt(Self, iIndex);
 end;
 
+{ CEventSource }
+
+function CEventSource.Delegates: CStdPtrArray;
+begin
+  Result := CStdPtrArray(@Self);
+end;
+
+function CEventSource.IsEmpty: Boolean;
+begin
+  Result := Delegates.GetSize > 0;
+end;
+
 { CNotifyPump }
 
 class function CNotifyPump.CppCreate: CNotifyPump;
@@ -3625,9 +3868,9 @@ begin
   Delphi_ControlUI_SetBorderStyle(Self, nStyle);
 end;
 
-function CControlUI.GetPos: PRect;
+function CControlUI.GetPos: TRect;
 begin
-  Result := Delphi_ControlUI_GetPos(Self);
+  Result := Delphi_ControlUI_GetPos(Self)^;
 end;
 
 function CControlUI.GetRelativePos: TRect;
@@ -4281,9 +4524,9 @@ begin
   Delphi_PaintManagerUI_SetInitSize(Self, cx, cy);
 end;
 
-function CPaintManagerUI.GetSizeBox: PRect;
+function CPaintManagerUI.GetSizeBox: TRect;
 begin
-  Result := Delphi_PaintManagerUI_GetSizeBox(Self);
+  Result := Delphi_PaintManagerUI_GetSizeBox(Self)^;
 end;
 
 procedure CPaintManagerUI.SetSizeBox(const rcSizeBox: TRect);
@@ -4291,9 +4534,9 @@ begin
   Delphi_PaintManagerUI_SetSizeBox(Self, rcSizeBox);
 end;
 
-function CPaintManagerUI.GetCaptionRect: PRect;
+function CPaintManagerUI.GetCaptionRect: TRect;
 begin
-  Result := Delphi_PaintManagerUI_GetCaptionRect(Self);
+  Result := Delphi_PaintManagerUI_GetCaptionRect(Self)^;
 end;
 
 procedure CPaintManagerUI.SetCaptionRect(const rcCaption: TRect);
@@ -4934,9 +5177,9 @@ begin
   Delphi_PaintManagerUI_SetLayered(Self, bLayered);
 end;
 
-function CPaintManagerUI.GetLayeredInset: PRect;
+function CPaintManagerUI.GetLayeredInset: TRect;
 begin
-  Result := Delphi_PaintManagerUI_GetLayeredInset(Self);
+  Result := Delphi_PaintManagerUI_GetLayeredInset(Self)^;
 end;
 
 procedure CPaintManagerUI.SetLayeredInset(const rcLayeredInset: TRect);
@@ -6461,6 +6704,11 @@ begin
   Delphi_CheckBoxUI_SetCheck(Self, bCheck, bTriggerEvent);
 end;
 
+procedure CCheckBoxUI.SetChecked(const Value: Boolean);
+begin
+  SetCheck(Value);
+end;
+
 function CCheckBoxUI.GetCheck: Boolean;
 begin
   Result := Delphi_CheckBoxUI_GetCheck(Self);
@@ -6513,6 +6761,11 @@ begin
   Delphi_ListContainerElementUI_SetOwner(Self, pOwner);
 end;
 
+procedure CListContainerElementUI.SetSelect(const Value: Boolean);
+begin
+  Select(Value);
+end;
+
 procedure CListContainerElementUI.SetVisible(bVisible: Boolean);
 begin
   Delphi_ListContainerElementUI_SetVisible(Self, bVisible);
@@ -6521,6 +6774,11 @@ end;
 procedure CListContainerElementUI.SetEnabled(bEnable: Boolean);
 begin
   Delphi_ListContainerElementUI_SetEnabled(Self, bEnable);
+end;
+
+procedure CListContainerElementUI.SetExpand(const Value: Boolean);
+begin
+  Expand(Value);
 end;
 
 function CListContainerElementUI.IsSelected: Boolean;
@@ -7002,14 +7260,25 @@ begin
   Result := Delphi_DateTimeUI_GetInterface(Self, PChar(pstrName));
 end;
 
-function CDateTimeUI.GetTime: PSystemTime;
+function CDateTimeUI.GetTime: TDateTime;
+var
+  LSysDateTime: TSystemTime;
 begin
-  Result := Delphi_DateTimeUI_GetTime(Self);
+  LSysDateTime:= Delphi_DateTimeUI_GetTime(Self)^;
+  Result := EncodeDateTime(LSysDateTime.wYear, LSysDateTime.wMonth, LSysDateTime.wDay,
+                 LSysDateTime.wHour, LSysDateTime.wMinute, LSysDateTime.wSecond,
+                 LSysDateTime.wMilliseconds);
 end;
 
-procedure CDateTimeUI.SetTime(pst: PSystemTime);
+procedure CDateTimeUI.SetTime(pst: TDateTime);
+var
+  LSysDateTime: TSYSTEMTIME;
 begin
-  Delphi_DateTimeUI_SetTime(Self, pst);
+  DecodeDateTime(pst, LSysDateTime.wYear, LSysDateTime.wMonth, LSysDateTime.wDay,
+                 LSysDateTime.wHour, LSysDateTime.wMinute, LSysDateTime.wSecond,
+                 LSysDateTime.wMilliseconds);
+  LSysDateTime.wDayOfWeek := DayOfTheWeek(pst);
+  Delphi_DateTimeUI_SetTime(Self, @LSysDateTime);
 end;
 
 procedure CDateTimeUI.SetReadOnly(bReadOnly: Boolean);
@@ -7930,7 +8199,7 @@ begin
   Result := Delphi_TreeNodeUI_GetItemText(Self);
 end;
 
-procedure CTreeNodeUI.CheckBoxSelected(_Selected: Boolean);
+procedure CTreeNodeUI.SetCheckBoxSelected(_Selected: Boolean);
 begin
   Delphi_TreeNodeUI_CheckBoxSelected(Self, _Selected);
 end;
@@ -8264,6 +8533,11 @@ begin
   Delphi_TabLayoutUI_SetPos(Self, rc, bNeedInvalidate);
 end;
 
+procedure CTabLayoutUI.SetSelectItem(const Value: Integer);
+begin
+  SelectItem(Value);
+end;
+
 procedure CTabLayoutUI.SetAttribute(pstrName: string; pstrValue: string);
 begin
   Delphi_TabLayoutUI_SetAttribute(Self, PChar(pstrName), PChar(pstrValue));
@@ -8510,6 +8784,11 @@ begin
   Delphi_ListElementUI_SetEnabled(Self, bEnable);
 end;
 
+procedure CListElementUI.SetExpanded(const Value: Boolean);
+begin
+  Expand(Value);
+end;
+
 function CListElementUI.GetIndex: Integer;
 begin
   Result := Delphi_ListElementUI_GetIndex(Self);
@@ -8528,6 +8807,11 @@ end;
 procedure CListElementUI.SetOwner(pOwner: CControlUI);
 begin
   Delphi_ListElementUI_SetOwner(Self, pOwner);
+end;
+
+procedure CListElementUI.SetSelect(const Value: Boolean);
+begin
+  Select(Value);
 end;
 
 procedure CListElementUI.SetVisible(bVisible: Boolean);
@@ -10185,5 +10469,7 @@ procedure Delphi_NativeControlUI_SetPos; external DuiLibdll name 'Delphi_NativeC
 function Delphi_NativeControlUI_GetClass; external DuiLibdll name 'Delphi_NativeControlUI_GetClass';
 function Delphi_NativeControlUI_GetText; external DuiLibdll name 'Delphi_NativeControlUI_GetText';
 procedure Delphi_NativeControlUI_SetText; external DuiLibdll name 'Delphi_NativeControlUI_SetText';
+
+
 
 end.

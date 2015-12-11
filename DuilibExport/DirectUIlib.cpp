@@ -65,6 +65,8 @@ public:
 		m_HandleCustomMessage(NULL),
 		m_GetItemText(NULL) {
 		m_GetClassStyle = WindowImplBase::GetClassStyle();
+		//printf("CEventSource size=%d,  CStdPtrArray size=%d\n", sizeof(CEventSource), sizeof(CStdPtrArray));
+		
 	}
 	~CDelphi_WindowImplBase(){ };
 	void InitWindow()
@@ -82,6 +84,18 @@ public:
 	{
 		if (m_Notify)
 			m_Notify(m_Self, msg);
+ 
+		printf("msg.pSender=%p\n", msg.pSender);
+		printf("msg.pSender->OnInit=%p\n", &msg.pSender->OnInit);
+		printf("msg.pSender->OnDestroy=%p\n", &msg.pSender->OnDestroy);
+		printf("msg.pSender->OnSize=%p\n", &msg.pSender->OnSize);
+		printf("msg.pSender->OnEvent=%p\n", &msg.pSender->OnEvent);
+		printf("msg.pSender->OnNotify=%p\n", &msg.pSender->OnNotify);
+		printf("msg.pSender->OnPaint=%p\n", &msg.pSender->OnPaint);
+		printf("msg.pSender->OnPostPaint=%p\n", &msg.pSender->OnPostPaint);
+		printf("==========================================\n");
+		//printf("Notify pSender.OnEvent=%d, msg.pSender->OnEvent=%p\n",
+		//	sizeof(msg.pSender->OnEvent), &msg.pSender->OnEvent);
 		return WindowImplBase::Notify(msg);
 	}
 	void OnClick(TNotifyUI& msg)
