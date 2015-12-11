@@ -9,31 +9,29 @@
 **关于Duilib for Delphi的详情，可见[我的博客](http://blog.csdn.net/zyjying520/article/details/49976667)**
 ### 重要说明
 ***
-代码基于DelphiXE6编写，其中有用到了不少新我的新特性，使用最少需要符合以下条件：    
+代码基于DelphiXE6编写，其中有用到了不少新的新特性，使用最少需要符合以下条件：    
 
 * 1、支持`Unicode`;
 * 2、支持class的`helper`语法;
 * 3、record的`运算符重载`；
-* 3、`泛型`少量。
+* 4、`泛型`支持。
 
 
 ### 目录祥情
 ***
-* 1、 CppConvert  
-   * 一个特定的转换工具，根据MakeList.txt与MakeCppSourceDef.txt的配置生成duilib.pas和DriectUIlib.cpp，DriectUIlib.h三个文件。
 
-* 2、 DDuilib
+* 1、 DDuilib
    * duilib for Delphi源目录。
 
-* 3、 DuilibExport
+* 2、 DuilibExport
    * 需要加入到原[duilib](https://github.com/duilib/duilib)工程中编译的c++源文件。
 
-* 4、Demo
+* 3、Demo
    * 新的Demo工程目录
    
-* 5、Duilib
+* 4、Duilib
    * 存放原[duilib](https://github.com/duilib/duilib)工程目录，这里不提供原[duilib](https://github.com/duilib/duilib)的源码，请自行下载。
-   * 5.1、 bin
+   * 4.1、 bin
       * 存放编译后的二进制及图片和xml资源，里面有的包含原duilib的资源文件 
 
 ### 说明
@@ -43,8 +41,10 @@
 
 ### 截图
 ***
+![截图2](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot3.png) 
 ![截图1](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot1.png)  
 ![截图2](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot2.png)  
+
 
 ### 作者信息
 ***
