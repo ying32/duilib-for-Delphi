@@ -19,21 +19,19 @@
 
 ### 目录祥情
 ***
-* 1、 CppConvert  
-   * 一个特定的转换工具，根据MakeList.txt与MakeCppSourceDef.txt的配置生成duilib.pas和DirectUIlib.cpp，DirectUIlib.h三个文件。
 
-* 2、 DDuilib
+* 1、 DDuilib
    * duilib for Delphi源目录。
 
-* 3、 DuilibExport
+* 2、 DuilibExport
    * 需要加入到原[duilib](https://github.com/duilib/duilib)工程中编译的c++源文件。
 
-* 4、Demo
+* 3、Demo
    * 新的Demo工程目录
    
-* 5、Duilib
+* 4、Duilib
    * 存放原[duilib](https://github.com/duilib/duilib)工程目录，这里不提供原[duilib](https://github.com/duilib/duilib)的源码，请自行下载。
-   * 5.1、 bin
+   * 4.1、 bin
       * 存放编译后的二进制及图片和xml资源，里面有的包含原duilib的资源文件 
 
 ### 说明
