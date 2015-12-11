@@ -180,7 +180,7 @@ constructor TDuiPopupMenu.Create(AListUI: CListUI);
 begin
   inherited Create('menu.xml', ExtractFilePath(ParamStr(0)) + 'skin\ListRes');
   FListUI := AListUI;
-  CreateWindow(AListUI.GetManager.GetPaintWindow, '', WS_VISIBLE or WS_POPUP, WS_EX_TOOLWINDOW);
+  CreateWindow(AListUI.GetManager.GetPaintWindow, '', WS_POPUP, WS_EX_TOOLWINDOW);
   Show;
 end;
 
@@ -204,15 +204,15 @@ begin
   begin
     // 原duilib作者把CPaintManagerUI中的一个设置背景透明的属性去除了，然后就产生了bug....
     // 然后也不能使用透明的png作为背景了，不然就产生黑色的边框。。。
-    if not IsIconic(Handle) then
-    begin
-		  GetWindowRect(Handle, rcWnd);
-		  rcWnd.Offset(-rcWnd.left, -rcWnd.top);
-		  hRgn := CreateRectRgn(rcWnd.left + 8, rcWnd.top + 8, rcWnd.right - 8, rcWnd.bottom - 8);
-		  SetWindowRgn(Handle, hRgn, TRUE);
-		  DeleteObject(hRgn);
-      bHandled := False;
-	  end;
+//    if not IsIconic(Handle) then
+//    begin
+//		  GetWindowRect(Handle, rcWnd);
+//		  rcWnd.Offset(-rcWnd.left, -rcWnd.top);
+//		  hRgn := CreateRectRgn(rcWnd.left + 8, rcWnd.top + 8, rcWnd.right - 8, rcWnd.bottom - 8);
+//		  SetWindowRgn(Handle, hRgn, TRUE);
+//		  DeleteObject(hRgn);
+//      bHandled := False;
+//	  end;
   end;
 end;
 

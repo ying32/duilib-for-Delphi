@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window>
+  <ListContainerElement>
+    <HorizontalLayout>
+      <VerticalLayout name="logo_container" width="48">
+        <Button name="logo" width="32" height="32" />
+      </VerticalLayout>
+      <VerticalLayout >
+        <HorizontalLayout>
+          <Label name="nickname" bordersize="0" width="120" textcolor="#FF000000" disabledtextcolor="#FF808080" />
+          <Label name="description" bordersize="0" textcolor="#FF808080" />
+        </HorizontalLayout>
+      </VerticalLayout>
+      <VerticalLayout name="operation" height="16" visible="false">
+      </VerticalLayout >
+    </HorizontalLayout>
+  </ListContainerElement>
+</Window>

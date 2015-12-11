@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window size="600,450" mininfo="200,300" caption="0,0,0,40" sizebox="4,4,4,4" roundcorner="4,4,4,4">
+  <Font name="微软雅黑" size="12" bold="false" default="true" />
+  <Font name="微软雅黑" size="12" bold="true"/>
+<Default name="VScrollBar" value="button1normalimage=&quot;file='scrollbar.png' source='0,0,16,16'&quot; button1hotimage=&quot;file='scrollbar.png' source='16,0,32,16,16'&quot; button1pushedimage=&quot;file='scrollbar.png' source='32,0,48,16'&quot; button2normalimage=&quot;file='scrollbar.png' source='0,32,16,48'&quot; button2hotimage=&quot;file='scrollbar.png' source='16,32,32,48'&quot; button2pushedimage=&quot;file='scrollbar.png' source='32,32,48,48'&quot; thumbnormalimage=&quot;file='scrollbar.png' source='0,48,16,64' corner='0,2,0,2'&quot; thumbhotimage=&quot;file='scrollbar.png' source='16,48,32,64' corner='0,2,0,2'&quot; thumbpushedimage=&quot;file='scrollbar.png' source='32,48,48,64' corner='0,2,0,2'&quot; bknormalimage=&quot;file='scrollbar.png' source='0,16,16,32'&quot;" />
+<HorizontalLayout name="bg" bkimage="file='bg2.png' corner='600,200,1,1'" hole="true">
+	<VerticalLayout bkimage="file='border.png' corner='5,5,5,5'" inset="1,0,1,0" hole="true">
+		<HorizontalLayout height="45">
+			<VerticalLayout width="48" inset="0,1,0,0">
+				<Button name="logo" width="44" height="44" maxheight="44" maxwidth="44" bkimage="file='man.png' corner='5,5,5,5'"/>
+			</VerticalLayout>
+			<VerticalLayout inset="2,6,2,0">
+				<Text name="nickname" textcolor="#FFFFFFFF" font="1" text="tojen" width="200" height="16" />
+				<RichEdit name="description"  multiline="false" width="200" inset="0,0,0,0" textcolor="#FFFFFFFF" height="18" text="北国风光，千里冰封，万里雪飘" enabled="true" rich="false"/>
+			</VerticalLayout>
+			<VerticalLayout width="94">
+				<Button name="minbtn" float="true" pos="0,0,28,19" width="28" height="19" maxheight="19" maxwidth="28"  normalimage="file='btn_mini_normal.png'" hotimage="btn_mini_highlight.png" pushedimage="btn_mini_down.png"  />
+				<Button name="maxbtn" float="true" pos="28,0,56,19" width="28" height="19" maxheight="19" maxwidth="28"  normalimage="file='btn_max_normal.png'" hotimage="btn_max_highlight.png" pushedimage="btn_max_down.png"  />
+        <Button name="restorebtn" visible="false" float="true" pos="28,0,56,19" width="28" height="19" maxheight="19" maxwidth="28"  normalimage="file='btn_restore_normal.png'" hotimage="btn_restore_highlight.png" pushedimage="btn_restore_down.png"  />
+				<Button name="closebtn" float="true" pos="56,0,95,19" width="39" height="19" maxheight="19" maxwidth="39"  normalimage="file='btn_close_normal.png'" hotimage="btn_close_highlight.png" pushedimage="btn_close_down.png"  />
+			</VerticalLayout>
+		</HorizontalLayout>
+		<HorizontalLayout bkimage="file='jb.png' corner='2,30,2,2'">
+			<VerticalLayout>
+				<HorizontalLayout name="TopBtnList" height="41" inset="3,3,3,3">
+					<Button name="home" width="34" height="34" maxheight="34" maxwidth="34" bkimage="file='icon_home.png' dest='5,4,31,30'" hotimage="file='btn_hot.png' corner='2,8,2,2'" pushedimage="file='btn_push.png' corner='2,5,2,2'"  />
+					<Control width="6"/>
+					<Button name="hide" width="34" height="34" maxheight="34" maxwidth="34" bkimage="file='icon_b.png' dest='5,4,31,30'" hotimage="file='btn_hot.png' corner='2,8,2,2'" pushedimage="file='btn_push.png' corner='2,5,2,2'"  />
+					<Control width="6"/>
+					<Button name="" width="34" height="34" maxheight="34" maxwidth="34" bkimage="file='icon_c.png' dest='5,4,31,30'" hotimage="file='btn_hot.png' corner='2,8,2,2'" pushedimage="file='btn_push.png' corner='2,5,2,2'"  />
+					<Control width="6"/>
+					<Button name="" width="34" height="34" maxheight="34" maxwidth="34" bkimage="file='icon_d.png' dest='5,4,31,30'" hotimage="file='btn_hot.png' corner='2,8,2,2'" pushedimage="file='btn_push.png' corner='2,5,2,2'"  />
+					<Control width="6"/>
+					<Button name="" width="34" height="34" maxheight="34" maxwidth="34" bkimage="file='icon_e.png' dest='5,4,31,30'" hotimage="file='btn_hot.png' corner='2,8,2,2'" pushedimage="file='btn_push.png' corner='2,5,2,2'"  />
+					<Control width="6"/>
+					<Button name="" width="34" height="34" maxheight="34" maxwidth="34" bkimage="file='icon_f.png' dest='5,4,31,30'" hotimage="file='btn_hot.png' corner='2,8,2,2'" pushedimage="file='btn_push.png' corner='2,5,2,2'"  />
+				</HorizontalLayout>
+				<HorizontalLayout bordersize="0" bordercolor="#FF999933" inset="5,0,0,0" bkimage="file='chat_mid_bk.png' source='0,10,2,26'">
+          <RichEdit name="view_richedit" multiline="true" vscrollbar="true" autovscroll="true" rich="true" readonly="true" />
+				</HorizontalLayout>
+				<HorizontalLayout name="fontbar" bkimage="file='font_bk.bmp'" height="30" inset="4,4,4,4">
+					<Combo name="font_type" droptype="droplist" width="100" height="22" textpadding="4,1,1,1"  normalimage="file='combo.png' source='0,0,100,22' corner='2,2,20,2'" hotimage="file='combo.png' source='0,22,100,44' corner='2,2,22,2'" pushedimage="file='combo.png' source='0,44,100,66' corner='2,2,22,2'">
+            <ListLabelElement text="微软雅黑" selected="true" height="23"/>
+            <ListLabelElement text="宋体" height="23" />
+            <ListLabelElement text="黑体" height="23" />
+            <ListLabelElement text="幼圆" height="23" />
+            <ListLabelElement text="楷体" height="23" />
+          </Combo>
+          <Combo name="font_size" droptype="droplist" width="50" height="22" textpadding="4,1,1,1" normalimage="file='combo.png' source='0,0,100,22' corner='2,2,20,2'" hotimage="file='combo.png' source='0,22,100,44' corner='2,2,22,2'" pushedimage="file='combo.png' source='0,44,100,66' corner='2,2,22,2'">
+						<ListLabelElement text="9" selected="true" height="23" />
+						<ListLabelElement text="10" height="23" />
+						<ListLabelElement text="11" height="23" />
+						<ListLabelElement text="12" height="23" />
+						<ListLabelElement text="13" height="23" />
+            <ListLabelElement text="14" height="23" />
+            <ListLabelElement text="15" height="23" />
+            <ListLabelElement text="16" height="23" />
+            <ListLabelElement text="17" height="23" />
+            <ListLabelElement text="18" height="23" />
+            <ListLabelElement text="19" height="23" />
+            <ListLabelElement text="20" height="23" />
+            <ListLabelElement text="21" height="23" />
+            <ListLabelElement text="22" height="23" />
+            <ListLabelElement text="24" height="23" />
+            <ListLabelElement text="28" height="23" />
+            <ListLabelElement text="32" height="23" />
+					</Combo>
+					<Control width="5"/>
+					<Option showhtml="true" name="boldbtn" width="22" height="22" text="{i Bold.png}{/i}" hotimage="file='btn_hot.png' corner='2,3,2,2'" selectedimage="file='btn_push.png' corner='2,5,2,2'"  />
+          <Option showhtml="true" name="italicbtn" width="22" height="22" text="{i Italic.png}{/i}" hotimage="file='btn_hot.png' corner='2,3,2,2'" selectedimage="file='btn_push.png' corner='2,5,2,2'"  />
+          <Option showhtml="true" name="underlinebtn" width="22" height="22" text="{i underline.png}{/i}" hotimage="file='btn_hot.png' corner='2,3,2,2'" selectedimage="file='btn_push.png' corner='2,5,2,2'"  />
+          <Option showhtml="true" name="colorbtn" width="22" height="22" text="{i color.png}{/i}" hotimage="file='btn_hot.png' corner='2,3,2,2'" selectedimage="file='btn_push.png' corner='2,5,2,2'"  />
+				</HorizontalLayout>
+				<HorizontalLayout height="28" inset="2,4,2,4">
+					<Option name="fontbtn" width="24" height="20" maxheight="20" maxwidth="24" bkimage="file='icon_font.png' dest='2,0,22,20'" hotimage="file='btn_hot.png' corner='2,3,2,2'" selectedimage="file='btn_push.png' corner='2,5,2,2'"  />
+					<Control width="5"/>
+          <Option name="emotionbtn" width="24" height="20" maxheight="20" maxwidth="24" bkimage="file='icon_face.png' dest='2,0,22,20'" hotimage="file='btn_hot.png' corner='2,3,2,2'" selectedimage="file='btn_push.png' corner='2,5,2,2'"  />
+					<Control width="5"/>
+					<Button name="imagebtn" width="24" height="20" maxheight="20" maxwidth="24" bkimage="file='icon_pic.png' dest='2,0,22,20'" hotimage="file='btn_hot.png' corner='2,3,2,2'" pushedimage="file='btn_push.png' corner='2,5,2,2'"  />
+					<Control width="5"/>
+					<Button name="shockbtn" width="24" height="20" maxheight="20" maxwidth="24" bkimage="file='icon_shark.png' dest='2,0,22,20'" hotimage="file='btn_hot.png' corner='2,3,2,2'" pushedimage="file='btn_push.png' corner='2,5,2,2'"  />
+          <Control width="5"/>
+          <Button name="screenshotsbtn" width="24" height="20" maxheight="20" maxwidth="24" bkimage="file='icon_screenshots.png' dest='2,1,20,19'" hotimage="file='btn_hot.png' corner='2,3,2,2'" pushedimage="file='btn_push.png' corner='2,5,2,2'"  />
+				</HorizontalLayout>
+				<HorizontalLayout height="80" bkcolor="#FFFFFFFF" inset="5,0,0,0">
+          <RichEdit name="input_richedit" multiline="true" vscrollbar="true" autovscroll="true" enabled="true" rich="false" readonly="false" wantreturn="true" wantctrlreturn="false" />
+				</HorizontalLayout>
+				<HorizontalLayout height="32">
+          <Control />
+          <Button name="closebtn" padding="0,4,0,0" tooltip="关闭" text="关闭" width="69" height="24" maxheight="24" maxwidth="69" bkimage="file='unsel.bmp'" hotimage="file='btn_hot.png' corner='2,3,2,2'" pushedimage="file='btn_push.png' corner='2,5,2,2'"  />
+          <Control width="5"/>
+          <Button name="sendbtn" padding="0,4,0,0" tooltip="发送" text="发送" width="69" height="24" maxheight="24" maxwidth="69" bkimage="file='unsel.bmp'" hotimage="file='btn_hot.png' corner='2,3,2,2'" pushedimage="file='btn_push.png' corner='2,5,2,2'"  />
+				</HorizontalLayout>
+			</VerticalLayout>
+			<VerticalLayout name="right_part" width="160">
+			</VerticalLayout>
+		</HorizontalLayout>
+		<HorizontalLayout height="1" />
+	</VerticalLayout>
+</HorizontalLayout>
+</Window>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window size="102,67">
+  <Font name="微软雅黑" size="12" bold="false" default="true" />
+  <Font name="微软雅黑" size="12" bold="true"/>
+	<VerticalLayout name="color" inset="4,4,4,4" bkcolor="#FFFFFFFF" bordersize="1" bordercolor="0xFF99933F">
+	</VerticalLayout>
+</Window>

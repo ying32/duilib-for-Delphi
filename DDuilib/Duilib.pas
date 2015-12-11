@@ -395,6 +395,10 @@ type
     class procedure ReloadSkin;
     class function LoadPlugin(pstrModuleName: string): Boolean;
     class function GetPlugins: CStdPtrArray;
+    function IsForceUseSharedRes: Boolean;
+    procedure SetForceUseSharedRes(bForce: Boolean);
+    function IsPainting: Boolean;
+    procedure SetPainting(bIsPainting: Boolean);
     function GetDefaultDisabledColor: DWORD;
     procedure SetDefaultDisabledColor(dwColor: DWORD; bShared: Boolean = False);
     function GetDefaultFontColor: DWORD;
@@ -482,7 +486,6 @@ type
     function MessageHandler(uMsg: UINT; wParam: WPARAM; lParam: LPARAM; var lRes: LRESULT): Boolean;
     function PreMessageHandler(uMsg: UINT; wParam: WPARAM; lParam: LPARAM; var lRes: LRESULT): Boolean;
     procedure UsedVirtualWnd(bUsed: Boolean);
-
     function GetName: string;
     function GetTooltipWindowWidth: Integer;
     procedure SetTooltipWindowWidth(iWidth: Integer);
@@ -504,6 +507,9 @@ type
     function GetWindowCustomAttribute(pstrName: string): string;
     function RemoveWindowCustomAttribute(pstrName: string): Boolean;
     procedure RemoveAllWindowCustomAttribute;
+  public
+  	property ForceUseSharedRes: Boolean read IsForceUseSharedRes write SetForceUseSharedRes;
+    property Painting: Boolean read IsPainting write SetPainting;
   end;
 
   CDialogBuilder = class
@@ -627,6 +633,7 @@ type
     function ApplyAttributeList(pstrList: string): CControlUI;
     function EstimateSize(szAvailable: TSize): TSize;
     procedure DoPaint(hDC: HDC; var rcPaint: TRect);
+    procedure Paint(hDC: HDC; var rcPaint: TRect);
     procedure PaintBkColor(hDC: HDC);
     procedure PaintBkImage(hDC: HDC);
     procedure PaintStatusImage(hDC: HDC);
@@ -635,11 +642,11 @@ type
     procedure DoPostPaint(hDC: HDC; var rcPaint: TRect);
     procedure SetVirtualWnd(pstrValue: string);
     function GetVirtualWnd: string;
+    function ClassName: string;
   public
     procedure Hide;
     procedure Show;
   public
-    property ClassName: string read GetClass; // reintroduce
     property Text: string read GetText write SetText;
     property ToolTip: string read GetToolTip write SetToolTip;
     property ToolTipWidth: Integer read GetToolTipWidth write SetToolTipWidth;
@@ -1063,11 +1070,13 @@ type
     function GetGroup: string;
     procedure SetGroup(pStrGroupName: string = '');
     function IsSelected: Boolean;
-    procedure Selected(bSelected: Boolean; bTriggerEvent: Boolean = True);
+    procedure _Selected(bSelected: Boolean; bTriggerEvent: Boolean = True);
     function EstimateSize(szAvailable: TSize): TSize;
     procedure SetAttribute(pstrName: string; pstrValue: string);
     procedure PaintStatusImage(hDC: HDC);
     procedure PaintText(hDC: HDC);
+  private
+    procedure SetSelected(const Value: Boolean);
   public
     property SelectedImage: string read GetSelectedImage write SetSelectedImage;
     property SelectedHotImage: string read GetSelectedHotImage write SetSelectedHotImage;
@@ -1075,7 +1084,7 @@ type
     property SelectedBkColor: DWORD read GetSelectBkColor write SetSelectedBkColor;
     property ForeImage: string read GetForeImage write SetForeImage;
     property Group: string read GetGroup write SetGroup;
-    property Selected: Boolean read IsSelected;// write _Selected;
+    property Selected: Boolean read IsSelected write SetSelected;
   end;
 
   CCheckBoxUI = class(COptionUI)
@@ -1852,6 +1861,7 @@ procedure Delphi_ControlUI_SetAttribute(Handle: CControlUI; pstrName: LPCTSTR; p
 function Delphi_ControlUI_ApplyAttributeList(Handle: CControlUI; pstrList: LPCTSTR): CControlUI; cdecl;
 procedure Delphi_ControlUI_EstimateSize(Handle: CControlUI; szAvailable: TSize; var Result: TSize); cdecl;
 procedure Delphi_ControlUI_DoPaint(Handle: CControlUI; hDC: HDC; var rcPaint: TRect); cdecl;
+procedure Delphi_ControlUI_Paint(Handle: CControlUI; hDC: HDC; var rcPaint: TRect); cdecl;
 procedure Delphi_ControlUI_PaintBkColor(Handle: CControlUI; hDC: HDC); cdecl;
 procedure Delphi_ControlUI_PaintBkImage(Handle: CControlUI; hDC: HDC); cdecl;
 procedure Delphi_ControlUI_PaintStatusImage(Handle: CControlUI; hDC: HDC); cdecl;
@@ -1950,6 +1960,10 @@ function Delphi_PaintManagerUI_GetHSL(H: PShort; S: PShort; L: PShort): Boolean;
 procedure Delphi_PaintManagerUI_ReloadSkin; cdecl;
 function Delphi_PaintManagerUI_LoadPlugin(pstrModuleName: LPCTSTR): Boolean; cdecl;
 function Delphi_PaintManagerUI_GetPlugins: CStdPtrArray; cdecl;
+function Delphi_PaintManagerUI_IsForceUseSharedRes(Handle: CPaintManagerUI): Boolean; cdecl;
+procedure Delphi_PaintManagerUI_SetForceUseSharedRes(Handle: CPaintManagerUI; bForce: Boolean); cdecl;
+function Delphi_PaintManagerUI_IsPainting(Handle: CPaintManagerUI): Boolean; cdecl;
+procedure Delphi_PaintManagerUI_SetPainting(Handle: CPaintManagerUI; bIsPainting: Boolean); cdecl;
 function Delphi_PaintManagerUI_GetDefaultDisabledColor(Handle: CPaintManagerUI): DWORD; cdecl;
 procedure Delphi_PaintManagerUI_SetDefaultDisabledColor(Handle: CPaintManagerUI; dwColor: DWORD; bShared: Boolean); cdecl;
 function Delphi_PaintManagerUI_GetDefaultFontColor(Handle: CPaintManagerUI): DWORD; cdecl;
@@ -3391,6 +3405,11 @@ end;
 
 { CControlUI }
 
+function CControlUI.ClassName: string;
+begin
+  Result := GetClass;
+end;
+
 class function CControlUI.CppCreate: CControlUI;
 begin
   Result := Delphi_ControlUI_CppCreate;
@@ -3941,6 +3960,11 @@ begin
   Delphi_ControlUI_DoPaint(Self, hDC, rcPaint);
 end;
 
+procedure CControlUI.Paint(hDC: HDC; var rcPaint: TRect);
+begin
+  Delphi_ControlUI_Paint(Self, hDC, rcPaint);
+end;
+
 procedure CControlUI.PaintBkColor(hDC: HDC);
 begin
   Delphi_ControlUI_PaintBkColor(Self, hDC);
@@ -4405,6 +4429,26 @@ end;
 class function CPaintManagerUI.GetPlugins: CStdPtrArray;
 begin
   Result := Delphi_PaintManagerUI_GetPlugins;
+end;
+
+function CPaintManagerUI.IsForceUseSharedRes: Boolean;
+begin
+  Result := Delphi_PaintManagerUI_IsForceUseSharedRes(Self);
+end;
+
+procedure CPaintManagerUI.SetForceUseSharedRes(bForce: Boolean);
+begin
+  Delphi_PaintManagerUI_SetForceUseSharedRes(Self, bForce);
+end;
+
+function CPaintManagerUI.IsPainting: Boolean;
+begin
+  Result := Delphi_PaintManagerUI_IsPainting(Self);
+end;
+
+procedure CPaintManagerUI.SetPainting(bIsPainting: Boolean);
+begin
+  Delphi_PaintManagerUI_SetPainting(Self, bIsPainting);
 end;
 
 function CPaintManagerUI.GetDefaultDisabledColor: DWORD;
@@ -6325,6 +6369,11 @@ begin
   Result := Delphi_OptionUI_GetSelectedTextColor(Self);
 end;
 
+procedure COptionUI.SetSelected(const Value: Boolean);
+begin
+  _Selected(Value);
+end;
+
 procedure COptionUI.SetSelectedBkColor(dwBkColor: DWORD);
 begin
   Delphi_OptionUI_SetSelectedBkColor(Self, dwBkColor);
@@ -6360,7 +6409,7 @@ begin
   Result := Delphi_OptionUI_IsSelected(Self);
 end;
 
-procedure COptionUI.Selected(bSelected: Boolean; bTriggerEvent: Boolean);
+procedure COptionUI._Selected(bSelected: Boolean; bTriggerEvent: Boolean);
 begin
   Delphi_OptionUI_Selected(Self, bSelected, bTriggerEvent);
 end;
@@ -9064,6 +9113,7 @@ procedure Delphi_ControlUI_SetAttribute; external DuiLibdll name 'Delphi_Control
 function Delphi_ControlUI_ApplyAttributeList; external DuiLibdll name 'Delphi_ControlUI_ApplyAttributeList';
 procedure Delphi_ControlUI_EstimateSize; external DuiLibdll name 'Delphi_ControlUI_EstimateSize';
 procedure Delphi_ControlUI_DoPaint; external DuiLibdll name 'Delphi_ControlUI_DoPaint';
+procedure Delphi_ControlUI_Paint; external DuiLibdll name 'Delphi_ControlUI_Paint';
 procedure Delphi_ControlUI_PaintBkColor; external DuiLibdll name 'Delphi_ControlUI_PaintBkColor';
 procedure Delphi_ControlUI_PaintBkImage; external DuiLibdll name 'Delphi_ControlUI_PaintBkImage';
 procedure Delphi_ControlUI_PaintStatusImage; external DuiLibdll name 'Delphi_ControlUI_PaintStatusImage';
@@ -9161,6 +9211,10 @@ function Delphi_PaintManagerUI_GetHSL; external DuiLibdll name 'Delphi_PaintMana
 procedure Delphi_PaintManagerUI_ReloadSkin; external DuiLibdll name 'Delphi_PaintManagerUI_ReloadSkin';
 function Delphi_PaintManagerUI_LoadPlugin; external DuiLibdll name 'Delphi_PaintManagerUI_LoadPlugin';
 function Delphi_PaintManagerUI_GetPlugins; external DuiLibdll name 'Delphi_PaintManagerUI_GetPlugins';
+function Delphi_PaintManagerUI_IsForceUseSharedRes; external DuiLibdll name 'Delphi_PaintManagerUI_IsForceUseSharedRes';
+procedure Delphi_PaintManagerUI_SetForceUseSharedRes; external DuiLibdll name 'Delphi_PaintManagerUI_SetForceUseSharedRes';
+function Delphi_PaintManagerUI_IsPainting; external DuiLibdll name 'Delphi_PaintManagerUI_IsPainting';
+procedure Delphi_PaintManagerUI_SetPainting; external DuiLibdll name 'Delphi_PaintManagerUI_SetPainting';
 function Delphi_PaintManagerUI_GetDefaultDisabledColor; external DuiLibdll name 'Delphi_PaintManagerUI_GetDefaultDisabledColor';
 procedure Delphi_PaintManagerUI_SetDefaultDisabledColor; external DuiLibdll name 'Delphi_PaintManagerUI_SetDefaultDisabledColor';
 function Delphi_PaintManagerUI_GetDefaultFontColor; external DuiLibdll name 'Delphi_PaintManagerUI_GetDefaultFontColor';

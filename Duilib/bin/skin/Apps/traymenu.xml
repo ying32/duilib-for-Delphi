@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window size="121,40">
+    <VerticalLayout bkimage="file=&apos;menubordernormal.png&apos; corner=&apos;6,6,6,6&apos;">
+        <List itemtextcolor="#FF000000" itemselectedtextcolor="#FF000000" itemselectedbkcolor="#FFC1E3FF" itemhottextcolor="#FF000000" itemhotbkcolor="#FFE9F5FF" itemdisabledtextcolor="#FFCCCCCC" itemdisabledbkcolor="#FFFFFFFF" itembkimage="file=&apos;menuitemnormal.png&apos; corner=&apos;2,2,2,2&apos;" itemselectedimage="file=&apos;menuitempressed.png&apos; corner=&apos;2,2,2,2&apos;" itemhotimage="file=&apos;menuitemhover.png&apos; corner=&apos;2,2,2,2&apos;" itemdisabledimage="file=&apos;menuitemdisabled.png&apos; corner=&apos;2,2,2,2&apos;" header="hidden" inset="8,8,8,8">
+            <ListContainerElement name="menu_exit" height="25" inset="30,0,0,0">
+                <Label text="退出" mouse="false" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" />
+            </ListContainerElement>
+        </List>
+    </VerticalLayout>
+</Window>

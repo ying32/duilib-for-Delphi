@@ -1,6 +1,5 @@
-当前duilib版本为 2015/12/3 15:22:32由wangchyz提交
+当前duilib版本为 2015/12/10 22:33:50由wangchyz提交
 
- 
 
 原Duilib几个需要修改的地方
 UIMarkup.h 行72
