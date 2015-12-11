@@ -769,6 +769,19 @@ type
     procedure EnableScrollBar(bEnableVertical: Boolean = True; bEnableHorizontal: Boolean = False);
     function GetVerticalScrollBar: CScrollBarUI;
     function GetHorizontalScrollBar: CScrollBarUI;
+  private
+    function GetLastItem: CControlUI;
+    procedure _SetItemIndex(pControl: CControlUI; const Value: Integer);
+  public
+    property Count: Integer read GetCount;
+    property ChildPadding: Integer read GetChildPadding write SetChildPadding;
+    property Items[iIndex: Integer]: CControlUI read GetItemAt;
+    property ItemIndex[pControl: CControlUI]: Integer read GetItemIndex write _SetItemIndex;
+    property LastItem: CControlUI read GetLastItem;
+    property Inset: TRect read GetInset write SetInset;
+    property AutoDestroy: Boolean read IsAutoDestroy write SetAutoDestroy;
+    property DelayedDestroy: Boolean read IsDelayedDestroy write SetDelayedDestroy;
+    property MouseChildEnabled: Boolean read IsMouseChildEnabled write SetMouseChildEnabled;
   end;
 
   CVerticalLayoutUI = class(CContainerUI)
@@ -1062,7 +1075,7 @@ type
     property SelectedBkColor: DWORD read GetSelectBkColor write SetSelectedBkColor;
     property ForeImage: string read GetForeImage write SetForeImage;
     property Group: string read GetGroup write SetGroup;
-    //property Selected: Boolean read IsSelected write _Selected;
+    property Selected: Boolean read IsSelected;// write _Selected;
   end;
 
   CCheckBoxUI = class(COptionUI)
@@ -1619,6 +1632,19 @@ type
     procedure SetColumns(nCols: Integer);
     procedure SetAttribute(pstrName: string; pstrValue: string);
   end;
+
+
+  CNativeControlUI = class(CContainerUI)
+  public
+    class function CppCreate(hWnd: HWND): CNativeControlUI;
+    procedure CppDestroy;
+    procedure SetInternVisible(bVisible: Boolean = True);
+    procedure SetPos(rc: TRect; bNeedInvalidate: Boolean);
+    function GetClass: string;
+    function GetText: string;
+    procedure SetText(pstrText: string);
+  end;
+
 
 //================================CStdStringPtrMap============================
 
@@ -2890,6 +2916,16 @@ procedure Delphi_TileLayoutUI_SetItemSize(Handle: CTileLayoutUI; szItem: TSize);
 function Delphi_TileLayoutUI_GetColumns(Handle: CTileLayoutUI): Integer; cdecl;
 procedure Delphi_TileLayoutUI_SetColumns(Handle: CTileLayoutUI; nCols: Integer); cdecl;
 procedure Delphi_TileLayoutUI_SetAttribute(Handle: CTileLayoutUI; pstrName: LPCTSTR; pstrValue: LPCTSTR); cdecl;
+
+//================================CNativeControlUI============================
+
+function Delphi_NativeControlUI_CppCreate(hWnd: HWND): CNativeControlUI; cdecl;
+procedure Delphi_NativeControlUI_CppDestroy(Handle: CNativeControlUI); cdecl;
+procedure Delphi_NativeControlUI_SetInternVisible(Handle: CNativeControlUI; bVisible: Boolean); cdecl;
+procedure Delphi_NativeControlUI_SetPos(Handle: CNativeControlUI; rc: TRect; bNeedInvalidate: Boolean); cdecl;
+function Delphi_NativeControlUI_GetClass(Handle: CNativeControlUI): LPCTSTR; cdecl;
+function Delphi_NativeControlUI_GetText(Handle: CNativeControlUI): CDuiString; cdecl;
+procedure Delphi_NativeControlUI_SetText(Handle: CNativeControlUI; pstrText: LPCTSTR); cdecl;
 
 implementation
 
@@ -4946,6 +4982,11 @@ begin
   Result := Delphi_ContainerUI_GetItemIndex(Self, pControl);
 end;
 
+function CContainerUI.GetLastItem: CControlUI;
+begin
+  Result := Items[Count - 1];
+end;
+
 function CContainerUI.SetItemIndex(pControl: CControlUI; iIndex: Integer): Boolean;
 begin
   Result := Delphi_ContainerUI_SetItemIndex(Self, pControl, iIndex);
@@ -4989,6 +5030,12 @@ end;
 procedure CContainerUI.SetVisible(bVisible: Boolean);
 begin
   Delphi_ContainerUI_SetVisible(Self, bVisible);
+end;
+
+procedure CContainerUI._SetItemIndex(pControl: CControlUI;
+  const Value: Integer);
+begin
+  SetItemIndex(pControl, Value);
 end;
 
 procedure CContainerUI.SetInternVisible(bVisible: Boolean);
@@ -8774,6 +8821,42 @@ begin
   Delphi_TileLayoutUI_SetAttribute(Self, LPCTSTR(pstrName), LPCTSTR(pstrValue));
 end;
 
+{ CNativeControlUI }
+
+class function CNativeControlUI.CppCreate(hWnd: HWND): CNativeControlUI;
+begin
+  Result := Delphi_NativeControlUI_CppCreate(hWnd);
+end;
+
+procedure CNativeControlUI.CppDestroy;
+begin
+  Delphi_NativeControlUI_CppDestroy(Self);
+end;
+
+procedure CNativeControlUI.SetInternVisible(bVisible: Boolean);
+begin
+  Delphi_NativeControlUI_SetInternVisible(Self, bVisible);
+end;
+
+procedure CNativeControlUI.SetPos(rc: TRect; bNeedInvalidate: Boolean);
+begin
+  Delphi_NativeControlUI_SetPos(Self, rc, bNeedInvalidate);
+end;
+
+function CNativeControlUI.GetClass: string;
+begin
+  Result := Delphi_NativeControlUI_GetClass(Self);
+end;
+
+function CNativeControlUI.GetText: string;
+begin
+  Result := Delphi_NativeControlUI_GetText(Self);
+end;
+
+procedure CNativeControlUI.SetText(pstrText: string);
+begin
+  Delphi_NativeControlUI_SetText(Self, LPCTSTR(pstrText));
+end;
 
 //================================CStdStringPtrMap============================
 
@@ -10039,5 +10122,14 @@ procedure Delphi_TileLayoutUI_SetColumns; external DuiLibdll name 'Delphi_TileLa
 procedure Delphi_TileLayoutUI_SetAttribute; external DuiLibdll name 'Delphi_TileLayoutUI_SetAttribute';
 
 
+//================================CNativeControlUI============================
+
+function Delphi_NativeControlUI_CppCreate; external DuiLibdll name 'Delphi_NativeControlUI_CppCreate';
+procedure Delphi_NativeControlUI_CppDestroy; external DuiLibdll name 'Delphi_NativeControlUI_CppDestroy';
+procedure Delphi_NativeControlUI_SetInternVisible; external DuiLibdll name 'Delphi_NativeControlUI_SetInternVisible';
+procedure Delphi_NativeControlUI_SetPos; external DuiLibdll name 'Delphi_NativeControlUI_SetPos';
+function Delphi_NativeControlUI_GetClass; external DuiLibdll name 'Delphi_NativeControlUI_GetClass';
+function Delphi_NativeControlUI_GetText; external DuiLibdll name 'Delphi_NativeControlUI_GetText';
+procedure Delphi_NativeControlUI_SetText; external DuiLibdll name 'Delphi_NativeControlUI_SetText';
 
 end.
