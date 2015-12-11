@@ -750,6 +750,18 @@ type
     procedure EnableScrollBar(bEnableVertical: Boolean = True; bEnableHorizontal: Boolean = False);
     function GetVerticalScrollBar: CScrollBarUI;
     function GetHorizontalScrollBar: CScrollBarUI;
+  private
+    function GetLastItem: CControlUI;
+  public
+    property Count: Integer read GetCount;
+    property ChildPadding: Integer read GetChildPadding write SetChildPadding;
+    property Items[iIndex: Integer]: CControlUI read GetItemAt;
+    property ItemIndex[pControl: CControlUI]: Integer read GetItemIndex write SetItemIndex;
+    property LastItem: CControlUI read GetLastItem;
+    property Inset: TRect read GetInset write SetInset;
+    property AutoDestroy: Boolean read IsAutoDestroy write SetAutoDestroy;
+    property DelayedDestroy: Boolean read IsDelayedDestroy write SetDelayedDestroy;
+    property MouseChildEnabled: Boolean read IsMouseChildEnabled write SetMouseChildEnabled;
   end;
 
   CVerticalLayoutUI = class(CContainerUI)
@@ -4785,6 +4797,11 @@ end;
 function CContainerUI.GetItemIndex(pControl: CControlUI): Integer;
 begin
   Result := Delphi_ContainerUI_GetItemIndex(Self, pControl);
+end;
+
+function CContainerUI.GetLastItem: CControlUI;
+begin
+  Result := Items[Count - 1];
 end;
 
 function CContainerUI.SetItemIndex(pControl: CControlUI; iIndex: Integer): Boolean;
