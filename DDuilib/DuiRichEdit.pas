@@ -23,8 +23,6 @@ type
 
   CRichEditUI = class(CContainerUI)
   private
-    function _Redo: Boolean;
-    function _Undo: Boolean;
     function _GetText: string;
     procedure _SetText(const Value: string);
     function _GetTextLength: Integer;
@@ -46,6 +44,8 @@ type
     procedure SetWantReturn(bWantReturn: Boolean = True);
     function IsWantCtrlReturn: Boolean;
     procedure SetWantCtrlReturn(bWantCtrlReturn: Boolean = True);
+    function IsTransparent: Boolean;
+    procedure SetTransparent(bTransparent: Boolean = True);
     function IsRich: Boolean;
     procedure SetRich(bRich: Boolean = True);
     function IsReadOnly: Boolean;
@@ -99,6 +99,8 @@ type
     procedure Copy;
     procedure Cut;
     procedure Paste;
+    function Redo: Boolean;
+    function Undo: Boolean;
     function GetLineCount: Integer;
     function GetLine(nIndex: Integer; nMaxLength: Integer): string;
     function LineIndex(nLine: Integer = -1): Integer;
@@ -139,8 +141,6 @@ type
     procedure SetAttribute(pstrName: string; pstrValue: string);
   public
     property DefaultCharFormat: TCharFormat2 read _GetDefaultCharFormat write _SetDefaultCharFormat;
-    property Redo: Boolean read _Redo;
-    property Undo: Boolean read _Undo;
     property Rich: Boolean read IsRich write SetRich;
     property WordWrap: Boolean read GetWordWrap write SetWordWrap;
     property WinStyle: LONG read GetWinStyle write SetWinStyle;
@@ -151,6 +151,7 @@ type
     property ReadOnly: Boolean read IsReadOnly write SetReadOnly;
     property LimitText: Integer read GetLimitText write SetLimitText;
     property Text: string read _GetText write _SetText;
+    property Transparent: Boolean read IsTransparent write SetTransparent;
     property Modify: Boolean read GetModify write SetModify;
     property Length: Integer read _GetTextLength;
     property SelText: string read _GetSelText;
@@ -174,6 +175,8 @@ function Delphi_RichEditUI_IsWantReturn(Handle: CRichEditUI): Boolean; cdecl;
 procedure Delphi_RichEditUI_SetWantReturn(Handle: CRichEditUI; bWantReturn: Boolean); cdecl;
 function Delphi_RichEditUI_IsWantCtrlReturn(Handle: CRichEditUI): Boolean; cdecl;
 procedure Delphi_RichEditUI_SetWantCtrlReturn(Handle: CRichEditUI; bWantCtrlReturn: Boolean); cdecl;
+function Delphi_RichEditUI_IsTransparent(Handle: CRichEditUI): Boolean; cdecl;
+procedure Delphi_RichEditUI_SetTransparent(Handle: CRichEditUI; bTransparent: Boolean); cdecl;
 function Delphi_RichEditUI_IsRich(Handle: CRichEditUI): Boolean; cdecl;
 procedure Delphi_RichEditUI_SetRich(Handle: CRichEditUI; bRich: Boolean); cdecl;
 function Delphi_RichEditUI_IsReadOnly(Handle: CRichEditUI): Boolean; cdecl;
@@ -326,6 +329,16 @@ end;
 procedure CRichEditUI.SetWantCtrlReturn(bWantCtrlReturn: Boolean);
 begin
   Delphi_RichEditUI_SetWantCtrlReturn(Self, bWantCtrlReturn);
+end;
+
+function CRichEditUI.IsTransparent: Boolean;
+begin
+  Result := Delphi_RichEditUI_IsTransparent(Self);
+end;
+
+procedure CRichEditUI.SetTransparent(bTransparent: Boolean);
+begin
+  Delphi_RichEditUI_SetTransparent(Self, bTransparent);
 end;
 
 function CRichEditUI.IsRich: Boolean;
@@ -598,7 +611,7 @@ begin
   Result := GetTextRange(nStart, nEnd);
 end;
 
-function CRichEditUI._Redo: Boolean;
+function CRichEditUI.Redo: Boolean;
 begin
   Result := Delphi_RichEditUI_Redo(Self);
 end;
@@ -626,7 +639,7 @@ begin
   SetText(PChar(Value));
 end;
 
-function CRichEditUI._Undo: Boolean;
+function CRichEditUI.Undo: Boolean;
 begin
   Result := Delphi_RichEditUI_Undo(Self);
 end;
@@ -854,6 +867,8 @@ function Delphi_RichEditUI_IsWantReturn; external DuiLibdll name 'Delphi_RichEdi
 procedure Delphi_RichEditUI_SetWantReturn; external DuiLibdll name 'Delphi_RichEditUI_SetWantReturn';
 function Delphi_RichEditUI_IsWantCtrlReturn; external DuiLibdll name 'Delphi_RichEditUI_IsWantCtrlReturn';
 procedure Delphi_RichEditUI_SetWantCtrlReturn; external DuiLibdll name 'Delphi_RichEditUI_SetWantCtrlReturn';
+function Delphi_RichEditUI_IsTransparent; external DuiLibdll name 'Delphi_RichEditUI_IsTransparent';
+procedure Delphi_RichEditUI_SetTransparent; external DuiLibdll name 'Delphi_RichEditUI_SetTransparent';
 function Delphi_RichEditUI_IsRich; external DuiLibdll name 'Delphi_RichEditUI_IsRich';
 procedure Delphi_RichEditUI_SetRich; external DuiLibdll name 'Delphi_RichEditUI_SetRich';
 function Delphi_RichEditUI_IsReadOnly; external DuiLibdll name 'Delphi_RichEditUI_IsReadOnly';

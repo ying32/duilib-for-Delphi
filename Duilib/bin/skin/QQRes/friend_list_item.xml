@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window>
+  <ListContainerElement>
+    <VerticalLayout>
+      <VerticalLayout height="32">
+        <HorizontalLayout>
+          <VerticalLayout name="logo_container" width="50">
+            <Button name="logo" width="32" height="32" />
+          </VerticalLayout>
+          <VerticalLayout >
+            <HorizontalLayout>
+              <Label name="nickname" bordersize="0" width="120" textcolor="#FF000000" disabledtextcolor="#FF808080" />
+              <Label name="description" bordersize="0" textcolor="#FF808080" />
+            </HorizontalLayout>
+          </VerticalLayout>
+        </HorizontalLayout>
+      </VerticalLayout>
+      <VerticalLayout name="operation" height="18" visible="false">
+        <HorizontalLayout width="72" padding="40, 0, 0, 0">
+          <Button bkimage="file='friend_circle.png' mask='0xffffffff'" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file='friend_circle.png' mask='0xffffffff'" hotimage="file='allbtn_over.png' corner='2,2,2,2' mask='0xffffffff'" pushedimage="file='allbtn_down.png' corner='2,2,2,2'  mask='0xffffffff'" />
+          <Button bkimage="file='mail.png' mask='0xffffffff'" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file='mail.png' mask='0xffffffff'" hotimage="file='allbtn_over.png' corner='2,2,2,2' mask='0xffffffff'" pushedimage="file='allbtn_down.png' corner='2,2,2,2'  mask='0xffffffff'" />
+          <Button bkimage="file='MainPanelServiceBarExt_XiaoYou.png' mask='0xffffffff'" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file='MainPanelServiceBarExt_XiaoYou.png' mask='0xffffffff'" hotimage="file='allbtn_over.png' mask='0xffffffff'" pushedimage="file='allbtn_down.png' mask='0xffffffff'" />
+          <Button bkimage="file='soso.png' mask='0xffffffff'" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file='soso.png' mask='0xffffffff'" hotimage="file='allbtn_over.png' corner='2,2,2,2' mask='0xffffffff'" pushedimage="file='allbtn_down.png' corner='2,2,2,2'  mask='0xffffffff'" />
+        </HorizontalLayout>
+      </VerticalLayout >
+    </VerticalLayout>
+  </ListContainerElement>
+</Window>

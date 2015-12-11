@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window size="268,130" caption="0,0,0,25" roundcorner="3,3">
+    <Font name="微软雅黑" size="13" bold="false" italic="false" />
+    <HorizontalLayout name="bg" bkimage="file=&apos;{00000000-0000-0000-0000-00000000000f}.jpg&apos; corner=&apos;780,620,1,1&apos;">
+        <VerticalLayout bkimage="file=&apos;mainwindow.png&apos; corner=&apos;1,1,1,1&apos; hole=&apos;true&apos;">
+            <HorizontalLayout height="25">
+                <VerticalLayout height="25">
+                    <Label text="修改信息" float="true" pos="7,3,0,0" width="124" height="18" textcolor="#00FFFBF0" disabledtextcolor="#FFA7A6AA" font="0" />
+                </VerticalLayout>
+                <VerticalLayout width="80" height="25">
+                    <Button name="closebtn" float="true" pos="48,0,0,0" width="32" height="18" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;titlebuttonclose.png&apos; source=&apos;0,0,32,18&apos;" hotimage="file=&apos;titlebuttonclose.png&apos; source=&apos;0,18,32,36&apos;" pushedimage="file=&apos;titlebuttonclose.png&apos; source=&apos;0,54,32,72&apos;" />
+                </VerticalLayout>
+            </HorizontalLayout>
+            <Label text="标题：" float="true" pos="26,44,0,0" width="44" height="22" textcolor="#00FFFBF0" disabledtextcolor="#FFA7A6AA" font="0" />
+            <Edit name="edtTitle" float="true" pos="75,44,0,0" width="167" height="22" bkcolor="#FFFFFFFF" menu="true" textpadding="4,3,4,3" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" font="0" />
+            <Button name="btnOK" text="确定" float="true" pos="179,93,0,0" width="68" height="22" textcolor="#00FFFFFF" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;buttonbasenormal.png&apos; corner=&apos;1,1,1,1&apos;" hotimage="file=&apos;buttonbasehover.png&apos; corner=&apos;1,1,1,1&apos;" pushedimage="file=&apos;buttonbasepressed.png&apos; corner=&apos;1,1,1,1&apos;" focusedimage="file=&apos;buttonbasefocus.png&apos; corner=&apos;1,1,1,1&apos;" disabledimage="file=&apos;buttonbasedisabled.png&apos; corner=&apos;1,1,1,1&apos;" />
+        </VerticalLayout>
+    </HorizontalLayout>
+</Window>

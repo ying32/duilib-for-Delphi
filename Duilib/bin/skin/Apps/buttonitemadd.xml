@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window>
+    <VerticalLayout name="addappLayout" width="80" height="80">
+        <HorizontalLayout />
+        <HorizontalLayout height="48">
+            <VerticalLayout />
+            <VerticalLayout width="48" height="48" bkimage="addapplication.png">
+                <Button name="btnaddapp" float="true" pos="0,0,0,0" width="48" height="48" normalimage="addapplication.png" hotimage="applicationbackgournd.png" />
+            </VerticalLayout>
+            <VerticalLayout />
+        </HorizontalLayout>
+        <HorizontalLayout />
+    </VerticalLayout>
+</Window>

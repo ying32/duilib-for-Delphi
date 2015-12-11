@@ -1356,6 +1356,22 @@ DIRECTUILIB_API CStdPtrArray* Delphi_PaintManagerUI_GetPlugins() {
     return CPaintManagerUI::GetPlugins();
 }
 
+DIRECTUILIB_API bool Delphi_PaintManagerUI_IsForceUseSharedRes(CPaintManagerUI* handle) {
+	return handle->IsForceUseSharedRes();
+}
+
+DIRECTUILIB_API void Delphi_PaintManagerUI_SetForceUseSharedRes(CPaintManagerUI* handle, bool bForce) {
+	handle->SetForceUseSharedRes(bForce);
+}
+
+DIRECTUILIB_API bool Delphi_PaintManagerUI_IsPainting(CPaintManagerUI* handle) {
+	return handle->IsPainting();
+}
+
+DIRECTUILIB_API void Delphi_PaintManagerUI_SetPainting(CPaintManagerUI* handle, bool bIsPainting) {
+	handle->SetPainting(bIsPainting);
+}
+
 DIRECTUILIB_API DWORD Delphi_PaintManagerUI_GetDefaultDisabledColor(CPaintManagerUI* handle) {
     return handle->GetDefaultDisabledColor();
 }
@@ -3693,6 +3709,14 @@ DIRECTUILIB_API void Delphi_RichEditUI_SetWantCtrlReturn(CRichEditUI* handle ,bo
     handle->SetWantCtrlReturn(bWantCtrlReturn);
 }
 
+DIRECTUILIB_API bool Delphi_RichEditUI_IsTransparent(CRichEditUI* handle) {
+	return handle->IsTransparent();
+}
+
+DIRECTUILIB_API void Delphi_RichEditUI_SetTransparent(CRichEditUI* handle, bool bTransparent) {
+	handle->SetTransparent(bTransparent);
+}
+
 DIRECTUILIB_API bool Delphi_RichEditUI_IsRich(CRichEditUI* handle) {
     return handle->IsRich();
 }
@@ -4043,6 +4067,10 @@ DIRECTUILIB_API void Delphi_RichEditUI_EndRight(CRichEditUI* handle) {
 
 DIRECTUILIB_API void Delphi_RichEditUI_EstimateSize(CRichEditUI* handle ,SIZE szAvailable, SIZE& Result) {
     Result = handle->EstimateSize(szAvailable);
+}
+
+DIRECTUILIB_API void Delphi_ControlUI_Paint(CControlUI* handle, HDC hDC, RECT& rcPaint) {
+	handle->Paint(hDC, rcPaint);
 }
 
 DIRECTUILIB_API void Delphi_RichEditUI_SetPos(CRichEditUI* handle ,RECT rc, bool bNeedInvalidate) {
