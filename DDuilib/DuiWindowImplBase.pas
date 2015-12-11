@@ -17,12 +17,15 @@ interface
 uses
   Windows,
   Messages,
+  Types,
   Generics.Collections,
   SysUtils,
   DuiBase,
+  DuiConst,
   Duilib;
 
 type
+  TDuiWindowImplBaseClass = class of TDuiWindowImplBase;
 
   TDuiWindowImplBase = class(TDuiBase<CDelphi_WindowImplBase>)
   private
@@ -31,6 +34,15 @@ type
     FPaintManagerUI: CPaintManagerUI;
     function GetHandle: HWND;
     function GetInitSize: TSize;
+    function GetScreenSize: TSize;
+    function GetWorkAreaRect: TRect;
+    function GetMousePos: TPoint;
+    function GetClientRect: TRect;
+    function GetHeight: Integer;
+    function GetLeft: Integer;
+    function GetTop: Integer;
+    function GetWidth: Integer;
+    procedure SetParentHandle(const Value: HWND);
   protected
     // 回调函数
     procedure DUI_InitWindow; cdecl;
@@ -55,12 +67,15 @@ type
   public
     procedure Show;
     procedure Hide;
-    function ShowModal: UINT;
+    function ShowModal: Integer;
     procedure CenterWindow;
     procedure Close;
     procedure CreateDuiWindow(AParent: HWND; ATitle: string);
-    procedure CreateWindow(hwndParent: HWND; ATitle: string; dwStyle: DWORD; dwExStyle: DWORD; const rc: TRect; hMenu: HMENU); overload;
-    procedure CreateWindow(hwndParent: HWND; ATitle: string; dwStyle: DWORD; dwExStyle: DWORD; x: Integer = Integer(CW_USEDEFAULT); y: Integer = Integer(CW_USEDEFAULT); cx: Integer = Integer(CW_USEDEFAULT); cy: Integer = Integer(CW_USEDEFAULT); hMenu: HMENU = 0); overload;
+    procedure CreateWindow(hwndParent: HWND; ATitle: string; dwStyle: DWORD; dwExStyle: DWORD;
+       const rc: TRect; hMenu: HMENU); overload;
+    procedure CreateWindow(hwndParent: HWND; ATitle: string; dwStyle: DWORD; dwExStyle: DWORD;
+       x: Integer = Integer(CW_USEDEFAULT); y: Integer = Integer(CW_USEDEFAULT);
+       cx: Integer = Integer(CW_USEDEFAULT); cy: Integer = Integer(CW_USEDEFAULT); hMenu: HMENU = 0); overload;
     procedure SetClassStyle(nStyle: UINT);
     procedure SetIcon(nRes: UINT);
     function FindControl(const AName: string): CControlUI; overload;
@@ -71,33 +86,54 @@ type
     procedure Maximize;
     procedure RemoveThisInPaintManager;
   public
+    constructor Create; overload;
     constructor Create(ASkinFile, ASkinFolder, AZipFileName: string; ARType: TResourceType); overload;
     constructor Create(ASkinFile, ASkinFolder: string; ARType: TResourceType); overload;
     constructor Create(ASkinFile, ASkinFolder: string);  overload;
     constructor Create(ASkinFile, ASkinFolder, AZipFileName: string); overload;
     destructor Destroy; override;
     procedure OnReceive(Param: Pointer); virtual;
+    procedure ShowMessage(const Fmt: string; Args: array of const); overload;
+    procedure ShowMessage(const Msg: string); overload;
   public
+    property Left: Integer read GetLeft;
+    property Top: Integer read GetTop;
+    property Width: Integer read GetWidth;
+    property Height: Integer read GetHeight;
+    property ClientRect: TRect read GetClientRect;
     property Handle: HWND read GetHandle;
-    property ParentHandle: HWND read FParentHandle;
+    property ParentHandle: HWND read FParentHandle write SetParentHandle;
     property PaintManagerUI: CPaintManagerUI read FPaintManagerUI;
     property InitSize: TSize read GetInitSize;
+    property ScreenSize: TSize read GetScreenSize;
+    property WorkAreaRect: TRect read GetWorkAreaRect;
+    property MousePos: TPoint read GetMousePos;
   end;
 
-
-
-  TDuiWindowImplList = TObjectList<TDuiWindowImplBase>;
+  TSimplePopupMenu = class(TDuiWindowImplBase)
+  private
+    FLostFocusFree: Boolean;
+    procedure Popup(X: Integer = -1; Y: Integer = -1);
+  protected
+    FParentPaintManager: CPaintManagerUI;
+    FMsg: string;
+    procedure DoNotify(var Msg: TNotifyUI); override;
+    procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
+    procedure DoInitWindow; override;
+    procedure DoFinalMessage(hWd: HWND); override;
+  public
+    constructor Create(ASkinFile, ASkinFolder, AZipFileName: string; ARType: TResourceType;
+       const AParentPaintManager: CPaintManagerUI; const AMsg: string; ALostFocusFree: Boolean = True);
+    destructor Destroy; override;
+  public
+    property Msg: string read FMsg;
+  end;
 
   TDuiApplication = class
-  private
-    FList: TDuiWindowImplList;
   public
     procedure Initialize;
     procedure Run;
     procedure Terminate;
-    // 先写好，以后有用的吧
-//    procedure AddDuiWindow(AWindow: TDuiWindowImplBase);
-//    procedure RemoveWindow(AWindow: TDuiWindowImplBase);
   public
     constructor Create;
     destructor Destroy; override;
@@ -107,36 +143,18 @@ type
 var
   DuiApplication: TDuiApplication;
 
-
 implementation
 
 { TWindowImplBase }
 
 constructor TDuiWindowImplBase.Create(ASkinFile, ASkinFolder, AZipFileName: string; ARType: TResourceType);
 begin
-  inherited Create;
-  FThis := CDelphi_WindowImplBase.CppCreate;
-  FPaintManagerUI := FThis.GetPaintManagerUI;
-
+  Create;
   FThis.SetClassName(ClassName);
   FThis.SetSkinFile(ASkinFile);
   FThis.SetSkinFolder(ASkinFolder);
   FThis.SetZipFileName('');
   FThis.SetResourceType(ARType);
-
-  FThis.SetDelphiSelf(Self);
-  FThis.SetInitWindow(GetMethodAddr('DUI_InitWindow'));
-  FThis.SetClick(GetMethodAddr('DUI_Click'));
-  FThis.SetNotify(GetMethodAddr('DUI_Notify'));
-  FThis.SetMessageHandler(GetMethodAddr('DUI_MessageHandler'));
-  FThis.SetFinalMessage(GetMethodAddr('DUI_FinalMessage'));
-  FThis.SetHandleMessage(GetMethodAddr('DUI_HandleMessage'));
-  FThis.SetHandleCustomMessage(GetMethodAddr('DUI_HandleCustomMessage'));
-  FThis.SetCreateControl(GetMethodAddr('DUI_CreateControl'));
-  FThis.SetGetItemText(GetMethodAddr('DUI_GetItemText'));
-
-//  if Assigned(DuiApplication) then
-//    DuiApplication.AddDuiWindow(Self);
 end;
 
 constructor TDuiWindowImplBase.Create(ASkinFile, ASkinFolder: string; ARType: TResourceType);
@@ -155,12 +173,27 @@ begin
   Create(ASkinFile, ASkinFolder, AZipFileName, UILIB_ZIP);
 end;
 
+constructor TDuiWindowImplBase.Create;
+begin
+  FThis := CDelphi_WindowImplBase.CppCreate;
+  FPaintManagerUI := FThis.GetPaintManagerUI;
+
+  FThis.SetDelphiSelf(Self);
+  FThis.SetInitWindow(GetMethodAddr('DUI_InitWindow'));
+  FThis.SetClick(GetMethodAddr('DUI_Click'));
+  FThis.SetNotify(GetMethodAddr('DUI_Notify'));
+  FThis.SetMessageHandler(GetMethodAddr('DUI_MessageHandler'));
+  FThis.SetFinalMessage(GetMethodAddr('DUI_FinalMessage'));
+  FThis.SetHandleMessage(GetMethodAddr('DUI_HandleMessage'));
+  FThis.SetHandleCustomMessage(GetMethodAddr('DUI_HandleCustomMessage'));
+  FThis.SetCreateControl(GetMethodAddr('DUI_CreateControl'));
+  FThis.SetGetItemText(GetMethodAddr('DUI_GetItemText'));
+end;
+
 destructor TDuiWindowImplBase.Destroy;
 begin
   if FThis <> nil then
     FThis.CppDestroy;
-//  if Assigned(DuiApplication) then
-//    DuiApplication.RemoveWindow(Self);
   inherited;
 end;
 
@@ -173,12 +206,14 @@ end;
 procedure TDuiWindowImplBase.CreateWindow(hwndParent: HWND; ATitle: string;
   dwStyle, dwExStyle: DWORD; x, y, cx, cy: Integer; hMenu: HMENU);
 begin
+  FParentHandle := hwndParent;
   FThis.Create(hwndParent, ATitle, dwStyle, dwExStyle, x, y, cx, cy, hMenu);
 end;
 
 procedure TDuiWindowImplBase.CreateWindow(hwndParent: HWND; ATitle: string;
   dwStyle, dwExStyle: DWORD; const rc: TRect; hMenu: HMENU);
 begin
+  FParentHandle := hwndParent;
   FThis.Create(hwndParent, ATitle, dwStyle, dwExStyle, rc, hMenu);
 end;
 
@@ -305,6 +340,11 @@ begin
   Result := FPaintManagerUI.FindControl(pt);
 end;
 
+function TDuiWindowImplBase.GetClientRect: TRect;
+begin
+  Windows.GetWindowRect(Handle, Result);
+end;
+
 function TDuiWindowImplBase.GetHandle: HWND;
 begin
   if FHandle = 0 then
@@ -312,9 +352,45 @@ begin
    Result := FHandle;
 end;
 
+function TDuiWindowImplBase.GetHeight: Integer;
+begin
+  Result := ClientRect.Height;
+end;
+
 function TDuiWindowImplBase.GetInitSize: TSize;
 begin
   Result := FPaintManagerUI.GetInitSize;
+end;
+
+function TDuiWindowImplBase.GetLeft: Integer;
+begin
+  Result := ClientRect.Left;
+end;
+
+function TDuiWindowImplBase.GetMousePos: TPoint;
+begin
+  GetCursorPos(Result);
+end;
+
+function TDuiWindowImplBase.GetScreenSize: TSize;
+begin
+  Result.cx := GetSystemMetrics(SM_CXSCREEN);
+  Result.cy := GetSystemMetrics(SM_CYSCREEN);
+end;
+
+function TDuiWindowImplBase.GetTop: Integer;
+begin
+  Result := ClientRect.Top;
+end;
+
+function TDuiWindowImplBase.GetWidth: Integer;
+begin
+  Result := ClientRect.Width;
+end;
+
+function TDuiWindowImplBase.GetWorkAreaRect: TRect;
+begin
+  SystemParametersInfo(SPI_GETWORKAREA, 0, Result, 0);
 end;
 
 function TDuiWindowImplBase.FindControl(const AName: string): CControlUI;
@@ -335,6 +411,16 @@ end;
 procedure TDuiWindowImplBase.Minimize;
 begin
   Perform(WM_SYSCOMMAND, SC_MINIMIZE);
+end;
+
+procedure TDuiWindowImplBase.ShowMessage(const Fmt: string; Args: array of const);
+begin
+  MessageBox(Handle, PChar(Format(Fmt, Args)), '消息', MB_OK or MB_ICONINFORMATION);
+end;
+
+procedure TDuiWindowImplBase.ShowMessage(const Msg: string);
+begin
+  ShowMessage(Msg, []);
 end;
 
 procedure TDuiWindowImplBase.OnReceive(Param: Pointer);
@@ -368,24 +454,41 @@ begin
   FThis.SetIcon(nRes);
 end;
 
+procedure TDuiWindowImplBase.SetParentHandle(const Value: HWND);
+begin
+  if FParentHandle <> Value then
+  begin
+    FParentHandle := Value;
+    SetParent(Handle, FParentHandle);
+  end;
+end;
+
 procedure TDuiWindowImplBase.Show;
 begin
   FThis.ShowWindow(True, False);
 end;
 
-function TDuiWindowImplBase.ShowModal: UINT;
+function TDuiWindowImplBase.ShowModal: Integer;
 begin
   Result := FThis.ShowModal;
 end;
 
 procedure TDuiWindowImplBase.CenterWindow;
+var
+  LParnetRect: TRect;
 begin
-  FThis.CenterWindow;
+  if (FParentHandle <> 0) and IsWindow(FParentHandle) then
+  begin
+    GetWindowRect(FParentHandle, LParnetRect);
+    SetWindowPos(Handle, HWND_TOP, LParnetRect.Left + (LParnetRect.Width div 2 - Width div 2),
+      LParnetRect.Top + (LParnetRect.Height div 2 - Height div 2), 0, 0, SWP_NOSIZE or SWP_NOREDRAW);
+  end else
+    FThis.CenterWindow;
 end;
 
 procedure TDuiWindowImplBase.Close;
 begin
-  FThis.Close();
+  FThis.Close;
 end;
 
 
@@ -395,12 +498,11 @@ end;
 constructor TDuiApplication.Create;
 begin
   inherited;
-  FList := TDuiWindowImplList.Create;
 end;
+
 
 destructor TDuiApplication.Destroy;
 begin
-  FList.Free;
   inherited;
 end;
 
@@ -408,26 +510,6 @@ procedure TDuiApplication.Initialize;
 begin
   CPaintManagerUI.SetInstance(HInstance);
 end;
-
-//procedure TDuiApplication.RemoveWindow(AWindow: TDuiWindowImplBase);
-//begin
-//  TMonitor.Enter(FList);
-//  try
-//    FList.Remove(AWindow);
-//  finally
-//    TMonitor.Exit(FList);
-//  end;
-//end;
-
-//procedure TDuiApplication.AddDuiWindow(AWindow: TDuiWindowImplBase);
-//begin
-//  TMonitor.Enter(FList);
-//  try
-//    FList.Add(AWindow);
-//  finally
-//    TMonitor.Exit(FList);
-//  end;
-//end;
 
 procedure TDuiApplication.Run;
 begin
@@ -437,6 +519,81 @@ end;
 procedure TDuiApplication.Terminate;
 begin
   PostQuitMessage(0);
+end;
+
+{ TSimplePopupMenu }
+
+constructor TSimplePopupMenu.Create(ASkinFile, ASkinFolder, AZipFileName: string; ARType: TResourceType;
+  const AParentPaintManager: CPaintManagerUI; const AMsg: string; ALostFocusFree: Boolean);
+begin
+  FMsg := AMsg;
+  FParentPaintManager := AParentPaintManager;
+  FLostFocusFree := ALostFocusFree;
+  inherited Create(ASkinFile, ASkinFolder, AZipFileName, ARType);
+  CreateWindow(0, ClassName, WS_POPUP, WS_EX_TOOLWINDOW or WS_EX_TOPMOST);
+end;
+
+destructor TSimplePopupMenu.Destroy;
+begin
+  if not FLostFocusFree then
+    RemoveThisInPaintManager;
+  inherited;
+end;
+
+procedure TSimplePopupMenu.DoFinalMessage(hWd: HWND);
+begin
+  if FLostFocusFree then
+  begin
+    inherited;
+    Free;
+  end;
+end;
+
+procedure TSimplePopupMenu.DoHandleMessage(var Msg: TMessage;
+  var bHandled: BOOL);
+begin
+  inherited;
+  if Msg.Msg = WM_KILLFOCUS then
+  begin
+    if FLostFocusFree then
+      Close
+    else Hide;
+    Msg.Result := 1;
+  end;
+end;
+
+procedure TSimplePopupMenu.DoInitWindow;
+begin
+  inherited;
+  Popup;
+end;
+
+procedure TSimplePopupMenu.DoNotify(var Msg: TNotifyUI);
+begin
+  inherited;
+  if Msg.sType = DUI_EVENT_ITEMSELECT then
+    Close
+  else if Msg.sType = DUI_EVENT_ITEMCLICK then
+    FParentPaintManager.SendNotify(Msg.pSender, FMsg);
+end;
+
+procedure TSimplePopupMenu.Popup(X, Y: Integer);
+var
+  LSize, LScreenSize: TSize;
+  LP: TPoint;
+begin
+  LSize := InitSize;
+  if (X = -1) and (Y = -1) then
+    LP := MousePos
+  else LP := Point(X, Y);
+  LScreenSize := ScreenSize;
+  if LP.X + LSize.cx >= LScreenSize.cx then
+    LP.X := LP.X - LSize.cx;
+  if LP.Y + LSize.cy >= LScreenSize.cy then
+    LP.Y := LP.Y - LSize.cy;
+  SetWindowPos(Handle, HWND_TOPMOST, LP.X, LP.Y, 0, 0, SWP_NOSIZE);
+  if IsWindow(Handle) and not IsWindowVisible(Handle) then
+    ShowWindow(Handle, SW_SHOWNORMAL or SWP_NOREDRAW);
 end;
 
 initialization
