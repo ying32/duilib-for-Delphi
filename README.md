@@ -5,6 +5,7 @@
 **不作提交，[github项目地址](https://github.com/ying32/duilib-for-Delphi/),**
 **[原oschina项目](http://git.oschina.net/ying32/Duilib-for-Delphi)** 
 
+**1.0版本，后面将继续同步duilib官方代码，此作为一个标记版本**
 
 **关于Duilib for Delphi的详情，可见[我的博客](http://blog.csdn.net/zyjying520/article/details/49976667)**
 ### 重要说明
