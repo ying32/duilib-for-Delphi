@@ -16,111 +16,89 @@ interface
 
 const
 
-  DUI_EVENT_WINDOWINIT = 'windowinit';
-  DUI_EVENT_CLICK = 'click';
-  DUI_EVENT_RETURN = 'return';
-  DUI_EVENT_KILLFOCUS = 'killfocus';
-  DUI_EVENT_SETFOCUS = 'setfocus';
-  DUI_EVENT_DROPDOWN = 'dropdown';
-  DUI_EVENT_TIMER = 'timer';
-  DUI_EVENT_MENU = 'menu';
+  DUI_MSGTYPE_MENU           = 'menu';
+  DUI_MSGTYPE_LINK           = 'link';
 
-  // CListUI
-  DUI_EVENT_ITEMSELECT = 'itemselect';
-  DUI_EVENT_ITEMACTIVATE = 'itemactivate';
-  DUI_EVENT_ITEMCLICK = 'itemclick';
-  DUI_EVENT_SELECTCHANGED = 'selectchanged';
+  DUI_MSGTYPE_TIMER          = 'timer';
+  DUI_MSGTYPE_CLICK          = 'click';
 
-  // CSliderUI
-  DUI_EVENT_VALUECHANGED = 'valuechanged';
+  DUI_MSGTYPE_RETURN         = 'return';
+  DUI_MSGTYPE_SCROLL         = 'scroll';
 
-  DUI_EVENT_TEXTCHANGED = 'textchanged';
+  DUI_MSGTYPE_DROPDOWN       = 'dropdown';
+  DUI_MSGTYPE_SETFOCUS       = 'setfocus';
 
-  DUI_CLASS_ListContainerElementUI = 'ListContainerElementUI';
-  DUI_CLASS_ListContainerElement = 'ListContainerElement';
+  DUI_MSGTYPE_KILLFOCUS      = 'killfocus';
+  DUI_MSGTYPE_ITEMCLICK 		 = 'itemclick';
+  DUI_MSGTYPE_TABSELECT      = 'tabselect';
 
-  DUI_CLASS_ListExpandElementUI = 'ListExpandElementUI';
-  DUI_CLASS_ListExpandElement = 'ListExpandElement';
+  DUI_MSGTYPE_ITEMSELECT 		 = 'itemselect';
+  DUI_MSGTYPE_ITEMEXPAND     = 'itemexpand';
+  DUI_MSGTYPE_WINDOWINIT     = 'windowinit';
+  DUI_MSGTYPE_BUTTONDOWN 		 = 'buttondown';
+  DUI_MSGTYPE_MOUSEENTER		 = 'mouseenter';
+  DUI_MSGTYPE_MOUSELEAVE		 = 'mouseleave';
 
-  DUI_CLASS_ListTextElementUI = 'ListTextElementUI';
-  DUI_CLASS_ListTextElement = 'ListTextElement';
+  DUI_MSGTYPE_TEXTCHANGED    = 'textchanged';
+  DUI_MSGTYPE_HEADERCLICK    = 'headerclick';
+  DUI_MSGTYPE_ITEMDBCLICK    = 'itemdbclick';
+  DUI_MSGTYPE_SHOWACTIVEX    = 'showactivex';
 
-  DUI_CLASS_ListLabelElementUI = 'ListLabelElementUI';
-  DUI_CLASS_ListLabelElement = 'ListLabelElement';
+  DUI_MSGTYPE_ITEMCOLLAPSE   = 'itemcollapse';
+  DUI_MSGTYPE_ITEMACTIVATE   = 'itemactivate';
+  DUI_MSGTYPE_VALUECHANGED   = 'valuechanged';
 
-  DUI_CLASS_ListItem = 'ListItem';
+  DUI_MSGTYPE_SELECTCHANGED  = 'selectchanged';
 
-  DUI_CLASS_ListElementUI = 'ListElementUI';
-  DUI_CLASS_ListElement = 'ListElement';
+  DUI_CTR_EDIT                  = 'Edit';
+  DUI_CTR_LIST                  = 'List';
+  DUI_CTR_TEXT                  = 'Text';
 
-  DUI_CLASS_ListHeaderItemUI = 'ListHeaderItemUI';
-  DUI_CLASS_ListHeaderItem = 'ListHeaderItem';
+  DUI_CTR_COMBO                 = 'Combo';
+  DUI_CTR_LABEL                 = 'Label';
+  DUI_CTR_FLASH					= 'Flash';
 
-  DUI_CLASS_ListHeaderUI = 'ListHeaderUI';
-  DUI_CLASS_ListHeader = 'ListHeader';
+  DUI_CTR_BUTTON                = 'Button';
+  DUI_CTR_OPTION                = 'Option';
+  DUI_CTR_SLIDER                = 'Slider';
 
-  DUI_CLASS_IListOwner = 'IListOwner';
+  DUI_CTR_CONTROL               = 'Control';
+  DUI_CTR_ACTIVEX               = 'ActiveX';
+  DUI_CTR_GIFANIM               = 'GifAnim';
 
-  DUI_CLASS_IList = 'IList';
+  DUI_CTR_LISTITEM              = 'ListItem';
+  DUI_CTR_PROGRESS              = 'Progress';
+  DUI_CTR_RICHEDIT              = 'RichEdit';
+  DUI_CTR_CHECKBOX              = 'CheckBox';
+  DUI_CTR_COMBOBOX              = 'ComboBox';
+  DUI_CTR_DATETIME              = 'DateTime';
+  DUI_CTR_TREEVIEW              = 'TreeView';
+  DUI_CTR_TREENODE              = 'TreeNode';
 
-  DUI_CLASS_List = 'List';
-  DUI_CLASS_ListUI = 'ListUI';
+  DUI_CTR_CONTAINER             = 'Container';
+  DUI_CTR_TABLAYOUT             = 'TabLayout';
+  DUI_CTR_SCROLLBAR             = 'ScrollBar';
 
-  DUI_CLASS_ControlUI = 'ControlUI';
-  DUI_CLASS_Control = 'Control';
+  DUI_CTR_LISTHEADER            = 'ListHeader';
+  DUI_CTR_TILELAYOUT            = 'TileLayout';
+  DUI_CTR_WEBBROWSER            = 'WebBrowser';
 
-  DUI_CLASS_TabLayoutUI = 'TabLayoutUI';
-  DUI_CLASS_TabLayout = 'TabLayout';
+  DUI_CTR_CHILDLAYOUT           = 'ChildLayout';
+  DUI_CTR_LISTELEMENT           = 'ListElement';
 
-  DUI_CLASS_DialogLayoutUI = 'DialogLayoutUI';
-  DUI_CLASS_DialogLayout = 'DialogLayout';
+  DUI_CTR_DIALOGLAYOUT          = 'DialogLayout';
 
-  DUI_CLASS_TileLayoutUI = 'TileLayoutUI';
-  DUI_CLASS_TileLayout = 'TileLayout';
+  DUI_CTR_VERTICALLAYOUT        = 'VerticalLayout';
+  DUI_CTR_LISTHEADERITEM        = 'ListHeaderItem';
 
-  DUI_CLASS_HorizontalLayoutUI = 'HorizontalLayoutUI';
-  DUI_CLASS_HorizontalLayout = 'HorizontalLayout';
+  DUI_CTR_LISTTEXTELEMENT       = 'ListTextElement';
 
-  DUI_CLASS_VerticalLayoutUI = 'VerticalLayoutUI';
-  DUI_CLASS_VerticalLayout = 'VerticalLayout';
+  DUI_CTR_HORIZONTALLAYOUT      = 'HorizontalLayout';
+  DUI_CTR_LISTLABELELEMENT      = 'ListLabelElement';
 
-  DUI_CLASS_IContainer = 'IContainer';
+  DUI_CTR_LISTCONTAINERELEMENT  = 'ListContainerElement';
+  DUI_CTR_LISTCONTAINERELEMENT_UI = 'ListContainerElementUI';
 
-  DUI_CLASS_ContainerUI = 'ContainerUI';
-  DUI_CLASS_Container = 'Container';
-
-  DUI_CLASS_ScrollBarUI = 'ScrollBarUI';
-  DUI_CLASS_ScrollBar = 'ScrollBar';
-
-  DUI_CLASS_Edit = 'Edit';
-  DUI_CLASS_EditUI = 'EditUI';
-
-  DUI_CLASS_SliderUI = 'SliderUI';
-  DUI_CLASS_Slider = 'Slider';
-
-  DUI_CLASS_ProgressUI = 'ProgressUI';
-  DUI_CLASS_Progress = 'Progress';
-
-  DUI_CLASS_TextUI = 'TextUI';
-  DUI_CLASS_Text = 'Text';
-
-  DUI_CLASS_OptionUI = 'OptionUI';
-  DUI_CLASS_Option = 'Option';
-
-  DUI_CLASS_ButtonUI = 'ButtonUI';
-  DUI_CLASS_Button = 'Button';
-
-  DUI_CLASS_LabelUI = 'LabelUI';
-  DUI_CLASS_Label = 'Label';
-
-  DUI_CLASS_ComboUI = 'ComboUI';
-  DUI_CLASS_Combo = 'Combo';
-
-  DUI_CLASS_ActiveXUI = 'ActiveXUI';
-  DUI_CLASS_ActiveX = 'ActiveX';
-
-  DUI_CALSS_RichEditUI = 'RichEditUI';
-  DUI_CALSS_RichEdit = 'RichEdit';
 
 implementation
 

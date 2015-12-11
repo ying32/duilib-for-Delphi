@@ -12,8 +12,7 @@ uses
   Duilib,
   DuiConst,
   DuiWindowImplBase,
-  DuiListUI,
-  DuilibHelper;
+  DuiListUI;
 
 type
 
@@ -104,7 +103,17 @@ begin
   inherited;
   LType := Msg.sType;
   LCtlName := Msg.pSender.Name;
-  if LType.Equals(DUI_EVENT_CLICK) then
+
+  Writeln(Format('Msg.pSender=%p', [Pointer(Msg.pSender)]));
+  Writeln(Format('Msg.pSender.OnInit=%p', [Pointer(Msg.pSender.OnInit.Delegates)]));
+  Writeln(Format('Msg.pSender.OnDestroy=%p', [Pointer(@Msg.pSender.OnDestroy)]));
+  Writeln(Format('Msg.pSender.OnSize=%p', [Pointer(@Msg.pSender.OnSize)]));
+  Writeln(Format('Msg.pSender.OnEvent=%p', [Pointer(@Msg.pSender.OnEvent)]));
+  Writeln(Format('Msg.pSender.OnNotify=%p', [Pointer(@Msg.pSender.OnNotify)]));
+  Writeln(Format('Msg.pSender.OnPaint=%p', [Pointer(@Msg.pSender.OnPaint)]));
+  Writeln(Format('Msg.pSender.OnPostPaint=%p', [Pointer(@Msg.pSender.OnPostPaint)]));
+  Writeln('');
+  if LType.Equals(DUI_MSGTYPE_CLICK) then
   begin
     if LCtlName.Equals('closebtn') then
       DuiApplication.Terminate
@@ -112,7 +121,8 @@ begin
       Minimize
     else if LCtlName.Equals('btn') then
       OnSearch;
-  end else if LType.Equals(DUI_EVENT_ITEMACTIVATE) then
+  end else
+  if LType.Equals(DUI_MSGTYPE_ITEMACTIVATE) then
   begin
     iIndex := Msg.pSender.Tag;
     if (iIndex <> -1) and (iIndex < FList.Count) then
@@ -120,13 +130,16 @@ begin
       MessageBox(0, PChar(Format('Col1=%s, Col2=%s, Col3=%s',
         [FList[iIndex].Col1, FList[iIndex].Col2, FList[iIndex].Col3])), nil, MB_OK);
     end;
-  end else if LType.Equals(DUI_EVENT_MENU) then
+  end else
+  if LType.Equals(DUI_MSGTYPE_MENU) then
   begin
+//    MessageBox(0, nil, nil, 0);
     if LCtlName.Equals('domainlist') then
     begin
       TDuiPopupMenu.Create(CListUI(msg.pSender));
     end;
-  end else if LType.Equals('menu_Delete') then
+  end else
+  if LType.Equals('menu_Delete') then
   begin
     pList := CListUI(Msg.pSender);
     if pList <> nil then
@@ -191,28 +204,12 @@ begin
 end;
 
 procedure TDuiPopupMenu.DoHandleMessage(var Msg: TMessage; var bHandled: BOOL);
-var
-  rcWnd: TRect;
-  hRgn: Windows.HRGN;
 begin
   inherited;
   if Msg.Msg = WM_KILLFOCUS then
   begin
     Msg.Result := 1;
     Close;
-  end else if Msg.Msg = WM_SIZE then
-  begin
-    // 原duilib作者把CPaintManagerUI中的一个设置背景透明的属性去除了，然后就产生了bug....
-    // 然后也不能使用透明的png作为背景了，不然就产生黑色的边框。。。
-//    if not IsIconic(Handle) then
-//    begin
-//		  GetWindowRect(Handle, rcWnd);
-//		  rcWnd.Offset(-rcWnd.left, -rcWnd.top);
-//		  hRgn := CreateRectRgn(rcWnd.left + 8, rcWnd.top + 8, rcWnd.right - 8, rcWnd.bottom - 8);
-//		  SetWindowRgn(Handle, hRgn, TRUE);
-//		  DeleteObject(hRgn);
-//      bHandled := False;
-//	  end;
   end;
 end;
 

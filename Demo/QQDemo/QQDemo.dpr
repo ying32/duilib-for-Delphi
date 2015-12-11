@@ -1,4 +1,4 @@
-program DDuilibDemo;
+program QQDemo;
 
 
 {$R *.res}
@@ -17,7 +17,6 @@ uses
   DuiRichEdit,
   DuiWindowImplBase,
   DuiConst,
-  DuilibHelper,
   UIListCommonDefine in 'UIListCommonDefine.pas';
 
 const
@@ -246,11 +245,11 @@ begin
 
   LCtlName := msg.pSender.Name;
   LType := Msg.sType;
-  if LType.Equals(DUI_EVENT_WINDOWINIT) then
+  if LType.Equals(DUI_MSGTYPE_WINDOWINIT) then
   begin
     OnPrepare(msg);
   end
-  else if SameStr(LType, DUI_EVENT_KILLFOCUS) then
+  else if SameStr(LType, DUI_MSGTYPE_KILLFOCUS) then
   begin
     if SameStr(LCtlName, 'signature') then
     begin
@@ -277,7 +276,7 @@ begin
       end;
     end;
   end
-  else if SameStr(LType, DUI_EVENT_CLICK) then
+  else if SameStr(LType, DUI_MSGTYPE_CLICK) then
   begin
     if SameStr(LCtlName, kCloseButtonControlName) then
       Close
@@ -360,7 +359,7 @@ begin
       TColorSkinWindow.Create(Self, rcWindow);
     end;
   end
-  else if SameStr(LType, DUI_EVENT_SELECTCHANGED) then
+  else if SameStr(LType, DUI_MSGTYPE_SELECTCHANGED) then
   begin
     pTabControl := CTabLayoutUI(FindControl(kTabControlName));
     if LCtlName.Equals(kFriendButtonControlName) then
@@ -389,7 +388,7 @@ begin
       end;
     end;
   end
-  else if SameStr(LType, DUI_EVENT_ITEMACTIVATE) then
+  else if SameStr(LType, DUI_MSGTYPE_ITEMACTIVATE) then
   begin
 
     pTabControl := CTabLayoutUI(FindControl(kTabControlName));
@@ -399,7 +398,7 @@ begin
       begin
         if (FFirned.this <> nil) and (FFirned.this.GetItemIndex(msg.pSender) <> -1) then
         begin
-          if msg.pSender.ClassName.Equals(DUI_CLASS_ListContainerElementUI) then
+          if msg.pSender.ClassName.Equals(DUI_CTR_LISTCONTAINERELEMENT_UI) then
           begin
             node := TNode(Pointer(msg.pSender.Tag));
             background := FindControl(kBackgroundControlName);
@@ -431,7 +430,7 @@ begin
       end;
     end;
   end
-  else if SameStr(LType, DUI_EVENT_ITEMCLICK) then
+  else if SameStr(LType, DUI_MSGTYPE_ITEMCLICK) then
   begin
     pTabControl := CTabLayoutUI(FindControl(kTabControlName));
     if pTabControl <> nil then
@@ -440,7 +439,7 @@ begin
       begin
         if (FFirned.this <> nil) and (FFirned.this.GetItemIndex(msg.pSender) <> -1) then
         begin
-          if msg.pSender.ClassName.Equals(DUI_CLASS_ListContainerElementUI) then
+          if msg.pSender.ClassName.Equals(DUI_CTR_LISTCONTAINERELEMENT_UI) then
           begin
             node := TNode(Pointer(msg.pSender.Tag));
             if FFirned.CanExpand(node) then
@@ -464,7 +463,7 @@ begin
     end;
 
   end
-  else if SameStr(LType, DUI_EVENT_ITEMSELECT) then
+  else if SameStr(LType, DUI_MSGTYPE_ITEMSELECT) then
   begin
     // firend list
     if msg.pSender = FFirned.this then
@@ -626,9 +625,9 @@ var
   LControl: CControlUI;
 begin
   inherited;
+  // 貌似这个方式比在xml文件中添加 menu="true" 属性好用
   if Msg.Msg = WM_RBUTTONUP then
   begin
-    OutputDebugString('TChatDialog.DoHandleMessage WM_RBUTTONUP');
     LPoint.X := TWMMouse(Msg).XPos;
     LPoint.Y := TWMMouse(Msg).YPos;
     LControl := FindControl(LPoint);
@@ -656,9 +655,9 @@ begin
 
   OutputDebugString(PChar(Format('Type=%s, Name=%s', [LType, LCtlName])));
 
-  if LType.Equals(DUI_EVENT_WINDOWINIT) then
+  if LType.Equals(DUI_MSGTYPE_WINDOWINIT) then
     OnPrepare(msg)
-  else if SameStr(LType, DUI_EVENT_CLICK) then
+  else if SameStr(LType, DUI_MSGTYPE_CLICK) then
   begin
     if SameStr(LCtlName, kCloseButtonControlName) then
       Close
@@ -679,15 +678,15 @@ begin
     else if LCtlName.Equals(kEmotionButtonControlName) then
     begin
       GetWindowRect(Handle, LWindowR);
-      TEmotionList.Create(Self, Point(LWindowR.Left + Msg.pSender.GetPos^.Left, LWindowR.Top + Msg.pSender.GetPos^.Top));
+      TEmotionList.Create(Self, Point(LWindowR.Left + Msg.pSender.GetPos.Left, LWindowR.Top + Msg.pSender.GetPos.Top));
     end;
   end
-  else if LType.Equals(DUI_EVENT_RETURN) then
+  else if LType.Equals(DUI_MSGTYPE_RETURN) then
   begin
     if LCtlName.Equals(kInputRichEditControlName) then
       SendMsg;
   end
-  else if LType.Equals(DUI_EVENT_ITEMSELECT) then
+  else if LType.Equals(DUI_MSGTYPE_ITEMSELECT) then
   begin
     if LCtlName.Equals(kFontTypeControlName) then
     begin
@@ -698,7 +697,7 @@ begin
         FontStyleChanged();
       end;
     end;
-  end else if LType.Equals('RichPopupMenu') then
+  end else if LType.Equals('RichPopupMenu') or LType.Equals(DUI_MSGTYPE_MENU) then
   begin
     OutputDebugString(PChar(Format('+++++++++++++++++++++RichPopupMenu, Name=%s', [LCtlName])));
     TRichEditSampleMenu.Create(Self);
@@ -1139,7 +1138,7 @@ begin
   for I := LBegin.NodeData.ListElment.GetIndex to LEnd.NodeData.ListElment.GetIndex do
   begin
     control := this.GetItemAt(i);
-    if control.ClassName.Equals(DUI_CLASS_ListContainerElementUI) then
+    if control.ClassName.Equals(DUI_CTR_LISTCONTAINERELEMENT_UI) then
     begin
       if AVisible then
       begin
@@ -1214,7 +1213,7 @@ var
 begin
   LType := msg.sType;
   LCtlName := msg.pSender.Name;
-  if LType.Equals(DUI_EVENT_CLICK) then
+  if LType.Equals(DUI_MSGTYPE_CLICK) then
   begin
     pTabControl := CTabLayoutUI(FindControl(kTabControlName));
     if pTabControl <> nil then
@@ -1242,7 +1241,7 @@ begin
       end;
     end;
   end
-  else if LType.Equals(DUI_EVENT_VALUECHANGED) then
+  else if LType.Equals(DUI_MSGTYPE_VALUECHANGED) then
   begin
     pTabControl := CTabLayoutUI(FindControl(kTabControlName));
     if pTabControl <> nil then
@@ -1269,7 +1268,7 @@ begin
       end;
     end;
   end
-  else if LType.Equals(DUI_EVENT_SELECTCHANGED) then
+  else if LType.Equals(DUI_MSGTYPE_SELECTCHANGED) then
   begin
     pTabControl := CTabLayoutUI(FindControl(kTabControlName));
     if pTabControl <> nil then
@@ -1332,7 +1331,7 @@ begin
   inherited;
   LType := Msg.sType;
   LCtlName := Msg.pSender.Name;
-  if LType.Equals(DUI_EVENT_CLICK) then
+  if LType.Equals(DUI_MSGTYPE_CLICK) then
   begin
 
   end;
