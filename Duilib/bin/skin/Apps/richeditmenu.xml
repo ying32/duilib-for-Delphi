@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<Window size="121,114">
-    <VerticalLayout bkimage="file=&apos;menubordernormal.png&apos; corner=&apos;6,6,6,6&apos;">
+<Window size="121,114" layeredimage="file='menubordernormal.png' corner='6,6,6,6'">
+    <VerticalLayout bkimage="file='menubordernormal.png' corner='6,6,6,6'">
         <List itemtextcolor="#FF000000" itemselectedtextcolor="#FF000000" itemselectedbkcolor="#FFC1E3FF" itemhottextcolor="#FF000000" itemhotbkcolor="#FFE9F5FF" itemdisabledtextcolor="#FFCCCCCC" itemdisabledbkcolor="#FFFFFFFF" itembkimage="file=&apos;menuitemnormal.png&apos; corner=&apos;2,2,2,2&apos;" itemselectedimage="file=&apos;menuitempressed.png&apos; corner=&apos;2,2,2,2&apos;" itemhotimage="file=&apos;menuitemhover.png&apos; corner=&apos;2,2,2,2&apos;" itemdisabledimage="file=&apos;menuitemdisabled.png&apos; corner=&apos;2,2,2,2&apos;" header="hidden" inset="8,8,8,8">
             <ListHeader />
             <ListContainerElement name="menu_copy" height="25" inset="30,0,0,0">

@@ -13,12 +13,16 @@
 //***************************************************************************
 unit Duilib;
 
+// 根据选择禁用有些提示，最好是确定单元后再这样做
+{$HINTS OFF}
+
 interface
 
 uses
   Windows,
   Types,
   Classes,
+  DateUtils,
   SysUtils;
 
 const
@@ -169,7 +173,7 @@ type
     pSrcBits: LPBYTE;
     nX: Integer;
     nY: Integer;
-    alphaChannel: Boolean;
+    bAlpha: Boolean;
     bUseHSL: Boolean;
     sResType: CDuiString;
     dwMask: DWORD;
@@ -182,8 +186,8 @@ type
     // tagTDrawInfo(LPCTSTR lpsz);
     // void Clear();
     sDrawString: CDuiString;
-    bLoaded: Boolean;
     sImageName: CDuiString;
+    bLoaded: Boolean;
     pImageInfo: PImageInfo;
     rcDestOffset: TRect;
     rcBmpPart: TRect;
@@ -272,6 +276,10 @@ type
   TResInfo = tagTResInfo;
 
   CStdValArray = class
+  private
+    function GetSize: Integer;
+    function GetData: Pointer;
+    function GetAt(iIndex: Integer): Pointer;
   public
     class function CppCreate(iElementSize: Integer; iPreallocSize: Integer = 0): CStdValArray;
     procedure CppDestroy;
@@ -279,9 +287,10 @@ type
     function IsEmpty: Boolean;
     function Add(pData: LPCVOID): Boolean;
     function Remove(iIndex: Integer): Boolean;
-    function GetSize: Integer;
-    function GetData: Pointer;
-    function GetAt(iIndex: Integer): Pointer;
+  public
+    property Size: Integer read GetSize;
+    property Data: Pointer read GetData;
+    property Items[iIndex: Integer]: Pointer read GetAt;
   end;
 
   CStdPtrArray = class
@@ -300,6 +309,35 @@ type
     function GetData: Pointer;
     function GetAt(iIndex: Integer): Pointer;
   end;
+
+  // 特殊来对待
+  // typedef bool (*FnType)(void*);
+  FnType = function(P1: Pointer): Boolean; cdecl;
+  PEventSource = ^CEventSource;
+  CEventSource = record
+  private
+    // CStdPtrArray size = 12, CStdPtrArray三个成员
+    // 不要使用这三个变量,只是用来占位用
+    m_ppVoid: PPointer;
+		m_nCount: Integer;
+		m_nAllocated: Integer;
+  public
+    /// <summary>
+    ///   m_aDelegates: CStdPtrArray;
+    ///   此时指向了变量的首地址，所就是返回了一个CStdPtrArray的指针
+    /// </summary>
+    function Delegates: CStdPtrArray; inline;
+  public
+    //  operator bool();
+    function IsEmpty: Boolean; inline;
+    //  void operator+= (const CDelegateBase& d); // add const for gcc
+    //  void operator+= (FnType pFn);
+    //  void operator-= (const CDelegateBase& d);
+    //  void operator-= (FnType pFn);
+    //  bool operator() (void* param);
+    // function (param: Pointer): Boolean;
+  end;
+
 
   CNotifyPump = class
   public
@@ -332,6 +370,13 @@ type
     function GetAttributeValue(pstrName: string): string; overload;
     function GetAttributeValue(iIndex: Integer; pstrValue: string; cchMax: SIZE_T): Boolean; overload;
     function GetAttributeValue(pstrName: string; pstrValue: string; cchMax: SIZE_T): Boolean; overload;
+  public
+    property Parent: CMarkupNode read GetParent;
+    property Sibling: CMarkupNode read GetSibling;
+    property Name: string read GetName;
+    property Value: string read GetValue;
+    property AttributeCount: Integer read GetAttributeCount;
+    property AttributeName[iIndex: Integer]: string read GetAttributeName;
   end;
 
   CMarkup = class
@@ -347,13 +392,16 @@ type
     procedure GetLastErrorMessage(pstrMessage: string; cchMax: SIZE_T);
     procedure GetLastErrorLocation(pstrSource: string; cchMax: SIZE_T);
     function GetRoot: CMarkupNode;
+  public
+    property Valid: Boolean read IsValid;
+    property Root: CMarkupNode read GetRoot;
   end;
 
   CPaintManagerUI = class
   public
     class function CppCreate: CPaintManagerUI;
     procedure CppDestroy;
-    procedure Init(hWnd: HWND);
+    procedure Init(hWnd: HWND; pstrName: string = '');
     function IsUpdateNeeded: Boolean;
     procedure NeedUpdate;
     procedure Invalidate; overload;
@@ -365,9 +413,9 @@ type
     function GetClientSize: TSize;
     function GetInitSize: TSize;
     procedure SetInitSize(cx: Integer; cy: Integer);
-    function GetSizeBox: PRect;
+    function GetSizeBox: TRect;
     procedure SetSizeBox(const rcSizeBox: TRect);
-    function GetCaptionRect: PRect;
+    function GetCaptionRect: TRect;
     procedure SetCaptionRect(const rcCaption: TRect);
     function GetRoundCorner: TSize;
     procedure SetRoundCorner(cx: Integer; cy: Integer);
@@ -375,9 +423,6 @@ type
     procedure SetMinInfo(cx: Integer; cy: Integer);
     function GetMaxInfo: TSize;
     procedure SetMaxInfo(cx: Integer; cy: Integer);
-    function GetTransparent: Integer;
-    procedure SetTransparent(nOpacity: Integer);
-    procedure SetBackgroundTransparent(bTrans: Boolean);
     function IsShowUpdateRect: Boolean;
     procedure SetShowUpdateRect(show: Boolean);
     class function GetInstance: HINST;
@@ -398,6 +443,10 @@ type
     class procedure ReloadSkin;
     class function LoadPlugin(pstrModuleName: string): Boolean;
     class function GetPlugins: CStdPtrArray;
+    function IsForceUseSharedRes: Boolean;
+    procedure SetForceUseSharedRes(bForce: Boolean);
+    function IsPainting: Boolean;
+    procedure SetPainting(bIsPainting: Boolean);
     function GetDefaultDisabledColor: DWORD;
     procedure SetDefaultDisabledColor(dwColor: DWORD; bShared: Boolean = False);
     function GetDefaultFontColor: DWORD;
@@ -485,6 +534,38 @@ type
     function MessageHandler(uMsg: UINT; wParam: WPARAM; lParam: LPARAM; var lRes: LRESULT): Boolean;
     function PreMessageHandler(uMsg: UINT; wParam: WPARAM; lParam: LPARAM; var lRes: LRESULT): Boolean;
     procedure UsedVirtualWnd(bUsed: Boolean);
+    function GetName: string;
+    function GetTooltipWindowWidth: Integer;
+    procedure SetTooltipWindowWidth(iWidth: Integer);
+    function GetHoverTime: Integer;
+    procedure SetHoverTime(iTime: Integer);
+    function GetOpacity: Byte;
+    procedure SetOpacity(nOpacity: Byte);
+    function IsLayered: Boolean;
+    procedure SetLayered(bLayered: Boolean);
+    function GetLayeredInset: TRect;
+    procedure SetLayeredInset(const rcLayeredInset: TRect);
+    function GetLayeredOpacity: Byte;
+    procedure SetLayeredOpacity(nOpacity: Byte);
+    function GetLayeredImage: string;
+    procedure SetLayeredImage(pstrImage: string);
+    class function GetPaintManager(pstrName: string): CPaintManagerUI;
+    class function GetPaintManagers: CStdPtrArray;
+    procedure AddWindowCustomAttribute(pstrName: string; pstrAttr: string);
+    function GetWindowCustomAttribute(pstrName: string): string;
+    function RemoveWindowCustomAttribute(pstrName: string): Boolean;
+    procedure RemoveAllWindowCustomAttribute;
+  public
+    property Name: string read GetName;
+  	property ForceUseSharedRes: Boolean read IsForceUseSharedRes write SetForceUseSharedRes;
+    property Painting: Boolean read IsPainting write SetPainting;
+    property LayeredImage: string read GetLayeredImage write SetLayeredImage;
+    property LayeredOpacity: Byte read GetLayeredOpacity write SetLayeredOpacity;
+    property LayeredInset: TRect read GetLayeredInset write SetLayeredInset;
+    property Layered: Boolean read IsLayered write SetLayered;
+    property Opacity: Byte read GetOpacity write SetOpacity;
+    property HoverTime: Integer read GetHoverTime write SetHoverTime;
+    property TooltipWindowWidth: Integer read GetTooltipWindowWidth write SetTooltipWindowWidth;
   end;
 
   CDialogBuilder = class
@@ -496,9 +577,23 @@ type
     function GetMarkup: CMarkup;
     procedure GetLastErrorMessage(pstrMessage: string; cchMax: SIZE_T);
     procedure GetLastErrorLocation(pstrSource: string; cchMax: SIZE_T);
+  public
+    property Markup: CMarkup read GetMarkup;
   end;
 
   CControlUI = class
+  strict private
+    // 占位用
+    ____: Pointer;
+  public
+    // 根据c++初始化的规则，此时对应的地址会被填充到变量中
+    OnInit: CEventSource;
+    OnDestroy: CEventSource;
+    OnSize: CEventSource;
+    OnEvent: CEventSource;
+    OnNotify: CEventSource;
+    OnPaint: CEventSource;
+    OnPostPaint: CEventSource;
   public
     class function CppCreate: CControlUI;
     procedure CppDestroy;
@@ -543,7 +638,7 @@ type
     procedure SetBottomBorderSize(nSize: Integer);
     function GetBorderStyle: Integer;
     procedure SetBorderStyle(nStyle: Integer);
-    function GetPos: PRect;
+    function GetPos: TRect;
     function GetRelativePos: TRect;
     procedure SetPos(rc: TRect; bNeedInvalidate: Boolean = True);
     procedure Move(szOffset: TSize; bNeedInvalidate: Boolean = True);
@@ -608,6 +703,7 @@ type
     function ApplyAttributeList(pstrList: string): CControlUI;
     function EstimateSize(szAvailable: TSize): TSize;
     procedure DoPaint(hDC: HDC; var rcPaint: TRect);
+    procedure Paint(hDC: HDC; var rcPaint: TRect);
     procedure PaintBkColor(hDC: HDC);
     procedure PaintBkImage(hDC: HDC);
     procedure PaintStatusImage(hDC: HDC);
@@ -616,11 +712,15 @@ type
     procedure DoPostPaint(hDC: HDC; var rcPaint: TRect);
     procedure SetVirtualWnd(pstrValue: string);
     function GetVirtualWnd: string;
+    function ClassName: string;
   public
     procedure Hide;
     procedure Show;
   public
-    property ClassName: string read GetClass; // reintroduce
+    property X: Integer read GetX;
+    property Y: Integer read GetY;
+    property Width: Integer read GetWidth;
+    property Height: Integer read GetHeight;
     property Text: string read GetText write SetText;
     property ToolTip: string read GetToolTip write SetToolTip;
     property ToolTipWidth: Integer read GetToolTipWidth write SetToolTipWidth;
@@ -763,6 +863,8 @@ type
     property AutoDestroy: Boolean read IsAutoDestroy write SetAutoDestroy;
     property DelayedDestroy: Boolean read IsDelayedDestroy write SetDelayedDestroy;
     property MouseChildEnabled: Boolean read IsMouseChildEnabled write SetMouseChildEnabled;
+    property ScrollPos: TSize read GetScrollPos write SetScrollPos;
+    property ScrollRange: TSize read GetScrollRange;
   end;
 
   CVerticalLayoutUI = class(CContainerUI)
@@ -781,6 +883,9 @@ type
     procedure SetPos(rc: TRect; bNeedInvalidate: Boolean = True);
     procedure DoPostPaint(hDC: HDC; var rcPaint: TRect);
     function GetThumbRect(bUseNew: Boolean = False): TRect;
+  public
+    property SepImmMode: Boolean read IsSepImmMode write SetSepImmMode;
+    property SepHeight: Integer read GetSepHeight write SetSepHeight;
   end;
 
   CHorizontalLayoutUI = class(CContainerUI)
@@ -820,7 +925,7 @@ type
     function GetScrollSelect: Boolean;
     procedure SetScrollSelect(bScrollSelect: Boolean);
     function GetCurSel: Integer;
-    function SelectItem(iIndex: Integer; bTakeFocus: Boolean = False): Boolean;
+    function SelectItem(iIndex: Integer; bTakeFocus: Boolean = False; bTriggerEvent: Boolean = True): Boolean;
     function GetHeader: CListHeaderUI;
     function GetList: CContainerUI;
     function GetListInfo: PListInfoUI;
@@ -966,7 +1071,29 @@ type
     procedure SetEnabledShadow(_EnabledShadowe: Boolean);
     function GetEnabledShadow: Boolean;
   public
+    property TextStyle: UINT read GetTextStyle write SetTextStyle;
+    property TextColor: DWORD read GetTextColor write SetTextColor;
+   	property DisabledTextColor: DWORD read GetDisabledTextColor write SetDisabledTextColor;
+    property Font: Integer read GetFont write SetFont;
+	  property TextPadding: TRect read GetTextPadding write SetTextPadding;
     property ShowHtml: Boolean read IsShowHtml write SetShowHtml;
+    property EnabledEffect: Boolean read GetEnabledEffect write SetEnabledEffect;
+    property Text: string read GetText write SetText;
+	  property TransShadow: Integer read GetTransShadow write SetTransShadow;
+    property TransShadow1: Integer read GetTransShadow1 write SetTransShadow1;
+    property TransText: Integer read GetTransText write SetTransText;
+    property TransText1: Integer read GetTransText1 write SetTransText1;
+    property TransStroke: Integer read GetTransStroke write SetTransStroke;
+    property GradientLength: Integer read GetGradientLength write SetGradientLength;
+    property TextRenderingHintAntiAlias: Integer read GetTextRenderingHintAntiAlias write SetTextRenderingHintAntiAlias;
+   	property ShadowOffset: TRectF read GetShadowOffset;
+    property TextColor1: DWORD read GetTextColor1 write SetTextColor1;
+    property TextShadowColorA: DWORD read GetTextShadowColorA write SetTextShadowColorA;
+    property TextShadowColorB: DWORD read GetTextShadowColorB write SetTextShadowColorB;
+    property StrokeColor: DWORD read GetStrokeColor write SetStrokeColor;
+    property GradientAngle: Integer read GetGradientAngle write SetGradientAngle;
+    property EnabledStroke: Boolean read GetEnabledStroke write SetEnabledStroke;
+    property EnabledShadow: Boolean read GetEnabledShadow write SetEnabledShadow;
   end;
 
   CButtonUI = class(CLabelUI)
@@ -1005,6 +1132,9 @@ type
     procedure SetAttribute(pstrName: string; pstrValue: string);
     procedure PaintText(hDC: HDC);
     procedure PaintStatusImage(hDC: HDC);
+    procedure SetFiveStatusImage(pStrImage: string);
+    procedure SetFadeAlphaDelta(uDelta: Byte);
+    function GetFadeAlphaDelta: Boolean;
   public
     property NormalImage: string read GetNormalImage write SetNormalImage;
     property HotImage: string read GetHotImage write SetHotImage;
@@ -1041,11 +1171,13 @@ type
     function GetGroup: string;
     procedure SetGroup(pStrGroupName: string = '');
     function IsSelected: Boolean;
-    procedure _Selected(bSelected: Boolean);
+    procedure _Selected(bSelected: Boolean; bTriggerEvent: Boolean = True);
     function EstimateSize(szAvailable: TSize): TSize;
     procedure SetAttribute(pstrName: string; pstrValue: string);
     procedure PaintStatusImage(hDC: HDC);
     procedure PaintText(hDC: HDC);
+  private
+    procedure SetSelected(const Value: Boolean);
   public
     property SelectedImage: string read GetSelectedImage write SetSelectedImage;
     property SelectedHotImage: string read GetSelectedHotImage write SetSelectedHotImage;
@@ -1053,7 +1185,7 @@ type
     property SelectedBkColor: DWORD read GetSelectBkColor write SetSelectedBkColor;
     property ForeImage: string read GetForeImage write SetForeImage;
     property Group: string read GetGroup write SetGroup;
-    property Selected: Boolean read IsSelected write _Selected;
+    property Selected: Boolean read IsSelected write SetSelected;
   end;
 
   CCheckBoxUI = class(COptionUI)
@@ -1062,10 +1194,12 @@ type
     procedure CppDestroy;
     function GetClass: string;
     function GetInterface(pstrName: string): Pointer;
-    procedure SetCheck(bCheck: Boolean);
+    procedure SetCheck(bCheck: Boolean; bTriggerEvent: Boolean = True);
     function GetCheck: Boolean;
+  private
+    procedure SetChecked(const Value: Boolean);
   public
-    property Checked: Boolean read GetCheck write SetCheck;
+    property Checked: Boolean read GetCheck write SetChecked;
   end;
 
   CListContainerElementUI = class(CContainerUI)
@@ -1092,6 +1226,13 @@ type
     procedure DoPaint(hDC: HDC; var rcPaint: TRect);
     procedure DrawItemText(hDC: HDC; const rcItem: TRect);
     procedure DrawItemBk(hDC: HDC; const rcItem: TRect);
+  private
+    procedure SetExpand(const Value: Boolean);
+    procedure SetSelect(const Value: Boolean);
+  public
+  	property Index: Integer read GetIndex write SetIndex;
+   	property Selected: Boolean read IsSelected write SetSelect;
+   	property Expanded: Boolean read IsExpanded write SetExpand;
   end;
 
   CComboUI = class(CContainerUI)
@@ -1111,7 +1252,7 @@ type
     function GetCurSel: Integer;
     function GetSelectCloseFlag: Boolean;
     procedure SetSelectCloseFlag(flag: Boolean);
-    function SelectItem(iIndex: Integer; bTakeFocus: Boolean = False): Boolean;
+    function SelectItem(iIndex: Integer; bTakeFocus: Boolean = False; bTriggerEvent: Boolean = True): Boolean;
     function SetItemIndex(pControl: CControlUI; iIndex: Integer): Boolean;
     function Add(pControl: CControlUI): Boolean;
     function AddAt(pControl: CControlUI; iIndex: Integer): Boolean;
@@ -1176,6 +1317,34 @@ type
     procedure DoPaint(hDC: HDC; var rcPaint: TRect);
     procedure PaintText(hDC: HDC);
     procedure PaintStatusImage(hDC: HDC);
+  public
+    property DropBoxAttributeList: string read GetDropBoxAttributeList write SetDropBoxAttributeList;
+	  property DropBoxSize: TSize read GetDropBoxSize write SetDropBoxSize;
+    property CurSel: Integer read GetCurSel;
+    property SelectCloseFlag: Boolean read GetSelectCloseFlag write SetSelectCloseFlag;
+    property ShowText: Boolean read GetShowText write SetShowText;
+    property TextPadding: TRect read GetTextPadding write SetTextPadding;
+    property NormalImage: string read GetNormalImage write SetNormalImage;
+    property HotImage: string  read GetHotImage write SetHotImage;
+    property PushedImage: string read GetPushedImage write SetPushedImage;
+	  property FocusedImage: string read GetFocusedImage write SetFocusedImage;
+    property DisabledImage: string read GetDisabledImage write SetDisabledImage;
+    property ItemTextPadding: TRect read GetItemTextPadding write SetItemTextPadding;
+    property ItemTextColor: DWORD read GetItemTextColor write SetItemTextColor;
+    property ItemBkColor: DWORD read GetItemBkColor write SetItemBkColor;
+    property ItemBkImage: string read GetItemBkImage write SetItemBkImage;
+    property AlternateBk: Boolean read IsAlternateBk write SetAlternateBk;
+    property SelectedItemTextColor: DWORD read GetSelectedItemTextColor write SetSelectedItemTextColor;
+    property SelectedItemBkColor: DWORD read GetSelectedItemBkColor write SetSelectedItemBkColor;
+    property SelectedItemImage: string read GetSelectedItemImage write SetSelectedItemImage;
+    property HotItemTextColor: DWORD read GetHotItemTextColor write SetHotItemTextColor;
+    property HotItemBkColor: DWORD read GetHotItemBkColor write SetHotItemBkColor;
+    property HotItemImage: string read GetHotItemImage write SetHotItemImage;
+    property DisabledItemTextColor: DWORD read GetDisabledItemTextColor write SetDisabledItemTextColor;
+    property DisabledItemBkColor: DWORD read GetDisabledItemBkColor write SetDisabledItemBkColor;
+    property DisabledItemImage: string read GetDisabledItemImage write SetDisabledItemImage;
+    property ItemLineColor: DWORD read GetItemLineColor write SetItemLineColor;
+    property ItemShowHtml: Boolean read IsItemShowHtml write SetItemShowHtml;
   end;
 
   CDateTimeUI = class(CLabelUI)
@@ -1184,14 +1353,15 @@ type
     procedure CppDestroy;
     function GetClass: string;
     function GetInterface(pstrName: string): Pointer;
-    function GetTime: PSystemTime;
-    procedure SetTime(pst: PSystemTime);
+    function GetTime: TDateTime;
+    procedure SetTime(pst: TDateTime);
     procedure SetReadOnly(bReadOnly: Boolean);
     function IsReadOnly: Boolean;
     procedure UpdateText;
     procedure DoEvent(var event: TEventUI);
   public
     property ReadOnly: Boolean read IsReadOnly write SetReadOnly;
+  	property Time: TDateTime read GetTime write SetTime;
   end;
 
   CEditUI = class(CLabelUI)
@@ -1237,6 +1407,19 @@ type
     procedure SetAttribute(pstrName: string; pstrValue: string);
     procedure PaintStatusImage(hDC: HDC);
     procedure PaintText(hDC: HDC);
+  public
+    property MaxChar: UINT read GetMaxChar write SetMaxChar;
+    property ReadOnly: Boolean read IsReadOnly write SetReadOnly;
+    property PasswordMode: Boolean read IsPasswordMode write SetPasswordMode;
+    property PasswordChar: Char read GetPasswordChar write SetPasswordChar;
+    property NumberOnly: Boolean read IsNumberOnly write SetNumberOnly;
+    property WindowStyls: Integer read GetWindowStyls;
+    property NativeEditHWND: HWND read GetNativeEditHWND;
+    property NormalImage: string read GetNormalImage write SetNormalImage;
+    property HotImage: string read GetHotImage write SetHotImage;
+    property FocusedImage: string read GetFocusedImage write SetFocusedImage;
+    property DisabledImage: string read GetDisabledImage write SetDisabledImage;
+    property NativeEditBkColor: DWORD read GetNativeEditBkColor write SetNativeEditBkColor;
   end;
 
   CProgressUI = class(CLabelUI)
@@ -1260,6 +1443,8 @@ type
     procedure SetAttribute(pstrName: string; pstrValue: string);
     procedure PaintStatusImage(hDC: HDC);
   public
+    property Horizontal: Boolean read IsHorizontal write SetHorizontal;
+    property StretchForeImage: Boolean read IsStretchForeImage write SetStretchForeImage;
     property Value: Integer read GetValue write SetValue;
     property MinValue: Integer read GetMinValue write SetMinValue;
     property MaxValue: Integer read GetMaxValue write SetMaxValue;
@@ -1344,6 +1529,37 @@ type
     procedure PaintButton2(hDC: HDC);
     procedure PaintThumb(hDC: HDC);
     procedure PaintRail(hDC: HDC);
+  public
+    property Owner: CContainerUI read GetOwner write SetOwner;
+    property Horizontal: Boolean read IsHorizontal write SetHorizontal;
+    property ScrollRange: Integer read GetScrollRange write SetScrollRange;
+    property ScrollPos: Integer read GetScrollPos write SetScrollPos;
+    property LineSize: Integer read GetLineSize write SetLineSize;
+    property ShowButton1: Boolean read GetShowButton1 write SetShowButton1;
+    property Button1Color: DWORD read GetButton1Color write SetButton1Color;
+    property Button1NormalImage: string read GetButton1NormalImage write SetButton1NormalImage;
+    property Button1HotImage: string read GetButton1HotImage write SetButton1HotImage;
+    property Button1PushedImage: string read GetButton1PushedImage write SetButton1PushedImage;
+    property Button1DisabledImage: string read GetButton1DisabledImage write SetButton1DisabledImage;
+    property ShowButton2: Boolean read GetShowButton2 write SetShowButton2;
+    property Button2Color: DWORD read GetButton2Color write SetButton2Color;
+    property Button2NormalImage: string read GetButton2NormalImage write SetButton2NormalImage;
+    property Button2HotImage: string read GetButton2HotImage write SetButton2HotImage;
+    property Button2PushedImage: string read GetButton2PushedImage write SetButton2PushedImage;
+    property Button2DisabledImage: string read GetButton2DisabledImage write SetButton2DisabledImage;
+    property ThumbColor: DWORD read GetThumbColor write SetThumbColor;
+    property ThumbNormalImage: string read GetThumbNormalImage write SetThumbNormalImage;
+    property ThumbHotImage: string read GetThumbHotImage write SetThumbHotImage;
+    property ThumbPushedImage: string read GetThumbPushedImage write SetThumbPushedImage;
+    property ThumbDisabledImage: string read GetThumbDisabledImage write SetThumbDisabledImage;
+    property RailNormalImage: string read GetRailNormalImage write SetRailNormalImage;
+    property RailHotImage: string read GetRailHotImage write SetRailHotImage;
+    property RailPushedImage: string read GetRailPushedImage write SetRailPushedImage;
+    property RailDisabledImage: string read GetRailDisabledImage write SetRailDisabledImage;
+    property BkNormalImage: string read GetBkNormalImage write SetBkNormalImage;
+    property BkHotImage: string read GetBkHotImage write SetBkHotImage;
+    property BkPushedImage: string read GetBkPushedImage write SetBkPushedImage;
+    property BkDisabledImage: string read GetBkDisabledImage write SetBkDisabledImage;
   end;
 
   CSliderUI = class(CProgressUI)
@@ -1396,7 +1612,7 @@ type
     function GetInterface(pstrName: string): Pointer;
     procedure DoEvent(var event: TEventUI);
     procedure Invalidate;
-    function Select(bSelect: Boolean = True): Boolean;
+    function Select(bSelect: Boolean = True; bTriggerEvent: Boolean = True): Boolean;
     function Add(_pTreeNodeUI: CControlUI): Boolean;
     function AddAt(pControl: CControlUI; iIndex: Integer): Boolean;
     function Remove(pControl: CControlUI): Boolean;
@@ -1404,7 +1620,7 @@ type
     function GetVisibleTag: Boolean;
     procedure SetItemText(pstrValue: string);
     function GetItemText: string;
-    procedure CheckBoxSelected(_Selected: Boolean);
+    procedure SetCheckBoxSelected(_Selected: Boolean);
     function IsCheckBoxSelected: Boolean;
     function IsHasChild: Boolean;
     function AddChildNode(_pTreeNodeUI: CTreeNodeUI): Boolean;
@@ -1431,6 +1647,24 @@ type
     function GetTreeNodes: CStdPtrArray;
     function GetTreeIndex: Integer;
     function GetNodeIndex: Integer;
+  public
+    property VisibleTag: Boolean read GetVisibleTag write SetVisibleTag;
+    property ItemText: string read GetItemText write SetItemText;
+    property CheckBoxSelected: Boolean read IsCheckBoxSelected write SetCheckBoxSelected;
+    property HasChild: Boolean read IsHasChild;
+    property ParentNode: CTreeNodeUI read GetParentNode write SetParentNode;
+    property ChildCount: LongInt read GetCountChild;
+    property TreeView: CTreeViewUI read GetTreeView write SetTreeView;
+    property ChildNode[index: Integer]: CTreeNodeUI read GetChildNode;
+    property VisibleFolderBtn: Boolean read GetVisibleFolderBtn write SetVisibleFolderBtn;
+    property VisibleCheckBtn: Boolean read GetVisibleCheckBtn write SetVisibleCheckBtn;
+    property ItemTextColor: DWORD read GetItemTextColor write SetItemTextColor;
+    property ItemHotTextColor: DWORD read GetItemHotTextColor write SetItemHotTextColor;
+    property SelItemTextColor: DWORD read GetSelItemTextColor write SetSelItemTextColor;
+    property SelItemHotTextColor: DWORD read GetSelItemHotTextColor write SetSelItemHotTextColor;
+    property TreeNodes: CStdPtrArray read GetTreeNodes;
+    property TreeIndex: Integer read GetTreeIndex;
+    property NodeIndex: Integer read GetNodeIndex;
   end;
 
   CTreeViewUI = class(CListUI)
@@ -1462,6 +1696,10 @@ type
     procedure SetSelItemTextColor(_dwSelItemTextColor: DWORD);
     procedure SetSelItemHotTextColor(_dwSelHotItemTextColor: DWORD);
     procedure SetAttribute(pstrName: string; pstrValue: string);
+  public
+    property VisibleFolderBtn: Boolean read GetVisibleFolderBtn write SetVisibleFolderBtn;
+    property VisibleCheckBtn: Boolean read GetVisibleCheckBtn write SetVisibleCheckBtn;
+    property ItemMinWidth: UINT read GetItemMinWidth write SetItemMinWidth;
   end;
 
   CTabLayoutUI = class(CContainerUI)
@@ -1475,10 +1713,14 @@ type
     function Remove(pControl: CControlUI): Boolean;
     procedure RemoveAll;
     function GetCurSel: Integer;
-    function SelectItem(iIndex: Integer): Boolean; overload;
-    function SelectItem(pControl: CControlUI): Boolean; overload;
+    function SelectItem(iIndex: Integer; bTriggerEvent: Boolean = True): Boolean; overload;
+    function SelectItem(pControl: CControlUI; bTriggerEvent: Boolean = True): Boolean; overload;
     procedure SetPos(rc: TRect; bNeedInvalidate: Boolean = True);
     procedure SetAttribute(pstrName: string; pstrValue: string);
+  private
+    procedure SetSelectItem(const Value: Integer);
+  public
+    property SelectIndex: Integer read GetCurSel write SetSelectItem;
   end;
 
   CRenderClip = class
@@ -1532,6 +1774,13 @@ type
     procedure DoEvent(var event: TEventUI);
     procedure SetAttribute(pstrName: string; pstrValue: string);
     procedure DrawItemBk(hDC: HDC; const rcItem: TRect);
+  private
+    procedure SetExpanded(const Value: Boolean);
+    procedure SetSelect(const Value: Boolean);
+  public
+    property Index: Integer read GetIndex write SetIndex;
+    property Selected: Boolean read IsSelected write SetSelect;
+    property Expanded: Boolean read IsExpanded write SetExpanded;
   end;
 
   CListLabelElementUI = class(CListElementUI)
@@ -1560,7 +1809,36 @@ type
     procedure DoEvent(var event: TEventUI);
     function EstimateSize(szAvailable: TSize): TSize;
     procedure DrawItemText(hDC: HDC; const rcItem: TRect);
+  public
+    property Texts[iIndex: Integer]: string read GetText write SetText;
   end;
+
+  CGifAnimUI = class(CControlUI)
+  public
+    class function CppCreate: CGifAnimUI;
+    procedure CppDestroy;
+    function GetClass: string;
+    function GetInterface(pstrName: string): Pointer;
+    procedure DoInit;
+    procedure DoPaint(hDC: HDC; var rcPaint: TRect);
+    procedure DoEvent(var event: TEventUI);
+    procedure SetVisible(bVisible: Boolean = True);
+    procedure SetAttribute(pstrName: string; pstrValue: string);
+    procedure SetBkImage(pStrImage: string);
+    function GetBkImage: string;
+    procedure SetAutoPlay(bIsAuto: Boolean = True);
+    function IsAutoPlay: Boolean;
+    procedure SetAutoSize(bIsAuto: Boolean = True);
+    function IsAutoSize: Boolean;
+    procedure PlayGif;
+    procedure PauseGif;
+    procedure StopGif;
+  public
+    property BkImage: string read GetBkImage write SetBkImage;
+    property AutoPlay: Boolean read IsAutoPlay write SetAutoPlay;
+    property AutoSize: Boolean read IsAutoSize write SetAutoSize;
+  end;
+
 
   CChildLayoutUI = class(CContainerUI)
   public
@@ -1572,6 +1850,8 @@ type
     function GetChildLayoutXML: string;
     function GetInterface(pstrName: string): Pointer;
     function GetClass: string;
+  public
+    property ChildLayoutXML: string read GetChildLayoutXML write SetChildLayoutXML;
   end;
 
   CTileLayoutUI = class(CContainerUI)
@@ -1586,6 +1866,9 @@ type
     function GetColumns: Integer;
     procedure SetColumns(nCols: Integer);
     procedure SetAttribute(pstrName: string; pstrValue: string);
+  public
+    property ItemSize: TSize read GetItemSize write SetItemSize;
+    property Columns: Integer read GetColumns write SetColumns;
   end;
 
 
@@ -1598,6 +1881,8 @@ type
     function GetClass: string;
     function GetText: string;
     procedure SetText(pstrText: string);
+  public
+    property Text: string read GetText write SetText;
   end;
 
 
@@ -1807,6 +2092,7 @@ procedure Delphi_ControlUI_SetAttribute(Handle: CControlUI; pstrName: LPCTSTR; p
 function Delphi_ControlUI_ApplyAttributeList(Handle: CControlUI; pstrList: LPCTSTR): CControlUI; cdecl;
 procedure Delphi_ControlUI_EstimateSize(Handle: CControlUI; szAvailable: TSize; var Result: TSize); cdecl;
 procedure Delphi_ControlUI_DoPaint(Handle: CControlUI; hDC: HDC; var rcPaint: TRect); cdecl;
+procedure Delphi_ControlUI_Paint(Handle: CControlUI; hDC: HDC; var rcPaint: TRect); cdecl;
 procedure Delphi_ControlUI_PaintBkColor(Handle: CControlUI; hDC: HDC); cdecl;
 procedure Delphi_ControlUI_PaintBkImage(Handle: CControlUI; hDC: HDC); cdecl;
 procedure Delphi_ControlUI_PaintStatusImage(Handle: CControlUI; hDC: HDC); cdecl;
@@ -1863,7 +2149,7 @@ procedure Delphi_Delphi_WindowImplBase_RemoveThisInPaintManager(Handle: CDelphi_
 
 function Delphi_PaintManagerUI_CppCreate: CPaintManagerUI; cdecl;
 procedure Delphi_PaintManagerUI_CppDestroy(Handle: CPaintManagerUI); cdecl;
-procedure Delphi_PaintManagerUI_Init(Handle: CPaintManagerUI; hWnd: HWND); cdecl;
+procedure Delphi_PaintManagerUI_Init(Handle: CPaintManagerUI; hWnd: HWND; pstrName: LPCTSTR); cdecl;
 function Delphi_PaintManagerUI_IsUpdateNeeded(Handle: CPaintManagerUI): Boolean; cdecl;
 procedure Delphi_PaintManagerUI_NeedUpdate(Handle: CPaintManagerUI); cdecl;
 procedure Delphi_PaintManagerUI_Invalidate_01(Handle: CPaintManagerUI); cdecl;
@@ -1885,9 +2171,6 @@ procedure Delphi_PaintManagerUI_GetMinInfo(Handle: CPaintManagerUI; var Result: 
 procedure Delphi_PaintManagerUI_SetMinInfo(Handle: CPaintManagerUI; cx: Integer; cy: Integer); cdecl;
 procedure Delphi_PaintManagerUI_GetMaxInfo(Handle: CPaintManagerUI; var Result: TSize); cdecl;
 procedure Delphi_PaintManagerUI_SetMaxInfo(Handle: CPaintManagerUI; cx: Integer; cy: Integer); cdecl;
-function Delphi_PaintManagerUI_GetTransparent(Handle: CPaintManagerUI): Integer; cdecl;
-procedure Delphi_PaintManagerUI_SetTransparent(Handle: CPaintManagerUI; nOpacity: Integer); cdecl;
-procedure Delphi_PaintManagerUI_SetBackgroundTransparent(Handle: CPaintManagerUI; bTrans: Boolean); cdecl;
 function Delphi_PaintManagerUI_IsShowUpdateRect(Handle: CPaintManagerUI): Boolean; cdecl;
 procedure Delphi_PaintManagerUI_SetShowUpdateRect(Handle: CPaintManagerUI; show: Boolean); cdecl;
 function Delphi_PaintManagerUI_GetInstance: HINST; cdecl;
@@ -1908,6 +2191,10 @@ function Delphi_PaintManagerUI_GetHSL(H: PShort; S: PShort; L: PShort): Boolean;
 procedure Delphi_PaintManagerUI_ReloadSkin; cdecl;
 function Delphi_PaintManagerUI_LoadPlugin(pstrModuleName: LPCTSTR): Boolean; cdecl;
 function Delphi_PaintManagerUI_GetPlugins: CStdPtrArray; cdecl;
+function Delphi_PaintManagerUI_IsForceUseSharedRes(Handle: CPaintManagerUI): Boolean; cdecl;
+procedure Delphi_PaintManagerUI_SetForceUseSharedRes(Handle: CPaintManagerUI; bForce: Boolean); cdecl;
+function Delphi_PaintManagerUI_IsPainting(Handle: CPaintManagerUI): Boolean; cdecl;
+procedure Delphi_PaintManagerUI_SetPainting(Handle: CPaintManagerUI; bIsPainting: Boolean); cdecl;
 function Delphi_PaintManagerUI_GetDefaultDisabledColor(Handle: CPaintManagerUI): DWORD; cdecl;
 procedure Delphi_PaintManagerUI_SetDefaultDisabledColor(Handle: CPaintManagerUI; dwColor: DWORD; bShared: Boolean); cdecl;
 function Delphi_PaintManagerUI_GetDefaultFontColor(Handle: CPaintManagerUI): DWORD; cdecl;
@@ -1996,6 +2283,27 @@ function Delphi_PaintManagerUI_MessageHandler(Handle: CPaintManagerUI; uMsg: UIN
 function Delphi_PaintManagerUI_PreMessageHandler(Handle: CPaintManagerUI; uMsg: UINT; wParam: WPARAM; lParam: LPARAM; var lRes: LRESULT): Boolean; cdecl;
 procedure Delphi_PaintManagerUI_UsedVirtualWnd(Handle: CPaintManagerUI; bUsed: Boolean); cdecl;
 
+function Delphi_PaintManagerUI_GetName(Handle: CPaintManagerUI): LPCTSTR; cdecl;
+function Delphi_PaintManagerUI_GetTooltipWindowWidth(Handle: CPaintManagerUI): Integer; cdecl;
+procedure Delphi_PaintManagerUI_SetTooltipWindowWidth(Handle: CPaintManagerUI; iWidth: Integer); cdecl;
+function Delphi_PaintManagerUI_GetHoverTime(Handle: CPaintManagerUI): Integer; cdecl;
+procedure Delphi_PaintManagerUI_SetHoverTime(Handle: CPaintManagerUI; iTime: Integer); cdecl;
+function Delphi_PaintManagerUI_GetOpacity(Handle: CPaintManagerUI): Byte; cdecl;
+procedure Delphi_PaintManagerUI_SetOpacity(Handle: CPaintManagerUI; nOpacity: Byte); cdecl;
+function Delphi_PaintManagerUI_IsLayered(Handle: CPaintManagerUI): Boolean; cdecl;
+procedure Delphi_PaintManagerUI_SetLayered(Handle: CPaintManagerUI; bLayered: Boolean); cdecl;
+function Delphi_PaintManagerUI_GetLayeredInset(Handle: CPaintManagerUI): PRect; cdecl;
+procedure Delphi_PaintManagerUI_SetLayeredInset(Handle: CPaintManagerUI; const rcLayeredInset: TRect); cdecl;
+function Delphi_PaintManagerUI_GetLayeredOpacity(Handle: CPaintManagerUI): Byte; cdecl;
+procedure Delphi_PaintManagerUI_SetLayeredOpacity(Handle: CPaintManagerUI; nOpacity: Byte); cdecl;
+function Delphi_PaintManagerUI_GetLayeredImage(Handle: CPaintManagerUI): LPCTSTR; cdecl;
+procedure Delphi_PaintManagerUI_SetLayeredImage(Handle: CPaintManagerUI; pstrImage: LPCTSTR); cdecl;
+function Delphi_PaintManagerUI_GetPaintManager(pstrName: LPCTSTR): CPaintManagerUI; cdecl;
+function Delphi_PaintManagerUI_GetPaintManagers: CStdPtrArray; cdecl;
+procedure Delphi_PaintManagerUI_AddWindowCustomAttribute(Handle: CPaintManagerUI; pstrName: LPCTSTR; pstrAttr: LPCTSTR); cdecl;
+function Delphi_PaintManagerUI_GetWindowCustomAttribute(Handle: CPaintManagerUI; pstrName: LPCTSTR): LPCTSTR; cdecl;
+function Delphi_PaintManagerUI_RemoveWindowCustomAttribute(Handle: CPaintManagerUI; pstrName: LPCTSTR): Boolean; cdecl;
+procedure Delphi_PaintManagerUI_RemoveAllWindowCustomAttribute(Handle: CPaintManagerUI); cdecl;
 //================================CContainerUI============================
 
 function Delphi_ContainerUI_CppCreate: CContainerUI; cdecl;
@@ -2087,7 +2395,7 @@ function Delphi_ListUI_GetInterface(Handle: CListUI; pstrName: LPCTSTR): Pointer
 function Delphi_ListUI_GetScrollSelect(Handle: CListUI): Boolean; cdecl;
 procedure Delphi_ListUI_SetScrollSelect(Handle: CListUI; bScrollSelect: Boolean); cdecl;
 function Delphi_ListUI_GetCurSel(Handle: CListUI): Integer; cdecl;
-function Delphi_ListUI_SelectItem(Handle: CListUI; iIndex: Integer; bTakeFocus: Boolean): Boolean; cdecl;
+function Delphi_ListUI_SelectItem(Handle: CListUI; iIndex: Integer; bTakeFocus: Boolean; bTriggerEvent: Boolean): Boolean; cdecl;
 function Delphi_ListUI_GetHeader(Handle: CListUI): CListHeaderUI; cdecl;
 function Delphi_ListUI_GetList(Handle: CListUI): CContainerUI; cdecl;
 function Delphi_ListUI_GetListInfo(Handle: CListUI): PListInfoUI; cdecl;
@@ -2268,6 +2576,13 @@ procedure Delphi_ButtonUI_SetAttribute(Handle: CButtonUI; pstrName: LPCTSTR; pst
 procedure Delphi_ButtonUI_PaintText(Handle: CButtonUI; hDC: HDC); cdecl;
 procedure Delphi_ButtonUI_PaintStatusImage(Handle: CButtonUI; hDC: HDC); cdecl;
 
+procedure Delphi_ButtonUI_SetFiveStatusImage(Handle: CButtonUI; pStrImage: LPCTSTR); cdecl;
+procedure Delphi_ButtonUI_SetFadeAlphaDelta(Handle: CButtonUI; uDelta: Byte); cdecl;
+function Delphi_ButtonUI_GetFadeAlphaDelta(Handle: CButtonUI): Boolean; cdecl;
+
+
+
+
 //================================COptionUI============================
 
 function Delphi_OptionUI_CppCreate: COptionUI; cdecl;
@@ -2290,7 +2605,7 @@ procedure Delphi_OptionUI_SetForeImage(Handle: COptionUI; pStrImage: LPCTSTR); c
 function Delphi_OptionUI_GetGroup(Handle: COptionUI): LPCTSTR; cdecl;
 procedure Delphi_OptionUI_SetGroup(Handle: COptionUI; pStrGroupName: LPCTSTR); cdecl;
 function Delphi_OptionUI_IsSelected(Handle: COptionUI): Boolean; cdecl;
-procedure Delphi_OptionUI_Selected(Handle: COptionUI; bSelected: Boolean); cdecl;
+procedure Delphi_OptionUI_Selected(Handle: COptionUI; bSelected: Boolean; bTriggerEvent: Boolean); cdecl;
 procedure Delphi_OptionUI_EstimateSize(Handle: COptionUI; szAvailable: TSize; var Result: TSize); cdecl;
 procedure Delphi_OptionUI_SetAttribute(Handle: COptionUI; pstrName: LPCTSTR; pstrValue: LPCTSTR); cdecl;
 procedure Delphi_OptionUI_PaintStatusImage(Handle: COptionUI; hDC: HDC); cdecl;
@@ -2302,7 +2617,7 @@ function Delphi_CheckBoxUI_CppCreate: CCheckBoxUI; cdecl;
 procedure Delphi_CheckBoxUI_CppDestroy(Handle: CCheckBoxUI); cdecl;
 function Delphi_CheckBoxUI_GetClass(Handle: CCheckBoxUI): LPCTSTR; cdecl;
 function Delphi_CheckBoxUI_GetInterface(Handle: CCheckBoxUI; pstrName: LPCTSTR): Pointer; cdecl;
-procedure Delphi_CheckBoxUI_SetCheck(Handle: CCheckBoxUI; bCheck: Boolean); cdecl;
+procedure Delphi_CheckBoxUI_SetCheck(Handle: CCheckBoxUI; bCheck: Boolean; bTriggerEvent: Boolean); cdecl;
 function Delphi_CheckBoxUI_GetCheck(Handle: CCheckBoxUI): Boolean; cdecl;
 
 //================================CListContainerElementUI============================
@@ -2347,7 +2662,7 @@ procedure Delphi_ComboUI_SetDropBoxSize(Handle: CComboUI; szDropBox: TSize); cde
 function Delphi_ComboUI_GetCurSel(Handle: CComboUI): Integer; cdecl;
 function Delphi_ComboUI_GetSelectCloseFlag(Handle: CComboUI): Boolean; cdecl;
 procedure Delphi_ComboUI_SetSelectCloseFlag(Handle: CComboUI; flag: Boolean); cdecl;
-function Delphi_ComboUI_SelectItem(Handle: CComboUI; iIndex: Integer; bTakeFocus: Boolean): Boolean; cdecl;
+function Delphi_ComboUI_SelectItem(Handle: CComboUI; iIndex: Integer; bTakeFocus: Boolean; bTriggerEvent: Boolean): Boolean; cdecl;
 function Delphi_ComboUI_SetItemIndex(Handle: CComboUI; pControl: CControlUI; iIndex: Integer): Boolean; cdecl;
 function Delphi_ComboUI_Add(Handle: CComboUI; pControl: CControlUI): Boolean; cdecl;
 function Delphi_ComboUI_AddAt(Handle: CComboUI; pControl: CControlUI; iIndex: Integer): Boolean; cdecl;
@@ -2612,7 +2927,7 @@ function Delphi_TreeNodeUI_GetClass(Handle: CTreeNodeUI): LPCTSTR; cdecl;
 function Delphi_TreeNodeUI_GetInterface(Handle: CTreeNodeUI; pstrName: LPCTSTR): Pointer; cdecl;
 procedure Delphi_TreeNodeUI_DoEvent(Handle: CTreeNodeUI; var event: TEventUI); cdecl;
 procedure Delphi_TreeNodeUI_Invalidate(Handle: CTreeNodeUI); cdecl;
-function Delphi_TreeNodeUI_Select(Handle: CTreeNodeUI; bSelect: Boolean): Boolean; cdecl;
+function Delphi_TreeNodeUI_Select(Handle: CTreeNodeUI; bSelect: Boolean; bTriggerEvent: Boolean): Boolean; cdecl;
 function Delphi_TreeNodeUI_Add(Handle: CTreeNodeUI; _pTreeNodeUI: CControlUI): Boolean; cdecl;
 function Delphi_TreeNodeUI_AddAt(Handle: CTreeNodeUI; pControl: CControlUI; iIndex: Integer): Boolean; cdecl;
 function Delphi_TreeNodeUI_Remove(Handle: CTreeNodeUI; pControl: CControlUI): Boolean; cdecl;
@@ -2689,8 +3004,8 @@ function Delphi_TabLayoutUI_AddAt(Handle: CTabLayoutUI; pControl: CControlUI; iI
 function Delphi_TabLayoutUI_Remove(Handle: CTabLayoutUI; pControl: CControlUI): Boolean; cdecl;
 procedure Delphi_TabLayoutUI_RemoveAll(Handle: CTabLayoutUI); cdecl;
 function Delphi_TabLayoutUI_GetCurSel(Handle: CTabLayoutUI): Integer; cdecl;
-function Delphi_TabLayoutUI_SelectItem_01(Handle: CTabLayoutUI; iIndex: Integer): Boolean; cdecl;
-function Delphi_TabLayoutUI_SelectItem_02(Handle: CTabLayoutUI; pControl: CControlUI): Boolean; cdecl;
+function Delphi_TabLayoutUI_SelectItem_01(Handle: CTabLayoutUI; iIndex: Integer; bTriggerEvent: Boolean): Boolean; cdecl;
+function Delphi_TabLayoutUI_SelectItem_02(Handle: CTabLayoutUI; pControl: CControlUI; bTriggerEvent: Boolean): Boolean; cdecl;
 procedure Delphi_TabLayoutUI_SetPos(Handle: CTabLayoutUI; rc: TRect; bNeedInvalidate: Boolean); cdecl;
 procedure Delphi_TabLayoutUI_SetAttribute(Handle: CTabLayoutUI; pstrName: LPCTSTR; pstrValue: LPCTSTR); cdecl;
 
@@ -2799,6 +3114,28 @@ function Delphi_ListTextElementUI_GetLinkContent(Handle: CListTextElementUI; iIn
 procedure Delphi_ListTextElementUI_DoEvent(Handle: CListTextElementUI; var event: TEventUI); cdecl;
 procedure Delphi_ListTextElementUI_EstimateSize(Handle: CListTextElementUI; szAvailable: TSize; var Result: TSize); cdecl;
 procedure Delphi_ListTextElementUI_DrawItemText(Handle: CListTextElementUI; hDC: HDC; const rcItem: TRect); cdecl;
+
+
+//================================CGifAnimUI============================
+
+function Delphi_GifAnimUI_CppCreate: CGifAnimUI; cdecl;
+procedure Delphi_GifAnimUI_CppDestroy(Handle: CGifAnimUI); cdecl;
+function Delphi_GifAnimUI_GetClass(Handle: CGifAnimUI): LPCTSTR; cdecl;
+function Delphi_GifAnimUI_GetInterface(Handle: CGifAnimUI; pstrName: LPCTSTR): Pointer; cdecl;
+procedure Delphi_GifAnimUI_DoInit(Handle: CGifAnimUI); cdecl;
+procedure Delphi_GifAnimUI_DoPaint(Handle: CGifAnimUI; hDC: HDC; var rcPaint: TRect); cdecl;
+procedure Delphi_GifAnimUI_DoEvent(Handle: CGifAnimUI; var event: TEventUI); cdecl;
+procedure Delphi_GifAnimUI_SetVisible(Handle: CGifAnimUI; bVisible: Boolean); cdecl;
+procedure Delphi_GifAnimUI_SetAttribute(Handle: CGifAnimUI; pstrName: LPCTSTR; pstrValue: LPCTSTR); cdecl;
+procedure Delphi_GifAnimUI_SetBkImage(Handle: CGifAnimUI; pStrImage: LPCTSTR); cdecl;
+function Delphi_GifAnimUI_GetBkImage(Handle: CGifAnimUI): LPCTSTR; cdecl;
+procedure Delphi_GifAnimUI_SetAutoPlay(Handle: CGifAnimUI; bIsAuto: Boolean); cdecl;
+function Delphi_GifAnimUI_IsAutoPlay(Handle: CGifAnimUI): Boolean; cdecl;
+procedure Delphi_GifAnimUI_SetAutoSize(Handle: CGifAnimUI; bIsAuto: Boolean); cdecl;
+function Delphi_GifAnimUI_IsAutoSize(Handle: CGifAnimUI): Boolean; cdecl;
+procedure Delphi_GifAnimUI_PlayGif(Handle: CGifAnimUI); cdecl;
+procedure Delphi_GifAnimUI_PauseGif(Handle: CGifAnimUI); cdecl;
+procedure Delphi_GifAnimUI_StopGif(Handle: CGifAnimUI); cdecl;
 
 
 //================================CChildLayoutUI============================
@@ -3074,6 +3411,18 @@ begin
   Result := Delphi_StdPtrArray_GetAt(Self, iIndex);
 end;
 
+{ CEventSource }
+
+function CEventSource.Delegates: CStdPtrArray;
+begin
+  Result := CStdPtrArray(@Self);
+end;
+
+function CEventSource.IsEmpty: Boolean;
+begin
+  Result := Delegates.GetSize > 0;
+end;
+
 { CNotifyPump }
 
 class function CNotifyPump.CppCreate: CNotifyPump;
@@ -3299,6 +3648,11 @@ end;
 
 { CControlUI }
 
+function CControlUI.ClassName: string;
+begin
+  Result := GetClass;
+end;
+
 class function CControlUI.CppCreate: CControlUI;
 begin
   Result := Delphi_ControlUI_CppCreate;
@@ -3514,9 +3868,9 @@ begin
   Delphi_ControlUI_SetBorderStyle(Self, nStyle);
 end;
 
-function CControlUI.GetPos: PRect;
+function CControlUI.GetPos: TRect;
 begin
-  Result := Delphi_ControlUI_GetPos(Self);
+  Result := Delphi_ControlUI_GetPos(Self)^;
 end;
 
 function CControlUI.GetRelativePos: TRect;
@@ -3849,6 +4203,11 @@ begin
   Delphi_ControlUI_DoPaint(Self, hDC, rcPaint);
 end;
 
+procedure CControlUI.Paint(hDC: HDC; var rcPaint: TRect);
+begin
+  Delphi_ControlUI_Paint(Self, hDC, rcPaint);
+end;
+
 procedure CControlUI.PaintBkColor(hDC: HDC);
 begin
   Delphi_ControlUI_PaintBkColor(Self, hDC);
@@ -4105,9 +4464,9 @@ begin
   Delphi_PaintManagerUI_CppDestroy(Self);
 end;
 
-procedure CPaintManagerUI.Init(hWnd: HWND);
+procedure CPaintManagerUI.Init(hWnd: HWND; pstrName: string);
 begin
-  Delphi_PaintManagerUI_Init(Self, hWnd);
+  Delphi_PaintManagerUI_Init(Self, hWnd, LPCTSTR(pstrName));
 end;
 
 function CPaintManagerUI.IsUpdateNeeded: Boolean;
@@ -4165,9 +4524,9 @@ begin
   Delphi_PaintManagerUI_SetInitSize(Self, cx, cy);
 end;
 
-function CPaintManagerUI.GetSizeBox: PRect;
+function CPaintManagerUI.GetSizeBox: TRect;
 begin
-  Result := Delphi_PaintManagerUI_GetSizeBox(Self);
+  Result := Delphi_PaintManagerUI_GetSizeBox(Self)^;
 end;
 
 procedure CPaintManagerUI.SetSizeBox(const rcSizeBox: TRect);
@@ -4175,9 +4534,9 @@ begin
   Delphi_PaintManagerUI_SetSizeBox(Self, rcSizeBox);
 end;
 
-function CPaintManagerUI.GetCaptionRect: PRect;
+function CPaintManagerUI.GetCaptionRect: TRect;
 begin
-  Result := Delphi_PaintManagerUI_GetCaptionRect(Self);
+  Result := Delphi_PaintManagerUI_GetCaptionRect(Self)^;
 end;
 
 procedure CPaintManagerUI.SetCaptionRect(const rcCaption: TRect);
@@ -4213,21 +4572,6 @@ end;
 procedure CPaintManagerUI.SetMaxInfo(cx: Integer; cy: Integer);
 begin
   Delphi_PaintManagerUI_SetMaxInfo(Self, cx, cy);
-end;
-
-function CPaintManagerUI.GetTransparent: Integer;
-begin
-  Result := Delphi_PaintManagerUI_GetTransparent(Self);
-end;
-
-procedure CPaintManagerUI.SetTransparent(nOpacity: Integer);
-begin
-  Delphi_PaintManagerUI_SetTransparent(Self, nOpacity);
-end;
-
-procedure CPaintManagerUI.SetBackgroundTransparent(bTrans: Boolean);
-begin
-  Delphi_PaintManagerUI_SetBackgroundTransparent(Self, bTrans);
 end;
 
 function CPaintManagerUI.IsShowUpdateRect: Boolean;
@@ -4328,6 +4672,26 @@ end;
 class function CPaintManagerUI.GetPlugins: CStdPtrArray;
 begin
   Result := Delphi_PaintManagerUI_GetPlugins;
+end;
+
+function CPaintManagerUI.IsForceUseSharedRes: Boolean;
+begin
+  Result := Delphi_PaintManagerUI_IsForceUseSharedRes(Self);
+end;
+
+procedure CPaintManagerUI.SetForceUseSharedRes(bForce: Boolean);
+begin
+  Delphi_PaintManagerUI_SetForceUseSharedRes(Self, bForce);
+end;
+
+function CPaintManagerUI.IsPainting: Boolean;
+begin
+  Result := Delphi_PaintManagerUI_IsPainting(Self);
+end;
+
+procedure CPaintManagerUI.SetPainting(bIsPainting: Boolean);
+begin
+  Delphi_PaintManagerUI_SetPainting(Self, bIsPainting);
 end;
 
 function CPaintManagerUI.GetDefaultDisabledColor: DWORD;
@@ -4768,6 +5132,111 @@ begin
   Delphi_PaintManagerUI_UsedVirtualWnd(Self, bUsed);
 end;
 
+function CPaintManagerUI.GetName: string;
+begin
+  Result := Delphi_PaintManagerUI_GetName(Self);
+end;
+
+function CPaintManagerUI.GetTooltipWindowWidth: Integer;
+begin
+  Result := Delphi_PaintManagerUI_GetTooltipWindowWidth(Self);
+end;
+
+procedure CPaintManagerUI.SetTooltipWindowWidth(iWidth: Integer);
+begin
+  Delphi_PaintManagerUI_SetTooltipWindowWidth(Self, iWidth);
+end;
+
+function CPaintManagerUI.GetHoverTime: Integer;
+begin
+  Result := Delphi_PaintManagerUI_GetHoverTime(Self);
+end;
+
+procedure CPaintManagerUI.SetHoverTime(iTime: Integer);
+begin
+  Delphi_PaintManagerUI_SetHoverTime(Self, iTime);
+end;
+
+function CPaintManagerUI.GetOpacity: Byte;
+begin
+  Result := Delphi_PaintManagerUI_GetOpacity(Self);
+end;
+
+procedure CPaintManagerUI.SetOpacity(nOpacity: Byte);
+begin
+  Delphi_PaintManagerUI_SetOpacity(Self, nOpacity);
+end;
+
+function CPaintManagerUI.IsLayered: Boolean;
+begin
+  Result := Delphi_PaintManagerUI_IsLayered(Self);
+end;
+
+procedure CPaintManagerUI.SetLayered(bLayered: Boolean);
+begin
+  Delphi_PaintManagerUI_SetLayered(Self, bLayered);
+end;
+
+function CPaintManagerUI.GetLayeredInset: TRect;
+begin
+  Result := Delphi_PaintManagerUI_GetLayeredInset(Self)^;
+end;
+
+procedure CPaintManagerUI.SetLayeredInset(const rcLayeredInset: TRect);
+begin
+  Delphi_PaintManagerUI_SetLayeredInset(Self, rcLayeredInset);
+end;
+
+function CPaintManagerUI.GetLayeredOpacity: Byte;
+begin
+  Result := Delphi_PaintManagerUI_GetLayeredOpacity(Self);
+end;
+
+procedure CPaintManagerUI.SetLayeredOpacity(nOpacity: Byte);
+begin
+  Delphi_PaintManagerUI_SetLayeredOpacity(Self, nOpacity);
+end;
+
+function CPaintManagerUI.GetLayeredImage: string;
+begin
+  Result := Delphi_PaintManagerUI_GetLayeredImage(Self);
+end;
+
+procedure CPaintManagerUI.SetLayeredImage(pstrImage: string);
+begin
+  Delphi_PaintManagerUI_SetLayeredImage(Self, LPCTSTR(pstrImage));
+end;
+
+class function CPaintManagerUI.GetPaintManager(pstrName: string): CPaintManagerUI;
+begin
+  Result := Delphi_PaintManagerUI_GetPaintManager(LPCTSTR(pstrName));
+end;
+
+class function CPaintManagerUI.GetPaintManagers: CStdPtrArray;
+begin
+  Result := Delphi_PaintManagerUI_GetPaintManagers;
+end;
+
+procedure CPaintManagerUI.AddWindowCustomAttribute(pstrName: string; pstrAttr: string);
+begin
+  Delphi_PaintManagerUI_AddWindowCustomAttribute(Self, LPCTSTR(pstrName), LPCTSTR(pstrAttr));
+end;
+
+function CPaintManagerUI.GetWindowCustomAttribute(pstrName: string): string;
+begin
+  Result := Delphi_PaintManagerUI_GetWindowCustomAttribute(Self, LPCTSTR(pstrName));
+end;
+
+function CPaintManagerUI.RemoveWindowCustomAttribute(pstrName: string): Boolean;
+begin
+  Result := Delphi_PaintManagerUI_RemoveWindowCustomAttribute(Self, LPCTSTR(pstrName));
+end;
+
+procedure CPaintManagerUI.RemoveAllWindowCustomAttribute;
+begin
+  Delphi_PaintManagerUI_RemoveAllWindowCustomAttribute(Self);
+end;
+
 { CContainerUI }
 
 class function CContainerUI.CppCreate: CContainerUI;
@@ -5200,9 +5669,9 @@ begin
   Result := Delphi_ListUI_GetCurSel(Self);
 end;
 
-function CListUI.SelectItem(iIndex: Integer; bTakeFocus: Boolean): Boolean;
+function CListUI.SelectItem(iIndex: Integer; bTakeFocus: Boolean; bTriggerEvent: Boolean): Boolean;
 begin
-  Result := Delphi_ListUI_SelectItem(Self, iIndex, bTakeFocus);
+  Result := Delphi_ListUI_SelectItem(Self, iIndex, bTakeFocus, bTriggerEvent);
 end;
 
 function CListUI.GetHeader: CListHeaderUI;
@@ -6061,6 +6530,21 @@ begin
   Delphi_ButtonUI_PaintStatusImage(Self, hDC);
 end;
 
+procedure CButtonUI.SetFiveStatusImage(pStrImage: string);
+begin
+  Delphi_ButtonUI_SetFiveStatusImage(Self, LPCTSTR(pStrImage));
+end;
+
+procedure CButtonUI.SetFadeAlphaDelta(uDelta: Byte);
+begin
+  Delphi_ButtonUI_SetFadeAlphaDelta(Self, uDelta);
+end;
+
+function CButtonUI.GetFadeAlphaDelta: Boolean;
+begin
+  Result := Delphi_ButtonUI_GetFadeAlphaDelta(Self);
+end;
+
 { COptionUI }
 
 class function COptionUI.CppCreate: COptionUI;
@@ -6128,6 +6612,11 @@ begin
   Result := Delphi_OptionUI_GetSelectedTextColor(Self);
 end;
 
+procedure COptionUI.SetSelected(const Value: Boolean);
+begin
+  _Selected(Value);
+end;
+
 procedure COptionUI.SetSelectedBkColor(dwBkColor: DWORD);
 begin
   Delphi_OptionUI_SetSelectedBkColor(Self, dwBkColor);
@@ -6163,9 +6652,9 @@ begin
   Result := Delphi_OptionUI_IsSelected(Self);
 end;
 
-procedure COptionUI._Selected(bSelected: Boolean);
+procedure COptionUI._Selected(bSelected: Boolean; bTriggerEvent: Boolean);
 begin
-  Delphi_OptionUI_Selected(Self, bSelected);
+  Delphi_OptionUI_Selected(Self, bSelected, bTriggerEvent);
 end;
 
 function COptionUI.EstimateSize(szAvailable: TSize): TSize;
@@ -6210,9 +6699,14 @@ begin
   Result := Delphi_CheckBoxUI_GetInterface(Self, PChar(pstrName));
 end;
 
-procedure CCheckBoxUI.SetCheck(bCheck: Boolean);
+procedure CCheckBoxUI.SetCheck(bCheck: Boolean; bTriggerEvent: Boolean);
 begin
-  Delphi_CheckBoxUI_SetCheck(Self, bCheck);
+  Delphi_CheckBoxUI_SetCheck(Self, bCheck, bTriggerEvent);
+end;
+
+procedure CCheckBoxUI.SetChecked(const Value: Boolean);
+begin
+  SetCheck(Value);
 end;
 
 function CCheckBoxUI.GetCheck: Boolean;
@@ -6267,6 +6761,11 @@ begin
   Delphi_ListContainerElementUI_SetOwner(Self, pOwner);
 end;
 
+procedure CListContainerElementUI.SetSelect(const Value: Boolean);
+begin
+  Select(Value);
+end;
+
 procedure CListContainerElementUI.SetVisible(bVisible: Boolean);
 begin
   Delphi_ListContainerElementUI_SetVisible(Self, bVisible);
@@ -6275,6 +6774,11 @@ end;
 procedure CListContainerElementUI.SetEnabled(bEnable: Boolean);
 begin
   Delphi_ListContainerElementUI_SetEnabled(Self, bEnable);
+end;
+
+procedure CListContainerElementUI.SetExpand(const Value: Boolean);
+begin
+  Expand(Value);
 end;
 
 function CListContainerElementUI.IsSelected: Boolean;
@@ -6409,9 +6913,9 @@ begin
   Delphi_ComboUI_SetSelectCloseFlag(Self, flag);
 end;
 
-function CComboUI.SelectItem(iIndex: Integer; bTakeFocus: Boolean): Boolean;
+function CComboUI.SelectItem(iIndex: Integer; bTakeFocus: Boolean; bTriggerEvent: Boolean): Boolean;
 begin
-  Result := Delphi_ComboUI_SelectItem(Self, iIndex, bTakeFocus);
+  Result := Delphi_ComboUI_SelectItem(Self, iIndex, bTakeFocus, bTriggerEvent);
 end;
 
 function CComboUI.SetItemIndex(pControl: CControlUI; iIndex: Integer): Boolean;
@@ -6756,14 +7260,25 @@ begin
   Result := Delphi_DateTimeUI_GetInterface(Self, PChar(pstrName));
 end;
 
-function CDateTimeUI.GetTime: PSystemTime;
+function CDateTimeUI.GetTime: TDateTime;
+var
+  LSysDateTime: TSystemTime;
 begin
-  Result := Delphi_DateTimeUI_GetTime(Self);
+  LSysDateTime:= Delphi_DateTimeUI_GetTime(Self)^;
+  Result := EncodeDateTime(LSysDateTime.wYear, LSysDateTime.wMonth, LSysDateTime.wDay,
+                 LSysDateTime.wHour, LSysDateTime.wMinute, LSysDateTime.wSecond,
+                 LSysDateTime.wMilliseconds);
 end;
 
-procedure CDateTimeUI.SetTime(pst: PSystemTime);
+procedure CDateTimeUI.SetTime(pst: TDateTime);
+var
+  LSysDateTime: TSYSTEMTIME;
 begin
-  Delphi_DateTimeUI_SetTime(Self, pst);
+  DecodeDateTime(pst, LSysDateTime.wYear, LSysDateTime.wMonth, LSysDateTime.wDay,
+                 LSysDateTime.wHour, LSysDateTime.wMinute, LSysDateTime.wSecond,
+                 LSysDateTime.wMilliseconds);
+  LSysDateTime.wDayOfWeek := DayOfTheWeek(pst);
+  Delphi_DateTimeUI_SetTime(Self, @LSysDateTime);
 end;
 
 procedure CDateTimeUI.SetReadOnly(bReadOnly: Boolean);
@@ -7644,9 +8159,9 @@ begin
   Delphi_TreeNodeUI_Invalidate(Self);
 end;
 
-function CTreeNodeUI.Select(bSelect: Boolean): Boolean;
+function CTreeNodeUI.Select(bSelect: Boolean; bTriggerEvent: Boolean): Boolean;
 begin
-  Result := Delphi_TreeNodeUI_Select(Self, bSelect);
+  Result := Delphi_TreeNodeUI_Select(Self, bSelect, bTriggerEvent);
 end;
 
 function CTreeNodeUI.Add(_pTreeNodeUI: CControlUI): Boolean;
@@ -7684,7 +8199,7 @@ begin
   Result := Delphi_TreeNodeUI_GetItemText(Self);
 end;
 
-procedure CTreeNodeUI.CheckBoxSelected(_Selected: Boolean);
+procedure CTreeNodeUI.SetCheckBoxSelected(_Selected: Boolean);
 begin
   Delphi_TreeNodeUI_CheckBoxSelected(Self, _Selected);
 end;
@@ -8003,19 +8518,24 @@ begin
   Result := Delphi_TabLayoutUI_GetCurSel(Self);
 end;
 
-function CTabLayoutUI.SelectItem(iIndex: Integer): Boolean;
+function CTabLayoutUI.SelectItem(iIndex: Integer; bTriggerEvent: Boolean): Boolean;
 begin
-  Result := Delphi_TabLayoutUI_SelectItem_01(Self, iIndex);
+  Result := Delphi_TabLayoutUI_SelectItem_01(Self, iIndex, bTriggerEvent);
 end;
 
-function CTabLayoutUI.SelectItem(pControl: CControlUI): Boolean;
+function CTabLayoutUI.SelectItem(pControl: CControlUI; bTriggerEvent: Boolean): Boolean;
 begin
-  Result := Delphi_TabLayoutUI_SelectItem_02(Self, pControl);
+  Result := Delphi_TabLayoutUI_SelectItem_02(Self, pControl, bTriggerEvent);
 end;
 
 procedure CTabLayoutUI.SetPos(rc: TRect; bNeedInvalidate: Boolean);
 begin
   Delphi_TabLayoutUI_SetPos(Self, rc, bNeedInvalidate);
+end;
+
+procedure CTabLayoutUI.SetSelectItem(const Value: Integer);
+begin
+  SelectItem(Value);
 end;
 
 procedure CTabLayoutUI.SetAttribute(pstrName: string; pstrValue: string);
@@ -8264,6 +8784,11 @@ begin
   Delphi_ListElementUI_SetEnabled(Self, bEnable);
 end;
 
+procedure CListElementUI.SetExpanded(const Value: Boolean);
+begin
+  Expand(Value);
+end;
+
 function CListElementUI.GetIndex: Integer;
 begin
   Result := Delphi_ListElementUI_GetIndex(Self);
@@ -8282,6 +8807,11 @@ end;
 procedure CListElementUI.SetOwner(pOwner: CControlUI);
 begin
   Delphi_ListElementUI_SetOwner(Self, pOwner);
+end;
+
+procedure CListElementUI.SetSelect(const Value: Boolean);
+begin
+  Select(Value);
 end;
 
 procedure CListElementUI.SetVisible(bVisible: Boolean);
@@ -8436,6 +8966,98 @@ end;
 procedure CListTextElementUI.DrawItemText(hDC: HDC; const rcItem: TRect);
 begin
   Delphi_ListTextElementUI_DrawItemText(Self, hDC, rcItem);
+end;
+
+{ CGifAnimUI }
+
+class function CGifAnimUI.CppCreate: CGifAnimUI;
+begin
+  Result := Delphi_GifAnimUI_CppCreate;
+end;
+
+procedure CGifAnimUI.CppDestroy;
+begin
+  Delphi_GifAnimUI_CppDestroy(Self);
+end;
+
+function CGifAnimUI.GetClass: string;
+begin
+  Result := Delphi_GifAnimUI_GetClass(Self);
+end;
+
+function CGifAnimUI.GetInterface(pstrName: string): Pointer;
+begin
+  Result := Delphi_GifAnimUI_GetInterface(Self, LPCTSTR(pstrName));
+end;
+
+procedure CGifAnimUI.DoInit;
+begin
+  Delphi_GifAnimUI_DoInit(Self);
+end;
+
+procedure CGifAnimUI.DoPaint(hDC: HDC; var rcPaint: TRect);
+begin
+  Delphi_GifAnimUI_DoPaint(Self, hDC, rcPaint);
+end;
+
+procedure CGifAnimUI.DoEvent(var event: TEventUI);
+begin
+  Delphi_GifAnimUI_DoEvent(Self, event);
+end;
+
+procedure CGifAnimUI.SetVisible(bVisible: Boolean);
+begin
+  Delphi_GifAnimUI_SetVisible(Self, bVisible);
+end;
+
+procedure CGifAnimUI.SetAttribute(pstrName: string; pstrValue: string);
+begin
+  Delphi_GifAnimUI_SetAttribute(Self, LPCTSTR(pstrName), LPCTSTR(pstrValue));
+end;
+
+procedure CGifAnimUI.SetBkImage(pStrImage: string);
+begin
+  Delphi_GifAnimUI_SetBkImage(Self, LPCTSTR(pStrImage));
+end;
+
+function CGifAnimUI.GetBkImage: string;
+begin
+  Result := Delphi_GifAnimUI_GetBkImage(Self);
+end;
+
+procedure CGifAnimUI.SetAutoPlay(bIsAuto: Boolean);
+begin
+  Delphi_GifAnimUI_SetAutoPlay(Self, bIsAuto);
+end;
+
+function CGifAnimUI.IsAutoPlay: Boolean;
+begin
+  Result := Delphi_GifAnimUI_IsAutoPlay(Self);
+end;
+
+procedure CGifAnimUI.SetAutoSize(bIsAuto: Boolean);
+begin
+  Delphi_GifAnimUI_SetAutoSize(Self, bIsAuto);
+end;
+
+function CGifAnimUI.IsAutoSize: Boolean;
+begin
+  Result := Delphi_GifAnimUI_IsAutoSize(Self);
+end;
+
+procedure CGifAnimUI.PlayGif;
+begin
+  Delphi_GifAnimUI_PlayGif(Self);
+end;
+
+procedure CGifAnimUI.PauseGif;
+begin
+  Delphi_GifAnimUI_PauseGif(Self);
+end;
+
+procedure CGifAnimUI.StopGif;
+begin
+  Delphi_GifAnimUI_StopGif(Self);
 end;
 
 { CChildLayoutUI }
@@ -8775,6 +9397,7 @@ procedure Delphi_ControlUI_SetAttribute; external DuiLibdll name 'Delphi_Control
 function Delphi_ControlUI_ApplyAttributeList; external DuiLibdll name 'Delphi_ControlUI_ApplyAttributeList';
 procedure Delphi_ControlUI_EstimateSize; external DuiLibdll name 'Delphi_ControlUI_EstimateSize';
 procedure Delphi_ControlUI_DoPaint; external DuiLibdll name 'Delphi_ControlUI_DoPaint';
+procedure Delphi_ControlUI_Paint; external DuiLibdll name 'Delphi_ControlUI_Paint';
 procedure Delphi_ControlUI_PaintBkColor; external DuiLibdll name 'Delphi_ControlUI_PaintBkColor';
 procedure Delphi_ControlUI_PaintBkImage; external DuiLibdll name 'Delphi_ControlUI_PaintBkImage';
 procedure Delphi_ControlUI_PaintStatusImage; external DuiLibdll name 'Delphi_ControlUI_PaintStatusImage';
@@ -8852,9 +9475,6 @@ procedure Delphi_PaintManagerUI_GetMinInfo; external DuiLibdll name 'Delphi_Pain
 procedure Delphi_PaintManagerUI_SetMinInfo; external DuiLibdll name 'Delphi_PaintManagerUI_SetMinInfo';
 procedure Delphi_PaintManagerUI_GetMaxInfo; external DuiLibdll name 'Delphi_PaintManagerUI_GetMaxInfo';
 procedure Delphi_PaintManagerUI_SetMaxInfo; external DuiLibdll name 'Delphi_PaintManagerUI_SetMaxInfo';
-function Delphi_PaintManagerUI_GetTransparent; external DuiLibdll name 'Delphi_PaintManagerUI_GetTransparent';
-procedure Delphi_PaintManagerUI_SetTransparent; external DuiLibdll name 'Delphi_PaintManagerUI_SetTransparent';
-procedure Delphi_PaintManagerUI_SetBackgroundTransparent; external DuiLibdll name 'Delphi_PaintManagerUI_SetBackgroundTransparent';
 function Delphi_PaintManagerUI_IsShowUpdateRect; external DuiLibdll name 'Delphi_PaintManagerUI_IsShowUpdateRect';
 procedure Delphi_PaintManagerUI_SetShowUpdateRect; external DuiLibdll name 'Delphi_PaintManagerUI_SetShowUpdateRect';
 function Delphi_PaintManagerUI_GetInstance; external DuiLibdll name 'Delphi_PaintManagerUI_GetInstance';
@@ -8875,6 +9495,10 @@ function Delphi_PaintManagerUI_GetHSL; external DuiLibdll name 'Delphi_PaintMana
 procedure Delphi_PaintManagerUI_ReloadSkin; external DuiLibdll name 'Delphi_PaintManagerUI_ReloadSkin';
 function Delphi_PaintManagerUI_LoadPlugin; external DuiLibdll name 'Delphi_PaintManagerUI_LoadPlugin';
 function Delphi_PaintManagerUI_GetPlugins; external DuiLibdll name 'Delphi_PaintManagerUI_GetPlugins';
+function Delphi_PaintManagerUI_IsForceUseSharedRes; external DuiLibdll name 'Delphi_PaintManagerUI_IsForceUseSharedRes';
+procedure Delphi_PaintManagerUI_SetForceUseSharedRes; external DuiLibdll name 'Delphi_PaintManagerUI_SetForceUseSharedRes';
+function Delphi_PaintManagerUI_IsPainting; external DuiLibdll name 'Delphi_PaintManagerUI_IsPainting';
+procedure Delphi_PaintManagerUI_SetPainting; external DuiLibdll name 'Delphi_PaintManagerUI_SetPainting';
 function Delphi_PaintManagerUI_GetDefaultDisabledColor; external DuiLibdll name 'Delphi_PaintManagerUI_GetDefaultDisabledColor';
 procedure Delphi_PaintManagerUI_SetDefaultDisabledColor; external DuiLibdll name 'Delphi_PaintManagerUI_SetDefaultDisabledColor';
 function Delphi_PaintManagerUI_GetDefaultFontColor; external DuiLibdll name 'Delphi_PaintManagerUI_GetDefaultFontColor';
@@ -8962,6 +9586,27 @@ procedure Delphi_PaintManagerUI_Term; external DuiLibdll name 'Delphi_PaintManag
 function Delphi_PaintManagerUI_MessageHandler; external DuiLibdll name 'Delphi_PaintManagerUI_MessageHandler';
 function Delphi_PaintManagerUI_PreMessageHandler; external DuiLibdll name 'Delphi_PaintManagerUI_PreMessageHandler';
 procedure Delphi_PaintManagerUI_UsedVirtualWnd; external DuiLibdll name 'Delphi_PaintManagerUI_UsedVirtualWnd';
+function Delphi_PaintManagerUI_GetName; external DuiLibdll name 'Delphi_PaintManagerUI_GetName';
+function Delphi_PaintManagerUI_GetTooltipWindowWidth; external DuiLibdll name 'Delphi_PaintManagerUI_GetTooltipWindowWidth';
+procedure Delphi_PaintManagerUI_SetTooltipWindowWidth; external DuiLibdll name 'Delphi_PaintManagerUI_SetTooltipWindowWidth';
+function Delphi_PaintManagerUI_GetHoverTime; external DuiLibdll name 'Delphi_PaintManagerUI_GetHoverTime';
+procedure Delphi_PaintManagerUI_SetHoverTime; external DuiLibdll name 'Delphi_PaintManagerUI_SetHoverTime';
+function Delphi_PaintManagerUI_GetOpacity; external DuiLibdll name 'Delphi_PaintManagerUI_GetOpacity';
+procedure Delphi_PaintManagerUI_SetOpacity; external DuiLibdll name 'Delphi_PaintManagerUI_SetOpacity';
+function Delphi_PaintManagerUI_IsLayered; external DuiLibdll name 'Delphi_PaintManagerUI_IsLayered';
+procedure Delphi_PaintManagerUI_SetLayered; external DuiLibdll name 'Delphi_PaintManagerUI_SetLayered';
+function Delphi_PaintManagerUI_GetLayeredInset; external DuiLibdll name 'Delphi_PaintManagerUI_GetLayeredInset';
+procedure Delphi_PaintManagerUI_SetLayeredInset; external DuiLibdll name 'Delphi_PaintManagerUI_SetLayeredInset';
+function Delphi_PaintManagerUI_GetLayeredOpacity; external DuiLibdll name 'Delphi_PaintManagerUI_GetLayeredOpacity';
+procedure Delphi_PaintManagerUI_SetLayeredOpacity; external DuiLibdll name 'Delphi_PaintManagerUI_SetLayeredOpacity';
+function Delphi_PaintManagerUI_GetLayeredImage; external DuiLibdll name 'Delphi_PaintManagerUI_GetLayeredImage';
+procedure Delphi_PaintManagerUI_SetLayeredImage; external DuiLibdll name 'Delphi_PaintManagerUI_SetLayeredImage';
+function Delphi_PaintManagerUI_GetPaintManager; external DuiLibdll name 'Delphi_PaintManagerUI_GetPaintManager';
+function Delphi_PaintManagerUI_GetPaintManagers; external DuiLibdll name 'Delphi_PaintManagerUI_GetPaintManagers';
+procedure Delphi_PaintManagerUI_AddWindowCustomAttribute; external DuiLibdll name 'Delphi_PaintManagerUI_AddWindowCustomAttribute';
+function Delphi_PaintManagerUI_GetWindowCustomAttribute; external DuiLibdll name 'Delphi_PaintManagerUI_GetWindowCustomAttribute';
+function Delphi_PaintManagerUI_RemoveWindowCustomAttribute; external DuiLibdll name 'Delphi_PaintManagerUI_RemoveWindowCustomAttribute';
+procedure Delphi_PaintManagerUI_RemoveAllWindowCustomAttribute; external DuiLibdll name 'Delphi_PaintManagerUI_RemoveAllWindowCustomAttribute';
 
 //================================CContainerUI============================
 
@@ -9234,6 +9879,10 @@ procedure Delphi_ButtonUI_EstimateSize; external DuiLibdll name 'Delphi_ButtonUI
 procedure Delphi_ButtonUI_SetAttribute; external DuiLibdll name 'Delphi_ButtonUI_SetAttribute';
 procedure Delphi_ButtonUI_PaintText; external DuiLibdll name 'Delphi_ButtonUI_PaintText';
 procedure Delphi_ButtonUI_PaintStatusImage; external DuiLibdll name 'Delphi_ButtonUI_PaintStatusImage';
+
+procedure Delphi_ButtonUI_SetFiveStatusImage; external DuiLibdll name 'Delphi_ButtonUI_SetFiveStatusImage';
+procedure Delphi_ButtonUI_SetFadeAlphaDelta; external DuiLibdll name 'Delphi_ButtonUI_SetFadeAlphaDelta';
+function Delphi_ButtonUI_GetFadeAlphaDelta; external DuiLibdll name 'Delphi_ButtonUI_GetFadeAlphaDelta';
 
 //================================COptionUI============================
 
@@ -9764,6 +10413,28 @@ procedure Delphi_ListTextElementUI_DoEvent; external DuiLibdll name 'Delphi_List
 procedure Delphi_ListTextElementUI_EstimateSize; external DuiLibdll name 'Delphi_ListTextElementUI_EstimateSize';
 procedure Delphi_ListTextElementUI_DrawItemText; external DuiLibdll name 'Delphi_ListTextElementUI_DrawItemText';
 
+//================================CGifAnimUI============================
+
+function Delphi_GifAnimUI_CppCreate; external DuiLibdll name 'Delphi_GifAnimUI_CppCreate';
+procedure Delphi_GifAnimUI_CppDestroy; external DuiLibdll name 'Delphi_GifAnimUI_CppDestroy';
+function Delphi_GifAnimUI_GetClass; external DuiLibdll name 'Delphi_GifAnimUI_GetClass';
+function Delphi_GifAnimUI_GetInterface; external DuiLibdll name 'Delphi_GifAnimUI_GetInterface';
+procedure Delphi_GifAnimUI_DoInit; external DuiLibdll name 'Delphi_GifAnimUI_DoInit';
+procedure Delphi_GifAnimUI_DoPaint; external DuiLibdll name 'Delphi_GifAnimUI_DoPaint';
+procedure Delphi_GifAnimUI_DoEvent; external DuiLibdll name 'Delphi_GifAnimUI_DoEvent';
+procedure Delphi_GifAnimUI_SetVisible; external DuiLibdll name 'Delphi_GifAnimUI_SetVisible';
+procedure Delphi_GifAnimUI_SetAttribute; external DuiLibdll name 'Delphi_GifAnimUI_SetAttribute';
+procedure Delphi_GifAnimUI_SetBkImage; external DuiLibdll name 'Delphi_GifAnimUI_SetBkImage';
+function Delphi_GifAnimUI_GetBkImage; external DuiLibdll name 'Delphi_GifAnimUI_GetBkImage';
+procedure Delphi_GifAnimUI_SetAutoPlay; external DuiLibdll name 'Delphi_GifAnimUI_SetAutoPlay';
+function Delphi_GifAnimUI_IsAutoPlay; external DuiLibdll name 'Delphi_GifAnimUI_IsAutoPlay';
+procedure Delphi_GifAnimUI_SetAutoSize; external DuiLibdll name 'Delphi_GifAnimUI_SetAutoSize';
+function Delphi_GifAnimUI_IsAutoSize; external DuiLibdll name 'Delphi_GifAnimUI_IsAutoSize';
+procedure Delphi_GifAnimUI_PlayGif; external DuiLibdll name 'Delphi_GifAnimUI_PlayGif';
+procedure Delphi_GifAnimUI_PauseGif; external DuiLibdll name 'Delphi_GifAnimUI_PauseGif';
+procedure Delphi_GifAnimUI_StopGif; external DuiLibdll name 'Delphi_GifAnimUI_StopGif';
+
+
 //================================CChildLayoutUI============================
 
 function Delphi_ChildLayoutUI_CppCreate; external DuiLibdll name 'Delphi_ChildLayoutUI_CppCreate';
@@ -9798,5 +10469,7 @@ procedure Delphi_NativeControlUI_SetPos; external DuiLibdll name 'Delphi_NativeC
 function Delphi_NativeControlUI_GetClass; external DuiLibdll name 'Delphi_NativeControlUI_GetClass';
 function Delphi_NativeControlUI_GetText; external DuiLibdll name 'Delphi_NativeControlUI_GetText';
 procedure Delphi_NativeControlUI_SetText; external DuiLibdll name 'Delphi_NativeControlUI_SetText';
+
+
 
 end.

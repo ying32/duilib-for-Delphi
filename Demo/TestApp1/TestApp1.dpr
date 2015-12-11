@@ -12,8 +12,7 @@ uses
   DuiConst,
   DuiWindowImplBase,
   DuiRichEdit,
-  Duilib,
-  DuilibHelper;
+  Duilib;
 
 type
 
@@ -75,7 +74,7 @@ begin
   inherited;
   LType := Msg.sType;
   LCtlName := Msg.pSender.Name;
-  if LType = DUI_EVENT_CLICK then
+  if LType = DUI_MSGTYPE_CLICK then
   begin
     if LCtlName = 'insertimagebtn' then
     begin
