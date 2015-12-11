@@ -134,8 +134,8 @@ type
     procedure DoNotify(var Msg: TNotifyUI); override;
     procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
     function DoCreateControl(pstrStr: string): CControlUI; override;
-    // 这里单独提取不使用原来的那个
-    procedure DuiWindowInit;
+    procedure DuiWindowInit; // 这个是DoNotify中收到的 windowinit
+    procedure DoInitWindow; override;
   public
     procedure ShowBalloonTips(ATitle, AInfo: string; ATimeout: Integer = 1000);
   public
@@ -218,8 +218,6 @@ end;
 { TAppsWindow }
 
 constructor TAppsWindow.Create;
-var
-  I: Integer;
 begin
   inherited Create('MainWindow.xml', kResDir);
   FIsMouseHover := True;
@@ -494,6 +492,18 @@ begin
      end;
   end;
   inherited;
+end;
+
+procedure TAppsWindow.DoInitWindow;
+var
+  LSize, LScreenSize: TSize;
+begin
+  inherited;
+  LSize := InitSize;
+  LScreenSize := ScreenSize;
+  MoveWindow(Handle, LScreenSize.cx - LSize.cx - 5,
+                     LScreenSize.cy div 2 - LSize.cy div 2,
+                     LSize.cx, LSize.cy, False);
 end;
 
 procedure TAppsWindow.DoNotify(var Msg: TNotifyUI);

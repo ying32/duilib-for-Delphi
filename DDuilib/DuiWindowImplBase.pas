@@ -24,6 +24,7 @@ uses
   Duilib;
 
 type
+  TDuiWindowImplBaseClass = class of TDuiWindowImplBase;
 
   TDuiWindowImplBase = class(TDuiBase<CDelphi_WindowImplBase>)
   private
@@ -33,6 +34,13 @@ type
     function GetHandle: HWND;
     function GetInitSize: TSize;
     function GetScreenSize: TSize;
+    function GetWorkAreaRect: TRect;
+    function GetMousePos: TPoint;
+    function GetClientRect: TRect;
+    function GetHeight: Integer;
+    function GetLeft: Integer;
+    function GetTop: Integer;
+    function GetWidth: Integer;
   protected
     // 回调函数
     procedure DUI_InitWindow; cdecl;
@@ -57,12 +65,15 @@ type
   public
     procedure Show;
     procedure Hide;
-    function ShowModal: UINT;
+    function ShowModal: Integer;
     procedure CenterWindow;
     procedure Close;
     procedure CreateDuiWindow(AParent: HWND; ATitle: string);
-    procedure CreateWindow(hwndParent: HWND; ATitle: string; dwStyle: DWORD; dwExStyle: DWORD; const rc: TRect; hMenu: HMENU); overload;
-    procedure CreateWindow(hwndParent: HWND; ATitle: string; dwStyle: DWORD; dwExStyle: DWORD; x: Integer = Integer(CW_USEDEFAULT); y: Integer = Integer(CW_USEDEFAULT); cx: Integer = Integer(CW_USEDEFAULT); cy: Integer = Integer(CW_USEDEFAULT); hMenu: HMENU = 0); overload;
+    procedure CreateWindow(hwndParent: HWND; ATitle: string; dwStyle: DWORD; dwExStyle: DWORD;
+       const rc: TRect; hMenu: HMENU); overload;
+    procedure CreateWindow(hwndParent: HWND; ATitle: string; dwStyle: DWORD; dwExStyle: DWORD;
+       x: Integer = Integer(CW_USEDEFAULT); y: Integer = Integer(CW_USEDEFAULT);
+       cx: Integer = Integer(CW_USEDEFAULT); cy: Integer = Integer(CW_USEDEFAULT); hMenu: HMENU = 0); overload;
     procedure SetClassStyle(nStyle: UINT);
     procedure SetIcon(nRes: UINT);
     function FindControl(const AName: string): CControlUI; overload;
@@ -73,6 +84,7 @@ type
     procedure Maximize;
     procedure RemoveThisInPaintManager;
   public
+    constructor Create; overload;
     constructor Create(ASkinFile, ASkinFolder, AZipFileName: string; ARType: TResourceType); overload;
     constructor Create(ASkinFile, ASkinFolder: string; ARType: TResourceType); overload;
     constructor Create(ASkinFile, ASkinFolder: string);  overload;
@@ -81,15 +93,20 @@ type
     procedure OnReceive(Param: Pointer); virtual;
     procedure MsgBox(const Fmt: string; Args: array of const); overload;
     procedure MsgBox(const Msg: string); overload;
-
   public
+    property Left: Integer read GetLeft;
+    property Top: Integer read GetTop;
+    property Width: Integer read GetWidth;
+    property Height: Integer read GetHeight;
+    property ClientRect: TRect read GetClientRect;
     property Handle: HWND read GetHandle;
     property ParentHandle: HWND read FParentHandle;
     property PaintManagerUI: CPaintManagerUI read FPaintManagerUI;
     property InitSize: TSize read GetInitSize;
     property ScreenSize: TSize read GetScreenSize;
+    property WorkAreaRect: TRect read GetWorkAreaRect;
+    property MousePos: TPoint read GetMousePos;
   end;
-
 
   TSimplePopupMenu = class(TDuiWindowImplBase)
   private
@@ -101,25 +118,17 @@ type
     procedure DoInitWindow; override;
     procedure DoFinalMessage(hWd: HWND); override;
   public
-    constructor Create(ASkinFile, ASkinFolder, AZipFileName: string; ARType: TResourceType; const AParentPaintManager: CPaintManagerUI; const AMsg: string);
+    constructor Create(ASkinFile, ASkinFolder, AZipFileName: string; ARType: TResourceType;
+       const AParentPaintManager: CPaintManagerUI; const AMsg: string);
   public
     property Msg: string read FMsg;
   end;
 
-
-  TDuiWindowImplList = TObjectList<TDuiWindowImplBase>;
-
   TDuiApplication = class
-  private
-    FList: TDuiWindowImplList;
   public
     procedure Initialize;
     procedure Run;
     procedure Terminate;
-    // 先写好，以后有用的吧
-//    procedure AddDuiWindow(AWindow: TDuiWindowImplBase);
-//    procedure RemoveWindow(AWindow: TDuiWindowImplBase);
-
   public
     constructor Create;
     destructor Destroy; override;
@@ -135,29 +144,12 @@ implementation
 
 constructor TDuiWindowImplBase.Create(ASkinFile, ASkinFolder, AZipFileName: string; ARType: TResourceType);
 begin
-  inherited Create;
-  FThis := CDelphi_WindowImplBase.CppCreate;
-  FPaintManagerUI := FThis.GetPaintManagerUI;
-
+  Create;
   FThis.SetClassName(ClassName);
   FThis.SetSkinFile(ASkinFile);
   FThis.SetSkinFolder(ASkinFolder);
   FThis.SetZipFileName('');
   FThis.SetResourceType(ARType);
-
-  FThis.SetDelphiSelf(Self);
-  FThis.SetInitWindow(GetMethodAddr('DUI_InitWindow'));
-  FThis.SetClick(GetMethodAddr('DUI_Click'));
-  FThis.SetNotify(GetMethodAddr('DUI_Notify'));
-  FThis.SetMessageHandler(GetMethodAddr('DUI_MessageHandler'));
-  FThis.SetFinalMessage(GetMethodAddr('DUI_FinalMessage'));
-  FThis.SetHandleMessage(GetMethodAddr('DUI_HandleMessage'));
-  FThis.SetHandleCustomMessage(GetMethodAddr('DUI_HandleCustomMessage'));
-  FThis.SetCreateControl(GetMethodAddr('DUI_CreateControl'));
-  FThis.SetGetItemText(GetMethodAddr('DUI_GetItemText'));
-
-//  if Assigned(DuiApplication) then
-//    DuiApplication.AddDuiWindow(Self);
 end;
 
 constructor TDuiWindowImplBase.Create(ASkinFile, ASkinFolder: string; ARType: TResourceType);
@@ -176,12 +168,27 @@ begin
   Create(ASkinFile, ASkinFolder, AZipFileName, UILIB_ZIP);
 end;
 
+constructor TDuiWindowImplBase.Create;
+begin
+  FThis := CDelphi_WindowImplBase.CppCreate;
+  FPaintManagerUI := FThis.GetPaintManagerUI;
+
+  FThis.SetDelphiSelf(Self);
+  FThis.SetInitWindow(GetMethodAddr('DUI_InitWindow'));
+  FThis.SetClick(GetMethodAddr('DUI_Click'));
+  FThis.SetNotify(GetMethodAddr('DUI_Notify'));
+  FThis.SetMessageHandler(GetMethodAddr('DUI_MessageHandler'));
+  FThis.SetFinalMessage(GetMethodAddr('DUI_FinalMessage'));
+  FThis.SetHandleMessage(GetMethodAddr('DUI_HandleMessage'));
+  FThis.SetHandleCustomMessage(GetMethodAddr('DUI_HandleCustomMessage'));
+  FThis.SetCreateControl(GetMethodAddr('DUI_CreateControl'));
+  FThis.SetGetItemText(GetMethodAddr('DUI_GetItemText'));
+end;
+
 destructor TDuiWindowImplBase.Destroy;
 begin
   if FThis <> nil then
     FThis.CppDestroy;
-//  if Assigned(DuiApplication) then
-//    DuiApplication.RemoveWindow(Self);
   inherited;
 end;
 
@@ -326,6 +333,11 @@ begin
   Result := FPaintManagerUI.FindControl(pt);
 end;
 
+function TDuiWindowImplBase.GetClientRect: TRect;
+begin
+  Windows.GetWindowRect(Handle, Result);
+end;
+
 function TDuiWindowImplBase.GetHandle: HWND;
 begin
   if FHandle = 0 then
@@ -333,15 +345,45 @@ begin
    Result := FHandle;
 end;
 
+function TDuiWindowImplBase.GetHeight: Integer;
+begin
+  Result := ClientRect.Height;
+end;
+
 function TDuiWindowImplBase.GetInitSize: TSize;
 begin
   Result := FPaintManagerUI.GetInitSize;
+end;
+
+function TDuiWindowImplBase.GetLeft: Integer;
+begin
+  Result := ClientRect.Left;
+end;
+
+function TDuiWindowImplBase.GetMousePos: TPoint;
+begin
+  GetCursorPos(Result);
 end;
 
 function TDuiWindowImplBase.GetScreenSize: TSize;
 begin
   Result.cx := GetSystemMetrics(SM_CXSCREEN);
   Result.cy := GetSystemMetrics(SM_CYSCREEN);
+end;
+
+function TDuiWindowImplBase.GetTop: Integer;
+begin
+  Result := ClientRect.Top;
+end;
+
+function TDuiWindowImplBase.GetWidth: Integer;
+begin
+  Result := ClientRect.Width;
+end;
+
+function TDuiWindowImplBase.GetWorkAreaRect: TRect;
+begin
+  SystemParametersInfo(SPI_GETWORKAREA, 0, Result, 0);
 end;
 
 function TDuiWindowImplBase.FindControl(const AName: string): CControlUI;
@@ -410,7 +452,7 @@ begin
   FThis.ShowWindow(True, False);
 end;
 
-function TDuiWindowImplBase.ShowModal: UINT;
+function TDuiWindowImplBase.ShowModal: Integer;
 begin
   Result := FThis.ShowModal;
 end;
@@ -432,12 +474,11 @@ end;
 constructor TDuiApplication.Create;
 begin
   inherited;
-  FList := TDuiWindowImplList.Create;
 end;
+
 
 destructor TDuiApplication.Destroy;
 begin
-  FList.Free;
   inherited;
 end;
 
@@ -445,27 +486,6 @@ procedure TDuiApplication.Initialize;
 begin
   CPaintManagerUI.SetInstance(HInstance);
 end;
-
-
-//procedure TDuiApplication.RemoveWindow(AWindow: TDuiWindowImplBase);
-//begin
-//  TMonitor.Enter(FList);
-//  try
-//    FList.Remove(AWindow);
-//  finally
-//    TMonitor.Exit(FList);
-//  end;
-//end;
-
-//procedure TDuiApplication.AddDuiWindow(AWindow: TDuiWindowImplBase);
-//begin
-//  TMonitor.Enter(FList);
-//  try
-//    FList.Add(AWindow);
-//  finally
-//    TMonitor.Exit(FList);
-//  end;
-//end;
 
 procedure TDuiApplication.Run;
 begin
