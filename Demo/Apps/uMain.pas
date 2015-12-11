@@ -126,6 +126,7 @@ type
     procedure btnopenappClick(Sender: TObject);
     procedure btnaddappClick(Sender: TObject);
     procedure OpenAppByItemIndex(AIndex: Integer);
+    procedure DeleteAppByItemIndex(AIndex: Integer);
   protected
     procedure DoNotify(var Msg: TNotifyUI); override;
     procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
@@ -268,6 +269,41 @@ begin
 
   if not DirectoryExists(GetIconsPath) then
     CreateDir(GetIconsPath);
+end;
+
+procedure TAppsWindow.DeleteAppByItemIndex(AIndex: Integer);
+var
+  LVerticalLayout: CVerticalLayoutUI;
+  LItemIndex: Integer;
+begin
+  if (AIndex >= 0) and (AIndex < FApps.Count) then
+  begin
+    // 移除相应布局中的
+    LItemIndex := (AIndex + 1) mod PAGE_MAX_CHIND - 1;
+    if LItemIndex >= 0 then
+    begin
+      if FTileLayout.Count = 1 then
+      begin
+        // 最后一个不是添加按钮
+        if FTileLayout.LastItem.Name <> 'addappLayout' then
+          FTileLayout.RemoveAt(0);
+      end else
+        FTileLayout.RemoveAt(LItemIndex);
+      // 如果少于 PAGE_MAX_CHIND 添加一个“添加“按钮
+      if (FTileLayout.Count = 0) or ((FTileLayout.Count > 0) and
+         (FTileLayout.LastItem.Name <> 'addappLayout')) then
+      begin
+        LVerticalLayout := CreateAddItemButton;
+        if LVerticalLayout <> nil then
+          FTileLayout.Add(LVerticalLayout);
+      end;
+      // 这里不要做删除所有的，只删除那个按钮
+      // 删除应用列表中的
+      FApps.Delete(AIndex);
+    end;
+    // 改变底部按钮
+    ReInitRadios;
+  end;
 end;
 
 destructor TAppsWindow.Destroy;
@@ -614,7 +650,7 @@ begin
       OpenAppByItemIndex(Msg.pSender.Tag)
     else if LCtlName.Equals('menu_modify') then
     begin
-      with TModifyInfoWindow.Create(Handle, CButtonUI(Pointer(Msg.pSender.Tag)), FApps) do
+      with TModifyInfoWindow.Create(Handle, CControlUI(Pointer(Msg.pSender.Tag)), FApps) do
       begin
         CenterWindow;
         ShowModal;
@@ -622,7 +658,9 @@ begin
       end;
     end else
     if LCtlName.Equals('menu_delete') then
-
+    begin
+      DeleteAppByItemIndex(CLabelUI(Pointer(Msg.pSender.Tag)).Tag);
+    end;
   end;
 end;
 
@@ -1075,7 +1113,7 @@ begin
     begin
       if FEdtTitle.Text = '' then
       begin
-        MsgBox('请输入一个名称！');
+        ShowMessage('请输入一个名称！');
         Exit;
       end;
       LblTitle := CLabelUI(Pointer(FTitleControl));
