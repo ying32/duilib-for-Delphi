@@ -752,11 +752,12 @@ type
     function GetHorizontalScrollBar: CScrollBarUI;
   private
     function GetLastItem: CControlUI;
+    procedure _SetItemIndex(pControl: CControlUI; const Value: Integer);
   public
     property Count: Integer read GetCount;
     property ChildPadding: Integer read GetChildPadding write SetChildPadding;
     property Items[iIndex: Integer]: CControlUI read GetItemAt;
-    property ItemIndex[pControl: CControlUI]: Integer read GetItemIndex write SetItemIndex;
+    property ItemIndex[pControl: CControlUI]: Integer read GetItemIndex write _SetItemIndex;
     property LastItem: CControlUI read GetLastItem;
     property Inset: TRect read GetInset write SetInset;
     property AutoDestroy: Boolean read IsAutoDestroy write SetAutoDestroy;
@@ -4847,6 +4848,12 @@ end;
 procedure CContainerUI.SetVisible(bVisible: Boolean);
 begin
   Delphi_ContainerUI_SetVisible(Self, bVisible);
+end;
+
+procedure CContainerUI._SetItemIndex(pControl: CControlUI;
+  const Value: Integer);
+begin
+  SetItemIndex(pControl, Value);
 end;
 
 procedure CContainerUI.SetInternVisible(bVisible: Boolean);

@@ -647,7 +647,7 @@ begin
   if LType.Equals(kButtonMenuItemClick) then
   begin
     if LCtlName.Equals('menu_open') then
-      OpenAppByItemIndex(Msg.pSender.Tag)
+      OpenAppByItemIndex(CLabelUI(Pointer(Msg.pSender.Tag)).Tag)
     else if LCtlName.Equals('menu_modify') then
     begin
       with TModifyInfoWindow.Create(Handle, CControlUI(Pointer(Msg.pSender.Tag)), FApps) do
