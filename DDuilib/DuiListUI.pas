@@ -24,7 +24,7 @@ uses
 
 type
 
-  TDuiListUI = class(TDuiBase{$IFDEF SuppoertGeneric}<CDelphi_ListUI>{$ENDIF})
+  TDuiListUI = class(TDuiBase{$IFDEF SupportGeneric}<CDelphi_ListUI>{$ENDIF})
   private
     FLastSelectIndex: Integer;
     function GetCount: Integer;

@@ -10,5 +10,5 @@
 
 // ∑∫–Õ÷ß≥÷
 {$IF Defined(FPC) or not Defined(UseLowVer)}
-   {$DEFINE SuppoertGeneric}
+   {$DEFINE SupportGeneric}
 {$ifend}

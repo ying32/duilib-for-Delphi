@@ -31,15 +31,15 @@ type
   {$ElSE}
     {$M+}
   {$ENDIF}
-  {$IFDEF FPC}generic{$ENDIF}TDuiBase{$IFDEF SuppoertGeneric}<T>{$ENDIF} = class(TObject)
+  {$IFDEF FPC}generic{$ENDIF}TDuiBase{$IFDEF SupportGeneric}<T>{$ENDIF} = class(TObject)
   private
     function GetThisControlUI: CControlUI;
   {$IFNDEF UseLowVer}strict {$ENDIF}protected
-    FThis: {$IFDEF SuppoertGeneric}T{$ELSE}Pointer{$ENDIF};
+    FThis: {$IFDEF SupportGeneric}T{$ELSE}Pointer{$ENDIF};
   public
     function GetMethodAddr(const AName: string): Pointer;
   public
-    property this: {$IFDEF SuppoertGeneric}T{$ELSE}Pointer{$ENDIF} read FThis;
+    property this: {$IFDEF SupportGeneric}T{$ELSE}Pointer{$ENDIF} read FThis;
     property ControlUI: CControlUI read GetThisControlUI;
   end;
 
@@ -47,12 +47,12 @@ implementation
 
 { TDuiBase<T> }
 
-function TDuiBase{$IF Defined(SuppoertGeneric) and not Defined(FPC)}<T>{$IFEND}.GetThisControlUI: CControlUI;
+function TDuiBase{$IF Defined(SupportGeneric) and not Defined(FPC)}<T>{$IFEND}.GetThisControlUI: CControlUI;
 begin
-  Result := {$IFDEF SuppoertGeneric}PPointer(@FThis)^{$ELSE}FThis{$ENDIF};
+  Result := {$IFDEF SupportGeneric}PPointer(@FThis)^{$ELSE}FThis{$ENDIF};
 end;
 
-function TDuiBase{$IF Defined(SuppoertGeneric) and not Defined(FPC)}<T>{$IFEND}.GetMethodAddr(const AName: string): Pointer;
+function TDuiBase{$IF Defined(SupportGeneric) and not Defined(FPC)}<T>{$IFEND}.GetMethodAddr(const AName: string): Pointer;
 {$IFNDEF UseLowVer}
 var
   T: TRttiType;

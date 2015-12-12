@@ -20,7 +20,7 @@ uses
   Windows,
   Messages,
   Types,
-{$IFDEF SuppoertGeneric}
+{$IFDEF SupportGeneric}
   Generics.Collections,
 {$ENDIF}
   SysUtils,
@@ -31,7 +31,7 @@ uses
 type
   TDuiWindowImplBaseClass = class of TDuiWindowImplBase;
 
-  TDuiWindowImplBase = class(TDuiBase{$IFDEF SuppoertGeneric}<CDelphi_WindowImplBase>{$ENDIF})
+  TDuiWindowImplBase = class(TDuiBase{$IFDEF SupportGeneric}<CDelphi_WindowImplBase>{$ENDIF})
   private
     FHandle: HWND;
     FParentHandle: HWND;
