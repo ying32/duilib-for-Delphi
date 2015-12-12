@@ -34,7 +34,7 @@ type
   {$IFDEF FPC}generic{$ENDIF}TDuiBase{$IFDEF SuppoertGeneric}<T>{$ENDIF} = class(TObject)
   private
     function GetThisControlUI: CControlUI;
-  strict protected
+  {$IFNDEF UseLowVer}strict {$ENDIF}protected
     FThis: {$IFDEF SuppoertGeneric}T{$ELSE}Pointer{$ENDIF};
   public
     function GetMethodAddr(const AName: string): Pointer;
@@ -47,12 +47,12 @@ implementation
 
 { TDuiBase<T> }
 
-function TDuiBase{$IF Defined(SuppoertGeneric) and not Defined(FPC)}<T>{$ENDIF}.GetThisControlUI: CControlUI;
+function TDuiBase{$IF Defined(SuppoertGeneric) and not Defined(FPC)}<T>{$IFEND}.GetThisControlUI: CControlUI;
 begin
   Result := {$IFDEF SuppoertGeneric}PPointer(@FThis)^{$ELSE}FThis{$ENDIF};
 end;
 
-function TDuiBase{$IF Defined(SuppoertGeneric) and not Defined(FPC)}<T>{$ENDIF}.GetMethodAddr(const AName: string): Pointer;
+function TDuiBase{$IF Defined(SuppoertGeneric) and not Defined(FPC)}<T>{$IFEND}.GetMethodAddr(const AName: string): Pointer;
 {$IFNDEF UseLowVer}
 var
   T: TRttiType;

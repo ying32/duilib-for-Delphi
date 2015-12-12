@@ -75,6 +75,21 @@ type
   CScrollBarUI = class;
   CTreeViewUI = class;
 
+{$IFDEF UseLowVer}
+  TRectF = record
+    Left, Top, Right, Bottom: Single;
+  end;
+
+  LPVOID = Pointer;
+  UINT_PTR = Cardinal;
+  LPBYTE = PByte;
+  LPCVOID = Pointer;
+  SIZE_T = Cardinal;
+  PShort = ^SHORT;
+  UIntPtr = Cardinal;
+  LONG = Longint;
+{$ENDIF UseLowVer}
+
   FINDCONTROLPROC = function(AControl: CControlUI; P: LPVOID): CControlUI; cdecl;
   TFindControlProc = FINDCONTROLPROC;
   INotifyUI = Pointer;
@@ -89,12 +104,6 @@ type
   IDropTarget = Pointer;
   PLRESULT = ^LRESULT;
   PULVCompareFunc = function(p1, p2, p3: UINT_PTR): Integer; cdecl;
-
-{$IFDEF UseLowVer}
-  TRectF = record
-    Left, Top, Right, Bottom: Single;
-  end;
-{$ENDIF UseLowVer}
 
   //CDuiString = array[0..65] of Char; // 132 byte
   // MAX_LOCAL_STRING_LEN = 63 + 1 + 1 + #0 = 66byte
@@ -279,7 +288,7 @@ type
     procedure Resize(nSize: Integer = 83);
     function Find(key: string; optimize: Boolean = True): Pointer;
     function Insert(key: string; pData: Pointer): Boolean;
-    function &Set(key: string; pData: Pointer): Pointer;
+    function {$IFNDEF UseLowVer}&Set{$ELSE}_Set{$ENDIF}(key: string; pData: Pointer): Pointer;
     function Remove(key: string): Boolean;
     procedure RemoveAll;
     function GetSize: Integer;
@@ -612,7 +621,7 @@ type
   end;
 
   CControlUI = class
-  strict private
+  {$IFNDEF UseLowVer}strict {$ENDIF}private
     // ’ºŒª”√
     ____: Pointer;
   public
@@ -764,7 +773,7 @@ type
     property FocusBorderColor: DWORD read GetFocusBorderColor write SetFocusBorderColor;
     property ColorHSL: Boolean read IsColorHSL write SetColorHSL;
     property BorderRound: TSize read GetBorderRound write SetBorderRound;
-    property BorderSize: Integer read GetBorderSize write SetBorderSize;
+    property BorderSize: Integer read GetBorderSize{$IFNDEF UseLowVer}write SetBorderSize{$ENDIF};
     property Shortcut: Char read GetShortcut write SetShortcut;
     property ContextMenuUsed: Boolean read IsContextMenuUsed write SetContextMenuUsed;
     property VirtualWnd: string read GetVirtualWnd write SetVirtualWnd;
@@ -3329,7 +3338,7 @@ begin
   Result := Delphi_StdStringPtrMap_Insert(Self, PChar(key), pData);
 end;
 
-function CStdStringPtrMap.&Set(key: string; pData: Pointer): Pointer;
+function CStdStringPtrMap.{$IFNDEF UseLowVer}&Set{$ELSE}_Set{$ENDIF}(key: string; pData: Pointer): Pointer;
 begin
   Result := Delphi_StdStringPtrMap_Set(Self, PChar(key), pData);
 end;

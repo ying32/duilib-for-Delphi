@@ -2,20 +2,25 @@ program ListDemo;
 
 {$APPTYPE CONSOLE}
 
+{$I DDuilib.inc}
+
 {$R *.res}
 
 uses
   Windows,
   Messages,
   SysUtils,
+  Classes,
+{$IFNDEF UseLowVer}
   Generics.Collections,
+{$ENDIF}
   Duilib,
   DuiConst,
   DuiWindowImplBase,
   DuiListUI;
 
 type
-
+  PListItem = ^TListItem;
   TListItem = record
     Col1: string;
     Col2: string;
@@ -25,7 +30,7 @@ type
   TListMainForm = class(TDuiWindowImplBase)
   private
     FSearch: CButtonUI;
-    FList: TList<TListItem>;
+    FList: TList{$IFNDEF UseLowVer}<TListItem>{$ENDIF};
     procedure OnSearch;
     function DoGetItemText(pControl: CControlUI; iIndex, iSubItem: Integer): string; override;
   protected
@@ -57,11 +62,19 @@ constructor TListMainForm.Create;
 begin
   inherited Create('skin.xml', 'skin\ListRes');
   CreateWindow(0, 'ListDemo', UI_WNDSTYLE_FRAME, WS_EX_STATICEDGE or WS_EX_APPWINDOW , 0, 0, 600, 320);
-  FList := TList<TListItem>.Create;
+  FList := TList{$IFNDEF UseLowVer}<TListItem>{$ENDIF}.Create;
 end;
 
 destructor TListMainForm.Destroy;
+{$IFDEF UseLowVer}
+var
+  I: Integer;
+{$ENDIF}
 begin
+{$IFDEF UseLowVer}
+  for I := 0 to FList.Count - 1 do
+    Dispose(FList[I]);
+{$ENDIF}
   FList.Free;
   inherited;
 end;
@@ -73,7 +86,7 @@ var
 begin
   if (pControl.Tag <> NativeUInt(-1)) and (pControl.Tag < FList.Count) then
   begin
-    Litem := FList[pControl.Tag];
+    Litem := {$IFNDEF UseLowVer}FList[pControl.Tag]{$ELSE}PListItem(FList[pControl.Tag])^{$ENDIF};
     case iSubItem of
       0 : Result := Litem.Col1;
       1 : Result := Litem.Col2;
@@ -101,45 +114,45 @@ var
   pList: CListUI;
 begin
   inherited;
+{$IFNDEF UseLowVer}
   LType := Msg.sType;
+{$ELSE}
+  LType := DuiStringToString(Msg.sType);
+{$ENDIF}
   LCtlName := Msg.pSender.Name;
 
-  Writeln(Format('Msg.pSender=%p', [Pointer(Msg.pSender)]));
-  Writeln(Format('Msg.pSender.OnInit=%p', [Pointer(Msg.pSender.OnInit.Delegates)]));
-  Writeln(Format('Msg.pSender.OnDestroy=%p', [Pointer(@Msg.pSender.OnDestroy)]));
-  Writeln(Format('Msg.pSender.OnSize=%p', [Pointer(@Msg.pSender.OnSize)]));
-  Writeln(Format('Msg.pSender.OnEvent=%p', [Pointer(@Msg.pSender.OnEvent)]));
-  Writeln(Format('Msg.pSender.OnNotify=%p', [Pointer(@Msg.pSender.OnNotify)]));
-  Writeln(Format('Msg.pSender.OnPaint=%p', [Pointer(@Msg.pSender.OnPaint)]));
-  Writeln(Format('Msg.pSender.OnPostPaint=%p', [Pointer(@Msg.pSender.OnPostPaint)]));
-  Writeln('');
-  if LType.Equals(DUI_MSGTYPE_CLICK) then
+  if LType = DUI_MSGTYPE_CLICK then
   begin
-    if LCtlName.Equals('closebtn') then
+    if LCtlName = 'closebtn' then
       DuiApplication.Terminate
-    else if LCtlName.Equals('minbtn') then
+    else if LCtlName = 'minbtn' then
       Minimize
-    else if LCtlName.Equals('btn') then
+    else if LCtlName = 'btn' then
       OnSearch;
   end else
-  if LType.Equals(DUI_MSGTYPE_ITEMACTIVATE) then
+  if LType = DUI_MSGTYPE_ITEMACTIVATE then
   begin
     iIndex := Msg.pSender.Tag;
     if (iIndex <> -1) and (iIndex < FList.Count) then
     begin
+    {$IFNDEF UseLowVer}
       MessageBox(0, PChar(Format('Col1=%s, Col2=%s, Col3=%s',
-        [FList[iIndex].Col1, FList[iIndex].Col2, FList[iIndex].Col3])), nil, MB_OK);
+        [ FList[iIndex].Col1, FList[iIndex].Col2, FList[iIndex].Col3])), nil, MB_OK);
+    {$ELSE}
+      MessageBox(0, PChar(Format('Col1=%s, Col2=%s, Col3=%s',
+        [ PListItem(FList[iIndex])^.Col1, PListItem(FList[iIndex])^.Col2, PListItem(FList[iIndex])^.Col3])), nil, MB_OK);
+    {$ENDIF}
     end;
   end else
-  if LType.Equals(DUI_MSGTYPE_MENU) then
+  if LType = DUI_MSGTYPE_MENU then
   begin
 //    MessageBox(0, nil, nil, 0);
-    if LCtlName.Equals('domainlist') then
+    if LCtlName = 'domainlist' then
     begin
       TDuiPopupMenu.Create(CListUI(msg.pSender));
     end;
   end else
-  if LType.Equals('menu_Delete') then
+  if LType = 'menu_Delete' then
   begin
     pList := CListUI(Msg.pSender);
     if pList <> nil then
@@ -158,7 +171,11 @@ var
   LInputText: string;
   I: Integer;
   pListElement: CListTextElementUI;
+{$IFNDEF UseLowVer}
   LItem: TListItem;
+{$ELSE}
+  LItem: PListItem;
+{$ENDIF}
 begin
   pList := CListUI(FindControl('domainlist'));
   pEdit := CEditUI(FindControl('input'));
@@ -174,9 +191,12 @@ begin
     pList.SetTextCallback(Pointer(this));
     for I := 0 to 10 do
     begin
-      LItem.Col1 := I.ToString;
-      LItem.Col2 := 'aaaaa' + I.ToString;
-      LItem.Col3 := 'bbbbb' + I.ToString;
+      {$IFDEF UseLowVer}
+         New(LItem);
+      {$ENDIF}
+      LItem.Col1 := IntToStr(I);
+      LItem.Col2 := 'aaaaa' + IntToStr(I);
+      LItem.Col3 := 'bbbbb' + IntToStr(I);
       FList.Add(LItem);
       pListElement := CListTextElementUI.CppCreate;
       pListElement.Tag := I;
@@ -241,9 +261,9 @@ end;
 procedure TDuiPopupMenu.DoNotify(var Msg: TNotifyUI);
 begin
   inherited;
-  if Msg.sType = 'itemselect' then
+  if Msg.sType.m_pstr = 'itemselect' then
     Close
-  else if Msg.sType = 'itemclick' then
+  else if Msg.sType.m_pstr = 'itemclick' then
   begin
     if Assigned(FListUI) and (Msg.pSender.Name = 'menu_Delete') then
       FListUI.GetManager.SendNotify(FListUI, 'menu_Delete', 0, 0, True);

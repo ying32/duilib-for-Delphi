@@ -8,13 +8,17 @@
 //***************************************************************************
 unit UIListCommonDefine;
 
+{$I DDuilib.inc}
+
 interface
 
 uses
-  System.Math,
-  System.Classes,
-  System.SysUtils,
+  Math,
+  Classes,
+  SysUtils,
+{$IFNDEF UseLowVer}
   System.Generics.Collections,
+{$ENDIF}
   Duilib;
 
 type
@@ -32,7 +36,11 @@ type
 
   TNode = class
   private
+   {$IFNDEF UseLowVer}
     FChildrens: TObjectList<TNode>;
+   {$ELSE}
+    FChildrens: TList;
+   {$ENDIF}
     FParent: TNode;
     FNodeData: TNodeData;
     procedure SetParent(AParent: TNode);
@@ -74,7 +82,11 @@ end;
 constructor TNode.Create;
 begin
   inherited;
-  FChildrens := TObjectList<TNode>.Create;
+  {$IFNDEF UseLowVer}
+    FChildrens := TObjectList<TNode>.Create;
+  {$ELSE}
+    FChildrens := TList.Create;
+  {$ENDIF}
 end;
 
 constructor TNode.Create(ANodeData: TNodeData; AParent: TNode);
