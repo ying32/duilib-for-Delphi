@@ -28,7 +28,7 @@ uses
   SysUtils;
 
 const
-{$IFDEF UNICODE}
+{$IFNDEF UseLowVer}
   {$IFDEF DEBUG}
     DuiLibdll = 'DuiLib_ud.dll';
   {$ELSE}
@@ -102,12 +102,13 @@ type
   PCDuiString = ^CDuiString; // 这个有点牵强吧
   CDuiString = record
 {$IFNDEF UseLowVer}
-  private // 这个方法不知道从哪个版本的Delphi支持
+  private
 {$ENDIF}
+    m_pstr: LPTSTR;
     /// <summary>
-    ///   这个不要用，使用　ToString
+    ///   这个不要用，使用　ToString  132 byte
     /// </summary>
-    szStr: array[0..65] of Char;
+    m_szBuffer: array[0..MAX_LOCAL_STRING_LEN] of Char;
 {$IFNDEF UseLowVer}
   public
     class operator Equal(const Lhs, Rhs : CDuiString) : Boolean; overload;
@@ -3236,13 +3237,14 @@ end;
 class operator CDuiString.Implicit(const AStr: string): CDuiString;
 var
   LLen: Integer;
-  LBytes: TBytes;
 begin
-  LBytes := TEncoding.Unicode.GetBytes(AStr + #0);
-  LLen := System.Length(LBytes);
+  Result.m_pstr := PChar(AStr);
+  // 这里其实大多时候可选
+  LLen := System.Length(AStr);
   if LLen > MAX_LOCAL_STRING_LEN then
     LLen := MAX_LOCAL_STRING_LEN;
-  Move(LBytes[0], Result.szStr[2], LLen);
+  Move(Result.m_pstr^, Result.m_szBuffer[0], LLen * 2);
+  Result.m_szBuffer[LLen] := #0;
 end;
 
 class operator CDuiString.Implicit(ADuiStr: CDuiString): string;
@@ -3277,24 +3279,25 @@ end;
 
 function CDuiString.ToString: string;
 begin
-  Result := PChar(@szStr[2]);
+  Result := m_pstr; //PChar(@m_szBuffer[0]);
 end;
 {$ELSE UseLowVer}
 function StringToDuiString(const AStr: string): CDuiString;
 var
   LLen: Integer;
-  LBytes: TBytes;
 begin
-  LBytes := nil;// TEncoding.Unicode.GetBytes(AStr + #0);
-  LLen := System.Length(LBytes);
+  Result.m_pstr := PChar(AStr);
+  // 这里其实大多时候可选
+  LLen := System.Length(AStr);
   if LLen > MAX_LOCAL_STRING_LEN then
     LLen := MAX_LOCAL_STRING_LEN;
-  Move(LBytes[0], Result.szStr[2], LLen);
+  Move(Result.m_pstr^, Result.m_szBuffer[0], LLen);
+  Result.m_szBuffer[LLen] := #0;
 end;
 
 function DuiStringToString(ADuiStr: CDuiString): string;
 begin
-  Result := PChar(@ADuiStr.szStr[2]);
+  Result := ADuiStr.m_pstr;
 end;
 
 {$ENDIF UseLowVer}
