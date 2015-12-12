@@ -38,7 +38,7 @@ type
     function GetInterface(pstrName: string): Pointer;
     function CreateControl(const clsid: TCLSID): Boolean; overload;
     function CreateControl(pstrCLSID: string): Boolean; overload;
-    function GetControl(const iid: TIID; ppRet: PPointer): HRESULT;
+    function GetControl(const iid: TIID; {ppRet: PPointer}out ppRet): HRESULT;
     procedure SetVisible(bVisible: Boolean = True);
     procedure SetInternVisible(bVisible: Boolean = True);
     procedure SetPos(rc: TRect; bNeedInvalidate: Boolean = True);
@@ -62,9 +62,9 @@ function Delphi_ActiveXUI_GetInterface(Handle: CActiveXUI; pstrName: LPCTSTR): P
 function Delphi_ActiveXUI_GetHostWindow(Handle: CActiveXUI): HWND; cdecl;
 function Delphi_ActiveXUI_IsDelayCreate(Handle: CActiveXUI): Boolean; cdecl;
 procedure Delphi_ActiveXUI_SetDelayCreate(Handle: CActiveXUI; bDelayCreate: Boolean); cdecl;
-function Delphi_ActiveXUI_CreateControl_01(Handle: CActiveXUI; const clsid: TCLSID): Boolean; cdecl;
+function Delphi_ActiveXUI_CreateControl_01(Handle: CActiveXUI; clsid: TCLSID): Boolean; cdecl;
 function Delphi_ActiveXUI_CreateControl_02(Handle: CActiveXUI; pstrCLSID: LPCTSTR): Boolean; cdecl;
-function Delphi_ActiveXUI_GetControl(Handle: CActiveXUI; const iid: TIID; ppRet: PPointer): HRESULT; cdecl;
+function Delphi_ActiveXUI_GetControl(Handle: CActiveXUI; iid: TIID; {ppRet: PPointer}out ppRet): HRESULT; cdecl;
 procedure Delphi_ActiveXUI_GetClisd(Handle: CActiveXUI; var Result: TCLSID); cdecl;
 function Delphi_ActiveXUI_GetModuleName(Handle: CActiveXUI): CDuiString; cdecl;
 procedure Delphi_ActiveXUI_SetModuleName(Handle: CActiveXUI; pstrText: LPCTSTR); cdecl;
@@ -125,7 +125,7 @@ begin
   Result := Delphi_ActiveXUI_CreateControl_02(Self, PChar(pstrCLSID));
 end;
 
-function CActiveXUI.GetControl(const iid: TIID; ppRet: PPointer): HRESULT;
+function CActiveXUI.GetControl(const iid: TIID; {ppRet: PPointer}out ppRet): HRESULT;
 begin
   Result := Delphi_ActiveXUI_GetControl(Self, iid, ppRet);
 end;

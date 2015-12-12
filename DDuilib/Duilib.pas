@@ -2152,7 +2152,7 @@ procedure Delphi_Delphi_WindowImplBase_CppDestroy(Handle: CDelphi_WindowImplBase
 function Delphi_Delphi_WindowImplBase_GetHWND(Handle: CDelphi_WindowImplBase): HWND; cdecl;
 function Delphi_Delphi_WindowImplBase_RegisterWindowClass(Handle: CDelphi_WindowImplBase): Boolean; cdecl;
 function Delphi_Delphi_WindowImplBase_RegisterSuperclass(Handle: CDelphi_WindowImplBase): Boolean; cdecl;
-function Delphi_Delphi_WindowImplBase_Create_01(Handle: CDelphi_WindowImplBase; hwndParent: HWND; pstrName: LPCTSTR; dwStyle: DWORD; dwExStyle: DWORD; const rc: TRect; hMenu: HMENU): HWND; cdecl;
+function Delphi_Delphi_WindowImplBase_Create_01(Handle: CDelphi_WindowImplBase; hwndParent: HWND; pstrName: LPCTSTR; dwStyle: DWORD; dwExStyle: DWORD; rc: TRect; hMenu: HMENU): HWND; cdecl;
 function Delphi_Delphi_WindowImplBase_Create_02(Handle: CDelphi_WindowImplBase; hwndParent: HWND; pstrName: LPCTSTR; dwStyle: DWORD; dwExStyle: DWORD; x: Integer; y: Integer; cx: Integer; cy: Integer; hMenu: HMENU): HWND; cdecl;
 function Delphi_Delphi_WindowImplBase_CreateDuiWindow(Handle: CDelphi_WindowImplBase; hwndParent: HWND; pstrWindowName: LPCTSTR; dwStyle: DWORD; dwExStyle: DWORD): HWND; cdecl;
 function Delphi_Delphi_WindowImplBase_Subclass(Handle: CDelphi_WindowImplBase; hWnd: HWND): HWND; cdecl;
@@ -2323,7 +2323,7 @@ function Delphi_PaintManagerUI_FindSubControlByName(Handle: CPaintManagerUI; pPa
 function Delphi_PaintManagerUI_FindSubControlByClass(Handle: CPaintManagerUI; pParent: CControlUI; pstrClass: LPCTSTR; iIndex: Integer): CControlUI; cdecl;
 function Delphi_PaintManagerUI_FindSubControlsByClass(Handle: CPaintManagerUI; pParent: CControlUI; pstrClass: LPCTSTR): CStdPtrArray; cdecl;
 procedure Delphi_PaintManagerUI_MessageLoop; cdecl;
-function Delphi_PaintManagerUI_TranslateMessage(const pMsg: PMsg): Boolean; cdecl;
+function Delphi_PaintManagerUI_TranslateMessage(pMsg: PMsg): Boolean; cdecl;
 procedure Delphi_PaintManagerUI_Term; cdecl;
 function Delphi_PaintManagerUI_MessageHandler(Handle: CPaintManagerUI; uMsg: UINT; wParam: WPARAM; lParam: LPARAM; var lRes: LRESULT): Boolean; cdecl;
 function Delphi_PaintManagerUI_PreMessageHandler(Handle: CPaintManagerUI; uMsg: UINT; wParam: WPARAM; lParam: LPARAM; var lRes: LRESULT): Boolean; cdecl;
