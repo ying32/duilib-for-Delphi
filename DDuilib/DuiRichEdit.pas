@@ -12,6 +12,8 @@
 //***************************************************************************
 unit DuiRichEdit;
 
+{$I DDuilib.inc}
+
 interface
 
 uses
@@ -423,7 +425,11 @@ end;
 
 function CRichEditUI.GetText: string;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_RichEditUI_GetText(Self);
+{$ELSE}
+  Result := DuiStringToString(Delphi_RichEditUI_GetText(Self));
+{$ENDIF}
 end;
 
 procedure CRichEditUI.SetText(pstrText: string);
@@ -473,7 +479,11 @@ end;
 
 function CRichEditUI.GetSelText: string;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_RichEditUI_GetSelText(Self);
+{$ELSE}
+  Result := DuiStringToString(Delphi_RichEditUI_GetSelText(Self));
+{$ENDIF}
 end;
 
 function CRichEditUI.SetSelAll: Integer;
@@ -608,7 +618,11 @@ end;
 
 function CRichEditUI._GetTextRange(nStart, nEnd: Integer): string;
 begin
+{$IFNDEF UseLowVer}
   Result := GetTextRange(nStart, nEnd);
+{$ELSE}
+  Result := DuiStringToString(GetTextRange(nStart, nEnd));
+{$ENDIF}
 end;
 
 function CRichEditUI.Redo: Boolean;
@@ -671,7 +685,11 @@ end;
 
 function CRichEditUI.GetLine(nIndex: Integer; nMaxLength: Integer): string;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_RichEditUI_GetLine(Self, nIndex, nMaxLength);
+{$ELSE}
+  Result := DuiStringToString(Delphi_RichEditUI_GetLine(Self, nIndex, nMaxLength));
+{$ENDIF}
 end;
 
 function CRichEditUI.LineIndex(nLine: Integer): Integer;

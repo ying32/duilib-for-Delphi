@@ -12,27 +12,32 @@
 //***************************************************************************
 unit DuiBase;
 
+{$I DDuilib.inc}
+
 interface
 
 uses
   TypInfo,
+{$IFNDEF UseLowVer}
   Rtti,
+{$ENDIF}
   Duilib;
 
+
+
 type
-
-   TDuiNotify = procedure(Sender: TObject;  var Msg: TNotifyUI) of object;
-
-  {$RTTI EXPLICIT METHODS([vcProtected])}
-  TDuiBase<T> = class(TObject)
+  {$IFNDEF UseLowVer}
+    {$RTTI EXPLICIT METHODS([vcProtected])}
+  {$ENDIF}
+  {$IFDEF FPC}generic{$ENDIF}TDuiBase{$IFDEF SuppoertGeneric}<T>{$ENDIF} = class(TObject)
   private
     function GetThisControlUI: CControlUI;
   strict protected
-    FThis: T;
+    FThis: {$IFDEF SuppoertGeneric}T{$ELSE}Pointer{$ENDIF};
   public
     function GetMethodAddr(const AName: string): Pointer;
   public
-    property this: T read FThis;
+    property this: {$IFDEF SuppoertGeneric}T{$ELSE}Pointer{$ENDIF} read FThis;
     property ControlUI: CControlUI read GetThisControlUI;
   end;
 
@@ -40,12 +45,13 @@ implementation
 
 { TDuiBase<T> }
 
-function TDuiBase<T>.GetThisControlUI: CControlUI;
+function TDuiBase{$IF Defined(SuppoertGeneric) and not Defined(FPC)}<T>{$ENDIF}.GetThisControlUI: CControlUI;
 begin
   Result := PPointer(@FThis)^;
 end;
 
-function TDuiBase<T>.GetMethodAddr(const AName: string): Pointer;
+function TDuiBase{$IF Defined(SuppoertGeneric) and not Defined(FPC)}<T>{$ENDIF}.GetMethodAddr(const AName: string): Pointer;
+{$IFNDEF UseLowVer}
 var
   T: TRttiType;
 begin
@@ -53,5 +59,10 @@ begin
   Result := T.GetMethod(AName).CodeAddress;
   T.Free;
 end;
+{$ELSE}
+begin
+  Result := nil;
+end;
+{$ENDIF}
 
 end.

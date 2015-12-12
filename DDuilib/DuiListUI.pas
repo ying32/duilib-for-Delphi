@@ -14,6 +14,8 @@ unit DuiListUI;
 
 interface
 
+{$I DDuilib.inc}
+
 uses
   Windows,
   SysUtils,
@@ -22,7 +24,7 @@ uses
 
 type
 
-  TDuiListUI = class(TDuiBase<CDelphi_ListUI>)
+  TDuiListUI = class(TDuiBase{$IFDEF SuppoertGeneric}<CDelphi_ListUI>{$ENDIF})
   private
     FLastSelectIndex: Integer;
     function GetCount: Integer;
@@ -63,8 +65,8 @@ constructor TDuiListUI.Create;
 begin
   inherited;
   FThis := CDelphi_ListUI.CppCreate;
-  FThis.SetDelphiSelf(Self);
-  FThis.SetDoEvent(GetMethodAddr('DUI_DoEvent'));
+  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.SetDelphiSelf(Self);
+  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.SetDoEvent(GetMethodAddr('DUI_DoEvent'));
   FLastSelectIndex := -1;
 end;
 
@@ -87,37 +89,37 @@ end;
 procedure TDuiListUI.FreeCpp;
 begin
   if FThis <> nil then
-    FThis.CppDestroy;
+    {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.CppDestroy;
 end;
 
 function TDuiListUI.GetCount: Integer;
 begin
-  Result := FThis.GetCount;
+  Result := {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.GetCount;
 end;
 
 function TDuiListUI.GetCurSel: Integer;
 begin
-  Result := FThis.GetCurSel;
+  Result := {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.GetCurSel;
 end;
 
 function TDuiListUI.IsItemShowHtml: Boolean;
 begin
-  Result := FThis.IsItemShowHtml;
+  Result := {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.IsItemShowHtml;
 end;
 
 function TDuiListUI.Remove(pControl: CControlUI): Boolean;
 begin
-  Result := FThis.Remove(pControl);
+  Result := {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.Remove(pControl);
 end;
 
 procedure TDuiListUI.RemoveAll;
 begin
-  FThis.RemoveAll;
+  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.RemoveAll;
 end;
 
 function TDuiListUI.RemoveAt(iIndex: Integer): Boolean;
 begin
-  Result := FThis.RemoveAt(iIndex);
+  Result := {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.RemoveAt(iIndex);
 end;
 
 procedure TDuiListUI.DoSelectItem;
@@ -127,17 +129,17 @@ end;
 
 procedure TDuiListUI.SetItemShowHtml(bShowHtml: Boolean);
 begin
-  FThis.SetItemShowHtml(bShowHtml);
+  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.SetItemShowHtml(bShowHtml);
 end;
 
 function TDuiListUI.Add(pControl: CControlUI): Boolean;
 begin
-  Result := FThis.Add(pControl);
+  Result := {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.Add(pControl);
 end;
 
 function TDuiListUI.AddAt(pControl: CControlUI; iIndex: Integer): Boolean;
 begin
-  Result := FThis.AddAt(pControl, iIndex);
+  Result := {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.AddAt(pControl, iIndex);
 end;
 
 

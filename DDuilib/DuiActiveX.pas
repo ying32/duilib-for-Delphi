@@ -12,6 +12,8 @@
 //***************************************************************************
 unit DuiActiveX;
 
+{$I DDuilib.inc}
+
 interface
 
 uses
@@ -135,7 +137,11 @@ end;
 
 function CActiveXUI.GetModuleName: string;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_ActiveXUI_GetModuleName(Self);
+{$ELSE}
+  Result := DuiStringToString(Delphi_ActiveXUI_GetModuleName(Self));
+{$ENDIF}
 end;
 
 procedure CActiveXUI.SetModuleName(pstrText: string);
