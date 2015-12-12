@@ -261,9 +261,9 @@ end;
 procedure TDuiPopupMenu.DoNotify(var Msg: TNotifyUI);
 begin
   inherited;
-  if Msg.sType.m_pstr = 'itemselect' then
+  if Msg.sType{$IFDEF UseLowVer}.m_pstr{$ENDIF} = 'itemselect' then
     Close
-  else if Msg.sType.m_pstr = 'itemclick' then
+  else if Msg.sType{$IFDEF UseLowVer}.m_pstr{$ENDIF} = 'itemclick' then
   begin
     if Assigned(FListUI) and (Msg.pSender.Name = 'menu_Delete') then
       FListUI.GetManager.SendNotify(FListUI, 'menu_Delete', 0, 0, True);
