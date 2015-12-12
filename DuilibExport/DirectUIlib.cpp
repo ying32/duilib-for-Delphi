@@ -83,19 +83,7 @@ public:
 	void Notify(TNotifyUI& msg)
 	{
 		if (m_Notify)
-			m_Notify(m_Self, msg);
- 
-		printf("msg.pSender=%p\n", msg.pSender);
-		printf("msg.pSender->OnInit=%p\n", &msg.pSender->OnInit);
-		printf("msg.pSender->OnDestroy=%p\n", &msg.pSender->OnDestroy);
-		printf("msg.pSender->OnSize=%p\n", &msg.pSender->OnSize);
-		printf("msg.pSender->OnEvent=%p\n", &msg.pSender->OnEvent);
-		printf("msg.pSender->OnNotify=%p\n", &msg.pSender->OnNotify);
-		printf("msg.pSender->OnPaint=%p\n", &msg.pSender->OnPaint);
-		printf("msg.pSender->OnPostPaint=%p\n", &msg.pSender->OnPostPaint);
-		printf("==========================================\n");
-		//printf("Notify pSender.OnEvent=%d, msg.pSender->OnEvent=%p\n",
-		//	sizeof(msg.pSender->OnEvent), &msg.pSender->OnEvent);
+			m_Notify(m_Self, msg);	
 		return WindowImplBase::Notify(msg);
 	}
 	void OnClick(TNotifyUI& msg)
@@ -235,7 +223,12 @@ class CNativeControlUI: public CControlUI
 
 	  CDuiString GetText() const {
 		  CHAR text[MAX_PATH] = {0};
+          #ifdef UNICODE
 		  ::GetWindowText(m_hWnd, (LPWSTR)text, MAX_PATH);
+		  #else
+		  ::GetWindowText(m_hWnd, (LPSTR)text, MAX_PATH);
+		  #endif
+		  
 		  return (LPCTSTR)text;
 	  }
 	  void SetText(LPCTSTR pstrText){
@@ -1664,6 +1657,18 @@ DIRECTUILIB_API bool Delphi_PaintManagerUI_RemovePostPaint(CPaintManagerUI* hand
 
 DIRECTUILIB_API bool Delphi_PaintManagerUI_SetPostPaintIndex(CPaintManagerUI* handle ,CControlUI* pControl, int iIndex) {
     return handle->SetPostPaintIndex(pControl, iIndex);
+}
+
+DIRECTUILIB_API int Delphi_PaintManagerUI_GetPaintChildWndCount(CPaintManagerUI* handle) {
+	return handle->GetPaintChildWndCount();
+}
+
+DIRECTUILIB_API bool Delphi_PaintManagerUI_AddPaintChildWnd(CPaintManagerUI* handle, HWND hChildWnd) {
+	return handle->AddPaintChildWnd(hChildWnd);
+}
+
+DIRECTUILIB_API bool Delphi_PaintManagerUI_RemovePaintChildWnd(CPaintManagerUI* handle, HWND hChildWnd) {
+	return handle->RemovePaintChildWnd(hChildWnd);
 }
 
 DIRECTUILIB_API void Delphi_PaintManagerUI_AddDelayedCleanup(CPaintManagerUI* handle ,CControlUI* pControl) {

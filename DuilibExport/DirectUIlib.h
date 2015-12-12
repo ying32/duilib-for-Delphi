@@ -7,6 +7,7 @@
 //       ∞Ê»®À˘”– (C) 2015-2015 ying32 All Rights Reserved
 //
 //*******************************************************************
+
 #include "../UIlib.h"
 
 #define DIRECTUILIB_API extern "C" __declspec(dllexport)

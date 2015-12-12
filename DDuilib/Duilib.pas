@@ -556,6 +556,9 @@ type
     function AddPostPaint(pControl: CControlUI): Boolean;
     function RemovePostPaint(pControl: CControlUI): Boolean;
     function SetPostPaintIndex(pControl: CControlUI; iIndex: Integer): Boolean;
+    function GetPaintChildWndCount: Integer;
+    function AddPaintChildWnd(hChildWnd: HWND): Boolean;
+    function RemovePaintChildWnd(hChildWnd: HWND): Boolean;
     procedure AddDelayedCleanup(pControl: CControlUI);
     function AddTranslateAccelerator(pTranslateAccelerator: ITranslateAccelerator): Boolean;
     function RemoveTranslateAccelerator(pTranslateAccelerator: ITranslateAccelerator): Boolean;
@@ -596,6 +599,7 @@ type
     procedure RemoveAllWindowCustomAttribute;
   public
     property Name: string read GetName;
+    property PaintChildWndCount: Integer read GetPaintChildWndCount;
   	property ForceUseSharedRes: Boolean read IsForceUseSharedRes write SetForceUseSharedRes;
     property Painting: Boolean read IsPainting write SetPainting;
     property LayeredImage: string read GetLayeredImage write SetLayeredImage;
@@ -2304,6 +2308,9 @@ function Delphi_PaintManagerUI_GetPostPaintCount(Handle: CPaintManagerUI): Integ
 function Delphi_PaintManagerUI_AddPostPaint(Handle: CPaintManagerUI; pControl: CControlUI): Boolean; cdecl;
 function Delphi_PaintManagerUI_RemovePostPaint(Handle: CPaintManagerUI; pControl: CControlUI): Boolean; cdecl;
 function Delphi_PaintManagerUI_SetPostPaintIndex(Handle: CPaintManagerUI; pControl: CControlUI; iIndex: Integer): Boolean; cdecl;
+function Delphi_PaintManagerUI_GetPaintChildWndCount(Handle: CPaintManagerUI): Integer; cdecl;
+function Delphi_PaintManagerUI_AddPaintChildWnd(Handle: CPaintManagerUI; hChildWnd: HWND): Boolean; cdecl;
+function Delphi_PaintManagerUI_RemovePaintChildWnd(Handle: CPaintManagerUI; hChildWnd: HWND): Boolean; cdecl;
 procedure Delphi_PaintManagerUI_AddDelayedCleanup(Handle: CPaintManagerUI; pControl: CControlUI); cdecl;
 function Delphi_PaintManagerUI_AddTranslateAccelerator(Handle: CPaintManagerUI; pTranslateAccelerator: ITranslateAccelerator): Boolean; cdecl;
 function Delphi_PaintManagerUI_RemoveTranslateAccelerator(Handle: CPaintManagerUI; pTranslateAccelerator: ITranslateAccelerator): Boolean; cdecl;
@@ -5166,6 +5173,21 @@ end;
 function CPaintManagerUI.SetPostPaintIndex(pControl: CControlUI; iIndex: Integer): Boolean;
 begin
   Result := Delphi_PaintManagerUI_SetPostPaintIndex(Self, pControl, iIndex);
+end;
+
+function CPaintManagerUI.GetPaintChildWndCount: Integer;
+begin
+  Result := Delphi_PaintManagerUI_GetPaintChildWndCount(Self);
+end;
+
+function CPaintManagerUI.AddPaintChildWnd(hChildWnd: HWND): Boolean;
+begin
+  Result := Delphi_PaintManagerUI_AddPaintChildWnd(Self, hChildWnd);
+end;
+
+function CPaintManagerUI.RemovePaintChildWnd(hChildWnd: HWND): Boolean;
+begin
+  Result := Delphi_PaintManagerUI_RemovePaintChildWnd(Self, hChildWnd);
 end;
 
 procedure CPaintManagerUI.AddDelayedCleanup(pControl: CControlUI);
@@ -9744,6 +9766,9 @@ function Delphi_PaintManagerUI_GetPostPaintCount; external DuiLibdll name 'Delph
 function Delphi_PaintManagerUI_AddPostPaint; external DuiLibdll name 'Delphi_PaintManagerUI_AddPostPaint';
 function Delphi_PaintManagerUI_RemovePostPaint; external DuiLibdll name 'Delphi_PaintManagerUI_RemovePostPaint';
 function Delphi_PaintManagerUI_SetPostPaintIndex; external DuiLibdll name 'Delphi_PaintManagerUI_SetPostPaintIndex';
+function Delphi_PaintManagerUI_GetPaintChildWndCount; external DuiLibdll name 'Delphi_PaintManagerUI_GetPaintChildWndCount';
+function Delphi_PaintManagerUI_AddPaintChildWnd; external DuiLibdll name 'Delphi_PaintManagerUI_AddPaintChildWnd';
+function Delphi_PaintManagerUI_RemovePaintChildWnd; external DuiLibdll name 'Delphi_PaintManagerUI_RemovePaintChildWnd';
 procedure Delphi_PaintManagerUI_AddDelayedCleanup; external DuiLibdll name 'Delphi_PaintManagerUI_AddDelayedCleanup';
 function Delphi_PaintManagerUI_AddTranslateAccelerator; external DuiLibdll name 'Delphi_PaintManagerUI_AddTranslateAccelerator';
 function Delphi_PaintManagerUI_RemoveTranslateAccelerator; external DuiLibdll name 'Delphi_PaintManagerUI_RemoveTranslateAccelerator';
