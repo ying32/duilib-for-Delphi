@@ -2,6 +2,8 @@ program TestApp1;
 
 {$APPTYPE CONSOLE}
 
+{$I DDuilib.inc}
+
 {$R *.res}
 
 uses
