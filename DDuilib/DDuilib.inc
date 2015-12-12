@@ -1,4 +1,4 @@
-ï»¿{$IFDEF FPC}
+{$IFDEF FPC}
   {$IFNDEF UseLowVer}
     {$DEFINE UseLowVer}
   {$ENDIF}
@@ -8,7 +8,7 @@
    {$DEFINE UseLowVer}
 {$ENDIF}
 
-// æ³›å‹æ”¯æŒ
+// ·ºĞÍÖ§³Ö
 {$IF Defined(FPC) or not Defined(UseLowVer)}
    {$DEFINE SuppoertGeneric}
-{$ENDIF}
+{$ifend}

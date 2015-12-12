@@ -89,7 +89,8 @@ begin
     begin
       pRich := CRichEditUI(FindControl('testrichedit'));
       if Assigned(pRich) then
-        pRich.RemoveAll;
+        pRich.Text := '²àÑ¿·¢´ô·¢´ôasAKSJLKDSADSJ  DSADS';
+        //pRich.RemoveAll;
     end else
     if LCtlName = 'changeskinbtn' then
     begin

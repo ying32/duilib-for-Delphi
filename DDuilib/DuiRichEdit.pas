@@ -474,7 +474,7 @@ end;
 
 procedure CRichEditUI.ReplaceSelW(lpszNewText: string; bCanUndo: Boolean);
 begin
-  Delphi_RichEditUI_ReplaceSelW(Self, PChar(lpszNewText), bCanUndo);
+  Delphi_RichEditUI_ReplaceSelW(Self, PWideChar(lpszNewText), bCanUndo);
 end;
 
 function CRichEditUI.GetSelText: string;

@@ -363,7 +363,7 @@ end;
 
 function TDuiWindowImplBase.GetHeight: Integer;
 begin
-  Result := ClientRect.Height;
+  Result := {$IFNDEF UseLowVer}ClientRect.Height{$ELSE}ClientRect.Bottom - ClientRect.Top{$ENDIF};
 end;
 
 function TDuiWindowImplBase.GetInitSize: TSize;
@@ -394,12 +394,12 @@ end;
 
 function TDuiWindowImplBase.GetWidth: Integer;
 begin
-  Result := ClientRect.Width;
+  Result := {$IFNDEF UseLowVer}ClientRect.Width{$ELSE}ClientRect.Right - ClientRect.Left{$ENDIF};
 end;
 
 function TDuiWindowImplBase.GetWorkAreaRect: TRect;
 begin
-  SystemParametersInfo(SPI_GETWORKAREA, 0, Result, 0);
+  SystemParametersInfo(SPI_GETWORKAREA, 0, {$IFDEF UseLowVer}@{$ENDIF}Result, 0);
 end;
 
 function TDuiWindowImplBase.FindControl(const AName: string): CControlUI;
@@ -484,13 +484,13 @@ end;
 
 procedure TDuiWindowImplBase.CenterWindow;
 var
-  LParnetRect: TRect;
+  LParentRect: TRect;
 begin
   if (FParentHandle <> 0) and IsWindow(FParentHandle) then
   begin
-    GetWindowRect(FParentHandle, LParnetRect);
-    SetWindowPos(Handle, HWND_TOP, LParnetRect.Left + (LParnetRect.Width div 2 - Width div 2),
-      LParnetRect.Top + (LParnetRect.Height div 2 - Height div 2), 0, 0, SWP_NOSIZE or SWP_NOREDRAW);
+    GetWindowRect(FParentHandle, LParentRect);
+    SetWindowPos(Handle, HWND_TOP, LParentRect.Left + ((LParentRect.Right - LParentRect.Left) div 2 - Width div 2),
+      LParentRect.Top + ((LParentRect.Bottom - LParentRect.Top) div 2 - Height div 2), 0, 0, SWP_NOSIZE or SWP_NOREDRAW);
   end else
     {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.CenterWindow;
 end;

@@ -1,17 +1,20 @@
 program QQDemo;
 
+{$I DDuilib.inc}
 
 {$R *.res}
 
 uses
-  Winapi.Windows,
-  Winapi.Messages,
-  System.SysUtils,
-  System.Classes,
-  Winapi.ActiveX,
-  System.Types,
-  Winapi.RichEdit,
+  Windows,
+  Messages,
+  SysUtils,
+  Classes,
+  ActiveX,
+  Types,
+  RichEdit,
+ {$IFNDEF UseLowVer}
   System.Generics.Collections,
+ {$ENDIF}
   Duilib,
   DuiListUI,
   DuiRichEdit,
