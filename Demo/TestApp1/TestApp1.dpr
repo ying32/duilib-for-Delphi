@@ -12,6 +12,9 @@ uses
   DuiConst,
   DuiWindowImplBase,
   DuiRichEdit,
+  DuiActiveX,
+  DuiWebBrowser,
+  DuiListUI,
   Duilib;
 
 type
@@ -72,7 +75,11 @@ var
   pRich: CRichEditUI;
 begin
   inherited;
+{$IFNDEF UseLowVer}
   LType := Msg.sType;
+{$ELSE}
+  LType := DuiStringToString(Msg.sType);
+{$ENDIF}
   LCtlName := Msg.pSender.Name;
   if LType = DUI_MSGTYPE_CLICK then
   begin

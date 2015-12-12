@@ -18,6 +18,8 @@ unit Duilib;
 
 interface
 
+{$I DDuilib.inc}
+
 uses
   Windows,
   Types,
@@ -26,11 +28,21 @@ uses
   SysUtils;
 
 const
-{$IFDEF DEBUG}
-  DuiLibdll = 'DuiLib_ud.dll';
+{$IFDEF UNICODE}
+  {$IFDEF DEBUG}
+    DuiLibdll = 'DuiLib_ud.dll';
+  {$ELSE}
+    DuiLibdll = 'DuiLib_u.dll';
+  {$ENDIF}
 {$ELSE}
-  DuiLibdll = 'DuiLib_u.dll';
+  {$IFDEF DEBUG}
+    DuiLibdll = 'DuiLib_d.dll';
+  {$ELSE}
+    DuiLibdll = 'DuiLib.dll';
+  {$ENDIF}
 {$ENDIF}
+
+
 
   UI_WNDSTYLE_CONTAINER   = 0;
   UI_WNDSTYLE_FRAME       = WS_VISIBLE or WS_OVERLAPPEDWINDOW;
@@ -52,6 +64,11 @@ const
   XMLFILE_ENCODING_ASNI    = 2;
 
 
+  /// <summary>
+  ///    MAX_LOCAL_STRING_LEN = 63 + 1 + 1 + #0 = 66byte
+  /// </summary>
+  MAX_LOCAL_STRING_LEN = 63;
+
 type
 
   CControlUI = class;
@@ -68,23 +85,30 @@ type
   IDialogBuilderCallback = Pointer;
   IListOwnerUI = Pointer;
   IListCallbackUI = Pointer;
-  STRINGorID = type PWideChar; // 暂改
+  STRINGorID = type PChar;
   IDropTarget = Pointer;
   PLRESULT = ^LRESULT;
   PULVCompareFunc = function(p1, p2, p3: UINT_PTR): Integer; cdecl;
+
+{$IFDEF UseLowVer}
+  TRectF = record
+    Left, Top, Right, Bottom: Single;
+  end;
+{$ENDIF UseLowVer}
 
   //CDuiString = array[0..65] of Char; // 132 byte
   // MAX_LOCAL_STRING_LEN = 63 + 1 + 1 + #0 = 66byte
   // 这里定义为一个记录， 因为他内部返回的并不是一个指针，so，字段大小不一样了，只能改record方式来做
   PCDuiString = ^CDuiString; // 这个有点牵强吧
   CDuiString = record
-  const
-    MAX_LOCAL_STRING_LEN = 63;
+{$IFNDEF UseLowVer}
   private // 这个方法不知道从哪个版本的Delphi支持
+{$ENDIF}
     /// <summary>
     ///   这个不要用，使用　ToString
     /// </summary>
-    szStr:array[0..65] of Char;
+    szStr: array[0..65] of Char;
+{$IFNDEF UseLowVer}
   public
     class operator Equal(const Lhs, Rhs : CDuiString) : Boolean; overload;
     class operator Equal(const Lhs: CDuiString; Rhs : string) : Boolean; overload;
@@ -100,6 +124,7 @@ type
     function ToString: string;
     function Length: Integer;
     function IsEmpty: Boolean;
+{$ENDIF}
   end;
 
   /// <summary>
@@ -315,12 +340,15 @@ type
   FnType = function(P1: Pointer): Boolean; cdecl;
   PEventSource = ^CEventSource;
   CEventSource = record
+{$IFNDEF UseLowVer}
   private
+{$ENDIF}
     // CStdPtrArray size = 12, CStdPtrArray三个成员
     // 不要使用这三个变量,只是用来占位用
     m_ppVoid: PPointer;
-		m_nCount: Integer;
-		m_nAllocated: Integer;
+    m_nCount: Integer;
+    m_nAllocated: Integer;
+{$IFNDEF UseLowVer}
   public
     /// <summary>
     ///   m_aDelegates: CStdPtrArray;
@@ -336,6 +364,7 @@ type
     //  void operator-= (FnType pFn);
     //  bool operator() (void* param);
     // function (param: Pointer): Boolean;
+{$ENDIF}
   end;
 
 
@@ -697,8 +726,8 @@ type
     function GetAdjustColor(dwColor: DWORD): DWORD;
     procedure Init;
     procedure DoInit;
-    procedure Event(var event: TEventUI);
-    procedure DoEvent(var event: TEventUI);
+    procedure Event(var AEvent: TEventUI);
+    procedure DoEvent(var AEvent: TEventUI);
     procedure SetAttribute(pstrName: string; pstrValue: string);
     function ApplyAttributeList(pstrList: string): CControlUI;
     function EstimateSize(szAvailable: TSize): TSize;
@@ -802,7 +831,7 @@ type
     function Remove(pControl: CControlUI): Boolean;
     function RemoveAt(iIndex: Integer): Boolean;
     procedure RemoveAll;
-    procedure DoEvent(var event: TEventUI);
+    procedure DoEvent(var AEvent: TEventUI);
     procedure SetVisible(bVisible: Boolean = True);
     procedure SetInternVisible(bVisible: Boolean = True);
     procedure SetMouseEnabled(bEnable: Boolean = True);
@@ -879,7 +908,7 @@ type
     procedure SetSepImmMode(bImmediately: Boolean);
     function IsSepImmMode: Boolean;
     procedure SetAttribute(pstrName: string; pstrValue: string);
-    procedure DoEvent(var event: TEventUI);
+    procedure DoEvent(var AEvent: TEventUI);
     procedure SetPos(rc: TRect; bNeedInvalidate: Boolean = True);
     procedure DoPostPaint(hDC: HDC; var rcPaint: TRect);
     function GetThumbRect(bUseNew: Boolean = False): TRect;
@@ -900,7 +929,7 @@ type
     procedure SetSepImmMode(bImmediately: Boolean);
     function IsSepImmMode: Boolean;
     procedure SetAttribute(pstrName: string; pstrValue: string);
-    procedure DoEvent(var event: TEventUI);
+    procedure DoEvent(var AEvent: TEventUI);
     procedure SetPos(rc: TRect; bNeedInvalidate: Boolean = True);
     procedure DoPostPaint(hDC: HDC; var rcPaint: TRect);
     function GetThumbRect(bUseNew: Boolean = False): TRect;
@@ -981,7 +1010,7 @@ type
     function ExpandItem(iIndex: Integer; bExpand: Boolean = True): Boolean;
     procedure SetPos(rc: TRect; bNeedInvalidate: Boolean = True);
     procedure Move(szOffset: TSize; bNeedInvalidate: Boolean = True);
-    procedure DoEvent(var event: TEventUI);
+    procedure DoEvent(var AEvent: TEventUI);
     procedure SetAttribute(pstrName: string; pstrValue: string);
     function GetTextCallback: IListCallbackUI;
     procedure SetTextCallback(pCallback: IListCallbackUI);
@@ -1033,7 +1062,7 @@ type
     function IsShowHtml: Boolean;
     procedure SetShowHtml(bShowHtml: Boolean = True);
     function EstimateSize(szAvailable: TSize): TSize;
-    procedure DoEvent(var event: TEventUI);
+    procedure DoEvent(var AEvent: TEventUI);
     procedure SetAttribute(pstrName: string; pstrValue: string);
     procedure PaintText(hDC: HDC);
     procedure SetEnabledEffect(_EnabledEffect: Boolean);
@@ -1105,7 +1134,7 @@ type
     function GetControlFlags: UINT;
     function Activate: Boolean;
     procedure SetEnabled(bEnable: Boolean = True);
-    procedure DoEvent(var event: TEventUI);
+    procedure DoEvent(var AEvent: TEventUI);
     function GetNormalImage: string;
     procedure SetNormalImage(pStrImage: string);
     function GetHotImage: string;
@@ -1221,7 +1250,7 @@ type
     function Expand(bExpand: Boolean = True): Boolean;
     procedure Invalidate;
     function Activate: Boolean;
-    procedure DoEvent(var event: TEventUI);
+    procedure DoEvent(var AEvent: TEventUI);
     procedure SetAttribute(pstrName: string; pstrValue: string);
     procedure DoPaint(hDC: HDC; var rcPaint: TRect);
     procedure DrawItemText(hDC: HDC; const rcItem: TRect);
@@ -1312,7 +1341,7 @@ type
     function EstimateSize(szAvailable: TSize): TSize;
     procedure SetPos(rc: TRect; bNeedInvalidate: Boolean = True);
     procedure Move(szOffset: TSize; bNeedInvalidate: Boolean = True);
-    procedure DoEvent(var event: TEventUI);
+    procedure DoEvent(var AEvent: TEventUI);
     procedure SetAttribute(pstrName: string; pstrValue: string);
     procedure DoPaint(hDC: HDC; var rcPaint: TRect);
     procedure PaintText(hDC: HDC);
@@ -1358,7 +1387,7 @@ type
     procedure SetReadOnly(bReadOnly: Boolean);
     function IsReadOnly: Boolean;
     procedure UpdateText;
-    procedure DoEvent(var event: TEventUI);
+    procedure DoEvent(var AEvent: TEventUI);
   public
     property ReadOnly: Boolean read IsReadOnly write SetReadOnly;
   	property Time: TDateTime read GetTime write SetTime;
@@ -1403,7 +1432,7 @@ type
     procedure SetVisible(bVisible: Boolean = True);
     procedure SetInternVisible(bVisible: Boolean = True);
     function EstimateSize(szAvailable: TSize): TSize;
-    procedure DoEvent(var event: TEventUI);
+    procedure DoEvent(var AEvent: TEventUI);
     procedure SetAttribute(pstrName: string; pstrValue: string);
     procedure PaintStatusImage(hDC: HDC);
     procedure PaintText(hDC: HDC);
@@ -1521,7 +1550,7 @@ type
     function GetBkDisabledImage: string;
     procedure SetBkDisabledImage(pStrImage: string);
     procedure SetPos(rc: TRect; bNeedInvalidate: Boolean = True);
-    procedure DoEvent(var event: TEventUI);
+    procedure DoEvent(var AEvent: TEventUI);
     procedure SetAttribute(pstrName: string; pstrValue: string);
     procedure DoPaint(hDC: HDC; var rcPaint: TRect);
     procedure PaintBk(hDC: HDC);
@@ -1580,7 +1609,7 @@ type
     procedure SetThumbHotImage(pStrImage: string);
     function GetThumbPushedImage: string;
     procedure SetThumbPushedImage(pStrImage: string);
-    procedure DoEvent(var event: TEventUI);
+    procedure DoEvent(var AEvent: TEventUI);
     procedure SetAttribute(pstrName: string; pstrValue: string);
     procedure PaintStatusImage(hDC: HDC);
   public
@@ -1599,7 +1628,7 @@ type
     function GetControlFlags: UINT;
     function GetInterface(pstrName: string): Pointer;
     function GetLinkContent(iIndex: Integer): string;
-    procedure DoEvent(var event: TEventUI);
+    procedure DoEvent(var AEvent: TEventUI);
     function EstimateSize(szAvailable: TSize): TSize;
     procedure PaintText(hDC: HDC);
   end;
@@ -1610,7 +1639,7 @@ type
     procedure CppDestroy;
     function GetClass: string;
     function GetInterface(pstrName: string): Pointer;
-    procedure DoEvent(var event: TEventUI);
+    procedure DoEvent(var AEvent: TEventUI);
     procedure Invalidate;
     function Select(bSelect: Boolean = True; bTriggerEvent: Boolean = True): Boolean;
     function Add(_pTreeNodeUI: CControlUI): Boolean;
@@ -1655,7 +1684,7 @@ type
     property ParentNode: CTreeNodeUI read GetParentNode write SetParentNode;
     property ChildCount: LongInt read GetCountChild;
     property TreeView: CTreeViewUI read GetTreeView write SetTreeView;
-    property ChildNode[index: Integer]: CTreeNodeUI read GetChildNode;
+    property ChildNode[nindex: Integer]: CTreeNodeUI read GetChildNode;
     property VisibleFolderBtn: Boolean read GetVisibleFolderBtn write SetVisibleFolderBtn;
     property VisibleCheckBtn: Boolean read GetVisibleCheckBtn write SetVisibleCheckBtn;
     property ItemTextColor: DWORD read GetItemTextColor write SetItemTextColor;
@@ -1771,7 +1800,7 @@ type
     function Expand(bExpand: Boolean = True): Boolean;
     procedure Invalidate;
     function Activate: Boolean;
-    procedure DoEvent(var event: TEventUI);
+    procedure DoEvent(var AEvent: TEventUI);
     procedure SetAttribute(pstrName: string; pstrValue: string);
     procedure DrawItemBk(hDC: HDC; const rcItem: TRect);
   private
@@ -1789,7 +1818,7 @@ type
     procedure CppDestroy;
     function GetClass: string;
     function GetInterface(pstrName: string): Pointer;
-    procedure DoEvent(var event: TEventUI);
+    procedure DoEvent(var AEvent: TEventUI);
     function EstimateSize(szAvailable: TSize): TSize;
     procedure DoPaint(hDC: HDC; var rcPaint: TRect);
     procedure DrawItemText(hDC: HDC; const rcItem: TRect);
@@ -1806,7 +1835,7 @@ type
     procedure SetText(iIndex: Integer; pstrText: string);
     procedure SetOwner(pOwner: CControlUI);
     function GetLinkContent(iIndex: Integer): string;
-    procedure DoEvent(var event: TEventUI);
+    procedure DoEvent(var AEvent: TEventUI);
     function EstimateSize(szAvailable: TSize): TSize;
     procedure DrawItemText(hDC: HDC; const rcItem: TRect);
   public
@@ -1821,7 +1850,7 @@ type
     function GetInterface(pstrName: string): Pointer;
     procedure DoInit;
     procedure DoPaint(hDC: HDC; var rcPaint: TRect);
-    procedure DoEvent(var event: TEventUI);
+    procedure DoEvent(var AEvent: TEventUI);
     procedure SetVisible(bVisible: Boolean = True);
     procedure SetAttribute(pstrName: string; pstrValue: string);
     procedure SetBkImage(pStrImage: string);
@@ -3172,11 +3201,17 @@ function Delphi_NativeControlUI_GetClass(Handle: CNativeControlUI): LPCTSTR; cde
 function Delphi_NativeControlUI_GetText(Handle: CNativeControlUI): CDuiString; cdecl;
 procedure Delphi_NativeControlUI_SetText(Handle: CNativeControlUI; pstrText: LPCTSTR); cdecl;
 
+
+{$IFDEF UseLowVer}
+  function StringToDuiString(const AStr: string): CDuiString;
+  function DuiStringToString(ADuiStr: CDuiString): string;
+{$ENDIF UseLowVer}
 implementation
 
 
 { CDuiString }
 
+{$IFNDEF UseLowVer}
 class operator CDuiString.Equal(const Lhs, Rhs: CDuiString): Boolean;
 begin
   Result := Lhs.ToString = Rhs.ToString;
@@ -3244,6 +3279,25 @@ function CDuiString.ToString: string;
 begin
   Result := PChar(@szStr[2]);
 end;
+{$ELSE UseLowVer}
+function StringToDuiString(const AStr: string): CDuiString;
+var
+  LLen: Integer;
+  LBytes: TBytes;
+begin
+  LBytes := nil;// TEncoding.Unicode.GetBytes(AStr + #0);
+  LLen := System.Length(LBytes);
+  if LLen > MAX_LOCAL_STRING_LEN then
+    LLen := MAX_LOCAL_STRING_LEN;
+  Move(LBytes[0], Result.szStr[2], LLen);
+end;
+
+function DuiStringToString(ADuiStr: CDuiString): string;
+begin
+  Result := PChar(@ADuiStr.szStr[2]);
+end;
+
+{$ENDIF UseLowVer}
 
 { CStdStringPtrMap }
 
@@ -3413,6 +3467,7 @@ end;
 
 { CEventSource }
 
+{$IFNDEF UseLowVer}
 function CEventSource.Delegates: CStdPtrArray;
 begin
   Result := CStdPtrArray(@Self);
@@ -3422,6 +3477,7 @@ function CEventSource.IsEmpty: Boolean;
 begin
   Result := Delegates.GetSize > 0;
 end;
+{$ENDIF UseLowVer}
 
 { CNotifyPump }
 
@@ -3437,12 +3493,20 @@ end;
 
 function CNotifyPump.AddVirtualWnd(strName: string; pObject: CNotifyPump): Boolean;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_NotifyPump_AddVirtualWnd(Self, strName, pObject);
+{$ELSE}
+  Result := Delphi_NotifyPump_AddVirtualWnd(Self, StringToDuiString(strName), pObject);
+{$ENDIF}
 end;
 
 function CNotifyPump.RemoveVirtualWnd(strName: string): Boolean;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_NotifyPump_RemoveVirtualWnd(Self, strName);
+{$ELSE}
+  Result := Delphi_NotifyPump_RemoveVirtualWnd(Self, StringToDuiString(strName));
+{$ENDIF}
 end;
 
 procedure CNotifyPump.NotifyPump(var msg: TNotifyUI);
@@ -3665,7 +3729,11 @@ end;
 
 function CControlUI.GetName: string;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_ControlUI_GetName(Self);
+{$ELSE}
+  Result := DuiStringToString(Delphi_ControlUI_GetName(Self));
+{$ENDIF}
 end;
 
 procedure CControlUI.SetName(pstrName: string);
@@ -3710,7 +3778,11 @@ end;
 
 function CControlUI.GetText: string;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_ControlUI_GetText(Self);
+{$ELSE}
+  Result := DuiStringToString(Delphi_ControlUI_GetText(Self));
+{$ENDIF}
 end;
 
 procedure CControlUI.SetText(pstrText: string);
@@ -4005,7 +4077,11 @@ end;
 
 function CControlUI.GetToolTip: string;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_ControlUI_GetToolTip(Self);
+{$ELSE}
+  Result := DuiStringToString(Delphi_ControlUI_GetToolTip(Self));
+{$ENDIF}
 end;
 
 procedure CControlUI.SetToolTip(pstrText: string);
@@ -4045,7 +4121,11 @@ end;
 
 function CControlUI.GetUserData: string;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_ControlUI_GetUserData(Self)^;
+{$ELSE}
+  Result := DuiStringToString(Delphi_ControlUI_GetUserData(Self)^);
+{$ENDIF}
 end;
 
 procedure CControlUI.SetUserData(pstrText: string);
@@ -4173,14 +4253,14 @@ begin
   Delphi_ControlUI_DoInit(Self);
 end;
 
-procedure CControlUI.Event(var event: TEventUI);
+procedure CControlUI.Event(var AEvent: TEventUI);
 begin
-  Delphi_ControlUI_Event(Self, event);
+  Delphi_ControlUI_Event(Self, AEvent);
 end;
 
-procedure CControlUI.DoEvent(var event: TEventUI);
+procedure CControlUI.DoEvent(var AEvent: TEventUI);
 begin
-  Delphi_ControlUI_DoEvent(Self, event);
+  Delphi_ControlUI_DoEvent(Self, AEvent);
 end;
 
 procedure CControlUI.SetAttribute(pstrName: string; pstrValue: string);
@@ -4245,8 +4325,13 @@ end;
 
 function CControlUI.GetVirtualWnd: string;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_ControlUI_GetVirtualWnd(Self);
+{$ELSE}
+  Result := DuiStringToString(Delphi_ControlUI_GetVirtualWnd(Self));
+{$ENDIF}
 end;
+
 
 { CDelphi_WindowImplBase }
 
@@ -4342,7 +4427,11 @@ end;
 
 function CDelphi_WindowImplBase.AddVirtualWnd(strName: string; pObject: CNotifyPump): Boolean;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_Delphi_WindowImplBase_AddVirtualWnd(Self, strName, pObject);
+{$ELSE}
+  Result := Delphi_Delphi_WindowImplBase_AddVirtualWnd(Self, StringToDuiString(strName), pObject);
+{$ENDIF}
 end;
 
 procedure CDelphi_WindowImplBase.RemoveThisInPaintManager;
@@ -4352,7 +4441,11 @@ end;
 
 function CDelphi_WindowImplBase.RemoveVirtualWnd(strName: string): Boolean;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_Delphi_WindowImplBase_RemoveVirtualWnd(Self, strName);
+{$ELSE}
+  Result := Delphi_Delphi_WindowImplBase_RemoveVirtualWnd(Self, StringToDuiString(strName));
+{$ENDIF}
 end;
 
 procedure CDelphi_WindowImplBase.NotifyPump(var msg: TNotifyUI);
@@ -4591,12 +4684,20 @@ end;
 
 class function CPaintManagerUI.GetInstancePath: string;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_PaintManagerUI_GetInstancePath;
+{$ELSE}
+  Result := DuiStringToString(Delphi_PaintManagerUI_GetInstancePath);
+{$ENDIF}
 end;
 
 class function CPaintManagerUI.GetCurrentPath: string;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_PaintManagerUI_GetCurrentPath;
+{$ELSE}
+  Result := DuiStringToString(Delphi_PaintManagerUI_GetCurrentPath);
+{$ENDIF}
 end;
 
 class function CPaintManagerUI.GetResourceDll: HINST;
@@ -4606,12 +4707,20 @@ end;
 
 class function CPaintManagerUI.GetResourcePath: string;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_PaintManagerUI_GetResourcePath^;
+{$ELSE}
+  Result := DuiStringToString(Delphi_PaintManagerUI_GetResourcePath^);
+{$ENDIF}
 end;
 
 class function CPaintManagerUI.GetResourceZip: string;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_PaintManagerUI_GetResourceZip^;
+{$ELSE}
+  Result := DuiStringToString(Delphi_PaintManagerUI_GetResourceZip^);
+{$ENDIF}
 end;
 
 class function CPaintManagerUI.IsCachedResourceZip: Boolean;
@@ -4894,7 +5003,7 @@ var
   DuiStr: CDuiString;
 begin
   Delphi_PaintManagerUI_ProcessMultiLanguageTokens(DuiStr);
-  pStrMultiLanguage := DuiStr;
+  pStrMultiLanguage := {$IFNDEF UseLowVer}DuiStr{$ELSE}DuiStringToString(DuiStr){$ENDIF};
 end;
 
 function CPaintManagerUI.AttachDialog(pControl: CControlUI): Boolean;
@@ -5309,9 +5418,9 @@ begin
   Delphi_ContainerUI_RemoveAll(Self);
 end;
 
-procedure CContainerUI.DoEvent(var event: TEventUI);
+procedure CContainerUI.DoEvent(var AEvent: TEventUI);
 begin
-  Delphi_ContainerUI_DoEvent(Self, event);
+  Delphi_ContainerUI_DoEvent(Self, AEvent);
 end;
 
 procedure CContainerUI.SetVisible(bVisible: Boolean);
@@ -5442,7 +5551,11 @@ end;
 
 function CContainerUI.GetSubControlText(pstrSubControlName: string): string;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_ContainerUI_GetSubControlText(Self, PChar(pstrSubControlName));
+{$ELSE}
+  Result := DuiStringToString(Delphi_ContainerUI_GetSubControlText(Self, PChar(pstrSubControlName)));
+{$ENDIF}
 end;
 
 function CContainerUI.GetSubControlFixedHeight(pstrSubControlName: string): Integer;
@@ -5457,7 +5570,11 @@ end;
 
 function CContainerUI.GetSubControlUserData(pstrSubControlName: string): string;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_ContainerUI_GetSubControlUserData(Self, PChar(pstrSubControlName));
+{$ELSE}
+  Result := DuiStringToString(Delphi_ContainerUI_GetSubControlUserData(Self, PChar(pstrSubControlName)));
+{$ENDIF}
 end;
 
 function CContainerUI.FindSubControl(pstrSubControlName: string): CControlUI;
@@ -5607,9 +5724,9 @@ begin
   Delphi_VerticalLayoutUI_SetAttribute(Self, PChar(pstrName), PChar(pstrValue));
 end;
 
-procedure CVerticalLayoutUI.DoEvent(var event: TEventUI);
+procedure CVerticalLayoutUI.DoEvent(var AEvent: TEventUI);
 begin
-  Delphi_VerticalLayoutUI_DoEvent(Self, event);
+  Delphi_VerticalLayoutUI_DoEvent(Self, AEvent);
 end;
 
 procedure CVerticalLayoutUI.SetPos(rc: TRect; bNeedInvalidate: Boolean);
@@ -5949,9 +6066,9 @@ begin
   Delphi_ListUI_Move(Self, szOffset, bNeedInvalidate);
 end;
 
-procedure CListUI.DoEvent(var event: TEventUI);
+procedure CListUI.DoEvent(var AEvent: TEventUI);
 begin
-  Delphi_ListUI_DoEvent(Self, event);
+  Delphi_ListUI_DoEvent(Self, AEvent);
 end;
 
 procedure CListUI.SetAttribute(pstrName: string; pstrValue: string);
@@ -6173,9 +6290,9 @@ begin
   Delphi_LabelUI_EstimateSize(Self, szAvailable, Result);
 end;
 
-procedure CLabelUI.DoEvent(var event: TEventUI);
+procedure CLabelUI.DoEvent(var AEvent: TEventUI);
 begin
-  Delphi_LabelUI_DoEvent(Self, event);
+  Delphi_LabelUI_DoEvent(Self, AEvent);
 end;
 
 procedure CLabelUI.SetAttribute(pstrName: string; pstrValue: string);
@@ -6205,7 +6322,11 @@ end;
 
 function CLabelUI.GetText: string;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_LabelUI_GetText(Self);
+{$ELSE}
+  Result := DuiStringToString(Delphi_LabelUI_GetText(Self));
+{$ENDIF}
 end;
 
 procedure CLabelUI.SetTransShadow(_TransShadow: Integer);
@@ -6395,9 +6516,9 @@ begin
   Delphi_ButtonUI_SetEnabled(Self, bEnable);
 end;
 
-procedure CButtonUI.DoEvent(var event: TEventUI);
+procedure CButtonUI.DoEvent(var AEvent: TEventUI);
 begin
-  Delphi_ButtonUI_DoEvent(Self, event);
+  Delphi_ButtonUI_DoEvent(Self, AEvent);
 end;
 
 function CButtonUI.GetNormalImage: string;
@@ -6811,9 +6932,9 @@ begin
   Result := Delphi_ListContainerElementUI_Activate(Self);
 end;
 
-procedure CListContainerElementUI.DoEvent(var event: TEventUI);
+procedure CListContainerElementUI.DoEvent(var AEvent: TEventUI);
 begin
-  Delphi_ListContainerElementUI_DoEvent(Self, event);
+  Delphi_ListContainerElementUI_DoEvent(Self, AEvent);
 end;
 
 procedure CListContainerElementUI.SetAttribute(pstrName: string; pstrValue: string);
@@ -6870,7 +6991,11 @@ end;
 
 function CComboUI.GetText: string;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_ComboUI_GetText(Self);
+{$ELSE}
+  Result := DuiStringToString(Delphi_ComboUI_GetText(Self));
+{$ENDIF}
 end;
 
 procedure CComboUI.SetEnabled(bEnable: Boolean);
@@ -6880,7 +7005,11 @@ end;
 
 function CComboUI.GetDropBoxAttributeList: string;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_ComboUI_GetDropBoxAttributeList(Self);
+{$ELSE}
+  Result := DuiStringToString(Delphi_ComboUI_GetDropBoxAttributeList(Self));
+{$ENDIF}
 end;
 
 procedure CComboUI.SetDropBoxAttributeList(pstrList: string);
@@ -7213,9 +7342,9 @@ begin
   Delphi_ComboUI_Move(Self, szOffset, bNeedInvalidate);
 end;
 
-procedure CComboUI.DoEvent(var event: TEventUI);
+procedure CComboUI.DoEvent(var AEvent: TEventUI);
 begin
-  Delphi_ComboUI_DoEvent(Self, event);
+  Delphi_ComboUI_DoEvent(Self, AEvent);
 end;
 
 procedure CComboUI.SetAttribute(pstrName: string; pstrValue: string);
@@ -7296,9 +7425,9 @@ begin
   Delphi_DateTimeUI_UpdateText(Self);
 end;
 
-procedure CDateTimeUI.DoEvent(var event: TEventUI);
+procedure CDateTimeUI.DoEvent(var AEvent: TEventUI);
 begin
-  Delphi_DateTimeUI_DoEvent(Self, event);
+  Delphi_DateTimeUI_DoEvent(Self, AEvent);
 end;
 
 { CEditUI }
@@ -7488,9 +7617,9 @@ begin
   Delphi_EditUI_EstimateSize(Self, szAvailable, Result);
 end;
 
-procedure CEditUI.DoEvent(var event: TEventUI);
+procedure CEditUI.DoEvent(var AEvent: TEventUI);
 begin
-  Delphi_EditUI_DoEvent(Self, event);
+  Delphi_EditUI_DoEvent(Self, AEvent);
 end;
 
 procedure CEditUI.SetAttribute(pstrName: string; pstrValue: string);
@@ -7943,9 +8072,9 @@ begin
   Delphi_ScrollBarUI_SetPos(Self, rc, bNeedInvalidate);
 end;
 
-procedure CScrollBarUI.DoEvent(var event: TEventUI);
+procedure CScrollBarUI.DoEvent(var AEvent: TEventUI);
 begin
-  Delphi_ScrollBarUI_DoEvent(Self, event);
+  Delphi_ScrollBarUI_DoEvent(Self, AEvent);
 end;
 
 procedure CScrollBarUI.SetAttribute(pstrName: string; pstrValue: string);
@@ -8065,9 +8194,9 @@ begin
   Delphi_SliderUI_SetThumbPushedImage(Self, PChar(pStrImage));
 end;
 
-procedure CSliderUI.DoEvent(var event: TEventUI);
+procedure CSliderUI.DoEvent(var AEvent: TEventUI);
 begin
-  Delphi_SliderUI_DoEvent(Self, event);
+  Delphi_SliderUI_DoEvent(Self, AEvent);
 end;
 
 procedure CSliderUI.SetAttribute(pstrName: string; pstrValue: string);
@@ -8109,12 +8238,16 @@ end;
 
 function CTextUI.GetLinkContent(iIndex: Integer): string;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_TextUI_GetLinkContent(Self, iIndex);
+{$ELSE}
+  Result := DuiStringToString(Delphi_TextUI_GetLinkContent(Self, iIndex));
+{$ENDIF}
 end;
 
-procedure CTextUI.DoEvent(var event: TEventUI);
+procedure CTextUI.DoEvent(var AEvent: TEventUI);
 begin
-  Delphi_TextUI_DoEvent(Self, event);
+  Delphi_TextUI_DoEvent(Self, AEvent);
 end;
 
 function CTextUI.EstimateSize(szAvailable: TSize): TSize;
@@ -8149,9 +8282,9 @@ begin
   Result := Delphi_TreeNodeUI_GetInterface(Self, PChar(pstrName));
 end;
 
-procedure CTreeNodeUI.DoEvent(var event: TEventUI);
+procedure CTreeNodeUI.DoEvent(var AEvent: TEventUI);
 begin
-  Delphi_TreeNodeUI_DoEvent(Self, event);
+  Delphi_TreeNodeUI_DoEvent(Self, AEvent);
 end;
 
 procedure CTreeNodeUI.Invalidate;
@@ -8196,7 +8329,11 @@ end;
 
 function CTreeNodeUI.GetItemText: string;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_TreeNodeUI_GetItemText(Self);
+{$ELSE}
+  Result := DuiStringToString(Delphi_TreeNodeUI_GetItemText(Self));
+{$ENDIF}
 end;
 
 procedure CTreeNodeUI.SetCheckBoxSelected(_Selected: Boolean);
@@ -8595,9 +8732,9 @@ begin
   Delphi_HorizontalLayoutUI_SetAttribute(Self, PChar(pstrName), PChar(pstrValue));
 end;
 
-procedure CHorizontalLayoutUI.DoEvent(var event: TEventUI);
+procedure CHorizontalLayoutUI.DoEvent(var AEvent: TEventUI);
 begin
-  Delphi_HorizontalLayoutUI_DoEvent(Self, event);
+  Delphi_HorizontalLayoutUI_DoEvent(Self, AEvent);
 end;
 
 procedure CHorizontalLayoutUI.SetPos(rc: TRect; bNeedInvalidate: Boolean);
@@ -8747,8 +8884,18 @@ begin
 end;
 
 class procedure CRenderEngine.DrawHtmlText(hDC: HDC; pManager: CPaintManagerUI; var rc: TRect; pstrText: string; dwTextColor: DWORD; pLinks: PRect; sLinks: string; var nLinkRects: Integer; uStyle: UINT);
+{$IFDEF UseLowVer}
+var
+  LsLinks: CDuiString;
+{$ENDIF}
 begin
+{$IFNDEF UseLowVer}
   Delphi_RenderEngine_DrawHtmlText(hDC, pManager, rc, PChar(pstrText), dwTextColor, pLinks, sLinks, nLinkRects, uStyle);
+{$ELSE}
+  LsLinks := StringToDuiString(sLinks);
+  Delphi_RenderEngine_DrawHtmlText(hDC, pManager, rc, PChar(pstrText), dwTextColor, pLinks, LsLinks, nLinkRects, uStyle);
+  sLinks := DuiStringToString(LsLinks);
+{$ENDIF}
 end;
 
 class function CRenderEngine.GenerateBitmap(pManager: CPaintManagerUI; pControl: CControlUI; rc: TRect): HBITMAP;
@@ -8849,9 +8996,9 @@ begin
   Result := Delphi_ListElementUI_Activate(Self);
 end;
 
-procedure CListElementUI.DoEvent(var event: TEventUI);
+procedure CListElementUI.DoEvent(var AEvent: TEventUI);
 begin
-  Delphi_ListElementUI_DoEvent(Self, event);
+  Delphi_ListElementUI_DoEvent(Self, AEvent);
 end;
 
 procedure CListElementUI.SetAttribute(pstrName: string; pstrValue: string);
@@ -8886,9 +9033,9 @@ begin
   Result := Delphi_ListLabelElementUI_GetInterface(Self, PChar(pstrName));
 end;
 
-procedure CListLabelElementUI.DoEvent(var event: TEventUI);
+procedure CListLabelElementUI.DoEvent(var AEvent: TEventUI);
 begin
-  Delphi_ListLabelElementUI_DoEvent(Self, event);
+  Delphi_ListLabelElementUI_DoEvent(Self, AEvent);
 end;
 
 function CListLabelElementUI.EstimateSize(szAvailable: TSize): TSize;
@@ -8950,12 +9097,16 @@ end;
 
 function CListTextElementUI.GetLinkContent(iIndex: Integer): string;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_ListTextElementUI_GetLinkContent(Self, iIndex);
+{$ELSE}
+  Result := DuiStringToString(Delphi_ListTextElementUI_GetLinkContent(Self, iIndex));
+{$ENDIF}
 end;
 
-procedure CListTextElementUI.DoEvent(var event: TEventUI);
+procedure CListTextElementUI.DoEvent(var AEvent: TEventUI);
 begin
-  Delphi_ListTextElementUI_DoEvent(Self, event);
+  Delphi_ListTextElementUI_DoEvent(Self, AEvent);
 end;
 
 function CListTextElementUI.EstimateSize(szAvailable: TSize): TSize;
@@ -9000,9 +9151,9 @@ begin
   Delphi_GifAnimUI_DoPaint(Self, hDC, rcPaint);
 end;
 
-procedure CGifAnimUI.DoEvent(var event: TEventUI);
+procedure CGifAnimUI.DoEvent(var AEvent: TEventUI);
 begin
-  Delphi_GifAnimUI_DoEvent(Self, event);
+  Delphi_GifAnimUI_DoEvent(Self, AEvent);
 end;
 
 procedure CGifAnimUI.SetVisible(bVisible: Boolean);
@@ -9084,12 +9235,20 @@ end;
 
 procedure CChildLayoutUI.SetChildLayoutXML(pXML: string);
 begin
+{$IFNDEF UseLowVer}
   Delphi_ChildLayoutUI_SetChildLayoutXML(Self, pXML);
+{$ELSE}
+  Delphi_ChildLayoutUI_SetChildLayoutXML(Self, StringToDuiString(pXML));
+{$ENDIF}
 end;
 
 function CChildLayoutUI.GetChildLayoutXML: string;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_ChildLayoutUI_GetChildLayoutXML(Self);
+{$ELSE}
+  Result := DuiStringToString(Delphi_ChildLayoutUI_GetChildLayoutXML(Self));
+{$ENDIF}
 end;
 
 function CChildLayoutUI.GetInterface(pstrName: string): Pointer;
@@ -9183,7 +9342,11 @@ end;
 
 function CNativeControlUI.GetText: string;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_NativeControlUI_GetText(Self);
+{$ElSE}
+  Result := DuiStringToString(Delphi_NativeControlUI_GetText(Self));
+{$ENDIF}
 end;
 
 procedure CNativeControlUI.SetText(pstrText: string);
