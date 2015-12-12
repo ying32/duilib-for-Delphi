@@ -28,6 +28,8 @@ uses
 type
   {$IFNDEF UseLowVer}
     {$RTTI EXPLICIT METHODS([vcProtected])}
+  {$ElSE}
+    {$M+}
   {$ENDIF}
   {$IFDEF FPC}generic{$ENDIF}TDuiBase{$IFDEF SuppoertGeneric}<T>{$ENDIF} = class(TObject)
   private
@@ -47,7 +49,7 @@ implementation
 
 function TDuiBase{$IF Defined(SuppoertGeneric) and not Defined(FPC)}<T>{$ENDIF}.GetThisControlUI: CControlUI;
 begin
-  Result := PPointer(@FThis)^;
+  Result := {$IFDEF SuppoertGeneric}PPointer(@FThis)^{$ELSE}FThis{$ENDIF};
 end;
 
 function TDuiBase{$IF Defined(SuppoertGeneric) and not Defined(FPC)}<T>{$ENDIF}.GetMethodAddr(const AName: string): Pointer;
@@ -61,7 +63,7 @@ begin
 end;
 {$ELSE}
 begin
-  Result := nil;
+  Result := MethodAddress(AName);
 end;
 {$ENDIF}
 

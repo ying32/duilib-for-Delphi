@@ -47,7 +47,11 @@ type
     function GetTop: Integer;
     function GetWidth: Integer;
     procedure SetParentHandle(const Value: HWND);
+{$IFDEF UseLowVer}
+  published
+{$ELSE}
   protected
+{$ENDIF}
     // 回调函数
     procedure DUI_InitWindow; cdecl;
     procedure DUI_Click(var Msg: TNotifyUI); cdecl;
@@ -58,6 +62,7 @@ type
     function  DUI_HandleCustomMessage(uMsg: UINT; wParam: WPARAM; lParam: LPARAM; var bHandled: BOOL): LRESULT; cdecl;
     function  DUI_CreateControl(pstrStr: LPCTSTR): CControlUI; cdecl;
     function DUI_GetItemText(pControl: CControlUI; iIndex, iSubItem: Integer): LPCTSTR; cdecl;
+  protected
     // Delphi虚函数
     procedure DoInitWindow; virtual;
     procedure DoNotify(var Msg: TNotifyUI); virtual;

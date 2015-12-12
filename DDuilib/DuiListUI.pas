@@ -31,9 +31,14 @@ type
     function GetCurSel: Integer;
     function IsItemShowHtml: Boolean;
     procedure SetItemShowHtml(bShowHtml: Boolean);
+{$IFDEF UseLowVer}
+  published
+{$ELSE}
   protected
+{$ENDIF}
     // dui
     procedure DUI_DoEvent(var AEvent: TEventUI); cdecl;
+  protected
     // delphi
     procedure DoEvent(var AEvent: TEventUI); virtual;
     procedure DoSelectItem; virtual;
