@@ -18,6 +18,9 @@
         <Projects Include="NativeControl\NativeControl.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="Webbrowser\webbrowser.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -71,14 +74,23 @@
     <Target Name="NativeControl:Make">
         <MSBuild Projects="NativeControl\NativeControl.dproj" Targets="Make"/>
     </Target>
+    <Target Name="webbrowser">
+        <MSBuild Projects="Webbrowser\webbrowser.dproj"/>
+    </Target>
+    <Target Name="webbrowser:Clean">
+        <MSBuild Projects="Webbrowser\webbrowser.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="webbrowser:Make">
+        <MSBuild Projects="Webbrowser\webbrowser.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="Apps;ListDemo;QQDemo;TestApp1;NativeControl"/>
+        <CallTarget Targets="Apps;ListDemo;QQDemo;TestApp1;NativeControl;webbrowser"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="Apps:Clean;ListDemo:Clean;QQDemo:Clean;TestApp1:Clean;NativeControl:Clean"/>
+        <CallTarget Targets="Apps:Clean;ListDemo:Clean;QQDemo:Clean;TestApp1:Clean;NativeControl:Clean;webbrowser:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="Apps:Make;ListDemo:Make;QQDemo:Make;TestApp1:Make;NativeControl:Make"/>
+        <CallTarget Targets="Apps:Make;ListDemo:Make;QQDemo:Make;TestApp1:Make;NativeControl:Make;webbrowser:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
