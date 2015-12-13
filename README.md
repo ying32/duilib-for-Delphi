@@ -9,7 +9,7 @@
 
 ****
 
-**此版代码已经更新至duilib最新版本**   
+**自行编译duilib时请一定看ReadMe.txt中的信息**   
 
 **欢迎加入[QQ群429151353](http://shang.qq.com/wpa/qunwpa?idkey=de0faba813de168a104d9160c9271d9873a8c91f30b416c11ff89cb2bdf6564b)一起交流，作者本人也一边写这个库，一边学习duilib。**  
 
@@ -38,11 +38,6 @@
    * 存放原[duilib](https://github.com/duilib/duilib)工程目录，这里不提供原[duilib](https://github.com/duilib/duilib)的源码，请自行下载。
    * 4.1、 bin
       * 存放编译后的二进制及图片和xml资源，里面有的包含原duilib的资源文件 
-
-### 说明
-***
-  **需要将DuilibExport下的DirectUIlib.cpp和DirectUIlib.h加入原[duilib](https://github.com/duilib/duilib)工程中，然后查看ReadMe.txt修改一处duilib的源代码，然后重编译duilib工程, 主意vs中设置为Unicode工程** 
-
 
 ### 截图
 ***
