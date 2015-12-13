@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<Window sizebox="4,4,6,6" caption="0,0,0,30" roundcorner="4,4" size="140,165" mininfo="140,165" opacity="true" transparency="0">
+<Window sizebox="4,4,6,6" caption="0,0,0,30" roundcorner="4,4" size="140,165" mininfo="140,165">
   <Font name="微软雅黑" size="12" bold="false" default="true" />
   <Font name="微软雅黑" size="12" bold="true"/>
   <VerticalLayout bordersize="0" pos="0,0,140,165" width="140" height="165" bkimage="file='bg.bmp' corner='4,4,2,2' mask='0xffffffff'">
