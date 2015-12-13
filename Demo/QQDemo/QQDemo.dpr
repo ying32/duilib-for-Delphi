@@ -1174,10 +1174,10 @@ end;
 
 constructor TColorSkinWindow.Create(main_frame: TXGuiFoundation; rcParentWindow: TRect);
 begin
-  inherited Create('ColorWnd.xml', ExtractFilePath(ParamStr(0)) + 'skin\QQRes\', UILIB_FILE);
+  inherited Create('ColorWnd.xml', ExtractFilePath(ParamStr(0)) + 'skin\QQRes', UILIB_FILE);
   FMainFrame := main_frame;
   FParentWindowRect := rcParentWindow;
-  CreateWindow(0, 'colorskin', WS_POPUP, WS_EX_TOOLWINDOW, 0, 0);
+  CreateWindow(0, 'colorskin', WS_POPUP, WS_EX_TOOLWINDOW);
   Show;
 end;
 
@@ -1240,7 +1240,7 @@ begin
       end
       else if pTabControl.SelectIndex = 1 then
       begin
-        Writeln(LCtlName);
+//        Writeln(LCtlName);
       end;
     end;
   end
