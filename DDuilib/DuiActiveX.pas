@@ -31,16 +31,16 @@ type
     function GetHostWindow: HWND;
     function IsDelayCreate: Boolean;
     procedure SetDelayCreate(bDelayCreate: Boolean = True);
+    function GetClass: string;
+    procedure SetVisible(bVisible: Boolean = True);
+    procedure SetInternVisible(bVisible: Boolean = True);
   public
     class function CppCreate: CActiveXUI;
     procedure CppDestroy;
-    function GetClass: string;
     function GetInterface(pstrName: string): Pointer;
     function CreateControl(const clsid: TCLSID): Boolean; overload;
     function CreateControl(pstrCLSID: string): Boolean; overload;
     function GetControl(const iid: TIID; {ppRet: PPointer}out ppRet): HRESULT;
-    procedure SetVisible(bVisible: Boolean = True);
-    procedure SetInternVisible(bVisible: Boolean = True);
     procedure SetPos(rc: TRect; bNeedInvalidate: Boolean = True);
     procedure Move(szOffset: TSize; bNeedInvalidate: Boolean = True);
     procedure DoPaint(hDC: HDC; var rcPaint: TRect);
@@ -50,6 +50,9 @@ type
     property DelayCreate: Boolean read IsDelayCreate write SetDelayCreate;
     property HostWindow: HWND read GetHostWindow;
     property ModuleName: string read GetModuleName write SetModuleName;
+    property Visible: Boolean read IsVisible write SetVisible;
+    property InternVisible: Boolean write SetInternVisible;
+    property Attribute[AName: string]: string write SetAttribute;
   end;
 
 
@@ -205,5 +208,11 @@ procedure Delphi_ActiveXUI_DoPaint; external DuiLibdll name 'Delphi_ActiveXUI_Do
 procedure Delphi_ActiveXUI_SetAttribute; external DuiLibdll name 'Delphi_ActiveXUI_SetAttribute';
 
 
+
+initialization
+  CoInitialize(nil);
+
+finalization
+  CoUninitialize;
 
 end.
