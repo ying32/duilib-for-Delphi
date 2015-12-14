@@ -1,9 +1,9 @@
-##Duilib for Delphi
+##Duilib for Delphi(DDuilib)
 ===============================================================================
 
-### 什么是Duilib for Delphi?
+### 什么是Duilib for Delphi(DDuilib)?
 ***  
-**Duilib for Delphi是一个基于C++ [duilib](https://github.com/duilib/duilib)的开源工程，主要致力于在Delphi中使用Duilib库构建漂亮的UI。**     
+**Duilib for Delphi(DDuilib)是一个基于C++ [duilib](https://github.com/duilib/duilib)的开源工程，主要致力于在Delphi中使用Duilib库构建漂亮的UI。**     
 **在此也非常感谢duilib作者的辛劳，没有他的库也许就没有现在这Duilib for Delphi。**  
 **更多关于Duilib for Delphi的详情，可见[我的博客](http://blog.csdn.net/zyjying520/article/details/49976667)。**    
 
