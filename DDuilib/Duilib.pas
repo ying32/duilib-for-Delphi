@@ -798,7 +798,105 @@ type
     property FixedHeight: Integer read GetFixedHeight write SetFixedHeight;
   end;
 
-  CDelphi_WindowImplBase = class
+  CWindowWnd = class
+  {
+
+    模拟使用register模拟__thiscall,
+    第个函数多2个参数，EAX, ECX，然后其它参数反过来传入,
+    原于register从左至右stdcall从右至右。
+    ps: __thiscall是"mov ecx, this"与"stdcall"的结合.
+
+
+    private
+      m_hWnd: HWND;
+      m_OldWndProc: WNDPROC;
+      m_bSubclassed: Boolean;
+    protected
+      function GetWindowClassName(EAX, ECX: Pointer): LPCTSTR; virtual; abstract;
+      function GetSuperClassName(EAX, ECX: Pointer): LPCTSTR; virtual; abstract;
+      function GetClassStyle(EAX, ECX: Pointer): UINT; virtual; abstract;
+      function HandleMessage(EAX, ECX: Pointer; uMsg: UINT; wParam: WPARAM; lParam: LPARAM; var bHandled: BOOL): LRESULT; virtual; abstract;
+      procedure OnFinalMessage(EAX, ECX: Pointer; hWd: HWND);
+    public
+      function GetHWND: HWND;
+      function RegisterWindowClass: Boolean;
+      function RegisterSuperclass: Boolean;
+      function Create(hwndParent: HWND; pstrName: string; dwStyle: DWORD; dwExStyle: DWORD; const rc: TRect; hMenu: HMENU = 0): HWND; overload;
+      function Create(hwndParent: HWND; pstrName: string; dwStyle: DWORD; dwExStyle: DWORD; x: Integer = Integer(CW_USEDEFAULT); y: Integer = Integer(CW_USEDEFAULT); cx: Integer = Integer(CW_USEDEFAULT); cy: Integer = Integer(CW_USEDEFAULT); hMenu: HMENU = 0): HWND; overload;
+      function CreateDuiWindow(hwndParent: HWND; pstrWindowName: string; dwStyle: DWORD = 0; dwExStyle: DWORD = 0): HWND;
+      function Subclass(hWnd: HWND): HWND;
+      procedure Unsubclass;
+      procedure ShowWindow(bShow: Boolean = True; bTakeFocus: Boolean = True);
+      function ShowModal: UINT;
+      procedure Close(nRet: UINT = IDOK);
+      procedure CenterWindow;
+      procedure SetIcon(nRes: UINT);
+      procedure ResizeClient(cx: Integer = -1; cy: Integer = -1);
+
+      //function SendMessage(uMsg: UINT; wParam: WPARAM = 0; lParam: LPARAM = 0): LRESULT;
+      //function PostMessage(uMsg: UINT; wParam: WPARAM = 0; lParam: LPARAM = 0): LRESULT;
+  }
+  end;
+
+  WindowImplBase = class(CWindowWnd)
+  (*
+    public
+      procedure InitWindow(EAX, ECX: Pointer); virtual; abstract;
+      procedure OnFinalMessage(EAX, ECX: Pointer; hWd: HWND); virtual; abstract;
+      procedure Notify(EAX, ECX: Pointer; );
+
+    public
+      virtual void InitWindow(){};
+      virtual void OnFinalMessage( HWND hWnd );
+      virtual void Notify(TNotifyUI& msg);
+
+      DUI_DECLARE_MESSAGE_MAP()
+      virtual void OnClick(TNotifyUI& msg);
+
+    protected:
+      virtual CDuiString GetSkinFolder() = 0;
+      virtual CDuiString GetSkinFile() = 0;
+      virtual LPCTSTR GetWindowClassName(void) const = 0 ;
+      virtual LRESULT ResponseDefaultKeyEvent(WPARAM wParam);
+
+      // 说实话，这个到时候要用一个特殊的东东去获取就像CDuiString和CEventSource一样
+      CPaintManagerUI m_PaintManager;
+
+      static LPBYTE m_lpResourceZIPBuffer;
+
+    public:
+      virtual UINT GetClassStyle() const;
+      virtual UILIB_RESOURCETYPE GetResourceType() const;
+      virtual CDuiString GetZIPFileName() const;
+      virtual LPCTSTR GetResourceID() const;
+      virtual CControlUI* CreateControl(LPCTSTR pstrClass);
+      virtual LRESULT MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+      virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+      virtual LRESULT OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+      virtual LRESULT OnNcActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+      virtual LRESULT OnNcCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+      virtual LRESULT OnNcPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+      virtual LRESULT OnNcHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+      virtual LRESULT OnGetMinMaxInfo(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+      virtual LRESULT OnMouseWheel(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+      virtual LRESULT OnMouseHover(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+      virtual LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+      virtual LRESULT OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+      virtual LRESULT OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+      virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+      virtual LRESULT OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+      virtual LRESULT OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+      virtual LRESULT OnSetFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+      virtual LRESULT OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+      virtual LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+      virtual LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+      virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
+      virtual LRESULT HandleCustomMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+      virtual LONG GetStyle();
+  *)
+  end;
+
+  CDelphi_WindowImplBase = class(WindowImplBase)
   public
     class function CppCreate: CDelphi_WindowImplBase;
     procedure CppDestroy;
