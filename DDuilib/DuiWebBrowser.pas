@@ -29,14 +29,14 @@ type
     function GetHomePage: string;
     function GetWebBrowser2: IWebBrowser2;
     function GetHtmlWindow: IDispatch;
+    procedure SetAutoNavigation(bAuto: Boolean = TRUE);
+    function IsAutoNavigation: Boolean;
+    procedure SetWebBrowserEventHandler(pEventHandler: CWebBrowserEventHandler);
   public
     class function CppCreate: CWebBrowserUI;
     procedure CppDestroy;
     function GetClass: string;
     function GetInterface(pstrName: string): Pointer;
-    procedure SetAutoNavigation(bAuto: Boolean = TRUE);
-    function IsAutoNavigation: Boolean;
-    procedure SetWebBrowserEventHandler(pEventHandler: CWebBrowserEventHandler);
     procedure Refresh;
     procedure Refresh2(Level: Integer);
     procedure GoBack;
@@ -53,6 +53,8 @@ type
     property HomePage: string read GetHomePage write SetHomePage;
     property WebBrowser2: IWebBrowser2 read GetWebBrowser2;
     property HtmlWindow: IDispatch read GetHtmlWindow;
+    property AutoNavigation: Boolean read IsAutoNavigation write SetAutoNavigation;
+    property WebBrowserEventHandler: CWebBrowserEventHandler write SetWebBrowserEventHandler;
   end;
 
 

@@ -6,8 +6,7 @@
     CMarkupNode();
     CMarkupNode(CMarkup* pOwner, int iPos);
 	
-3、在StdAfx.h文件中的#include "UIlib.h"上面增加一句#define UILIB_STATIC,这样就不会导出c++的类了。
-4、根据需求选择是Unicode还是多字节集工程。
+3、根据需求选择是Unicode还是多字节集工程。
 
 
 --------------------duilib更新信息,以此来表示当前Duilib for Delphi是使用的哪个版本----------------------

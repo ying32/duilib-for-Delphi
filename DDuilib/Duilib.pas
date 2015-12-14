@@ -175,7 +175,7 @@ type
     UIEVENT_COMMAND,
     UIEVENT__LAST
   );
-  TEVENTTYPE_UI = EVENTTYPE_UI;
+  TEventTypeUI = EVENTTYPE_UI;
 
   tagTEventUI = packed record
     AType: Integer;
@@ -282,6 +282,9 @@ type
   end;
 
   CStdStringPtrMap = class
+  private
+    function GetSize: Integer;
+    function GetAt(iIndex: Integer): string;
   public
     class function CppCreate: CStdStringPtrMap;
     procedure CppDestroy;
@@ -291,8 +294,9 @@ type
     function {$IFNDEF UseLowVer}&Set{$ELSE}_Set{$ENDIF}(key: string; pData: Pointer): Pointer;
     function Remove(key: string): Boolean;
     procedure RemoveAll;
-    function GetSize: Integer;
-    function GetAt(iIndex: Integer): string;
+  public
+    property Items[iIndex: Integer]: string read GetAt;
+    property Size: Integer read GetSize;
   end;
 
   tagTResInfo = packed record
@@ -329,6 +333,11 @@ type
   end;
 
   CStdPtrArray = class
+  private
+    function GetSize: Integer;
+    function GetData: Pointer;
+    function GetAt(iIndex: Integer): Pointer;
+    procedure _SetAt(iIndex: Integer; const Value: Pointer);
   public
     class function CppCreate: CStdPtrArray;
     procedure CppDestroy;
@@ -337,12 +346,13 @@ type
     function IsEmpty: Boolean;
     function Find(iIndex: Pointer): Integer;
     function Add(pData: Pointer): Boolean;
-    function SetAt(iIndex: Integer; pData: Pointer): Boolean;
     function InsertAt(iIndex: Integer; pData: Pointer): Boolean;
     function Remove(iIndex: Integer): Boolean;
-    function GetSize: Integer;
-    function GetData: Pointer;
-    function GetAt(iIndex: Integer): Pointer;
+    function SetAt(iIndex: Integer; pData: Pointer): Boolean;
+  public
+    property Data: Pointer read GetData;
+    property Items[iIndex: Integer]: Pointer read GetAt write _SetAt;
+    property Size: Integer read GetSize;
   end;
 
   // Ãÿ ‚¿¥∂‘¥˝
@@ -760,6 +770,8 @@ type
     procedure Hide;
     procedure Show;
   public
+    property Attribute[AName: string]: string write SetAttribute;
+    property ControlFlags: UINT read GetControlFlags;
     property X: Integer read GetX;
     property Y: Integer read GetY;
     property Width: Integer read GetWidth;
@@ -3457,6 +3469,11 @@ end;
 function CStdPtrArray.SetAt(iIndex: Integer; pData: Pointer): Boolean;
 begin
   Result := Delphi_StdPtrArray_SetAt(Self, iIndex, pData);
+end;
+
+procedure CStdPtrArray._SetAt(iIndex: Integer; const Value: Pointer);
+begin
+  SetAt(iIndex, Value);
 end;
 
 function CStdPtrArray.InsertAt(iIndex: Integer; pData: Pointer): Boolean;

@@ -89,6 +89,10 @@ type
     procedure SetIcon(nRes: UINT);
     function FindControl(const AName: string): CControlUI; overload;
     function FindControl(const pt: TPoint): CControlUI; overload;
+    function FindSubControl(const AParent: CControlUI; const AName: string): CControlUI; overload;
+    function FindSubControl(const AParent: CControlUI; const P: TPoint): CControlUI; overload;
+    function FindSubControls(const AParent: CControlUI; const AClassName: string): CStdPtrArray;
+    function FindSubControlByClass(const AParent: CControlUI; const AClassName: string; AIndex: Integer = 0): CControlUI;
     function Perform(uMsg: UINT; wParam: WPARAM = 0; lParam: LPARAM = 0): LRESULT;
     procedure Minimize;
     procedure Restore;
@@ -347,6 +351,30 @@ end;
 function TDuiWindowImplBase.FindControl(const pt: TPoint): CControlUI;
 begin
   Result := FPaintManagerUI.FindControl(pt);
+end;
+
+function TDuiWindowImplBase.FindSubControl(const AParent: CControlUI;
+  const P: TPoint): CControlUI;
+begin
+  Result := PaintManagerUI.FindSubControlByPoint(AParent, P);
+end;
+
+function TDuiWindowImplBase.FindSubControlByClass(const AParent: CControlUI;
+  const AClassName: string; AIndex: Integer): CControlUI;
+begin
+  Result := PaintManagerUI.FindSubControlByClass(AParent, AClassName, AIndex);
+end;
+
+function TDuiWindowImplBase.FindSubControls(const AParent: CControlUI;
+  const AClassName: string): CStdPtrArray;
+begin
+  Result := PaintManagerUI.FindSubControlsByClass(AParent, AClassName);
+end;
+
+function TDuiWindowImplBase.FindSubControl(const AParent: CControlUI;
+  const AName: string): CControlUI;
+begin
+  Result := PaintManagerUI.FindSubControlByName(AParent, AName);
 end;
 
 function TDuiWindowImplBase.GetClientRect: TRect;
