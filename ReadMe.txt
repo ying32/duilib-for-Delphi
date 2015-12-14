@@ -11,13 +11,12 @@
 
 --------------------duilib更新信息,以此来表示当前Duilib for Delphi是使用的哪个版本----------------------
 
-版本: 816d729e25eebb3bf4c20418eaf02c26ee202b1b
-作者: wangchyz <wangchyz@gmail.com>
-日期: 2015/12/13 11:31:41
-信息:
-1、修正horizontallayout的计算错误
 
-2、修正paintmanager的一处手误
+版本: 34f7a964c7d52b915e2babfebc1549de7c4b2b93
+作者: wangchyz <wangchyz@gmail.com>
+日期: 2015/12/14 18:48:28
+信息:
+activex光标调整为动态
 ----
-已修改: DuiLib/Core/UIManager.cpp
-已修改: DuiLib/Layout/UIHorizontalLayout.cpp
+已修改: DuiLib/Control/UIActiveX.cpp
+
