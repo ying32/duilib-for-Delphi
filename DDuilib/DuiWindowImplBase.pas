@@ -144,12 +144,17 @@ type
 
   TDuiApplication = class
   public
-    procedure Initialize;
-    procedure Run;
+    class procedure Initialize;
+    class procedure Run;
     procedure Terminate;
-  public
-    constructor Create;
-    destructor Destroy; override;
+    class function LoadPlugin(const pstrModuleName: string): Boolean;
+    class procedure ReloadSkin;
+    class function GetPlugins: CStdPtrArray;
+    class procedure SetResourcePath(pStrPath: string);
+    class function IsCachedResourceZip: Boolean;
+    class procedure SetResourceDll(hInst: HINST);
+    class procedure SetResourceZip(pVoid: Pointer; len: LongInt); overload;
+    class procedure SetResourceZip(pstrZip: string; bCachedResourceZip: Boolean = False); overload;
   end;
 
 
@@ -532,25 +537,55 @@ end;
 
 { TDuiApplication }
 
-constructor TDuiApplication.Create;
+class function TDuiApplication.GetPlugins: CStdPtrArray;
 begin
-  inherited;
+  Result := CPaintManagerUI.GetPlugins;
 end;
 
-
-destructor TDuiApplication.Destroy;
-begin
-  inherited;
-end;
-
-procedure TDuiApplication.Initialize;
+class procedure TDuiApplication.Initialize;
 begin
   CPaintManagerUI.SetInstance(HInstance);
 end;
 
-procedure TDuiApplication.Run;
+class function TDuiApplication.IsCachedResourceZip: Boolean;
+begin
+  Result := CPaintManagerUI.IsCachedResourceZip;
+end;
+
+class function TDuiApplication.LoadPlugin(const pstrModuleName: string): Boolean;
+begin
+  Result := CPaintManagerUI.LoadPlugin(pstrModuleName);
+end;
+
+class procedure TDuiApplication.ReloadSkin;
+begin
+  CPaintManagerUI.ReloadSkin;
+end;
+
+class procedure TDuiApplication.Run;
 begin
   CPaintManagerUI.MessageLoop;
+end;
+
+class procedure TDuiApplication.SetResourceDll(hInst: HINST);
+begin
+  CPaintManagerUI.SetResourceDll(hInst);
+end;
+
+class procedure TDuiApplication.SetResourcePath(pStrPath: string);
+begin
+  CPaintManagerUI.SetResourcePath(pStrPath);
+end;
+
+class procedure TDuiApplication.SetResourceZip(pVoid: Pointer; len: Integer);
+begin
+  CPaintManagerUI.SetResourceZip(pVoid, len);
+end;
+
+class procedure TDuiApplication.SetResourceZip(pstrZip: string;
+  bCachedResourceZip: Boolean);
+begin
+  CPaintManagerUI.SetResourceZip(pstrZip, bCachedResourceZip);
 end;
 
 procedure TDuiApplication.Terminate;

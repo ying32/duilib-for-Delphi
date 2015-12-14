@@ -31,12 +31,12 @@ type
     function GetHostWindow: HWND;
     function IsDelayCreate: Boolean;
     procedure SetDelayCreate(bDelayCreate: Boolean = True);
-    function GetClass: string;
     procedure SetVisible(bVisible: Boolean = True);
     procedure SetInternVisible(bVisible: Boolean = True);
   public
     class function CppCreate: CActiveXUI;
     procedure CppDestroy;
+    function GetClass: string;
     function GetInterface(pstrName: string): Pointer;
     function CreateControl(const clsid: TCLSID): Boolean; overload;
     function CreateControl(pstrCLSID: string): Boolean; overload;
