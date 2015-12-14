@@ -931,6 +931,22 @@ DIRECTUILIB_API void Delphi_ControlUI_SetFloat(CControlUI* handle ,bool bFloat) 
     handle->SetFloat(bFloat);
 }
 
+DIRECTUILIB_API void Delphi_ControlUI_AddCustomAttribute(CControlUI* handle, LPCTSTR pstrName, LPCTSTR pstrAttr) {
+	handle->AddCustomAttribute(pstrName, pstrAttr);
+}
+
+DIRECTUILIB_API LPCTSTR Delphi_ControlUI_GetCustomAttribute(CControlUI* handle, LPCTSTR pstrName) {
+	return handle->GetCustomAttribute(pstrName);
+}
+
+DIRECTUILIB_API bool Delphi_ControlUI_RemoveCustomAttribute(CControlUI* handle, LPCTSTR pstrName) {
+	return handle->RemoveCustomAttribute(pstrName);
+}
+
+DIRECTUILIB_API void Delphi_ControlUI_RemoveAllCustomAttribute(CControlUI* handle) {
+	handle->RemoveAllCustomAttribute();
+}
+
 DIRECTUILIB_API CControlUI* Delphi_ControlUI_FindControl(CControlUI* handle ,FINDCONTROLPROC Proc, LPVOID pData, UINT uFlags) {
     return handle->FindControl(Proc, pData, uFlags);
 }
@@ -1022,151 +1038,151 @@ DIRECTUILIB_API CDuiString Delphi_ControlUI_GetVirtualWnd(CControlUI* handle) {
 //================================CDelphi_WindowImplBase============================
 
 DIRECTUILIB_API CDelphi_WindowImplBase* Delphi_Delphi_WindowImplBase_CppCreate() {
-    return new CDelphi_WindowImplBase();
+	return new CDelphi_WindowImplBase();
 }
 
 DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_CppDestroy(CDelphi_WindowImplBase* handle) {
-    delete handle;
+	delete handle;
 }
 
 DIRECTUILIB_API HWND Delphi_Delphi_WindowImplBase_GetHWND(CDelphi_WindowImplBase* handle) {
-    return handle->GetHWND();
+	return handle->GetHWND();
 }
 
 DIRECTUILIB_API bool Delphi_Delphi_WindowImplBase_RegisterWindowClass(CDelphi_WindowImplBase* handle) {
-    return handle->RegisterWindowClass();
+	return handle->RegisterWindowClass();
 }
 
 DIRECTUILIB_API bool Delphi_Delphi_WindowImplBase_RegisterSuperclass(CDelphi_WindowImplBase* handle) {
-    return handle->RegisterSuperclass();
+	return handle->RegisterSuperclass();
 }
 
-DIRECTUILIB_API HWND Delphi_Delphi_WindowImplBase_Create_01(CDelphi_WindowImplBase* handle ,HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle, RECT rc, HMENU hMenu) {
-    return handle->Create(hwndParent, pstrName, dwStyle, dwExStyle, rc, hMenu);
+DIRECTUILIB_API HWND Delphi_Delphi_WindowImplBase_Create_01(CDelphi_WindowImplBase* handle, HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle, RECT rc, HMENU hMenu) {
+	return handle->Create(hwndParent, pstrName, dwStyle, dwExStyle, rc, hMenu);
 }
 
-DIRECTUILIB_API HWND Delphi_Delphi_WindowImplBase_Create_02(CDelphi_WindowImplBase* handle ,HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle, int x, int y, int cx, int cy, HMENU hMenu) {
-    return handle->Create(hwndParent, pstrName, dwStyle, dwExStyle, x, y, cx, cy, hMenu);
+DIRECTUILIB_API HWND Delphi_Delphi_WindowImplBase_Create_02(CDelphi_WindowImplBase* handle, HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle, int x, int y, int cx, int cy, HMENU hMenu) {
+	return handle->Create(hwndParent, pstrName, dwStyle, dwExStyle, x, y, cx, cy, hMenu);
 }
 
-DIRECTUILIB_API HWND Delphi_Delphi_WindowImplBase_CreateDuiWindow(CDelphi_WindowImplBase* handle ,HWND hwndParent, LPCTSTR pstrWindowName, DWORD dwStyle, DWORD dwExStyle) {
-    return handle->CreateDuiWindow(hwndParent, pstrWindowName, dwStyle, dwExStyle);
+DIRECTUILIB_API HWND Delphi_Delphi_WindowImplBase_CreateDuiWindow(CDelphi_WindowImplBase* handle, HWND hwndParent, LPCTSTR pstrWindowName, DWORD dwStyle, DWORD dwExStyle) {
+	return handle->CreateDuiWindow(hwndParent, pstrWindowName, dwStyle, dwExStyle);
 }
 
-DIRECTUILIB_API HWND Delphi_Delphi_WindowImplBase_Subclass(CDelphi_WindowImplBase* handle ,HWND hWnd) {
-    return handle->Subclass(hWnd);
+DIRECTUILIB_API HWND Delphi_Delphi_WindowImplBase_Subclass(CDelphi_WindowImplBase* handle, HWND hWnd) {
+	return handle->Subclass(hWnd);
 }
 
 DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_Unsubclass(CDelphi_WindowImplBase* handle) {
-    handle->Unsubclass();
+	handle->Unsubclass();
 }
 
-DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_ShowWindow(CDelphi_WindowImplBase* handle ,bool bShow, bool bTakeFocus) {
-    handle->ShowWindow(bShow, bTakeFocus);
+DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_ShowWindow(CDelphi_WindowImplBase* handle, bool bShow, bool bTakeFocus) {
+	handle->ShowWindow(bShow, bTakeFocus);
 }
 
 DIRECTUILIB_API UINT Delphi_Delphi_WindowImplBase_ShowModal(CDelphi_WindowImplBase* handle) {
-    return handle->ShowModal();
+	return handle->ShowModal();
 }
 
-DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_Close(CDelphi_WindowImplBase* handle ,UINT nRet) {
-    handle->Close(nRet);
+DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_Close(CDelphi_WindowImplBase* handle, UINT nRet) {
+	handle->Close(nRet);
 }
 
 DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_CenterWindow(CDelphi_WindowImplBase* handle) {
-    handle->CenterWindow();
+	handle->CenterWindow();
 }
 
-DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetIcon(CDelphi_WindowImplBase* handle ,UINT nRes) {
-    handle->SetIcon(nRes);
+DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetIcon(CDelphi_WindowImplBase* handle, UINT nRes) {
+	handle->SetIcon(nRes);
 }
 
-DIRECTUILIB_API LRESULT Delphi_Delphi_WindowImplBase_SendMessage(CDelphi_WindowImplBase* handle ,UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    return handle->SendMessage(uMsg, wParam, lParam);
+DIRECTUILIB_API LRESULT Delphi_Delphi_WindowImplBase_SendMessage(CDelphi_WindowImplBase* handle, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	return handle->SendMessage(uMsg, wParam, lParam);
 }
 
-DIRECTUILIB_API LRESULT Delphi_Delphi_WindowImplBase_PostMessage(CDelphi_WindowImplBase* handle ,UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    return handle->PostMessage(uMsg, wParam, lParam);
+DIRECTUILIB_API LRESULT Delphi_Delphi_WindowImplBase_PostMessage(CDelphi_WindowImplBase* handle, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	return handle->PostMessage(uMsg, wParam, lParam);
 }
 
-DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_ResizeClient(CDelphi_WindowImplBase* handle ,int cx, int cy) {
-    handle->ResizeClient(cx, cy);
+DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_ResizeClient(CDelphi_WindowImplBase* handle, int cx, int cy) {
+	handle->ResizeClient(cx, cy);
 }
 
-DIRECTUILIB_API bool Delphi_Delphi_WindowImplBase_AddVirtualWnd(CDelphi_WindowImplBase* handle ,CDuiString strName, CNotifyPump* pObject) {
-    return handle->AddVirtualWnd(strName, pObject);
+DIRECTUILIB_API bool Delphi_Delphi_WindowImplBase_AddVirtualWnd(CDelphi_WindowImplBase* handle, CDuiString strName, CNotifyPump* pObject) {
+	return handle->AddVirtualWnd(strName, pObject);
 }
 
-DIRECTUILIB_API bool Delphi_Delphi_WindowImplBase_RemoveVirtualWnd(CDelphi_WindowImplBase* handle ,CDuiString strName) {
-    return handle->RemoveVirtualWnd(strName);
+DIRECTUILIB_API bool Delphi_Delphi_WindowImplBase_RemoveVirtualWnd(CDelphi_WindowImplBase* handle, CDuiString strName) {
+	return handle->RemoveVirtualWnd(strName);
 }
 
-DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_NotifyPump(CDelphi_WindowImplBase* handle ,TNotifyUI& msg) {
-    handle->NotifyPump(msg);
+DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_NotifyPump(CDelphi_WindowImplBase* handle, TNotifyUI& msg) {
+	handle->NotifyPump(msg);
 }
 
-DIRECTUILIB_API bool Delphi_Delphi_WindowImplBase_LoopDispatch(CDelphi_WindowImplBase* handle ,TNotifyUI& msg) {
-    return handle->LoopDispatch(msg);
+DIRECTUILIB_API bool Delphi_Delphi_WindowImplBase_LoopDispatch(CDelphi_WindowImplBase* handle, TNotifyUI& msg) {
+	return handle->LoopDispatch(msg);
 }
 
 DIRECTUILIB_API CPaintManagerUI* Delphi_Delphi_WindowImplBase_GetPaintManagerUI(CDelphi_WindowImplBase* handle) {
-    return handle->GetPaintManagerUI();
+	return handle->GetPaintManagerUI();
 }
 
-DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetDelphiSelf(CDelphi_WindowImplBase* handle ,LPVOID Self) {
-    handle->SetDelphiSelf(Self);
+DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetDelphiSelf(CDelphi_WindowImplBase* handle, LPVOID Self) {
+	handle->SetDelphiSelf(Self);
 }
 
-DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetClassName(CDelphi_WindowImplBase* handle ,LPCTSTR ClassName) {
-    handle->SetClassName(ClassName);
+DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetClassName(CDelphi_WindowImplBase* handle, LPCTSTR ClassName) {
+	handle->SetClassName(ClassName);
 }
 
-DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetSkinFile(CDelphi_WindowImplBase* handle ,LPCTSTR SkinFile) {
-    handle->SetSkinFile(SkinFile);
+DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetSkinFile(CDelphi_WindowImplBase* handle, LPCTSTR SkinFile) {
+	handle->SetSkinFile(SkinFile);
 }
 
-DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetSkinFolder(CDelphi_WindowImplBase* handle ,LPCTSTR SkinFolder) {
-    handle->SetSkinFolder(SkinFolder);
+DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetSkinFolder(CDelphi_WindowImplBase* handle, LPCTSTR SkinFolder) {
+	handle->SetSkinFolder(SkinFolder);
 }
 
-DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetZipFileName(CDelphi_WindowImplBase* handle ,LPCTSTR ZipFileName) {
-    handle->SetZipFileName(ZipFileName);
+DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetZipFileName(CDelphi_WindowImplBase* handle, LPCTSTR ZipFileName) {
+	handle->SetZipFileName(ZipFileName);
 }
 
-DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetResourceType(CDelphi_WindowImplBase* handle ,UILIB_RESOURCETYPE RType) {
-    handle->SetResourceType(RType);
+DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetResourceType(CDelphi_WindowImplBase* handle, UILIB_RESOURCETYPE RType) {
+	handle->SetResourceType(RType);
 }
 
-DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetInitWindow(CDelphi_WindowImplBase* handle ,InitWindowCallBack Callback) {
-    handle->SetInitWindow(Callback);
+DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetInitWindow(CDelphi_WindowImplBase* handle, InitWindowCallBack Callback) {
+	handle->SetInitWindow(Callback);
 }
 
-DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetFinalMessage(CDelphi_WindowImplBase* handle ,FinalMessageCallBack Callback) {
-    handle->SetFinalMessage(Callback);
+DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetFinalMessage(CDelphi_WindowImplBase* handle, FinalMessageCallBack Callback) {
+	handle->SetFinalMessage(Callback);
 }
 
-DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetHandleMessage(CDelphi_WindowImplBase* handle ,HandleMessageCallBack Callback) {
-    handle->SetHandleMessage(Callback);
+DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetHandleMessage(CDelphi_WindowImplBase* handle, HandleMessageCallBack Callback) {
+	handle->SetHandleMessage(Callback);
 }
 
-DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetNotify(CDelphi_WindowImplBase* handle ,NotifyCallBack Callback) {
-    handle->SetNotify(Callback);
+DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetNotify(CDelphi_WindowImplBase* handle, NotifyCallBack Callback) {
+	handle->SetNotify(Callback);
 }
 
-DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetClick(CDelphi_WindowImplBase* handle ,NotifyCallBack Callback) {
-    handle->SetClick(Callback);
+DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetClick(CDelphi_WindowImplBase* handle, NotifyCallBack Callback) {
+	handle->SetClick(Callback);
 }
 
-DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetMessageHandler(CDelphi_WindowImplBase* handle ,MessageCallBack Callback) {
-    handle->SetMessageHandler(Callback);
+DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetMessageHandler(CDelphi_WindowImplBase* handle, MessageCallBack Callback) {
+	handle->SetMessageHandler(Callback);
 }
 
-DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetHandleCustomMessage(CDelphi_WindowImplBase* handle ,MessageCallBack Callback) {
-    handle->SetHandleCustomMessage(Callback);
+DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetHandleCustomMessage(CDelphi_WindowImplBase* handle, MessageCallBack Callback) {
+	handle->SetHandleCustomMessage(Callback);
 }
 
-DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetCreateControl(CDelphi_WindowImplBase* handle ,CreateControlCallBack CallBack) {
-    handle->SetCreateControl(CallBack);
+DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetCreateControl(CDelphi_WindowImplBase* handle, CreateControlCallBack CallBack) {
+	handle->SetCreateControl(CallBack);
 }
 
 DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetGetItemText(CDelphi_WindowImplBase* handle, GetItemTextCallBack ACallBack) {
@@ -1180,6 +1196,7 @@ DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetGetClassStyle(CDelphi_Windo
 DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_RemoveThisInPaintManager(CDelphi_WindowImplBase* handle) {
 	handle->RemoveThisInPaintManager();
 }
+
 
 //================================CPaintManagerUI============================
 
@@ -2506,6 +2523,10 @@ DIRECTUILIB_API LPCTSTR Delphi_LabelUI_GetClass(CLabelUI* handle) {
     return handle->GetClass();
 }
 
+DIRECTUILIB_API void Delphi_LabelUI_SetText(CLabelUI* handle, LPCTSTR pstrText) {
+	handle->SetText(pstrText);
+}
+
 DIRECTUILIB_API LPVOID Delphi_LabelUI_GetInterface(CLabelUI* handle ,LPCTSTR pstrName) {
     return handle->GetInterface(pstrName);
 }
@@ -2582,52 +2603,20 @@ DIRECTUILIB_API bool Delphi_LabelUI_GetEnabledEffect(CLabelUI* handle) {
     return handle->GetEnabledEffect();
 }
 
-DIRECTUILIB_API void Delphi_LabelUI_SetText(CLabelUI* handle ,LPCTSTR pstrText) {
-    handle->SetText(pstrText);
+DIRECTUILIB_API void Delphi_LabelUI_SetEnabledLuminous(CLabelUI* handle, bool bEnableLuminous) {
+	handle->SetEnabledLuminous(bEnableLuminous);
 }
 
-DIRECTUILIB_API CDuiString Delphi_LabelUI_GetText(CLabelUI* handle) {
-    return handle->GetText();
+DIRECTUILIB_API bool Delphi_LabelUI_GetEnabledLuminous(CLabelUI* handle) {
+	return handle->GetEnabledLuminous();
 }
 
-DIRECTUILIB_API void Delphi_LabelUI_SetTransShadow(CLabelUI* handle ,int _TransShadow) {
-    handle->SetTransShadow(_TransShadow);
+DIRECTUILIB_API void Delphi_LabelUI_SetLuminousFuzzy(CLabelUI* handle, float fFuzzy) {
+	handle->SetLuminousFuzzy(fFuzzy);
 }
 
-DIRECTUILIB_API int Delphi_LabelUI_GetTransShadow(CLabelUI* handle) {
-    return handle->GetTransShadow();
-}
-
-DIRECTUILIB_API void Delphi_LabelUI_SetTransShadow1(CLabelUI* handle ,int _TransShadow) {
-    handle->SetTransShadow1(_TransShadow);
-}
-
-DIRECTUILIB_API int Delphi_LabelUI_GetTransShadow1(CLabelUI* handle) {
-    return handle->GetTransShadow1();
-}
-
-DIRECTUILIB_API void Delphi_LabelUI_SetTransText(CLabelUI* handle ,int _TransText) {
-    handle->SetTransText(_TransText);
-}
-
-DIRECTUILIB_API int Delphi_LabelUI_GetTransText(CLabelUI* handle) {
-    return handle->GetTransText();
-}
-
-DIRECTUILIB_API void Delphi_LabelUI_SetTransText1(CLabelUI* handle ,int _TransText) {
-    handle->SetTransText1(_TransText);
-}
-
-DIRECTUILIB_API int Delphi_LabelUI_GetTransText1(CLabelUI* handle) {
-    return handle->GetTransText1();
-}
-
-DIRECTUILIB_API void Delphi_LabelUI_SetTransStroke(CLabelUI* handle ,int _TransStroke) {
-    handle->SetTransStroke(_TransStroke);
-}
-
-DIRECTUILIB_API int Delphi_LabelUI_GetTransStroke(CLabelUI* handle) {
-    return handle->GetTransStroke();
+DIRECTUILIB_API float Delphi_LabelUI_GetLuminousFuzzy(CLabelUI* handle) {
+	return handle->GetLuminousFuzzy();
 }
 
 DIRECTUILIB_API void Delphi_LabelUI_SetGradientLength(CLabelUI* handle ,int _GradientLength) {
@@ -2636,14 +2625,6 @@ DIRECTUILIB_API void Delphi_LabelUI_SetGradientLength(CLabelUI* handle ,int _Gra
 
 DIRECTUILIB_API int Delphi_LabelUI_GetGradientLength(CLabelUI* handle) {
     return handle->GetGradientLength();
-}
-
-DIRECTUILIB_API void Delphi_LabelUI_SetTextRenderingHintAntiAlias(CLabelUI* handle ,int _TextRenderingHintAntiAlias) {
-    handle->SetTextRenderingHintAntiAlias(_TextRenderingHintAntiAlias);
-}
-
-DIRECTUILIB_API int Delphi_LabelUI_GetTextRenderingHintAntiAlias(CLabelUI* handle) {
-    return handle->GetTextRenderingHintAntiAlias();
 }
 
 DIRECTUILIB_API void Delphi_LabelUI_SetShadowOffset(CLabelUI* handle ,int _offset, int _angle) {
@@ -5156,6 +5137,10 @@ DIRECTUILIB_API void Delphi_RenderEngine_CppDestroy(CRenderEngine* handle) {
 
 DIRECTUILIB_API DWORD Delphi_RenderEngine_AdjustColor(DWORD dwColor, short H, short S, short L) {
     return CRenderEngine::AdjustColor(dwColor, H, S, L);
+}
+
+DIRECTUILIB_API HBITMAP Delphi_RenderEngine_CreateARGB32Bitmap(HDC hDC, int cx, int cy, COLORREF** pBits) {
+	return CRenderEngine::CreateARGB32Bitmap(hDC, cx, cy, pBits);
 }
 
 DIRECTUILIB_API void Delphi_RenderEngine_AdjustImage(bool bUseHSL, TImageInfo* imageInfo, short H, short S, short L) {

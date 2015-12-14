@@ -8,6 +8,7 @@
 //       版权所有 (C) 2015 ying32 All Rights Reserved
 //
 //       1、以C开头的都是用来桥接C++类的，理论上是不给继承，除非是c++的类
+//          其中的虚函数也是不能乱写的
 //
 //       注：此单元现在已经改为手动编辑了，不要使用生成的直接替换
 //***************************************************************************
@@ -105,7 +106,7 @@ type
   PLRESULT = ^LRESULT;
   PULVCompareFunc = function(p1, p2, p3: UINT_PTR): Integer; cdecl;
 
-  //CDuiString = array[0..65] of Char; // 132 byte
+  //CDuiString = array[0..65] of Char; //  132/68 byte
   // MAX_LOCAL_STRING_LEN = 63 + 1 + 1 + #0 = 66byte
   // 这里定义为一个记录， 因为他内部返回的并不是一个指针，so，字段大小不一样了，只能改record方式来做
   PCDuiString = ^CDuiString; // 这个有点牵强吧
@@ -115,7 +116,7 @@ type
 {$ENDIF}
     m_pstr: LPTSTR;
     /// <summary>
-    ///   这个不要用，使用　ToString  132 byte
+    ///   这个不要用，使用　ToString
     /// </summary>
     m_szBuffer: array[0..MAX_LOCAL_STRING_LEN] of Char;
 {$IFNDEF UseLowVer}
@@ -742,6 +743,10 @@ type
     procedure SetFocus;
     function IsFloat: Boolean;
     procedure SetFloat(bFloat: Boolean = True);
+    procedure AddCustomAttribute(pstrName: string; pstrAttr: string);
+    function GetCustomAttribute(pstrName: string): string;
+    function RemoveCustomAttribute(pstrName: string): Boolean;
+    procedure RemoveAllCustomAttribute;
     function FindControl(Proc: TFindControlProc; pData: Pointer; uFlags: UINT): CControlUI;
     procedure Invalidate;
     function IsUpdateNeeded: Boolean;
@@ -798,105 +803,7 @@ type
     property FixedHeight: Integer read GetFixedHeight write SetFixedHeight;
   end;
 
-  CWindowWnd = class
-  {
-
-    模拟使用register模拟__thiscall,
-    第个函数多2个参数，EAX, ECX，然后其它参数反过来传入,
-    原于register从左至右stdcall从右至右。
-    ps: __thiscall是"mov ecx, this"与"stdcall"的结合.
-
-
-    private
-      m_hWnd: HWND;
-      m_OldWndProc: WNDPROC;
-      m_bSubclassed: Boolean;
-    protected
-      function GetWindowClassName(EAX, ECX: Pointer): LPCTSTR; virtual; abstract;
-      function GetSuperClassName(EAX, ECX: Pointer): LPCTSTR; virtual; abstract;
-      function GetClassStyle(EAX, ECX: Pointer): UINT; virtual; abstract;
-      function HandleMessage(EAX, ECX: Pointer; uMsg: UINT; wParam: WPARAM; lParam: LPARAM; var bHandled: BOOL): LRESULT; virtual; abstract;
-      procedure OnFinalMessage(EAX, ECX: Pointer; hWd: HWND);
-    public
-      function GetHWND: HWND;
-      function RegisterWindowClass: Boolean;
-      function RegisterSuperclass: Boolean;
-      function Create(hwndParent: HWND; pstrName: string; dwStyle: DWORD; dwExStyle: DWORD; const rc: TRect; hMenu: HMENU = 0): HWND; overload;
-      function Create(hwndParent: HWND; pstrName: string; dwStyle: DWORD; dwExStyle: DWORD; x: Integer = Integer(CW_USEDEFAULT); y: Integer = Integer(CW_USEDEFAULT); cx: Integer = Integer(CW_USEDEFAULT); cy: Integer = Integer(CW_USEDEFAULT); hMenu: HMENU = 0): HWND; overload;
-      function CreateDuiWindow(hwndParent: HWND; pstrWindowName: string; dwStyle: DWORD = 0; dwExStyle: DWORD = 0): HWND;
-      function Subclass(hWnd: HWND): HWND;
-      procedure Unsubclass;
-      procedure ShowWindow(bShow: Boolean = True; bTakeFocus: Boolean = True);
-      function ShowModal: UINT;
-      procedure Close(nRet: UINT = IDOK);
-      procedure CenterWindow;
-      procedure SetIcon(nRes: UINT);
-      procedure ResizeClient(cx: Integer = -1; cy: Integer = -1);
-
-      //function SendMessage(uMsg: UINT; wParam: WPARAM = 0; lParam: LPARAM = 0): LRESULT;
-      //function PostMessage(uMsg: UINT; wParam: WPARAM = 0; lParam: LPARAM = 0): LRESULT;
-  }
-  end;
-
-  WindowImplBase = class(CWindowWnd)
-  (*
-    public
-      procedure InitWindow(EAX, ECX: Pointer); virtual; abstract;
-      procedure OnFinalMessage(EAX, ECX: Pointer; hWd: HWND); virtual; abstract;
-      procedure Notify(EAX, ECX: Pointer; );
-
-    public
-      virtual void InitWindow(){};
-      virtual void OnFinalMessage( HWND hWnd );
-      virtual void Notify(TNotifyUI& msg);
-
-      DUI_DECLARE_MESSAGE_MAP()
-      virtual void OnClick(TNotifyUI& msg);
-
-    protected:
-      virtual CDuiString GetSkinFolder() = 0;
-      virtual CDuiString GetSkinFile() = 0;
-      virtual LPCTSTR GetWindowClassName(void) const = 0 ;
-      virtual LRESULT ResponseDefaultKeyEvent(WPARAM wParam);
-
-      // 说实话，这个到时候要用一个特殊的东东去获取就像CDuiString和CEventSource一样
-      CPaintManagerUI m_PaintManager;
-
-      static LPBYTE m_lpResourceZIPBuffer;
-
-    public:
-      virtual UINT GetClassStyle() const;
-      virtual UILIB_RESOURCETYPE GetResourceType() const;
-      virtual CDuiString GetZIPFileName() const;
-      virtual LPCTSTR GetResourceID() const;
-      virtual CControlUI* CreateControl(LPCTSTR pstrClass);
-      virtual LRESULT MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
-      virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-      virtual LRESULT OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-      virtual LRESULT OnNcActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-      virtual LRESULT OnNcCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-      virtual LRESULT OnNcPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-      virtual LRESULT OnNcHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-      virtual LRESULT OnGetMinMaxInfo(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-      virtual LRESULT OnMouseWheel(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-      virtual LRESULT OnMouseHover(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-      virtual LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-      virtual LRESULT OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-      virtual LRESULT OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-      virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-      virtual LRESULT OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-      virtual LRESULT OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-      virtual LRESULT OnSetFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-      virtual LRESULT OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-      virtual LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-      virtual LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-      virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
-      virtual LRESULT HandleCustomMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-      virtual LONG GetStyle();
-  *)
-  end;
-
-  CDelphi_WindowImplBase = class(WindowImplBase)
+  CDelphi_WindowImplBase = class
   public
     class function CppCreate: CDelphi_WindowImplBase;
     procedure CppDestroy;
@@ -1172,6 +1079,7 @@ type
     class function CppCreate: CLabelUI;
     procedure CppDestroy;
     function GetClass: string;
+    procedure SetText(pstrText: string);
     function GetInterface(pstrName: string): Pointer;
     procedure SetTextStyle(uStyle: UINT);
     function GetTextStyle: UINT;
@@ -1191,22 +1099,12 @@ type
     procedure PaintText(hDC: HDC);
     procedure SetEnabledEffect(_EnabledEffect: Boolean);
     function GetEnabledEffect: Boolean;
-    procedure SetText(pstrText: string);
-    function GetText: string;
-    procedure SetTransShadow(_TransShadow: Integer);
-    function GetTransShadow: Integer;
-    procedure SetTransShadow1(_TransShadow: Integer);
-    function GetTransShadow1: Integer;
-    procedure SetTransText(_TransText: Integer);
-    function GetTransText: Integer;
-    procedure SetTransText1(_TransText: Integer);
-    function GetTransText1: Integer;
-    procedure SetTransStroke(_TransStroke: Integer);
-    function GetTransStroke: Integer;
+    procedure SetEnabledLuminous(bEnableLuminous: Boolean);
+    function GetEnabledLuminous: Boolean;
+    procedure SetLuminousFuzzy(fFuzzy: Single);
+    function GetLuminousFuzzy: Single;
     procedure SetGradientLength(_GradientLength: Integer);
     function GetGradientLength: Integer;
-    procedure SetTextRenderingHintAntiAlias(_TextRenderingHintAntiAlias: Integer);
-    function GetTextRenderingHintAntiAlias: Integer;
     procedure SetShadowOffset(_offset: Integer; _angle: Integer);
     function GetShadowOffset: TRectF;
     procedure SetTextColor1(_TextColor1: DWORD);
@@ -1224,6 +1122,8 @@ type
     procedure SetEnabledShadow(_EnabledShadowe: Boolean);
     function GetEnabledShadow: Boolean;
   public
+    property EnabledLuminous: Boolean read GetEnabledLuminous write SetEnabledLuminous;
+    property LuminousFuzzy: Single read GetLuminousFuzzy write SetLuminousFuzzy;
     property TextStyle: UINT read GetTextStyle write SetTextStyle;
     property TextColor: DWORD read GetTextColor write SetTextColor;
    	property DisabledTextColor: DWORD read GetDisabledTextColor write SetDisabledTextColor;
@@ -1232,13 +1132,7 @@ type
     property ShowHtml: Boolean read IsShowHtml write SetShowHtml;
     property EnabledEffect: Boolean read GetEnabledEffect write SetEnabledEffect;
     property Text: string read GetText write SetText;
-	  property TransShadow: Integer read GetTransShadow write SetTransShadow;
-    property TransShadow1: Integer read GetTransShadow1 write SetTransShadow1;
-    property TransText: Integer read GetTransText write SetTransText;
-    property TransText1: Integer read GetTransText1 write SetTransText1;
-    property TransStroke: Integer read GetTransStroke write SetTransStroke;
     property GradientLength: Integer read GetGradientLength write SetGradientLength;
-    property TextRenderingHintAntiAlias: Integer read GetTextRenderingHintAntiAlias write SetTextRenderingHintAntiAlias;
    	property ShadowOffset: TRectF read GetShadowOffset;
     property TextColor1: DWORD read GetTextColor1 write SetTextColor1;
     property TextShadowColorA: DWORD read GetTextShadowColorA write SetTextShadowColorA;
@@ -1891,6 +1785,7 @@ type
     class function CppCreate: CRenderEngine;
     procedure CppDestroy;
     class function AdjustColor(dwColor: DWORD; H: Short; S: Short; L: Short): DWORD;
+    class function CreateARGB32Bitmap(hDC: HDC; cx: Integer; cy: Integer; pBits: COLORREF): HBITMAP;
     class procedure AdjustImage(bUseHSL: Boolean; imageInfo: PImageInfo; H: Short; S: Short; L: Short);
     class function LoadImage(bitmap: string; AType: string = ''; mask: DWORD = 0): PImageInfo;
     class procedure FreeImage(bitmap: PImageInfo; bDelete: Boolean = True);
@@ -2231,6 +2126,10 @@ function Delphi_ControlUI_IsFocused(Handle: CControlUI): Boolean; cdecl;
 procedure Delphi_ControlUI_SetFocus(Handle: CControlUI); cdecl;
 function Delphi_ControlUI_IsFloat(Handle: CControlUI): Boolean; cdecl;
 procedure Delphi_ControlUI_SetFloat(Handle: CControlUI; bFloat: Boolean); cdecl;
+procedure Delphi_ControlUI_AddCustomAttribute(Handle: CControlUI; pstrName: LPCTSTR; pstrAttr: LPCTSTR); cdecl;
+function Delphi_ControlUI_GetCustomAttribute(Handle: CControlUI; pstrName: LPCTSTR): LPCTSTR; cdecl;
+function Delphi_ControlUI_RemoveCustomAttribute(Handle: CControlUI; pstrName: LPCTSTR): Boolean; cdecl;
+procedure Delphi_ControlUI_RemoveAllCustomAttribute(Handle: CControlUI); cdecl;
 function Delphi_ControlUI_FindControl(Handle: CControlUI; Proc: TFindControlProc; pData: Pointer; uFlags: UINT): CControlUI; cdecl;
 procedure Delphi_ControlUI_Invalidate(Handle: CControlUI); cdecl;
 function Delphi_ControlUI_IsUpdateNeeded(Handle: CControlUI): Boolean; cdecl;
@@ -2254,6 +2153,7 @@ procedure Delphi_ControlUI_PaintBorder(Handle: CControlUI; hDC: HDC); cdecl;
 procedure Delphi_ControlUI_DoPostPaint(Handle: CControlUI; hDC: HDC; var rcPaint: TRect); cdecl;
 procedure Delphi_ControlUI_SetVirtualWnd(Handle: CControlUI; pstrValue: LPCTSTR); cdecl;
 function Delphi_ControlUI_GetVirtualWnd(Handle: CControlUI): CDuiString; cdecl;
+
 
 //================================CDelphi_WindowImplBase============================
 
@@ -2643,6 +2543,7 @@ procedure Delphi_Delphi_ListUI_SetDoEvent(Handle: CDelphi_ListUI; ADoEvent: Poin
 function Delphi_LabelUI_CppCreate: CLabelUI; cdecl;
 procedure Delphi_LabelUI_CppDestroy(Handle: CLabelUI); cdecl;
 function Delphi_LabelUI_GetClass(Handle: CLabelUI): LPCTSTR; cdecl;
+procedure Delphi_LabelUI_SetText(Handle: CLabelUI; pstrText: LPCTSTR); cdecl;
 function Delphi_LabelUI_GetInterface(Handle: CLabelUI; pstrName: LPCTSTR): Pointer; cdecl;
 procedure Delphi_LabelUI_SetTextStyle(Handle: CLabelUI; uStyle: UINT); cdecl;
 function Delphi_LabelUI_GetTextStyle(Handle: CLabelUI): UINT; cdecl;
@@ -2662,22 +2563,12 @@ procedure Delphi_LabelUI_SetAttribute(Handle: CLabelUI; pstrName: LPCTSTR; pstrV
 procedure Delphi_LabelUI_PaintText(Handle: CLabelUI; hDC: HDC); cdecl;
 procedure Delphi_LabelUI_SetEnabledEffect(Handle: CLabelUI; _EnabledEffect: Boolean); cdecl;
 function Delphi_LabelUI_GetEnabledEffect(Handle: CLabelUI): Boolean; cdecl;
-procedure Delphi_LabelUI_SetText(Handle: CLabelUI; pstrText: LPCTSTR); cdecl;
-function Delphi_LabelUI_GetText(Handle: CLabelUI): CDuiString; cdecl;
-procedure Delphi_LabelUI_SetTransShadow(Handle: CLabelUI; _TransShadow: Integer); cdecl;
-function Delphi_LabelUI_GetTransShadow(Handle: CLabelUI): Integer; cdecl;
-procedure Delphi_LabelUI_SetTransShadow1(Handle: CLabelUI; _TransShadow: Integer); cdecl;
-function Delphi_LabelUI_GetTransShadow1(Handle: CLabelUI): Integer; cdecl;
-procedure Delphi_LabelUI_SetTransText(Handle: CLabelUI; _TransText: Integer); cdecl;
-function Delphi_LabelUI_GetTransText(Handle: CLabelUI): Integer; cdecl;
-procedure Delphi_LabelUI_SetTransText1(Handle: CLabelUI; _TransText: Integer); cdecl;
-function Delphi_LabelUI_GetTransText1(Handle: CLabelUI): Integer; cdecl;
-procedure Delphi_LabelUI_SetTransStroke(Handle: CLabelUI; _TransStroke: Integer); cdecl;
-function Delphi_LabelUI_GetTransStroke(Handle: CLabelUI): Integer; cdecl;
+procedure Delphi_LabelUI_SetEnabledLuminous(Handle: CLabelUI; bEnableLuminous: Boolean); cdecl;
+function Delphi_LabelUI_GetEnabledLuminous(Handle: CLabelUI): Boolean; cdecl;
+procedure Delphi_LabelUI_SetLuminousFuzzy(Handle: CLabelUI; fFuzzy: Single); cdecl;
+function Delphi_LabelUI_GetLuminousFuzzy(Handle: CLabelUI): Single; cdecl;
 procedure Delphi_LabelUI_SetGradientLength(Handle: CLabelUI; _GradientLength: Integer); cdecl;
 function Delphi_LabelUI_GetGradientLength(Handle: CLabelUI): Integer; cdecl;
-procedure Delphi_LabelUI_SetTextRenderingHintAntiAlias(Handle: CLabelUI; _TextRenderingHintAntiAlias: Integer); cdecl;
-function Delphi_LabelUI_GetTextRenderingHintAntiAlias(Handle: CLabelUI): Integer; cdecl;
 procedure Delphi_LabelUI_SetShadowOffset(Handle: CLabelUI; _offset: Integer; _angle: Integer); cdecl;
 procedure Delphi_LabelUI_GetShadowOffset(Handle: CLabelUI; var Result: TRectF); cdecl;
 procedure Delphi_LabelUI_SetTextColor1(Handle: CLabelUI; _TextColor1: DWORD); cdecl;
@@ -3205,6 +3096,7 @@ procedure Delphi_RenderClip_UseOldClipEnd(hDC: HDC; var clip: CRenderClip); cdec
 function Delphi_RenderEngine_CppCreate: CRenderEngine; cdecl;
 procedure Delphi_RenderEngine_CppDestroy(Handle: CRenderEngine); cdecl;
 function Delphi_RenderEngine_AdjustColor(dwColor: DWORD; H: Short; S: Short; L: Short): DWORD; cdecl;
+function Delphi_RenderEngine_CreateARGB32Bitmap(hDC: HDC; cx: Integer; cy: Integer; pBits: COLORREF): HBITMAP; cdecl;
 procedure Delphi_RenderEngine_AdjustImage(bUseHSL: Boolean; imageInfo: PImageInfo; H: Short; S: Short; L: Short); cdecl;
 function Delphi_RenderEngine_LoadImage(bitmap: STRINGorID; AType: LPCTSTR; mask: DWORD): PImageInfo; cdecl;
 procedure Delphi_RenderEngine_FreeImage(bitmap: PImageInfo; bDelete: Boolean); cdecl;
@@ -4347,6 +4239,26 @@ begin
   Delphi_ControlUI_SetFloat(Self, bFloat);
 end;
 
+procedure CControlUI.AddCustomAttribute(pstrName: string; pstrAttr: string);
+begin
+  Delphi_ControlUI_AddCustomAttribute(Self, LPCTSTR(pstrName), LPCTSTR(pstrAttr));
+end;
+
+function CControlUI.GetCustomAttribute(pstrName: string): string;
+begin
+  Result := Delphi_ControlUI_GetCustomAttribute(Self, LPCTSTR(pstrName));
+end;
+
+function CControlUI.RemoveCustomAttribute(pstrName: string): Boolean;
+begin
+  Result := Delphi_ControlUI_RemoveCustomAttribute(Self, LPCTSTR(pstrName));
+end;
+
+procedure CControlUI.RemoveAllCustomAttribute;
+begin
+  Delphi_ControlUI_RemoveAllCustomAttribute(Self);
+end;
+
 function CControlUI.FindControl(Proc: TFindControlProc; pData: Pointer; uFlags: UINT): CControlUI;
 begin
   Result := Delphi_ControlUI_FindControl(Self, Proc, pData, uFlags);
@@ -4465,7 +4377,6 @@ begin
   Result := DuiStringToString(Delphi_ControlUI_GetVirtualWnd(Self));
 {$ENDIF}
 end;
-
 
 { CDelphi_WindowImplBase }
 
@@ -4676,7 +4587,6 @@ procedure CDelphi_WindowImplBase.SetCreateControl(CallBack: Pointer);
 begin
   Delphi_Delphi_WindowImplBase_SetCreateControl(Self, CallBack);
 end;
-
 
 
 { CPaintManagerUI }
@@ -6369,6 +6279,11 @@ begin
   Result := Delphi_LabelUI_GetClass(Self);
 end;
 
+procedure CLabelUI.SetText(pstrText: string);
+begin
+  Delphi_LabelUI_SetText(Self, PChar(pstrText));
+end;
+
 function CLabelUI.GetInterface(pstrName: string): Pointer;
 begin
   Result := Delphi_LabelUI_GetInterface(Self, PChar(pstrName));
@@ -6464,68 +6379,24 @@ begin
   Result := Delphi_LabelUI_GetEnabledEffect(Self);
 end;
 
-procedure CLabelUI.SetText(pstrText: string);
+procedure CLabelUI.SetEnabledLuminous(bEnableLuminous: Boolean);
 begin
-  Delphi_LabelUI_SetText(Self, PChar(pstrText));
+  Delphi_LabelUI_SetEnabledLuminous(Self, bEnableLuminous);
 end;
 
-function CLabelUI.GetText: string;
+function CLabelUI.GetEnabledLuminous: Boolean;
 begin
-{$IFNDEF UseLowVer}
-  Result := Delphi_LabelUI_GetText(Self);
-{$ELSE}
-  Result := DuiStringToString(Delphi_LabelUI_GetText(Self));
-{$ENDIF}
+  Result := Delphi_LabelUI_GetEnabledLuminous(Self);
 end;
 
-procedure CLabelUI.SetTransShadow(_TransShadow: Integer);
+procedure CLabelUI.SetLuminousFuzzy(fFuzzy: Single);
 begin
-  Delphi_LabelUI_SetTransShadow(Self, _TransShadow);
+  Delphi_LabelUI_SetLuminousFuzzy(Self, fFuzzy);
 end;
 
-function CLabelUI.GetTransShadow: Integer;
+function CLabelUI.GetLuminousFuzzy: Single;
 begin
-  Result := Delphi_LabelUI_GetTransShadow(Self);
-end;
-
-procedure CLabelUI.SetTransShadow1(_TransShadow: Integer);
-begin
-  Delphi_LabelUI_SetTransShadow1(Self, _TransShadow);
-end;
-
-function CLabelUI.GetTransShadow1: Integer;
-begin
-  Result := Delphi_LabelUI_GetTransShadow1(Self);
-end;
-
-procedure CLabelUI.SetTransText(_TransText: Integer);
-begin
-  Delphi_LabelUI_SetTransText(Self, _TransText);
-end;
-
-function CLabelUI.GetTransText: Integer;
-begin
-  Result := Delphi_LabelUI_GetTransText(Self);
-end;
-
-procedure CLabelUI.SetTransText1(_TransText: Integer);
-begin
-  Delphi_LabelUI_SetTransText1(Self, _TransText);
-end;
-
-function CLabelUI.GetTransText1: Integer;
-begin
-  Result := Delphi_LabelUI_GetTransText1(Self);
-end;
-
-procedure CLabelUI.SetTransStroke(_TransStroke: Integer);
-begin
-  Delphi_LabelUI_SetTransStroke(Self, _TransStroke);
-end;
-
-function CLabelUI.GetTransStroke: Integer;
-begin
-  Result := Delphi_LabelUI_GetTransStroke(Self);
+  Result := Delphi_LabelUI_GetLuminousFuzzy(Self);
 end;
 
 procedure CLabelUI.SetGradientLength(_GradientLength: Integer);
@@ -6536,16 +6407,6 @@ end;
 function CLabelUI.GetGradientLength: Integer;
 begin
   Result := Delphi_LabelUI_GetGradientLength(Self);
-end;
-
-procedure CLabelUI.SetTextRenderingHintAntiAlias(_TextRenderingHintAntiAlias: Integer);
-begin
-  Delphi_LabelUI_SetTextRenderingHintAntiAlias(Self, _TextRenderingHintAntiAlias);
-end;
-
-function CLabelUI.GetTextRenderingHintAntiAlias: Integer;
-begin
-  Result := Delphi_LabelUI_GetTextRenderingHintAntiAlias(Self);
 end;
 
 procedure CLabelUI.SetShadowOffset(_offset: Integer; _angle: Integer);
@@ -8977,6 +8838,11 @@ begin
   Result := Delphi_RenderEngine_AdjustColor(dwColor, H, S, L);
 end;
 
+class function CRenderEngine.CreateARGB32Bitmap(hDC: HDC; cx: Integer; cy: Integer; pBits: COLORREF): HBITMAP;
+begin
+  Result := Delphi_RenderEngine_CreateARGB32Bitmap(hDC, cx, cy, pBits);
+end;
+
 class procedure CRenderEngine.AdjustImage(bUseHSL: Boolean; imageInfo: PImageInfo; H: Short; S: Short; L: Short);
 begin
   Delphi_RenderEngine_AdjustImage(bUseHSL, imageInfo, H, S, L);
@@ -9695,6 +9561,10 @@ function Delphi_ControlUI_IsFocused; external DuiLibdll name 'Delphi_ControlUI_I
 procedure Delphi_ControlUI_SetFocus; external DuiLibdll name 'Delphi_ControlUI_SetFocus';
 function Delphi_ControlUI_IsFloat; external DuiLibdll name 'Delphi_ControlUI_IsFloat';
 procedure Delphi_ControlUI_SetFloat; external DuiLibdll name 'Delphi_ControlUI_SetFloat';
+procedure Delphi_ControlUI_AddCustomAttribute; external DuiLibdll name 'Delphi_ControlUI_AddCustomAttribute';
+function Delphi_ControlUI_GetCustomAttribute; external DuiLibdll name 'Delphi_ControlUI_GetCustomAttribute';
+function Delphi_ControlUI_RemoveCustomAttribute; external DuiLibdll name 'Delphi_ControlUI_RemoveCustomAttribute';
+procedure Delphi_ControlUI_RemoveAllCustomAttribute; external DuiLibdll name 'Delphi_ControlUI_RemoveAllCustomAttribute';
 function Delphi_ControlUI_FindControl; external DuiLibdll name 'Delphi_ControlUI_FindControl';
 procedure Delphi_ControlUI_Invalidate; external DuiLibdll name 'Delphi_ControlUI_Invalidate';
 function Delphi_ControlUI_IsUpdateNeeded; external DuiLibdll name 'Delphi_ControlUI_IsUpdateNeeded';
@@ -9718,6 +9588,7 @@ procedure Delphi_ControlUI_PaintBorder; external DuiLibdll name 'Delphi_ControlU
 procedure Delphi_ControlUI_DoPostPaint; external DuiLibdll name 'Delphi_ControlUI_DoPostPaint';
 procedure Delphi_ControlUI_SetVirtualWnd; external DuiLibdll name 'Delphi_ControlUI_SetVirtualWnd';
 function Delphi_ControlUI_GetVirtualWnd; external DuiLibdll name 'Delphi_ControlUI_GetVirtualWnd';
+
 
 //================================CDelphi_WindowImplBase============================
 
@@ -9761,6 +9632,7 @@ procedure Delphi_Delphi_WindowImplBase_SetCreateControl; external DuiLibdll name
 procedure Delphi_Delphi_WindowImplBase_SetGetItemText; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_SetGetItemText';
 procedure Delphi_Delphi_WindowImplBase_SetGetClassStyle; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_SetGetClassStyle';
 procedure Delphi_Delphi_WindowImplBase_RemoveThisInPaintManager; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_RemoveThisInPaintManager';
+
 //================================CPaintManagerUI============================
 
 function Delphi_PaintManagerUI_CppCreate; external DuiLibdll name 'Delphi_PaintManagerUI_CppCreate';
@@ -10106,6 +9978,7 @@ procedure Delphi_Delphi_ListUI_SetDoEvent; external DuiLibdll name 'Delphi_Delph
 function Delphi_LabelUI_CppCreate; external DuiLibdll name 'Delphi_LabelUI_CppCreate';
 procedure Delphi_LabelUI_CppDestroy; external DuiLibdll name 'Delphi_LabelUI_CppDestroy';
 function Delphi_LabelUI_GetClass; external DuiLibdll name 'Delphi_LabelUI_GetClass';
+procedure Delphi_LabelUI_SetText; external DuiLibdll name 'Delphi_LabelUI_SetText';
 function Delphi_LabelUI_GetInterface; external DuiLibdll name 'Delphi_LabelUI_GetInterface';
 procedure Delphi_LabelUI_SetTextStyle; external DuiLibdll name 'Delphi_LabelUI_SetTextStyle';
 function Delphi_LabelUI_GetTextStyle; external DuiLibdll name 'Delphi_LabelUI_GetTextStyle';
@@ -10125,22 +9998,12 @@ procedure Delphi_LabelUI_SetAttribute; external DuiLibdll name 'Delphi_LabelUI_S
 procedure Delphi_LabelUI_PaintText; external DuiLibdll name 'Delphi_LabelUI_PaintText';
 procedure Delphi_LabelUI_SetEnabledEffect; external DuiLibdll name 'Delphi_LabelUI_SetEnabledEffect';
 function Delphi_LabelUI_GetEnabledEffect; external DuiLibdll name 'Delphi_LabelUI_GetEnabledEffect';
-procedure Delphi_LabelUI_SetText; external DuiLibdll name 'Delphi_LabelUI_SetText';
-function Delphi_LabelUI_GetText; external DuiLibdll name 'Delphi_LabelUI_GetText';
-procedure Delphi_LabelUI_SetTransShadow; external DuiLibdll name 'Delphi_LabelUI_SetTransShadow';
-function Delphi_LabelUI_GetTransShadow; external DuiLibdll name 'Delphi_LabelUI_GetTransShadow';
-procedure Delphi_LabelUI_SetTransShadow1; external DuiLibdll name 'Delphi_LabelUI_SetTransShadow1';
-function Delphi_LabelUI_GetTransShadow1; external DuiLibdll name 'Delphi_LabelUI_GetTransShadow1';
-procedure Delphi_LabelUI_SetTransText; external DuiLibdll name 'Delphi_LabelUI_SetTransText';
-function Delphi_LabelUI_GetTransText; external DuiLibdll name 'Delphi_LabelUI_GetTransText';
-procedure Delphi_LabelUI_SetTransText1; external DuiLibdll name 'Delphi_LabelUI_SetTransText1';
-function Delphi_LabelUI_GetTransText1; external DuiLibdll name 'Delphi_LabelUI_GetTransText1';
-procedure Delphi_LabelUI_SetTransStroke; external DuiLibdll name 'Delphi_LabelUI_SetTransStroke';
-function Delphi_LabelUI_GetTransStroke; external DuiLibdll name 'Delphi_LabelUI_GetTransStroke';
+procedure Delphi_LabelUI_SetEnabledLuminous; external DuiLibdll name 'Delphi_LabelUI_SetEnabledLuminous';
+function Delphi_LabelUI_GetEnabledLuminous; external DuiLibdll name 'Delphi_LabelUI_GetEnabledLuminous';
+procedure Delphi_LabelUI_SetLuminousFuzzy; external DuiLibdll name 'Delphi_LabelUI_SetLuminousFuzzy';
+function Delphi_LabelUI_GetLuminousFuzzy; external DuiLibdll name 'Delphi_LabelUI_GetLuminousFuzzy';
 procedure Delphi_LabelUI_SetGradientLength; external DuiLibdll name 'Delphi_LabelUI_SetGradientLength';
 function Delphi_LabelUI_GetGradientLength; external DuiLibdll name 'Delphi_LabelUI_GetGradientLength';
-procedure Delphi_LabelUI_SetTextRenderingHintAntiAlias; external DuiLibdll name 'Delphi_LabelUI_SetTextRenderingHintAntiAlias';
-function Delphi_LabelUI_GetTextRenderingHintAntiAlias; external DuiLibdll name 'Delphi_LabelUI_GetTextRenderingHintAntiAlias';
 procedure Delphi_LabelUI_SetShadowOffset; external DuiLibdll name 'Delphi_LabelUI_SetShadowOffset';
 procedure Delphi_LabelUI_GetShadowOffset; external DuiLibdll name 'Delphi_LabelUI_GetShadowOffset';
 procedure Delphi_LabelUI_SetTextColor1; external DuiLibdll name 'Delphi_LabelUI_SetTextColor1';
@@ -10664,6 +10527,7 @@ procedure Delphi_RenderClip_UseOldClipEnd; external DuiLibdll name 'Delphi_Rende
 function Delphi_RenderEngine_CppCreate; external DuiLibdll name 'Delphi_RenderEngine_CppCreate';
 procedure Delphi_RenderEngine_CppDestroy; external DuiLibdll name 'Delphi_RenderEngine_CppDestroy';
 function Delphi_RenderEngine_AdjustColor; external DuiLibdll name 'Delphi_RenderEngine_AdjustColor';
+function Delphi_RenderEngine_CreateARGB32Bitmap; external DuiLibdll name 'Delphi_RenderEngine_CreateARGB32Bitmap';
 procedure Delphi_RenderEngine_AdjustImage; external DuiLibdll name 'Delphi_RenderEngine_AdjustImage';
 function Delphi_RenderEngine_LoadImage; external DuiLibdll name 'Delphi_RenderEngine_LoadImage';
 procedure Delphi_RenderEngine_FreeImage; external DuiLibdll name 'Delphi_RenderEngine_FreeImage';
@@ -10680,9 +10544,6 @@ function Delphi_RenderEngine_GenerateBitmap; external DuiLibdll name 'Delphi_Ren
 procedure Delphi_RenderEngine_GetTextSize; external DuiLibdll name 'Delphi_RenderEngine_GetTextSize';
 
 //================================CListElementUI============================
-
-//function Delphi_ListElementUI_CppCreate; external DuiLibdll name 'Delphi_ListElementUI_CppCreate';
-//procedure Delphi_ListElementUI_CppDestroy; external DuiLibdll name 'Delphi_ListElementUI_CppDestroy';
 function Delphi_ListElementUI_GetClass; external DuiLibdll name 'Delphi_ListElementUI_GetClass';
 function Delphi_ListElementUI_GetControlFlags; external DuiLibdll name 'Delphi_ListElementUI_GetControlFlags';
 function Delphi_ListElementUI_GetInterface; external DuiLibdll name 'Delphi_ListElementUI_GetInterface';
