@@ -1,7 +1,7 @@
 {$IFDEF FPC}
-  {$IFNDEF UseLowVer}
-    {$DEFINE UseLowVer}
-  {$ENDIF}
+  {$DEFINE UseLowVer}
+  // fcp中使用兼容delphi语法
+  {$mode delphi}
 {$ENDIF}
 
 {$IFNDEF UNICODE}
@@ -9,6 +9,7 @@
 {$ENDIF}
 
 // 泛型支持
-{$IF Defined(FPC) or not Defined(UseLowVer)}
+//{$IF Defined(FPC) or not Defined(UseLowVer)}
+{$IFNDEF UseLowVer}
    {$DEFINE SupportGeneric}
-{$ifend}
+{$ENDIF}

@@ -31,7 +31,7 @@ type
   {$ElSE}
     {$M+}
   {$ENDIF}
-  {$IFDEF FPC}generic{$ENDIF}TDuiBase{$IFDEF SupportGeneric}<T>{$ENDIF} = class(TObject)
+  TDuiBase{$IFDEF SupportGeneric}<T>{$ENDIF} = class(TObject)
   private
     function GetThisControlUI: CControlUI;
   {$IFNDEF UseLowVer}strict {$ENDIF}protected
@@ -47,12 +47,12 @@ implementation
 
 { TDuiBase<T> }
 
-function TDuiBase{$IF Defined(SupportGeneric) and not Defined(FPC)}<T>{$IFEND}.GetThisControlUI: CControlUI;
+function TDuiBase{$IFDEF SupportGeneric}<T>{$ENDIF}.GetThisControlUI: CControlUI;
 begin
   Result := {$IFDEF SupportGeneric}PPointer(@FThis)^{$ELSE}FThis{$ENDIF};
 end;
 
-function TDuiBase{$IF Defined(SupportGeneric) and not Defined(FPC)}<T>{$IFEND}.GetMethodAddr(const AName: string): Pointer;
+function TDuiBase{$IFDEF SupportGeneric}<T>{$ENDIF}.GetMethodAddr(const AName: string): Pointer;
 {$IFNDEF UseLowVer}
 var
   T: TRttiType;
