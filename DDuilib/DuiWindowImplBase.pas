@@ -67,6 +67,7 @@ type
     function  DUI_HandleCustomMessage(uMsg: UINT; wParam: WPARAM; lParam: LPARAM; var bHandled: BOOL): LRESULT; cdecl;
     function  DUI_CreateControl(pstrStr: LPCTSTR): CControlUI; cdecl;
     function DUI_GetItemText(pControl: CControlUI; iIndex, iSubItem: Integer): LPCTSTR; cdecl;
+    function DUI_ResponseDefaultKeyEvent(wParam: WPARAM): LRESULT; cdecl;
   protected
     // DelphiÐéº¯Êý
     procedure DoInitWindow; virtual;
@@ -78,6 +79,7 @@ type
     procedure DoHandleCustomMessage(var Msg: TMessage; var bHandled: BOOL); virtual;
     function DoCreateControl(pstrStr: string): CControlUI; virtual;
     function DoGetItemText(pControl: CControlUI; iIndex, iSubItem: Integer): string; virtual;
+    procedure DoResponseDefaultKeyEvent(wParam: WPARAM; var AResult: LRESULT); cdecl;
   public
     procedure Show;
     procedure Hide;
@@ -235,6 +237,8 @@ begin
   {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetHandleCustomMessage(GetMethodAddr('DUI_HandleCustomMessage'));
   {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetCreateControl(GetMethodAddr('DUI_CreateControl'));
   {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetGetItemText(GetMethodAddr('DUI_GetItemText'));
+  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetResponseDefaultKeyEvent(GetMethodAddr('DUI_ResponseDefaultKeyEvent'));
+  //
 end;
 
 destructor TDuiWindowImplBase.Destroy;
@@ -305,11 +309,19 @@ end;
 procedure TDuiWindowImplBase.DoMessageHandler(var Msg: TMessage; var bHandled: BOOL);
 begin
   // virtual method
+  if Msg.Msg = WM_KEYDOWN then
 end;
 
 procedure TDuiWindowImplBase.DoNotify(var Msg: TNotifyUI);
 begin
   // virtual method
+end;
+
+procedure TDuiWindowImplBase.DoResponseDefaultKeyEvent(wParam: WPARAM;
+  var AResult: LRESULT);
+begin
+  // virtual method
+  AResult := 0;
 end;
 
 procedure TDuiWindowImplBase.DUI_Click(var Msg: TNotifyUI);
@@ -380,6 +392,12 @@ end;
 procedure TDuiWindowImplBase.DUI_Notify(var Msg: TNotifyUI);
 begin
   DoNotify(Msg);
+end;
+
+function TDuiWindowImplBase.DUI_ResponseDefaultKeyEvent(
+  wParam: WPARAM): LRESULT;
+begin
+  DoResponseDefaultKeyEvent(wParam, Result);
 end;
 
 function TDuiWindowImplBase.FindControl(const pt: TPoint): CControlUI;
