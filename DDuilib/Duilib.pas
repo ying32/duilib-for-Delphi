@@ -846,6 +846,7 @@ type
     procedure SetGetItemText(ACallBack: Pointer);
     procedure SetGetClassStyle(uStyle: UINT);
     procedure RemoveThisInPaintManager;
+    procedure SetResponseDefaultKeyEvent(ACallBack: LPVOID);
   end;
 
   CContainerUI = class(CControlUI)
@@ -2200,6 +2201,7 @@ procedure Delphi_Delphi_WindowImplBase_SetCreateControl(Handle: CDelphi_WindowIm
 procedure Delphi_Delphi_WindowImplBase_SetGetItemText(Handle: CDelphi_WindowImplBase; CallBack: Pointer); cdecl;
 procedure Delphi_Delphi_WindowImplBase_SetGetClassStyle(Handle: CDelphi_WindowImplBase; uStyle: UINT); cdecl;
 procedure Delphi_Delphi_WindowImplBase_RemoveThisInPaintManager(Handle: CDelphi_WindowImplBase); cdecl;
+procedure Delphi_Delphi_WindowImplBase_SetResponseDefaultKeyEvent(Handle: CDelphi_WindowImplBase; ACallBack: LPVOID); cdecl;
 
 //================================CPaintManagerUI============================
 
@@ -4491,6 +4493,11 @@ end;
 procedure CDelphi_WindowImplBase.RemoveThisInPaintManager;
 begin
   Delphi_Delphi_WindowImplBase_RemoveThisInPaintManager(Self);
+end;
+
+procedure CDelphi_WindowImplBase.SetResponseDefaultKeyEvent(ACallBack: LPVOID);
+begin
+  Delphi_Delphi_WindowImplBase_SetResponseDefaultKeyEvent(Self, ACallBack);
 end;
 
 function CDelphi_WindowImplBase.RemoveVirtualWnd(strName: string): Boolean;
@@ -9647,6 +9654,7 @@ procedure Delphi_Delphi_WindowImplBase_SetCreateControl; external DuiLibdll name
 procedure Delphi_Delphi_WindowImplBase_SetGetItemText; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_SetGetItemText';
 procedure Delphi_Delphi_WindowImplBase_SetGetClassStyle; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_SetGetClassStyle';
 procedure Delphi_Delphi_WindowImplBase_RemoveThisInPaintManager; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_RemoveThisInPaintManager';
+procedure Delphi_Delphi_WindowImplBase_SetResponseDefaultKeyEvent; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_SetResponseDefaultKeyEvent';
 
 //================================CPaintManagerUI============================
 

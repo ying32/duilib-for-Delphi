@@ -25,6 +25,7 @@ typedef LRESULT(*MessageCallBack)(LPVOID, UINT uMsg, WPARAM wParam, LPARAM lPara
 typedef void(*InitWindowCallBack)(LPVOID);
 typedef CControlUI*(*CreateControlCallBack)(LPVOID, LPCTSTR);
 typedef LPCTSTR(*GetItemTextCallBack)(LPVOID, CControlUI*, int, int);
+typedef LRESULT(*ResponseDefaultKeyEventCallBack)(LPVOID, WPARAM);
 
 class CDelphi_WindowImplBase : // 好吧，你赢了,我认输
 	                           public IListCallbackUI, //这个貌似只能放第一个，他取的时候就是取第一个的，要不就另行建立一个类
@@ -47,6 +48,7 @@ protected:
 	MessageCallBack m_HandleCustomMessage;
 	CreateControlCallBack m_CreateControl;
 	GetItemTextCallBack m_GetItemText;
+	ResponseDefaultKeyEventCallBack m_ResponseDefaultKeyEvent;
 public:
 	CDelphi_WindowImplBase() :
 		WindowImplBase(),
@@ -63,10 +65,9 @@ public:
 		m_Click(NULL),
 		m_MessageHandler(NULL),
 		m_HandleCustomMessage(NULL),
-		m_GetItemText(NULL) {
+		m_GetItemText(NULL),
+		m_ResponseDefaultKeyEvent(NULL){
 		m_GetClassStyle = WindowImplBase::GetClassStyle();
-		//printf("CEventSource size=%d,  CStdPtrArray size=%d\n", sizeof(CEventSource), sizeof(CStdPtrArray));
-		
 	}
 	~CDelphi_WindowImplBase(){ };
 	void InitWindow()
@@ -90,7 +91,15 @@ public:
 	{
 		if (m_Click)
 			m_Click(m_Self, msg);
+		return WindowImplBase::OnClick(msg);
 	}
+	LRESULT ResponseDefaultKeyEvent(WPARAM wParam) {
+		if (m_ResponseDefaultKeyEvent) {
+			return m_ResponseDefaultKeyEvent(m_Self, wParam);
+		}
+		return WindowImplBase::ResponseDefaultKeyEvent(wParam);
+	}
+
 	CControlUI* CreateControl(LPCTSTR pstrClass) {
 		if (m_CreateControl)
 			return	m_CreateControl(m_Self, pstrClass);
@@ -175,6 +184,9 @@ public:
 		m_PaintManager.RemovePreMessageFilter(this);
 		m_PaintManager.RemoveNotifier(this);
 		m_PaintManager.ReapObjects(m_PaintManager.GetRoot());
+	}
+	void SetResponseDefaultKeyEvent(ResponseDefaultKeyEventCallBack ACallBack) {
+		m_ResponseDefaultKeyEvent = ACallBack;
 	}
 };
 
@@ -1199,6 +1211,10 @@ DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetGetClassStyle(CDelphi_Windo
 
 DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_RemoveThisInPaintManager(CDelphi_WindowImplBase* handle) {
 	handle->RemoveThisInPaintManager();
+}
+
+DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetResponseDefaultKeyEvent(CDelphi_WindowImplBase* handle, ResponseDefaultKeyEventCallBack ACallBack) {
+	handle->SetResponseDefaultKeyEvent(ACallBack);
 }
 
 
