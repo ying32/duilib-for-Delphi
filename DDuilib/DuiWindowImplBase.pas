@@ -19,7 +19,9 @@ interface
 uses
   Windows,
   Messages,
+  Classes,
   Types,
+  ShellAPI,
 {$IFDEF SupportGeneric}
   Generics.Collections,
 {$ENDIF}
@@ -27,6 +29,9 @@ uses
   DuiBase,
   DuiConst,
   Duilib;
+
+const
+  WM_TRAYICON_MESSAGE = WM_USER + $128;
 
 type
   TDuiWindowImplBaseClass = class of TDuiWindowImplBase;
@@ -142,6 +147,28 @@ type
     property Msg: string read FMsg;
   end;
 
+  TDuiTrayWindowImplBase = class(TDuiWindowImplBase)
+  private
+    FTrayData: TNotifyIconData;
+    FOnLClick: TNotifyEvent;
+    FOnRClick: TNotifyEvent;
+    FOnLDClick: TNotifyEvent;
+    FHint: string;
+    FHIcon: HICON;
+    procedure SetHint(const Value: string);
+    procedure SetHIcon(const Value: HICON);
+  protected
+    procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
+  public
+    procedure ShowBalloonTips(ATitle, AInfo: string; ATimeout: Integer = 1000);
+  public
+    property Hint: string read FHint write SetHint;
+    property Icon: HICON read FHIcon write SetHIcon;
+    property OnRClick: TNotifyEvent read FOnRClick write FOnRClick;
+    property OnLClick: TNotifyEvent read FOnLClick write FOnLClick;
+    property OnLDClick: TNotifyEvent read FOnLDClick write FOnLDClick;
+  end;
+
   TDuiApplication = class
   public
     class procedure Initialize;
@@ -162,6 +189,8 @@ var
   DuiApplication: TDuiApplication;
 
 implementation
+
+
 
 { TWindowImplBase }
 
@@ -666,6 +695,84 @@ begin
   SetWindowPos(Handle, HWND_TOPMOST, LP.X, LP.Y, 0, 0, SWP_NOSIZE);
   if IsWindow(Handle) and not IsWindowVisible(Handle) then
     ShowWindow(Handle, SW_SHOWNORMAL or SWP_NOREDRAW);
+end;
+
+
+{ TDuiTrayWindowImplBase }
+
+procedure TDuiTrayWindowImplBase.DoHandleMessage(var Msg: TMessage;
+  var bHandled: BOOL);
+begin
+  case Msg.Msg of
+    WM_CREATE:
+     begin
+       FTrayData.Wnd := Handle;
+       FTrayData.uID := FTrayData.Wnd;
+       FTrayData.cbSize := Sizeof(TNotifyIconData);
+       FTrayData.uFlags := NIF_MESSAGE or NIF_ICON or NIF_TIP or NIF_INFO;
+       FTrayData.ucallbackmessage := WM_TRAYICON_MESSAGE;
+       // Ä¬ÈÏ¼ÓÔØMAINICON
+       FTrayData.hIcon := LoadIcon(HInstance, 'MAINICON');
+       StrPLCopy(FTrayData.szTip, FHint, Length(FHint));
+       Shell_NotifyIcon(NIM_ADD, @FTrayData);
+     end;
+
+    WM_DESTROY:
+     begin
+       Shell_NotifyIcon(NIM_DELETE, @FTrayData);
+     end;
+
+    WM_TRAYICON_MESSAGE:
+     begin
+       case Msg.LParam of
+         WM_LBUTTONDOWN:
+           begin
+             if Assigned(FOnLClick) then
+               FOnLClick(Self);
+           end;
+         WM_RBUTTONDOWN:
+           begin
+             if Assigned(FOnRClick) then
+               FOnRClick(Self);
+           end;
+         WM_LBUTTONDBLCLK:
+           begin
+             if Assigned(FOnLDClick) then
+               FOnLDClick(Self);
+           end;
+       end;
+       bHandled := False;
+     end;
+  end;
+end;
+
+procedure TDuiTrayWindowImplBase.SetHIcon(const Value: HICON);
+begin
+  if FHIcon <> Value then
+  begin
+    FTrayData.hIcon := FHIcon;
+    Shell_NotifyIcon(NIM_MODIFY, @FTrayData);
+  end;
+end;
+
+procedure TDuiTrayWindowImplBase.SetHint(const Value: string);
+begin
+  if FHint <> Value then
+  begin
+    FHint := Value;
+    StrPLCopy(FTrayData.szTip, FHint, Length(FTrayData.szTip) - 1);
+    Shell_NotifyIcon(NIM_MODIFY, @FTrayData);
+  end;
+end;
+
+procedure TDuiTrayWindowImplBase.ShowBalloonTips(ATitle, AInfo: string;
+  ATimeout: Integer);
+begin
+  FTrayData.uTimeout := ATimeout;
+  FTrayData.dwInfoFlags := NIIF_INFO;
+  StrPLCopy(FTrayData.szInfoTitle, ATitle, Length(FTrayData.szInfoTitle) - 1);
+  StrPLCopy(FTrayData.szInfo, AInfo, Length(FTrayData.szInfo) - 1);
+  Shell_NotifyIcon(NIM_MODIFY, @FTrayData);
 end;
 
 initialization

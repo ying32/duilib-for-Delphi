@@ -735,6 +735,10 @@ DIRECTUILIB_API void Delphi_ControlUI_GetRelativePos(CControlUI* handle, RECT& R
     Result = handle->GetRelativePos();
 }
 
+DIRECTUILIB_API void Delphi_ControlUI_GetClientPos(CControlUI* handle, RECT& Result) {
+	Result = handle->GetClientPos();
+}
+
 DIRECTUILIB_API void Delphi_ControlUI_SetPos(CControlUI* handle ,RECT rc, bool bNeedInvalidate) {
     handle->SetPos(rc, bNeedInvalidate);
 }
@@ -1948,6 +1952,10 @@ DIRECTUILIB_API void Delphi_ContainerUI_SetMouseChildEnabled(CContainerUI* handl
 
 DIRECTUILIB_API int Delphi_ContainerUI_FindSelectable(CContainerUI* handle ,int iIndex, bool bForward) {
     return handle->FindSelectable(iIndex, bForward);
+}
+
+DIRECTUILIB_API void Delphi_ContainerUI_GetClientPos(CContainerUI* handle, RECT& Result) {
+	Result = handle->GetClientPos();
 }
 
 DIRECTUILIB_API void Delphi_ContainerUI_SetPos(CContainerUI* handle ,RECT rc, bool bNeedInvalidate) {
