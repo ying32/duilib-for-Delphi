@@ -694,6 +694,7 @@ type
     procedure SetBorderStyle(nStyle: Integer);
     function GetPos: TRect;
     function GetRelativePos: TRect;
+    function GetClientPos: TRect;
     procedure SetPos(rc: TRect; bNeedInvalidate: Boolean = True);
     procedure Move(szOffset: TSize; bNeedInvalidate: Boolean = True);
     function GetWidth: Integer;
@@ -877,6 +878,7 @@ type
     function IsMouseChildEnabled: Boolean;
     procedure SetMouseChildEnabled(bEnable: Boolean = True);
     function FindSelectable(iIndex: Integer; bForward: Boolean = True): Integer;
+    function GetClientPos: TRect;
     procedure SetPos(rc: TRect; bNeedInvalidate: Boolean = True);
     procedure Move(szOffset: TSize; bNeedInvalidate: Boolean = True);
     procedure DoPaint(hDC: HDC; var rcPaint: TRect);
@@ -2077,6 +2079,7 @@ function Delphi_ControlUI_GetBorderStyle(Handle: CControlUI): Integer; cdecl;
 procedure Delphi_ControlUI_SetBorderStyle(Handle: CControlUI; nStyle: Integer); cdecl;
 function Delphi_ControlUI_GetPos(Handle: CControlUI): PRect; cdecl;
 procedure Delphi_ControlUI_GetRelativePos(Handle: CControlUI; var Result: TRect); cdecl;
+procedure Delphi_ControlUI_GetClientPos(Handle: CControlUI; var Result: TRect); cdecl;
 procedure Delphi_ControlUI_SetPos(Handle: CControlUI; rc: TRect; bNeedInvalidate: Boolean); cdecl;
 procedure Delphi_ControlUI_Move(Handle: CControlUI; szOffset: TSize; bNeedInvalidate: Boolean); cdecl;
 function Delphi_ControlUI_GetWidth(Handle: CControlUI): Integer; cdecl;
@@ -2390,6 +2393,7 @@ procedure Delphi_ContainerUI_SetDelayedDestroy(Handle: CContainerUI; bDelayed: B
 function Delphi_ContainerUI_IsMouseChildEnabled(Handle: CContainerUI): Boolean; cdecl;
 procedure Delphi_ContainerUI_SetMouseChildEnabled(Handle: CContainerUI; bEnable: Boolean); cdecl;
 function Delphi_ContainerUI_FindSelectable(Handle: CContainerUI; iIndex: Integer; bForward: Boolean): Integer; cdecl;
+procedure Delphi_ContainerUI_GetClientPos(Handle: CContainerUI; var Result: TRect); cdecl;
 procedure Delphi_ContainerUI_SetPos(Handle: CContainerUI; rc: TRect; bNeedInvalidate: Boolean); cdecl;
 procedure Delphi_ContainerUI_Move(Handle: CContainerUI; szOffset: TSize; bNeedInvalidate: Boolean); cdecl;
 procedure Delphi_ContainerUI_DoPaint(Handle: CContainerUI; hDC: HDC; var rcPaint: TRect); cdecl;
@@ -3976,6 +3980,11 @@ begin
   Delphi_ControlUI_GetRelativePos(Self, Result);
 end;
 
+function CControlUI.GetClientPos: TRect;
+begin
+  Delphi_ControlUI_GetClientPos(Self, Result);
+end;
+
 procedure CControlUI.SetPos(rc: TRect; bNeedInvalidate: Boolean);
 begin
   Delphi_ControlUI_SetPos(Self, rc, bNeedInvalidate);
@@ -5556,6 +5565,11 @@ end;
 function CContainerUI.FindSelectable(iIndex: Integer; bForward: Boolean): Integer;
 begin
   Result := Delphi_ContainerUI_FindSelectable(Self, iIndex, bForward);
+end;
+
+function CContainerUI.GetClientPos: TRect;
+begin
+  Delphi_ContainerUI_GetClientPos(Self, Result);
 end;
 
 procedure CContainerUI.SetPos(rc: TRect; bNeedInvalidate: Boolean);
@@ -9512,6 +9526,7 @@ function Delphi_ControlUI_GetBorderStyle; external DuiLibdll name 'Delphi_Contro
 procedure Delphi_ControlUI_SetBorderStyle; external DuiLibdll name 'Delphi_ControlUI_SetBorderStyle';
 function Delphi_ControlUI_GetPos; external DuiLibdll name 'Delphi_ControlUI_GetPos';
 procedure Delphi_ControlUI_GetRelativePos; external DuiLibdll name 'Delphi_ControlUI_GetRelativePos';
+procedure Delphi_ControlUI_GetClientPos; external DuiLibdll name 'Delphi_ControlUI_GetClientPos';
 procedure Delphi_ControlUI_SetPos; external DuiLibdll name 'Delphi_ControlUI_SetPos';
 procedure Delphi_ControlUI_Move; external DuiLibdll name 'Delphi_ControlUI_Move';
 function Delphi_ControlUI_GetWidth; external DuiLibdll name 'Delphi_ControlUI_GetWidth';
@@ -9825,6 +9840,7 @@ procedure Delphi_ContainerUI_SetDelayedDestroy; external DuiLibdll name 'Delphi_
 function Delphi_ContainerUI_IsMouseChildEnabled; external DuiLibdll name 'Delphi_ContainerUI_IsMouseChildEnabled';
 procedure Delphi_ContainerUI_SetMouseChildEnabled; external DuiLibdll name 'Delphi_ContainerUI_SetMouseChildEnabled';
 function Delphi_ContainerUI_FindSelectable; external DuiLibdll name 'Delphi_ContainerUI_FindSelectable';
+procedure Delphi_ContainerUI_GetClientPos; external DuiLibdll name 'Delphi_ContainerUI_GetClientPos';
 procedure Delphi_ContainerUI_SetPos; external DuiLibdll name 'Delphi_ContainerUI_SetPos';
 procedure Delphi_ContainerUI_Move; external DuiLibdll name 'Delphi_ContainerUI_Move';
 procedure Delphi_ContainerUI_DoPaint; external DuiLibdll name 'Delphi_ContainerUI_DoPaint';

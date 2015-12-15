@@ -11,12 +11,18 @@
 
 --------------------duilib更新信息,以此来表示当前Duilib for Delphi是使用的哪个版本----------------------
 
-
-版本: 34f7a964c7d52b915e2babfebc1549de7c4b2b93
+版本: d24db5144fa1ed308b30d1b20bb0843baf0597e7
 作者: wangchyz <wangchyz@gmail.com>
-日期: 2015/12/14 18:48:28
+日期: 2015/12/15 9:44:34
 信息:
-activex光标调整为动态
+1、修正datetime窗口超出父窗口客户区范围的问题
+
+2、增加ActiveX控件内部调用CoInitialize初始化com环境
+3、TestApp窗口添加WS_CLIPCHILDREN属性
 ----
 已修改: DuiLib/Control/UIActiveX.cpp
+已修改: DuiLib/Control/UIDateTime.cpp
+已修改: TestApp1/App.cpp
+
+
 
