@@ -22,7 +22,9 @@ interface
 {$I DDuilib.inc}
 
 uses
+{$IFDEF MSWINDOWS}
   Windows,
+{$ENDIF}
   Types,
   Classes,
   DateUtils,
@@ -80,15 +82,16 @@ type
   TRectF = record
     Left, Top, Right, Bottom: Single;
   end;
-
-  LPVOID = Pointer;
-  UINT_PTR = Cardinal;
-  LPBYTE = PByte;
-  LPCVOID = Pointer;
-  SIZE_T = Cardinal;
-  PShort = ^SHORT;
-  UIntPtr = Cardinal;
-  LONG = Longint;
+  {$IFNDEF FPC}
+    LPVOID = Pointer;
+    UINT_PTR = Cardinal;
+    LPBYTE = PByte;
+    LPCVOID = Pointer;
+    SIZE_T = Cardinal;
+    PShort = ^SHORT;
+    UIntPtr = Cardinal;
+    LONG = Longint;
+  {$ENDIF FPC}
 {$ENDIF UseLowVer}
 
   FINDCONTROLPROC = function(AControl: CControlUI; P: LPVOID): CControlUI; cdecl;
@@ -3228,8 +3231,8 @@ procedure Delphi_NativeControlUI_SetText(Handle: CNativeControlUI; pstrText: LPC
 
 
 {$IFDEF UseLowVer}
-  function StringToDuiString(const AStr: string): CDuiString;
-  function DuiStringToString(ADuiStr: CDuiString): string;
+  function StringToDuiString(const AStr: string): CDuiString; {$IFDEF SupportInline}inline;{$ENDIF}
+  function DuiStringToString(ADuiStr: CDuiString): string; {$IFDEF SupportInline}inline;{$ENDIF}
 {$ENDIF UseLowVer}
 implementation
 

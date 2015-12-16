@@ -17,12 +17,14 @@ unit DuiWindowImplBase;
 interface
 
 uses
+{$IFDEF MSWINDOWS}
   Windows,
   Messages,
+  ShellAPI,
+{$ENDIF}
   Classes,
   Types,
-  ShellAPI,
-{$IFDEF SupportGeneric}
+{$IFDEF DelphiGeneric}
   Generics.Collections,
 {$ENDIF}
   SysUtils,
@@ -149,6 +151,9 @@ type
     property Msg: string read FMsg;
   end;
 
+// fpc下有点不同，以后再看，先禁用fpc下的
+{$IFDEF MSWINDOWS}
+{$IFNDEF FPC}
   TDuiTrayWindowImplBase = class(TDuiWindowImplBase)
   private
     FTrayData: TNotifyIconData;
@@ -170,6 +175,8 @@ type
     property OnLClick: TNotifyEvent read FOnLClick write FOnLClick;
     property OnLDClick: TNotifyEvent read FOnLDClick write FOnLDClick;
   end;
+{$ENDIF FPC}
+{$ENDIF MSWINDOWS}
 
   TDuiApplication = class
   public
@@ -225,47 +232,46 @@ end;
 constructor TDuiWindowImplBase.Create;
 begin
   FThis := CDelphi_WindowImplBase.CppCreate;
-  FPaintManagerUI := {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.GetPaintManagerUI;
+  FPaintManagerUI := {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.GetPaintManagerUI;
 
-  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetDelphiSelf(Self);
-  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetInitWindow(GetMethodAddr('DUI_InitWindow'));
-  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetClick(GetMethodAddr('DUI_Click'));
-  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetNotify(GetMethodAddr('DUI_Notify'));
-  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetMessageHandler(GetMethodAddr('DUI_MessageHandler'));
-  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetFinalMessage(GetMethodAddr('DUI_FinalMessage'));
-  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetHandleMessage(GetMethodAddr('DUI_HandleMessage'));
-  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetHandleCustomMessage(GetMethodAddr('DUI_HandleCustomMessage'));
-  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetCreateControl(GetMethodAddr('DUI_CreateControl'));
-  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetGetItemText(GetMethodAddr('DUI_GetItemText'));
-  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetResponseDefaultKeyEvent(GetMethodAddr('DUI_ResponseDefaultKeyEvent'));
-  //
+  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetDelphiSelf(Self);
+  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetInitWindow(GetMethodAddr('DUI_InitWindow'));
+  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetClick(GetMethodAddr('DUI_Click'));
+  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetNotify(GetMethodAddr('DUI_Notify'));
+  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetMessageHandler(GetMethodAddr('DUI_MessageHandler'));
+  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetFinalMessage(GetMethodAddr('DUI_FinalMessage'));
+  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetHandleMessage(GetMethodAddr('DUI_HandleMessage'));
+  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetHandleCustomMessage(GetMethodAddr('DUI_HandleCustomMessage'));
+  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetCreateControl(GetMethodAddr('DUI_CreateControl'));
+  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetGetItemText(GetMethodAddr('DUI_GetItemText'));
+  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetResponseDefaultKeyEvent(GetMethodAddr('DUI_ResponseDefaultKeyEvent'));
 end;
 
 destructor TDuiWindowImplBase.Destroy;
 begin
   if FThis <> nil then
-    {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.CppDestroy;
+    {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.CppDestroy;
   inherited;
 end;
 
 procedure TDuiWindowImplBase.CreateDuiWindow(AParent: HWND; ATitle: string);
 begin
   FParentHandle := AParent;
-  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.CreateDuiWindow(AParent, ATitle, UI_WNDSTYLE_FRAME, WS_EX_STATICEDGE);
+  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.CreateDuiWindow(AParent, ATitle, UI_WNDSTYLE_FRAME, WS_EX_STATICEDGE);
 end;
 
 procedure TDuiWindowImplBase.CreateWindow(hwndParent: HWND; ATitle: string;
   dwStyle, dwExStyle: DWORD; x, y, cx, cy: Integer; hMenu: HMENU);
 begin
   FParentHandle := hwndParent;
-  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.Create(hwndParent, ATitle, dwStyle, dwExStyle, x, y, cx, cy, hMenu);
+  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.Create(hwndParent, ATitle, dwStyle, dwExStyle, x, y, cx, cy, hMenu);
 end;
 
 procedure TDuiWindowImplBase.CreateWindow(hwndParent: HWND; ATitle: string;
   dwStyle, dwExStyle: DWORD; const rc: TRect; hMenu: HMENU);
 begin
   FParentHandle := hwndParent;
-  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.Create(hwndParent, ATitle, dwStyle, dwExStyle, rc, hMenu);
+  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.Create(hwndParent, ATitle, dwStyle, dwExStyle, rc, hMenu);
 end;
 
 procedure TDuiWindowImplBase.DoClick(var Msg: TNotifyUI);
@@ -437,13 +443,13 @@ end;
 function TDuiWindowImplBase.GetHandle: HWND;
 begin
   if FHandle = 0 then
-    FHandle := {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.GetHWND;
+    FHandle := {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.GetHWND;
    Result := FHandle;
 end;
 
 function TDuiWindowImplBase.GetHeight: Integer;
 begin
-  Result := {$IFNDEF UseLowVer}ClientRect.Height{$ELSE}ClientRect.Bottom - ClientRect.Top{$ENDIF};
+  Result := ClientRect.Bottom - ClientRect.Top;
 end;
 
 function TDuiWindowImplBase.GetInitSize: TSize;
@@ -474,7 +480,7 @@ end;
 
 function TDuiWindowImplBase.GetWidth: Integer;
 begin
-  Result := {$IFNDEF UseLowVer}ClientRect.Width{$ELSE}ClientRect.Right - ClientRect.Left{$ENDIF};
+  Result := ClientRect.Right - ClientRect.Left;
 end;
 
 function TDuiWindowImplBase.GetWorkAreaRect: TRect;
@@ -489,7 +495,7 @@ end;
 
 procedure TDuiWindowImplBase.Hide;
 begin
-  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.ShowWindow(False, False);
+  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.ShowWindow(False, False);
 end;
 
 procedure TDuiWindowImplBase.Maximize;
@@ -525,7 +531,7 @@ end;
 
 procedure TDuiWindowImplBase.RemoveThisInPaintManager;
 begin
-  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.RemoveThisInPaintManager;
+  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.RemoveThisInPaintManager;
 end;
 
 procedure TDuiWindowImplBase.Restore;
@@ -535,12 +541,12 @@ end;
 
 procedure TDuiWindowImplBase.SetClassStyle(nStyle: UINT);
 begin
-  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetGetClassStyle(nStyle);
+  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetGetClassStyle(nStyle);
 end;
 
 procedure TDuiWindowImplBase.SetIcon(nRes: UINT);
 begin
-  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetIcon(nRes);
+  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetIcon(nRes);
 end;
 
 procedure TDuiWindowImplBase.SetParentHandle(const Value: HWND);
@@ -554,12 +560,12 @@ end;
 
 procedure TDuiWindowImplBase.Show;
 begin
-  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.ShowWindow(True, False);
+  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.ShowWindow(True, False);
 end;
 
 function TDuiWindowImplBase.ShowModal: Integer;
 begin
-  Result := {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.ShowModal;
+  Result := {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.ShowModal;
 end;
 
 procedure TDuiWindowImplBase.CenterWindow;
@@ -572,12 +578,12 @@ begin
     SetWindowPos(Handle, HWND_TOP, LParentRect.Left + ((LParentRect.Right - LParentRect.Left) div 2 - Width div 2),
       LParentRect.Top + ((LParentRect.Bottom - LParentRect.Top) div 2 - Height div 2), 0, 0, SWP_NOSIZE or SWP_NOREDRAW);
   end else
-    {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.CenterWindow;
+    {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.CenterWindow;
 end;
 
 procedure TDuiWindowImplBase.Close;
 begin
-  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.Close;
+  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.Close;
 end;
 
 
@@ -717,7 +723,8 @@ end;
 
 
 { TDuiTrayWindowImplBase }
-
+{$IFDEF MSWINDOWS}
+{$IFNDEF FPC}
 procedure TDuiTrayWindowImplBase.DoHandleMessage(var Msg: TMessage;
   var bHandled: BOOL);
 begin
@@ -725,7 +732,7 @@ begin
     WM_CREATE:
      begin
        FTrayData.Wnd := Handle;
-       FTrayData.uID := FTrayData.Wnd;
+       FTrayData.uID := Handle;
        FTrayData.cbSize := Sizeof(TNotifyIconData);
        FTrayData.uFlags := NIF_MESSAGE or NIF_ICON or NIF_TIP or NIF_INFO;
        FTrayData.ucallbackmessage := WM_TRAYICON_MESSAGE;
@@ -792,6 +799,8 @@ begin
   StrPLCopy(FTrayData.szInfo, AInfo, Length(FTrayData.szInfo) - 1);
   Shell_NotifyIcon(NIM_MODIFY, @FTrayData);
 end;
+{$ENDIF FPC}
+{$ENDIF MSWINDOWS}
 
 initialization
    DuiApplication := TDuiApplication.Create;

@@ -19,7 +19,7 @@
 
 ### 重要说明
 ***
-代码基于DelphiXE6编写， 也兼容Delphi7。
+代码基于DelphiXE6编写， 也兼容Delphi7, FreePascal 。
 
 
 ### 目录祥情

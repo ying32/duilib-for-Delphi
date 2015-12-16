@@ -33,11 +33,11 @@ type
   {$ENDIF}
   TDuiBase{$IFDEF SupportGeneric}<T>{$ENDIF} = class(TObject)
   private
-    function GetThisControlUI: CControlUI;
+    function GetThisControlUI: CControlUI; {$IFDEF SupportInline}inline;{$ENDIF}
   {$IFNDEF UseLowVer}strict {$ENDIF}protected
     FThis: {$IFDEF SupportGeneric}T{$ELSE}Pointer{$ENDIF};
   public
-    function GetMethodAddr(const AName: string): Pointer;
+    function GetMethodAddr(const AName: string): Pointer; {$IFDEF FPC}{$IFDEF SupportInline}inline;{$ENDIF}{$ENDIF}
   public
     property this: {$IFDEF SupportGeneric}T{$ELSE}Pointer{$ENDIF} read FThis;
     property ControlUI: CControlUI read GetThisControlUI;

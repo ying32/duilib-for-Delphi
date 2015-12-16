@@ -17,7 +17,9 @@ interface
 {$I DDuilib.inc}
 
 uses
-  Windows,
+  {$IFDEF MSWINDOWS}
+    Windows,
+  {$ENDIF}
   SysUtils,
   DuiBase,
   Duilib;
@@ -70,8 +72,8 @@ constructor TDuiListUI.Create;
 begin
   inherited;
   FThis := CDelphi_ListUI.CppCreate;
-  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.SetDelphiSelf(Self);
-  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.SetDoEvent(GetMethodAddr('DUI_DoEvent'));
+  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.SetDelphiSelf(Self);
+  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.SetDoEvent(GetMethodAddr('DUI_DoEvent'));
   FLastSelectIndex := -1;
 end;
 
@@ -94,37 +96,37 @@ end;
 procedure TDuiListUI.FreeCpp;
 begin
   if FThis <> nil then
-    {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.CppDestroy;
+    {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.CppDestroy;
 end;
 
 function TDuiListUI.GetCount: Integer;
 begin
-  Result := {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.GetCount;
+  Result := {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.GetCount;
 end;
 
 function TDuiListUI.GetCurSel: Integer;
 begin
-  Result := {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.GetCurSel;
+  Result := {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.GetCurSel;
 end;
 
 function TDuiListUI.IsItemShowHtml: Boolean;
 begin
-  Result := {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.IsItemShowHtml;
+  Result := {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.IsItemShowHtml;
 end;
 
 function TDuiListUI.Remove(pControl: CControlUI): Boolean;
 begin
-  Result := {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.Remove(pControl);
+  Result := {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.Remove(pControl);
 end;
 
 procedure TDuiListUI.RemoveAll;
 begin
-  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.RemoveAll;
+  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.RemoveAll;
 end;
 
 function TDuiListUI.RemoveAt(iIndex: Integer): Boolean;
 begin
-  Result := {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.RemoveAt(iIndex);
+  Result := {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.RemoveAt(iIndex);
 end;
 
 procedure TDuiListUI.DoSelectItem;
@@ -134,17 +136,17 @@ end;
 
 procedure TDuiListUI.SetItemShowHtml(bShowHtml: Boolean);
 begin
-  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.SetItemShowHtml(bShowHtml);
+  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.SetItemShowHtml(bShowHtml);
 end;
 
 function TDuiListUI.Add(pControl: CControlUI): Boolean;
 begin
-  Result := {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.Add(pControl);
+  Result := {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.Add(pControl);
 end;
 
 function TDuiListUI.AddAt(pControl: CControlUI; iIndex: Integer): Boolean;
 begin
-  Result := {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.AddAt(pControl, iIndex);
+  Result := {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_ListUI(FThis){$ENDIF}.AddAt(pControl, iIndex);
 end;
 
 
