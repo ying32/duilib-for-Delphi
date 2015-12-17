@@ -182,7 +182,7 @@ type
   TEventTypeUI = EVENTTYPE_UI;
 
   tagTEventUI = packed record
-    AType: Integer;
+    AType: TEventTypeUI;
     pSender: CControlUI;
     dwTimestamp: DWORD;
     ptMouse: TPoint;

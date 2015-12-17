@@ -39,10 +39,10 @@ type
   protected
 {$ENDIF}
     // dui
-    procedure DUI_DoEvent(var AEvent: TEventUI); cdecl;
+    procedure DUI_DoEvent(var AEvent: TEventUI; var bHandled: Boolean); cdecl;
   protected
     // delphi
-    procedure DoEvent(var AEvent: TEventUI); virtual;
+    procedure DoEvent(var AEvent: TEventUI; var bHandled: Boolean); virtual;
     procedure DoSelectItem; virtual;
   public
     function Add(pControl: CControlUI): Boolean;
@@ -83,14 +83,15 @@ begin
   inherited;
 end;
 
-procedure TDuiListUI.DoEvent(var AEvent: TEventUI);
+procedure TDuiListUI.DoEvent(var AEvent: TEventUI; var bHandled: Boolean);
 begin
   // virutial;
+  bHandled := True;
 end;
 
-procedure TDuiListUI.DUI_DoEvent(var AEvent: TEventUI);
+procedure TDuiListUI.DUI_DoEvent(var AEvent: TEventUI; var bHandled: Boolean);
 begin
-  DoEvent(AEvent);
+  DoEvent(AEvent, bHandled);
 end;
 
 procedure TDuiListUI.FreeCpp;

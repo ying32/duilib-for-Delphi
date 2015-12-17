@@ -11,806 +11,290 @@
 //***************************************************************************
 unit DuiWkeBrowser;
 
+{$I DDuilib.inc}
+
 interface
 
-
-const
-  wkedll = 'wke.dll';
+uses
+  Windows,
+  Types,
+  Duilib,
+  DuiBase,
+  Wke;
 
 type
-  utf8 = AnsiChar;
-  Putf8 = PAnsiChar;
-  wchar_t = WideChar;
-  Pwchar_t = PWideChar;
 
-  jsExecState = Pointer;
-  jsValue = int64;
-  PjsValue = PInt64;
-  wkeString = Pointer;
-
-  {$Z4+}
-  wkeMouseFlags = (
-    WKE_LBUTTON = $01,
-    WKE_RBUTTON = $02,
-    WKE_SHIFT   = $04,
-    WKE_CONTROL = $08,
-    WKE_MBUTTON = $10
-  );
-  TwkeMouseFlags = wkeMouseFlags;
-
-  {$Z4+}
-  wkeMouseMsg = (
-    WKE_MSG_MOUSEMOVE     = $0200,
-    WKE_MSG_LBUTTONDOWN   = $0201,
-    WKE_MSG_LBUTTONUP     = $0202,
-    WKE_MSG_LBUTTONDBLCLK = $0203,
-    WKE_MSG_RBUTTONDOWN   = $0204,
-    WKE_MSG_RBUTTONUP     = $0205,
-    WKE_MSG_RBUTTONDBLCLK = $0206,
-    WKE_MSG_MBUTTONDOWN   = $0207,
-    WKE_MSG_MBUTTONUP     = $0208,
-    WKE_MSG_MBUTTONDBLCLK = $0209,
-    WKE_MSG_MOUSEWHEEL    = $020A
-  );
-  TwkeMouseMsg = wkeMouseMsg;
-
-  wkeRect = packed record
-    x: Integer;
-    y: Integer;
-    w: Integer;
-    h: Integer;
-  end;
-  PwkeRect = ^TwkeRect;
-  TwkeRect = wkeRect;
-
-  PwkeClientHandler = ^TwkeClientHandler;
-
-  ON_TITLE_CHANGED = procedure(clientHandler: PwkeClientHandler; title: wkeString); cdecl;
-  ON_URL_CHANGED = procedure(clientHandler: PwkeClientHandler; url: wkeString); cdecl;
-
-  wkeClientHandler = packed record
-    onTitleChanged: ON_TITLE_CHANGED;
-    onURLChanged: ON_URL_CHANGED;
-  end;
-  _wkeClientHandler = wkeClientHandler;
-  TwkeClientHandler = wkeClientHandler;
-
-  // MS VC编译的默认类成员约定为__thiscall，这里模拟调用下
-  // 虚函数使用反的, 超过两参数的，除p1,p2都反过来申明
-  // 注意：下面的申明只能vc的 __thiscall， 如使用gcc那就得另改啰
-  IWebView = class
-  private
-    procedure __destroy(p1, p2: Pointer); virtual; abstract;
-    function __name(p1, p2: Pointer): Putf8; virtual; abstract;
-    procedure __setName(p1, p2: Pointer; name: Putf8); virtual; abstract;
-    function __transparent(p1, p2: Pointer): Boolean; virtual; abstract;
-    procedure __setTransparent(p1, p2: Pointer; transparent: Boolean); virtual; abstract;
-    procedure __loadURLA(p1, p2: Pointer; url: Putf8); virtual; abstract;
-    procedure __loadURLW(p1, p2: Pointer; url: Pwchar_t); virtual; abstract;
-    procedure __loadHTMLA(p1, p2: Pointer; html: Putf8); virtual; abstract;
-    procedure __loadHTMLW(p1, p2: Pointer; html: Pwchar_t); virtual; abstract;
-    procedure __loadFileA(p1, p2: Pointer; filename: Putf8); virtual; abstract;
-    procedure __loadFileW(p1, p2: Pointer; filename: Pwchar_t); virtual; abstract;
-    function __isLoaded(p1, p2: Pointer): Boolean; virtual; abstract;
-    function __isLoadFailed(p1, p2: Pointer): Boolean; virtual; abstract;
-    function __isLoadComplete(p1, p2: Pointer): Boolean; virtual; abstract;
-    function __isDocumentReady(p1, p2: Pointer): Boolean; virtual; abstract;
-    procedure __stopLoading(p1, p2: Pointer); virtual; abstract;
-    procedure __reload(p1, p2: Pointer); virtual; abstract;
-    function __title(p1, p2: Pointer): Putf8; virtual; abstract;
-    function __titleW(p1, p2: Pointer): Pwchar_t; virtual; abstract;
-    // procedure __resize(p1, p2: Pointer; w: Integer; h: Integer); virtual; abstract;
-    procedure __resize(p1, p2: Pointer; h: Integer; w: Integer); virtual; abstract;
-    function __width(p1, p2: Pointer): Integer; virtual; abstract;
-    function __height(p1, p2: Pointer): Integer; virtual; abstract;
-    function __contentsWidth(p1, p2: Pointer): Integer; virtual; abstract;
-    function __contentsHeight(p1, p2: Pointer): Integer; virtual; abstract;
-    procedure __setDirty(p1, p2: Pointer; dirty: Boolean); virtual; abstract;
-    function __isDirty(p1, p2: Pointer): Boolean; virtual; abstract;
-    // procedure __addDirtyArea(p1, p2: Pointer; x: Integer; y: Integer; w: Integer; h: Integer); virtual; abstract;
-    procedure __addDirtyArea(p1, p2: Pointer; h: Integer; w: Integer; y: Integer; x: Integer); virtual; abstract;
-    procedure __layoutIfNeeded(p1, p2: Pointer); virtual; abstract;
-    // procedure __paint(p1, p2: Pointer; bits: PPointer; pitch: Integer); virtual; abstract;
-    procedure __paint(p1, p2: Pointer; pitch: Integer; bits: PPointer); virtual; abstract;
-    function __canGoBack(p1, p2: Pointer): Boolean; virtual; abstract;
-    function __goBack(p1, p2: Pointer): Boolean; virtual; abstract;
-    function __canGoForward(p1, p2: Pointer): Boolean; virtual; abstract;
-    function __goForward(p1, p2: Pointer): Boolean; virtual; abstract;
-    procedure __selectAll(p1, p2: Pointer); virtual; abstract;
-    procedure __copy(p1, p2: Pointer); virtual; abstract;
-    procedure __cut(p1, p2: Pointer); virtual; abstract;
-    procedure __paste(p1, p2: Pointer); virtual; abstract;
-    procedure __delete_(p1, p2: Pointer); virtual; abstract;
-    procedure __setCookieEnabled(p1, p2: Pointer; enable: Boolean); virtual; abstract;
-    function __cookieEnabled(p1, p2: Pointer): Boolean; virtual; abstract;
-    procedure __setMediaVolume(p1, p2: Pointer; volume: Single); virtual; abstract;
-    function __mediaVolume(p1, p2: Pointer): Single; virtual; abstract;
-    // function __mouseEvent(p1, p2: Pointer; AMessage: LongInt; x: Integer; y: Integer; flags: LongInt): Boolean; virtual; abstract;
-    function __mouseEvent(p1, p2: Pointer; flags: LongInt; y, x: Integer; AMessage: LongInt): Boolean; virtual; abstract;
-    // function __contextMenuEvent(p1, p2: Pointer; x: Integer; y: Integer; flags: LongInt): Boolean; virtual; abstract;
-    function __contextMenuEvent(p1, p2: Pointer; flags: LongInt; y, x: Integer): Boolean; virtual; abstract;
-    // function __mouseWheel(p1, p2: Pointer; x: Integer; y: Integer; delta: Integer; flags: LongInt): Boolean; virtual; abstract;
-    function __mouseWheel(p1, p2: Pointer; flags: LongInt; delta, y, x: Integer): Boolean; virtual; abstract;
-    // function __keyUp(p1, p2: Pointer; virtualKeyCode: LongInt; flags: LongInt; systemKey: Boolean): Boolean; virtual; abstract;
-    function __keyUp(p1, p2: Pointer; systemKey: Boolean; flags: LongInt; virtualKeyCode: LongInt): Boolean; virtual; abstract;
-    // function __keyDown(p1, p2: Pointer; virtualKeyCode: LongInt; flags: LongInt; systemKey: Boolean): Boolean; virtual; abstract;
-    function __keyDown(p1, p2: Pointer; systemKey: Boolean; flags: LongInt; virtualKeyCode: LongInt): Boolean; virtual; abstract;
-    // function __keyPress(p1, p2: Pointer; virtualKeyCode: LongInt; flags: LongInt; systemKey: Boolean): Boolean; virtual; abstract;
-    function __keyPress(p1, p2: Pointer; systemKey: Boolean; flags: LongInt; virtualKeyCode: LongInt): Boolean; virtual; abstract;
-    procedure __focus(p1, p2: Pointer); virtual; abstract;
-    procedure __unfocus(p1, p2: Pointer); virtual; abstract;
-    function __getCaret(p1, p2: Pointer): wkeRect; virtual; abstract;
-    function __runJSA(p1, p2: Pointer; script: Putf8): jsValue; virtual; abstract;
-    function __runJSW(p1, p2: Pointer; script: Pwchar_t): jsValue; virtual; abstract;
-    function __globalExec(p1, p2: Pointer): jsExecState; virtual; abstract;
-    procedure __sleep(p1, p2: Pointer); virtual; abstract;
-    procedure __awaken(p1, p2: Pointer); virtual; abstract;
-    function __isAwake(p1, p2: Pointer): Boolean; virtual; abstract;
-    procedure __setZoomFactor(p1, p2: Pointer; factor: Single); virtual; abstract;
-    function __zoomFactor(p1, p2: Pointer): Single; virtual; abstract;
-    procedure __setEditable(p1, p2: Pointer; editable: Boolean); virtual; abstract;
-    procedure __setClientHandler(p1, p2: Pointer; handler: PwkeClientHandler); virtual; abstract;
-    function __getClientHandler(p1, p2: Pointer): wkeClientHandler; virtual; abstract;
+  CWkeWebbrowserUI = class(CControlUI)
   public
-    procedure destroy_;
-    function name: Putf8;
-    procedure setName(const AName: Putf8);
-    function transparent: Boolean;
-    procedure setTransparent(ATransparent: Boolean);
-    procedure loadURLA(const url: Putf8);
-    procedure loadURLW(const url: Pwchar_t);
-    procedure loadHTMLA(const html: Putf8);
-    procedure loadHTMLW(const html: Pwchar_t);
-    procedure loadFileA(const filename: Putf8);
-    procedure loadFileW(const filename: Pwchar_t);
-    function isLoaded: Boolean;
-    function isLoadFailed: Boolean;
-    function isLoadComplete: Boolean;
-    function isDocumentReady: Boolean;
-    procedure stopLoading;
-    procedure reload;
-    function title: Putf8;
-    function titleW: Pwchar_t;
-    procedure resize(w: Integer; h: Integer);
-    function width: Integer;
-    function height: Integer;
-    function contentsWidth: Integer;
-    function contentsHeight: Integer;
-    procedure setDirty(dirty: Boolean);
-    function isDirty: Boolean;
-    procedure addDirtyArea(x: Integer; y: Integer; w: Integer; h: Integer);
-    procedure layoutIfNeeded;
-    procedure paint(bits: PPointer; pitch: Integer);
-    function canGoBack: Boolean;
-    function goBack: Boolean;
-    function canGoForward: Boolean;
-    function goForward: Boolean;
-    procedure selectAll;
-    procedure copy;
-    procedure cut;
-    procedure paste;
-    procedure delete_;
-    procedure setCookieEnabled(enable: Boolean);
-    function cookieEnabled: Boolean;
-    procedure setMediaVolume(volume: Single);
-    function mediaVolume: Single;
-    function mouseEvent(AMessage: LongInt; x: Integer; y: Integer; flags: LongInt): Boolean;
-    function contextMenuEvent(x: Integer; y: Integer; flags: LongInt): Boolean;
-    function mouseWheel(x: Integer; y: Integer; delta: Integer; flags: LongInt): Boolean;
-    function keyUp(virtualKeyCode: LongInt; flags: LongInt; systemKey: Boolean): Boolean;
-    function keyDown(virtualKeyCode: LongInt; flags: LongInt; systemKey: Boolean): Boolean;
-    function keyPress(virtualKeyCode: LongInt; flags: LongInt; systemKey: Boolean): Boolean;
-    procedure focus;
-    procedure unfocus;
-    function getCaret: wkeRect;
-    function runJSA(script: Putf8): jsValue;
-    function runJSW(script: Pwchar_t): jsValue;
-    function globalExec: jsExecState;
-    procedure sleep;
-    procedure awaken;
-    function isAwake: Boolean;
-    procedure setZoomFactor(factor: Single);
-    function zoomFactor: Single;
-    procedure setEditable(editable: Boolean);
-    procedure setClientHandler(handler: PwkeClientHandler);
-    function getClientHandler: wkeClientHandler;
+    class function CppCreate: CWkeWebbrowserUI;
+    procedure CppDestroy;
+    procedure SetSetInternVisibleCallback(ACallback: Pointer);
+    procedure SetSetPosCallback(ACallback: Pointer);
+    procedure SetDelphiSelf(ASelf: Pointer);
+    procedure SetDoEventCallback(ACallback: Pointer);
+    procedure SetDoPaintCallback(ACallback: Pointer);
   end;
 
-  wkeWebView = IWebView;
 
-  // 是不是应该使用PAnsiChar????
-  FILE_OPEN = function(path: PAnsiChar): Pointer; cdecl;
-  FILE_CLOSE = procedure(handle: Pointer); cdecl;
-  FILE_SIZE = function(handle: Pointer): Cardinal; cdecl;
-  FILE_READ = function(handle: Pointer; buffer: Pointer; size: Cardinal): Integer; cdecl;
-  FILE_SEEK = function(handle: Pointer; offset: Integer; origin: Integer): Integer; cdecl;
-
-
-  jsNativeFunction = function(es: jsExecState): jsValue; stdcall;
-
-  {$Z4+}
-  jsType = (
-    JSTYPE_NUMBER,
-    JSTYPE_STRING,
-    JSTYPE_BOOLEAN,
-    JSTYPE_OBJECT,
-    JSTYPE_FUNCTION,
-    JSTYPE_UNDEFINED
-  );
-  TjsType = jsType;
-
-  procedure wkeInit; cdecl;
-  procedure wkeShutdown; cdecl;
-  procedure wkeUpdate; cdecl;
-  function wkeVersion: Integer; cdecl;
-  function wkeVersionString: utf8; cdecl;
-  procedure wkeSetFileSystem(pfn_open: FILE_OPEN; pfn_close: FILE_CLOSE; pfn_size: FILE_SIZE; pfn_read: FILE_READ; pfn_seek: FILE_SEEK); cdecl;
-  function wkeCreateWebView: wkeWebView; cdecl;
-  function wkeGetWebView(name: Pchar): wkeWebView; cdecl;
-  procedure wkeDestroyWebView(webView: wkeWebView); cdecl;
-  function wkeWebViewName(webView: wkeWebView): char; cdecl;
-  procedure wkeSetWebViewName(webView: wkeWebView; const name: Pchar); cdecl;
-  function wkeIsTransparent(webView: wkeWebView): Boolean; cdecl;
-  procedure wkeSetTransparent(webView: wkeWebView; transparent: Boolean); cdecl;
-  procedure wkeLoadURL(webView: wkeWebView; const url: Putf8); cdecl;
-  procedure wkeLoadURLW(webView: wkeWebView; const url: Pwchar_t); cdecl;
-  procedure wkeLoadHTML(webView: wkeWebView; const html: Putf8); cdecl;
-  procedure wkeLoadHTMLW(webView: wkeWebView; const html: Pwchar_t); cdecl;
-  procedure wkeLoadFile(webView: wkeWebView; const filename: Putf8); cdecl;
-  procedure wkeLoadFileW(webView: wkeWebView; const filename: Pwchar_t); cdecl;
-  function wkeIsLoaded(webView: wkeWebView): Boolean; cdecl;
-  function wkeIsLoadFailed(webView: wkeWebView): Boolean; cdecl;
-  function wkeIsLoadComplete(webView: wkeWebView): Boolean; cdecl;
-  function wkeIsDocumentReady(webView: wkeWebView): Boolean; cdecl;
-  function wkeIsLoading(webView: wkeWebView): Boolean; cdecl;
-  procedure wkeStopLoading(webView: wkeWebView); cdecl;
-  procedure wkeReload(webView: wkeWebView); cdecl;
-  function wkeTitle(webView: wkeWebView): utf8; cdecl;
-  function wkeTitleW(webView: wkeWebView): wchar_t; cdecl;
-  procedure wkeResize(webView: wkeWebView; w: Integer; h: Integer); cdecl;
-  function wkeWidth(webView: wkeWebView): Integer; cdecl;
-  function wkeHeight(webView: wkeWebView): Integer; cdecl;
-  function wkeContentsWidth(webView: wkeWebView): Integer; cdecl;
-  function wkeContentsHeight(webView: wkeWebView): Integer; cdecl;
-  procedure wkeSetDirty(webView: wkeWebView; dirty: Boolean); cdecl;
-  function wkeIsDirty(webView: wkeWebView): Boolean; cdecl;
-  procedure wkeAddDirtyArea(webView: wkeWebView; x: Integer; y: Integer; w: Integer; h: Integer); cdecl;
-  procedure wkeLayoutIfNeeded(webView: wkeWebView); cdecl;
-  procedure wkePaint(webView: wkeWebView; bits: PPointer; pitch: Integer); cdecl;
-  function wkeCanGoBack(webView: wkeWebView): Boolean; cdecl;
-  function wkeGoBack(webView: wkeWebView): Boolean; cdecl;
-  function wkeCanGoForward(webView: wkeWebView): Boolean; cdecl;
-  function wkeGoForward(webView: wkeWebView): Boolean; cdecl;
-  procedure wkeSelectAll(webView: wkeWebView); cdecl;
-  procedure wkeCopy(webView: wkeWebView); cdecl;
-  procedure wkeCut(webView: wkeWebView); cdecl;
-  procedure wkePaste(webView: wkeWebView); cdecl;
-  procedure wkeDelete(webView: wkeWebView); cdecl;
-  procedure wkeSetCookieEnabled(webView: wkeWebView; enable: Boolean); cdecl;
-  function wkeCookieEnabled(webView: wkeWebView): Boolean; cdecl;
-  procedure wkeSetMediaVolume(webView: wkeWebView; volume: Single); cdecl;
-  function wkeMediaVolume(webView: wkeWebView): Single; cdecl;
-  function wkeMouseEvent(webView: wkeWebView; AMessage: LongInt; x: Integer; y: Integer; flags: LongInt): Boolean; cdecl;
-  function wkeContextMenuEvent(webView: wkeWebView; x: Integer; y: Integer; flags: LongInt): Boolean; cdecl;
-  function wkeMouseWheel(webView: wkeWebView; x: Integer; y: Integer; delta: Integer; flags: LongInt): Boolean; cdecl;
-  function wkeKeyUp(webView: wkeWebView; virtualKeyCode: LongInt; flags: LongInt; systemKey: Boolean): Boolean; cdecl;
-  function wkeKeyDown(webView: wkeWebView; virtualKeyCode: LongInt; flags: LongInt; systemKey: Boolean): Boolean; cdecl;
-  function wkeKeyPress(webView: wkeWebView; charCode: LongInt; flags: LongInt; systemKey: Boolean): Boolean; cdecl;
-  procedure wkeFocus(webView: wkeWebView); cdecl;
-  procedure wkeUnfocus(webView: wkeWebView); cdecl;
-  function wkeGetCaret(webView: wkeWebView): wkeRect; cdecl;
-  function wkeRunJS(webView: wkeWebView; const script: Putf8): jsValue; cdecl;
-  function wkeRunJSW(webView: wkeWebView; const script: Pwchar_t): jsValue; cdecl;
-  function wkeGlobalExec(webView: wkeWebView): jsExecState; cdecl;
-  procedure wkeSleep(webView: wkeWebView); cdecl;
-  procedure wkeAwaken(webView: wkeWebView); cdecl;
-  function wkeIsAwake(webView: wkeWebView): Boolean; cdecl;
-  procedure wkeSetZoomFactor(webView: wkeWebView; factor: Single); cdecl;
-  function wkeZoomFactor(webView: wkeWebView): Single; cdecl;
-  procedure wkeSetEditable(webView: wkeWebView; editable: Boolean); cdecl;
-  procedure wkeSetClientHandler(webView: wkeWebView; const handler: PwkeClientHandler); cdecl;
-  function wkeGetClientHandler(webView: wkeWebView): wkeClientHandler; cdecl;
-  function wkeToString(AString: wkeString): utf8; cdecl;
-  function wkeToStringW(AString: wkeString): wchar_t; cdecl;
+  TWkeWebbrowser = class(TDuiBase{$IFDEF SupportGeneric}<CWkeWebbrowserUI>{$ENDIF})
+  private
+    FWebView: IWebView;
+    FhBitmap: HBITMAP;
+    FPixels: Pointer;
+    FhDC: HDC;
+    FPaintManager: CPaintManagerUI;
+    procedure SetInitCWekWebBrowserUI;
+{$IFDEF UseLowVer}
+  published
+{$ELSE}
+  protected
+{$ENDIF}
+    procedure DUI_SetInternVisible(bVisible: Boolean); cdecl;
+    procedure DUI_SetPos(rc: TRect; bNeedInvalidate: Boolean); cdecl;
+    procedure DUI_DoEvent(var AEvent: TEventUI; var bHandled: Boolean); cdecl;
+    procedure DUI_DoPaint(DC: HDC; var rcPaint: TRect; var bHandled: Boolean); cdecl;
+  protected
+    procedure DoSetInternVisible(bVisible: Boolean); virtual;
+    procedure DoSetPos(rc: TRect; bNeedInvalidate: Boolean); virtual;
+    procedure DoEvent(var AEvent: TEventUI; var bHandled: Boolean); virtual;
+    procedure DoPaint(DC: HDC; var rcPaint: TRect; var bHandled: Boolean); virtual;
+  public
+    constructor Create; overload;
+    constructor Create(web: CWkeWebbrowserUI); overload;
+    destructor Destroy; override;
+    procedure Invalidate;
+  public
+    procedure SetWkeWebbrowserUI(web: CWkeWebbrowserUI);
+    procedure FreeCpp;
+    procedure Navigate(const AURL: string);
+  end;
 
 
-  procedure jsBindFunction(name: Pchar; fn: jsNativeFunction; argCount: LongInt); cdecl;
-  procedure jsBindGetter(name: Pchar; fn: jsNativeFunction); cdecl;
-  procedure jsBindSetter(name: Pchar; fn: jsNativeFunction); cdecl;
-  function jsArgCount(es: jsExecState): Integer; cdecl;
-  function jsArgType(es: jsExecState; argIdx: Integer): jsType; cdecl;
-  function jsArg(es: jsExecState; argIdx: Integer): jsValue; cdecl;
-  function jsTypeOf(v: jsValue): jsType; cdecl;
-  function jsIsNumber(v: jsValue): Boolean; cdecl;
-  function jsIsString(v: jsValue): Boolean; cdecl;
-  function jsIsBoolean(v: jsValue): Boolean; cdecl;
-  function jsIsObject(v: jsValue): Boolean; cdecl;
-  function jsIsFunction(v: jsValue): Boolean; cdecl;
-  function jsIsUndefined(v: jsValue): Boolean; cdecl;
-  function jsIsNull(v: jsValue): Boolean; cdecl;
-  function jsIsArray(v: jsValue): Boolean; cdecl;
-  function jsIsTrue(v: jsValue): Boolean; cdecl;
-  function jsIsFalse(v: jsValue): Boolean; cdecl;
-  function jsToInt(es: jsExecState; v: jsValue): Integer; cdecl;
-  function jsToFloat(es: jsExecState; v: jsValue): Single; cdecl;
-  function jsToDouble(es: jsExecState; v: jsValue): Double; cdecl;
-  function jsToBoolean(es: jsExecState; v: jsValue): Boolean; cdecl;
-  function jsToString(es: jsExecState; v: jsValue): utf8; cdecl;
-  function jsToStringW(es: jsExecState; v: jsValue): wchar_t; cdecl;
-  function jsInt(n: Integer): jsValue; cdecl;
-  function jsFloat(f: Single): jsValue; cdecl;
-  function jsDouble(d: Double): jsValue; cdecl;
-  function jsBoolean(b: Boolean): jsValue; cdecl;
-  function jsUndefined: jsValue; cdecl;
-  function jsNull: jsValue; cdecl;
-  function jsTrue: jsValue; cdecl;
-  function jsFalse: jsValue; cdecl;
-  function jsString(es: jsExecState; str: Putf8): jsValue; cdecl;
-  function jsStringW(es: jsExecState; str: Pwchar_t): jsValue; cdecl;
-  function jsObject(es: jsExecState): jsValue; cdecl;
-  function jsArray(es: jsExecState): jsValue; cdecl;
-  function jsFunction(es: jsExecState; fn: jsNativeFunction; argCount: LongInt): jsValue; cdecl;
-  function jsGlobalObject(es: jsExecState): jsValue; cdecl;
-  function jsEval(es: jsExecState; str: Putf8): jsValue; cdecl;
-  function jsEvalW(es: jsExecState; str: Pwchar_t): jsValue; cdecl;
-  function jsCall(es: jsExecState; func: jsValue; thisObject: jsValue; args: PjsValue; argCount: Integer): jsValue; cdecl;
-  function jsCallGlobal(es: jsExecState; func: jsValue; args: PjsValue; argCount: Integer): jsValue; cdecl;
-  function jsGet(es: jsExecState; AObject: jsValue; prop: Pchar): jsValue; cdecl;
-  procedure jsSet(es: jsExecState; AObject: jsValue; prop: Pchar; v: jsValue); cdecl;
-  function jsGetGlobal(es: jsExecState; prop: Pchar): jsValue; cdecl;
-  procedure jsSetGlobal(es: jsExecState; prop: Pchar; v: jsValue); cdecl;
-  function jsGetAt(es: jsExecState; AObject: jsValue; index: Integer): jsValue; cdecl;
-  procedure jsSetAt(es: jsExecState; AObject: jsValue; index: Integer; v: jsValue); cdecl;
-  function jsGetLength(es: jsExecState; AObject: jsValue): Integer; cdecl;
-  procedure jsSetLength(es: jsExecState; AObject: jsValue; length: Integer); cdecl;
-  function jsGetWebView(es: jsExecState): wkeWebView; cdecl;
-  procedure jsGC; cdecl;
+//================================CWkeWebbrowserUI============================
+
+function Delphi_WkeWebbrowserUI_CppCreate: CWkeWebbrowserUI; cdecl;
+procedure Delphi_WkeWebbrowserUI_CppDestroy(Handle: CWkeWebbrowserUI); cdecl;
+procedure Delphi_WkeWebbrowserUI_SetSetInternVisibleCallback(Handle: CWkeWebbrowserUI; ACallback: Pointer); cdecl;
+procedure Delphi_WkeWebbrowserUI_SetSetPosCallback(Handle: CWkeWebbrowserUI; ACallback: Pointer); cdecl;
+procedure Delphi_WkeWebbrowserUI_SetDelphiSelf(Handle: CWkeWebbrowserUI; ASelf: Pointer); cdecl;
+procedure Delphi_WkeWebbrowserUI_SetDoEventCallback(Handle: CWkeWebbrowserUI; ACallback: Pointer); cdecl;
+procedure Delphi_WkeWebbrowserUI_SetDoPaintCallback(Handle: CWkeWebbrowserUI; ACallback: Pointer); cdecl;
 
 implementation
 
-{ IWebView }
 
-procedure IWebView.addDirtyArea(x, y, w, h: Integer);
+{ CWkeWebbrowserUI }
+
+class function CWkeWebbrowserUI.CppCreate: CWkeWebbrowserUI;
 begin
-  __addDirtyArea(Self, Self, h, w, y, x);
+  Result := Delphi_WkeWebbrowserUI_CppCreate;
 end;
 
-procedure IWebView.awaken;
+procedure CWkeWebbrowserUI.CppDestroy;
 begin
-  __awaken(Self, Self);
+  Delphi_WkeWebbrowserUI_CppDestroy(Self);
 end;
 
-function IWebView.canGoBack: Boolean;
+procedure CWkeWebbrowserUI.SetSetInternVisibleCallback(ACallback: Pointer);
 begin
-  Result := __canGoBack(Self, Self);
+  Delphi_WkeWebbrowserUI_SetSetInternVisibleCallback(Self, ACallback);
 end;
 
-function IWebView.canGoForward: Boolean;
+procedure CWkeWebbrowserUI.SetSetPosCallback(ACallback: Pointer);
 begin
-  Result := __canGoForward(Self, Self);
+  Delphi_WkeWebbrowserUI_SetSetPosCallback(Self, ACallback);
 end;
 
-function IWebView.contentsHeight: Integer;
+procedure CWkeWebbrowserUI.SetDelphiSelf(ASelf: Pointer);
 begin
-  Result := __contentsHeight(Self, Self);
+  Delphi_WkeWebbrowserUI_SetDelphiSelf(Self, ASelf);
 end;
 
-function IWebView.contentsWidth: Integer;
+procedure CWkeWebbrowserUI.SetDoEventCallback(ACallback: Pointer);
 begin
-  Result := __contentsWidth(Self, Self);
+  Delphi_WkeWebbrowserUI_SetDoEventCallback(Self, ACallback);
 end;
 
-function IWebView.contextMenuEvent(x, y, flags: Integer): Boolean;
+procedure CWkeWebbrowserUI.SetDoPaintCallback(ACallback: Pointer);
 begin
-  Result := __contextMenuEvent(Self, Self, flags, y, x);
-end;
-
-function IWebView.cookieEnabled: Boolean;
-begin
-  Result := __cookieEnabled(Self, Self);
-end;
-
-procedure IWebView.copy;
-begin
-  __copy(Self, Self);
-end;
-
-procedure IWebView.cut;
-begin
-  __cut(Self, Self);
-end;
-
-procedure IWebView.delete_;
-begin
-  __delete_(Self, Self);
-end;
-
-procedure IWebView.destroy_;
-begin
-  __destroy(Self, Self);
-end;
-
-procedure IWebView.focus;
-begin
-  __focus(Self, Self);
-end;
-
-function IWebView.getCaret: wkeRect;
-begin
-  Result := __getCaret(Self, Self);
-end;
-
-function IWebView.getClientHandler: wkeClientHandler;
-begin
-  Result := __getClientHandler(Self, Self);
-end;
-
-function IWebView.globalExec: jsExecState;
-begin
-  Result := __globalExec(Self, Self);
-end;
-
-function IWebView.goBack: Boolean;
-begin
-  Result := __goBack(Self, Self);
-end;
-
-function IWebView.goForward: Boolean;
-begin
-  Result := __goForward(Self, Self);
-end;
-
-function IWebView.height: Integer;
-begin
-  Result := __height(Self, Self);
-end;
-
-function IWebView.isAwake: Boolean;
-begin
-  Result := __isAwake(Self, Self);
-end;
-
-function IWebView.isDirty: Boolean;
-begin
-  Result := __isDirty(Self, Self);
-end;
-
-function IWebView.isDocumentReady: Boolean;
-begin
-  Result := __isDocumentReady(Self, Self);
-end;
-
-function IWebView.isLoadComplete: Boolean;
-begin
-  Result := __isLoadComplete(Self, Self);
-end;
-
-function IWebView.isLoaded: Boolean;
-begin
-  Result := __isLoaded(Self, Self);
-end;
-
-function IWebView.isLoadFailed: Boolean;
-begin
-  Result := __isLoadFailed(Self, Self);
-end;
-
-function IWebView.keyDown(virtualKeyCode, flags: Integer;
-  systemKey: Boolean): Boolean;
-begin
-  Result := __keyDown(Self, Self, systemKey, flags, virtualKeyCode);
-end;
-
-function IWebView.keyPress(virtualKeyCode, flags: Integer;
-  systemKey: Boolean): Boolean;
-begin
-  Result := __keyPress(Self, Self, systemKey, flags, virtualKeyCode);
-end;
-
-function IWebView.keyUp(virtualKeyCode, flags: Integer;
-  systemKey: Boolean): Boolean;
-begin
-  Result := __keyUp(Self, Self, systemKey, flags, virtualKeyCode);
-end;
-
-procedure IWebView.layoutIfNeeded;
-begin
-  __layoutIfNeeded(Self, Self);
-end;
-
-procedure IWebView.loadFileA(const filename: Putf8);
-begin
-  __loadFileA(Self, Self, filename);
-end;
-
-procedure IWebView.loadFileW(const filename: Pwchar_t);
-begin
-  __loadFileW(Self, Self, filename);
-end;
-
-procedure IWebView.loadHTMLA(const html: Putf8);
-begin
-  __loadHTMLA(Self, Self, html);
-end;
-
-procedure IWebView.loadHTMLW(const html: Pwchar_t);
-begin
-  __loadHTMLW(Self, Self, html);
-end;
-
-procedure IWebView.loadURLA(const url: Putf8);
-begin
-  __loadURLA(Self, Self, url);
-end;
-
-procedure IWebView.loadURLW(const url: Pwchar_t);
-begin
-  __loadURLW(Self, Self, url);
-end;
-
-function IWebView.mediaVolume: Single;
-begin
-  Result := __mediaVolume(Self, Self);
-end;
-
-function IWebView.mouseEvent(AMessage, x, y, flags: Integer): Boolean;
-begin
-  Result := __mouseEvent(Self, Self, flags, y, x, AMessage);
-end;
-
-function IWebView.mouseWheel(x, y, delta, flags: Integer): Boolean;
-begin
-  Result := __mouseWheel(Self, Self, flags, delta, y, x);
-end;
-
-function IWebView.name: Putf8;
-begin
-  Result := __name(Self, Self);
-end;
-
-procedure IWebView.paint(bits: PPointer; pitch: Integer);
-begin
-  __paint(Self, Self, pitch, bits);
-end;
-
-procedure IWebView.paste;
-begin
-  __paste(Self, Self);
-end;
-
-procedure IWebView.reload;
-begin
-  __reload(Self, Self);
-end;
-
-procedure IWebView.resize(w, h: Integer);
-begin
-  __resize(Self, Self, h, w);
-end;
-
-function IWebView.runJSA(script: Putf8): jsValue;
-begin
-  Result := __runJSA(Self, Self, script);
-end;
-
-function IWebView.runJSW(script: Pwchar_t): jsValue;
-begin
-  Result := __runJSW(Self, Self, script);
-end;
-
-procedure IWebView.selectAll;
-begin
-  __selectAll(Self, Self);
-end;
-
-procedure IWebView.setClientHandler(handler: PwkeClientHandler);
-begin
-  __setClientHandler(Self, Self, handler);
-end;
-
-procedure IWebView.setCookieEnabled(enable: Boolean);
-begin
-  __setCookieEnabled(Self, Self, enable);
-end;
-
-procedure IWebView.setDirty(dirty: Boolean);
-begin
-  __setDirty(Self, Self, dirty);
-end;
-
-procedure IWebView.setEditable(editable: Boolean);
-begin
-  __setEditable(Self, Self, editable);
-end;
-
-procedure IWebView.setMediaVolume(volume: Single);
-begin
-  __setMediaVolume(Self,  Self, volume);
-end;
-
-procedure IWebView.setName(const AName: Putf8);
-begin
-  __setName(Self, Self, AName);
-end;
-
-procedure IWebView.setTransparent(ATransparent: Boolean);
-begin
-  __setTransparent(Self, Self, ATransparent);
-end;
-
-procedure IWebView.setZoomFactor(factor: Single);
-begin
-  __setZoomFactor(Self, Self, factor);
-end;
-
-procedure IWebView.sleep;
-begin
-  __sleep(Self, Self);
-end;
-
-procedure IWebView.stopLoading;
-begin
-  __stopLoading(Self, Self);
-end;
-
-function IWebView.title: Putf8;
-begin
-  Result := __title(Self, Self);
-end;
-
-function IWebView.titleW: Pwchar_t;
-begin
-  Result := __titleW(Self, Self);
-end;
-
-function IWebView.transparent: Boolean;
-begin
-  Result := __transparent(Self, Self);
-end;
-
-procedure IWebView.unfocus;
-begin
-  __unfocus(Self, Self);
-end;
-
-function IWebView.width: Integer;
-begin
-  Result := __width(Self, Self);
-end;
-
-function IWebView.zoomFactor: Single;
-begin
-  Result := __zoomFactor(Self, Self);
+  Delphi_WkeWebbrowserUI_SetDoPaintCallback(Self, ACallback);
 end;
 
 
+{ TWkeWebbrowser }
+
+constructor TWkeWebbrowser.Create;
+begin
+  inherited;
+  FhDC := CreateCompatibleDC(0);
+  FWebView := wkeCreateWebView;
+end;
+
+constructor TWkeWebbrowser.Create(web: CWkeWebbrowserUI);
+begin
+  Create;
+  FThis := web;
+  SetInitCWekWebBrowserUI;
+end;
+
+destructor TWkeWebbrowser.Destroy;
+begin
+  if FhDC <> 0 then
+    DeleteDC(FhDC);
+  if FhBitmap <>0 then
+    DeleteObject(FhBitmap);
+  wkeDestroyWebView(FWebView);
+  inherited;
+end;
+
+procedure TWkeWebbrowser.DoEvent(var AEvent: TEventUI; var bHandled: Boolean);
+begin
+  // virtual
+  if AEvent.AType = UIEVENT_TIMER then
+  begin
+
+  end else Writeln(Integer(AEvent.AType));
+  //Invalidate;
+end;
+
+procedure TWkeWebbrowser.DoPaint(DC: HDC; var rcPaint: TRect;
+  var bHandled: Boolean);
+var
+  bi: TBitmapInfo;
+  hbmp: HBITMAP;
+  LR: TRect;
+begin
+  // virtual
+  if FWebView <> nil then
+  begin
+    Writeln(rcPaint.Right - rcPaint.Left);
+    Writeln(rcPaint.Bottom - rcPaint.Top);
+  {  if FPixels = nil then
+    begin
+      FillChar(bi, SizeOf(TBitmapInfo), #0);
+      bi.bmiHeader.biSize := sizeof(TBitmapInfoHeader);
+      bi.bmiHeader.biWidth         := rcPaint.Right - rcPaint.Left;
+      bi.bmiHeader.biHeight        := -(rcPaint.Bottom - rcPaint.Top);
+      bi.bmiHeader.biPlanes        := 1;
+      bi.bmiHeader.biBitCount      := 32;
+      bi.bmiHeader.biCompression   := BI_RGB;
+      hbmp := CreateDIBSection(0, bi, DIB_RGB_COLORS, FPixels, 0, 0);
+      SelectObject(FhDC, hbmp);
+      if FhBitmap <> 0 then
+        DeleteObject(FhBitmap);
+      FhBitmap := hbmp;
+    end;
+    if FPixels <> nil then
+    begin
+      FWebView.paint(FPixels, 0);
+//      LR := Rect(0, 0, 100, 200);
+//      DrawText(FhDC, PChar('fffffffffffffffffffffffffffff'), -1, LR, 0);
+
+      BitBlt(DC, 0, 0, rcPaint.Right - rcPaint.Left, rcPaint.Bottom - rcPaint.Top, FhDC, 0, 0, SRCCOPY);
+      bHandled := False;
+    end;   }
+  end;
+end;
+
+procedure TWkeWebbrowser.DoSetInternVisible(bVisible: Boolean);
+begin
+  // virtual
+end;
+
+procedure TWkeWebbrowser.DoSetPos(rc: TRect; bNeedInvalidate: Boolean);
+begin
+  // virtual
+  if FWebView <> nil then
+    FWebView.resize(rc.Right - rc.Left, rc.Bottom - rc.Top);
+end;
+
+procedure TWkeWebbrowser.DUI_DoEvent(var AEvent: TEventUI;
+  var bHandled: Boolean);
+begin
+  DoEvent(AEvent, bHandled);
+end;
+
+procedure TWkeWebbrowser.DUI_DoPaint(DC: HDC; var rcPaint: TRect;
+  var bHandled: Boolean);
+begin
+  DoPaint(DC, rcPaint, bHandled);
+end;
+
+procedure TWkeWebbrowser.DUI_SetInternVisible(bVisible: Boolean);
+begin
+  DoSetInternVisible(bVisible);
+end;
+
+procedure TWkeWebbrowser.DUI_SetPos(rc: TRect; bNeedInvalidate: Boolean);
+begin
+  DoSetPos(rc, bNeedInvalidate);
+end;
+
+procedure TWkeWebbrowser.FreeCpp;
+begin
+  if FThis <> nil then
+  begin
+    FThis.CppDestroy;
+    FThis := nil;
+  end;
+end;
+
+procedure TWkeWebbrowser.Invalidate;
+begin
+  if FWebView <> nil then
+  begin
+    //if FWebView.isDirty then
+      {$IFDEF SupportGeneric}FThis{$ELSE}CWkeWebbrowserUI(FThis){$ENDIF}.Invalidate;
+  end;
+end;
+
+procedure TWkeWebbrowser.Navigate(const AURL: string);
+begin
+  if FWebView <> nil then
+  {$IFDEF UNICODE}
+    FWebView.loadURLW(PChar(AURL));
+  {$ELSE}
+    FWebView.loadURLA(PChar(AURL));
+  {$ENDIF}
+end;
+
+procedure TWkeWebbrowser.SetInitCWekWebBrowserUI;
+begin
+  if FThis <> nil then
+  begin
+    FPaintManager := {$IFDEF SupportGeneric}FThis{$ELSE}CWkeWebbrowserUI(FThis){$ENDIF}.GetManager;
+    {$IFDEF SupportGeneric}FThis{$ELSE}CWkeWebbrowserUI(FThis){$ENDIF}.SetDelphiSelf(Self);
+    {$IFDEF SupportGeneric}FThis{$ELSE}CWkeWebbrowserUI(FThis){$ENDIF}.SetSetInternVisibleCallback(GetMethodAddr('DUI_SetInternVisible'));
+    {$IFDEF SupportGeneric}FThis{$ELSE}CWkeWebbrowserUI(FThis){$ENDIF}.SetSetPosCallback(GetMethodAddr('DUI_SetPos'));
+    {$IFDEF SupportGeneric}FThis{$ELSE}CWkeWebbrowserUI(FThis){$ENDIF}.SetDoEventCallback(GetMethodAddr('DUI_DoEvent'));
+    {$IFDEF SupportGeneric}FThis{$ELSE}CWkeWebbrowserUI(FThis){$ENDIF}.SetDoPaintCallback(GetMethodAddr('DUI_DoPaint'));
+  end;
+end;
+
+procedure TWkeWebbrowser.SetWkeWebbrowserUI(web: CWkeWebbrowserUI);
+begin
+  if (web <> nil) and (web <> FThis) then
+  begin
+    FThis := web;
+    SetInitCWekWebBrowserUI;
+  end;
+end;
+
+//================================CWkeWebbrowserUI============================
+
+function Delphi_WkeWebbrowserUI_CppCreate; external DuiLibdll name 'Delphi_WkeWebbrowserUI_CppCreate';
+procedure Delphi_WkeWebbrowserUI_CppDestroy; external DuiLibdll name 'Delphi_WkeWebbrowserUI_CppDestroy';
+procedure Delphi_WkeWebbrowserUI_SetSetInternVisibleCallback; external DuiLibdll name 'Delphi_WkeWebbrowserUI_SetSetInternVisibleCallback';
+procedure Delphi_WkeWebbrowserUI_SetSetPosCallback; external DuiLibdll name 'Delphi_WkeWebbrowserUI_SetSetPosCallback';
+procedure Delphi_WkeWebbrowserUI_SetDelphiSelf; external DuiLibdll name 'Delphi_WkeWebbrowserUI_SetDelphiSelf';
+procedure Delphi_WkeWebbrowserUI_SetDoEventCallback; external DuiLibdll name 'Delphi_WkeWebbrowserUI_SetDoEventCallback';
+procedure Delphi_WkeWebbrowserUI_SetDoPaintCallback; external DuiLibdll name 'Delphi_WkeWebbrowserUI_SetDoPaintCallback';
 
 
-procedure wkeInit; external wkedll name 'wkeInit';
-procedure wkeShutdown; external wkedll name 'wkeShutdown';
-procedure wkeUpdate; external wkedll name 'wkeUpdate';
-function wkeVersion; external wkedll name 'wkeVersion';
-function wkeVersionString; external wkedll name 'wkeVersionString';
-procedure wkeSetFileSystem; external wkedll name 'wkeSetFileSystem';
-function wkeCreateWebView; external wkedll name 'wkeCreateWebView';
-function wkeGetWebView; external wkedll name 'wkeGetWebView';
-procedure wkeDestroyWebView; external wkedll name 'wkeDestroyWebView';
-function wkeWebViewName; external wkedll name 'wkeWebViewName';
-procedure wkeSetWebViewName; external wkedll name 'wkeSetWebViewName';
-function wkeIsTransparent; external wkedll name 'wkeIsTransparent';
-procedure wkeSetTransparent; external wkedll name 'wkeSetTransparent';
-procedure wkeLoadURL; external wkedll name 'wkeLoadURL';
-procedure wkeLoadURLW; external wkedll name 'wkeLoadURLW';
-procedure wkeLoadHTML; external wkedll name 'wkeLoadHTML';
-procedure wkeLoadHTMLW; external wkedll name 'wkeLoadHTMLW';
-procedure wkeLoadFile; external wkedll name 'wkeLoadFile';
-procedure wkeLoadFileW; external wkedll name 'wkeLoadFileW';
-function wkeIsLoaded; external wkedll name 'wkeIsLoaded';
-function wkeIsLoadFailed; external wkedll name 'wkeIsLoadFailed';
-function wkeIsLoadComplete; external wkedll name 'wkeIsLoadComplete';
-function wkeIsDocumentReady; external wkedll name 'wkeIsDocumentReady';
-function wkeIsLoading; external wkedll name 'wkeIsLoading';
-procedure wkeStopLoading; external wkedll name 'wkeStopLoading';
-procedure wkeReload; external wkedll name 'wkeReload';
-function wkeTitle; external wkedll name 'wkeTitle';
-function wkeTitleW; external wkedll name 'wkeTitleW';
-procedure wkeResize; external wkedll name 'wkeResize';
-function wkeWidth; external wkedll name 'wkeWidth';
-function wkeHeight; external wkedll name 'wkeHeight';
-function wkeContentsWidth; external wkedll name 'wkeContentsWidth';
-function wkeContentsHeight; external wkedll name 'wkeContentsHeight';
-procedure wkeSetDirty; external wkedll name 'wkeSetDirty';
-function wkeIsDirty; external wkedll name 'wkeIsDirty';
-procedure wkeAddDirtyArea; external wkedll name 'wkeAddDirtyArea';
-procedure wkeLayoutIfNeeded; external wkedll name 'wkeLayoutIfNeeded';
-procedure wkePaint; external wkedll name 'wkePaint';
-function wkeCanGoBack; external wkedll name 'wkeCanGoBack';
-function wkeGoBack; external wkedll name 'wkeGoBack';
-function wkeCanGoForward; external wkedll name 'wkeCanGoForward';
-function wkeGoForward; external wkedll name 'wkeGoForward';
-procedure wkeSelectAll; external wkedll name 'wkeSelectAll';
-procedure wkeCopy; external wkedll name 'wkeCopy';
-procedure wkeCut; external wkedll name 'wkeCut';
-procedure wkePaste; external wkedll name 'wkePaste';
-procedure wkeDelete; external wkedll name 'wkeDelete';
-procedure wkeSetCookieEnabled; external wkedll name 'wkeSetCookieEnabled';
-function wkeCookieEnabled; external wkedll name 'wkeCookieEnabled';
-procedure wkeSetMediaVolume; external wkedll name 'wkeSetMediaVolume';
-function wkeMediaVolume; external wkedll name 'wkeMediaVolume';
-function wkeMouseEvent; external wkedll name 'wkeMouseEvent';
-function wkeContextMenuEvent; external wkedll name 'wkeContextMenuEvent';
-function wkeMouseWheel; external wkedll name 'wkeMouseWheel';
-function wkeKeyUp; external wkedll name 'wkeKeyUp';
-function wkeKeyDown; external wkedll name 'wkeKeyDown';
-function wkeKeyPress; external wkedll name 'wkeKeyPress';
-procedure wkeFocus; external wkedll name 'wkeFocus';
-procedure wkeUnfocus; external wkedll name 'wkeUnfocus';
-function wkeGetCaret; external wkedll name 'wkeGetCaret';
-function wkeRunJS; external wkedll name 'wkeRunJS';
-function wkeRunJSW; external wkedll name 'wkeRunJSW';
-function wkeGlobalExec; external wkedll name 'wkeGlobalExec';
-procedure wkeSleep; external wkedll name 'wkeSleep';
-procedure wkeAwaken; external wkedll name 'wkeAwaken';
-function wkeIsAwake; external wkedll name 'wkeIsAwake';
-procedure wkeSetZoomFactor; external wkedll name 'wkeSetZoomFactor';
-function wkeZoomFactor; external wkedll name 'wkeZoomFactor';
-procedure wkeSetEditable; external wkedll name 'wkeSetEditable';
-procedure wkeSetClientHandler; external wkedll name 'wkeSetClientHandler';
-function wkeGetClientHandler; external wkedll name 'wkeGetClientHandler';
-function wkeToString; external wkedll name 'wkeToString';
-function wkeToStringW; external wkedll name 'wkeToStringW';
+initialization
+   wkeInit;
 
-
-procedure jsBindFunction; external wkedll name 'jsBindFunction';
-procedure jsBindGetter; external wkedll name 'jsBindGetter';
-procedure jsBindSetter; external wkedll name 'jsBindSetter';
-function jsArgCount; external wkedll name 'jsArgCount';
-function jsArgType; external wkedll name 'jsArgType';
-function jsArg; external wkedll name 'jsArg';
-function jsTypeOf; external wkedll name 'jsTypeOf';
-function jsIsNumber; external wkedll name 'jsIsNumber';
-function jsIsString; external wkedll name 'jsIsString';
-function jsIsBoolean; external wkedll name 'jsIsBoolean';
-function jsIsObject; external wkedll name 'jsIsObject';
-function jsIsFunction; external wkedll name 'jsIsFunction';
-function jsIsUndefined; external wkedll name 'jsIsUndefined';
-function jsIsNull; external wkedll name 'jsIsNull';
-function jsIsArray; external wkedll name 'jsIsArray';
-function jsIsTrue; external wkedll name 'jsIsTrue';
-function jsIsFalse; external wkedll name 'jsIsFalse';
-function jsToInt; external wkedll name 'jsToInt';
-function jsToFloat; external wkedll name 'jsToFloat';
-function jsToDouble; external wkedll name 'jsToDouble';
-function jsToBoolean; external wkedll name 'jsToBoolean';
-function jsToString; external wkedll name 'jsToString';
-function jsToStringW; external wkedll name 'jsToStringW';
-function jsInt; external wkedll name 'jsInt';
-function jsFloat; external wkedll name 'jsFloat';
-function jsDouble; external wkedll name 'jsDouble';
-function jsBoolean; external wkedll name 'jsBoolean';
-function jsUndefined; external wkedll name 'jsUndefined';
-function jsNull; external wkedll name 'jsNull';
-function jsTrue; external wkedll name 'jsTrue';
-function jsFalse; external wkedll name 'jsFalse';
-function jsString; external wkedll name 'jsString';
-function jsStringW; external wkedll name 'jsStringW';
-function jsObject; external wkedll name 'jsObject';
-function jsArray; external wkedll name 'jsArray';
-function jsFunction; external wkedll name 'jsFunction';
-function jsGlobalObject; external wkedll name 'jsGlobalObject';
-function jsEval; external wkedll name 'jsEval';
-function jsEvalW; external wkedll name 'jsEvalW';
-function jsCall; external wkedll name 'jsCall';
-function jsCallGlobal; external wkedll name 'jsCallGlobal';
-function jsGet; external wkedll name 'jsGet';
-procedure jsSet; external wkedll name 'jsSet';
-function jsGetGlobal; external wkedll name 'jsGetGlobal';
-procedure jsSetGlobal; external wkedll name 'jsSetGlobal';
-function jsGetAt; external wkedll name 'jsGetAt';
-procedure jsSetAt; external wkedll name 'jsSetAt';
-function jsGetLength; external wkedll name 'jsGetLength';
-procedure jsSetLength; external wkedll name 'jsSetLength';
-function jsGetWebView; external wkedll name 'jsGetWebView';
-procedure jsGC; external wkedll name 'jsGC';
+finalization
+   wkeShutdown;
 
 end.

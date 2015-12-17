@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window size="651,443" caption="0,0,0,32">
+    <VerticalLayout width="532" height="339" bkcolor="#FFC0DCC0" bkcolor2="#00A6CAF0">
+        <HorizontalLayout height="32" bkcolor="#FFC0C0C0">
+            <VerticalLayout height="32">
+                <Label name="浏览器Demo" float="true" pos="16,5,0,0" width="153" height="22" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" />
+            </VerticalLayout>
+            <VerticalLayout width="100" height="32">
+                <Button name="closebtn" text="关闭" float="true" pos="51,0,0,0" width="48" height="32" bkcolor="#FF800000" focusbordercolor="#00C0DCC0" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" />
+            </VerticalLayout>
+        </HorizontalLayout>
+        <HorizontalLayout>
+            <WkeWebbrowser name="webbrowser" />
+        </HorizontalLayout>
+    </VerticalLayout>
+</Window>
