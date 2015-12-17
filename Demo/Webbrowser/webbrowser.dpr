@@ -31,7 +31,7 @@ type
 
 constructor TWebbrowserWindow.Create;
 begin
-  inherited Create('WerbrowserWindow.xml', 'skin');
+  inherited Create('WebbrowserWindow.xml', 'skin');
   CreateWindow(0, 'ä¯ÀÀÆ÷', UI_WNDSTYLE_FRAME, WS_EX_WINDOWEDGE);
 end;
 
