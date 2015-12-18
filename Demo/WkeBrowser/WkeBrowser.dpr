@@ -35,7 +35,6 @@ begin
   inherited Create('WkebrowserWindow.xml', 'skin');
   FWkeWebbrowser := TWkeWebbrowser.Create;
   CreateWindow(0, 'wkeä¯ÀÀÆ÷', UI_WNDSTYLE_FRAME, WS_EX_WINDOWEDGE);
-
 end;
 
 destructor TWkeBrowserWindow.Destroy;
@@ -46,9 +45,8 @@ end;
 
 function TWkeBrowserWindow.DoCreateControl(pstrStr: string): CControlUI;
 begin
-  Writeln('CreateControl=', pstrStr);
-  if pstrStr = 'WkeWebbrowser' then
-    Exit(CWkeWebbrowserUI.CppCreate);
+  if pstrStr = 'NativeControl' then
+    Exit(CNativeControlUI.CppCreate);
   Result := nil;
 end;
 
@@ -61,10 +59,10 @@ end;
 
 procedure TWkeBrowserWindow.DoInitWindow;
 var
-  pControl: CWkeWebbrowserUI;
+  pControl: CNativeControlUI;
 begin
   inherited;
-  pControl := CWkeWebbrowserUI(FindControl('webbrowser'));
+  pControl := CNativeControlUI(FindControl('webbrowser'));
   if pControl <> nil then
   begin
     FWkeWebbrowser.SetWkeWebbrowserUI(pControl);

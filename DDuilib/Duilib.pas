@@ -1928,13 +1928,14 @@ type
 
   CNativeControlUI = class(CContainerUI)
   public
-    class function CppCreate(hWnd: HWND): CNativeControlUI;
+    class function CppCreate(hWnd: HWND = 0): CNativeControlUI;
     procedure CppDestroy;
     procedure SetInternVisible(bVisible: Boolean = True);
     procedure SetPos(rc: TRect; bNeedInvalidate: Boolean);
     function GetClass: string;
     function GetText: string;
     procedure SetText(pstrText: string);
+    procedure SetNativeHandle(hWd: HWND);
   public
     property Text: string read GetText write SetText;
   end;
@@ -3228,6 +3229,7 @@ procedure Delphi_NativeControlUI_SetPos(Handle: CNativeControlUI; rc: TRect; bNe
 function Delphi_NativeControlUI_GetClass(Handle: CNativeControlUI): LPCTSTR; cdecl;
 function Delphi_NativeControlUI_GetText(Handle: CNativeControlUI): CDuiString; cdecl;
 procedure Delphi_NativeControlUI_SetText(Handle: CNativeControlUI; pstrText: LPCTSTR); cdecl;
+procedure Delphi_NativeControlUI_SetNativeHandle(Handle: CNativeControlUI; hWd: HWND); cdecl;
 
 
 {$IFDEF UseLowVer}
@@ -9393,6 +9395,11 @@ begin
   Delphi_NativeControlUI_SetText(Self, LPCTSTR(pstrText));
 end;
 
+procedure CNativeControlUI.SetNativeHandle(hWd: HWND);
+begin
+  Delphi_NativeControlUI_SetNativeHandle(Self, hWd);
+end;
+
 //================================CStdStringPtrMap============================
 
 function Delphi_StdStringPtrMap_CppCreate; external DuiLibdll name 'Delphi_StdStringPtrMap_CppCreate';
@@ -10672,6 +10679,7 @@ procedure Delphi_NativeControlUI_SetPos; external DuiLibdll name 'Delphi_NativeC
 function Delphi_NativeControlUI_GetClass; external DuiLibdll name 'Delphi_NativeControlUI_GetClass';
 function Delphi_NativeControlUI_GetText; external DuiLibdll name 'Delphi_NativeControlUI_GetText';
 procedure Delphi_NativeControlUI_SetText; external DuiLibdll name 'Delphi_NativeControlUI_SetText';
+procedure Delphi_NativeControlUI_SetNativeHandle; external DuiLibdll name 'Delphi_NativeControlUI_SetNativeHandle';
 
 
 

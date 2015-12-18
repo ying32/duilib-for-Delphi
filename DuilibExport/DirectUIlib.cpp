@@ -224,12 +224,14 @@ class CNativeControlUI: public CControlUI
 
       void SetInternVisible(bool bVisible = true) {
            CControlUI::SetInternVisible(bVisible);
-           ::ShowWindow(m_hWnd, bVisible);
+		   if (m_hWnd)
+		       ::ShowWindow(m_hWnd, bVisible);
       }
 	  
 	  void SetPos(RECT rc, bool bNeedInvalidate) {
-        CControlUI::SetPos(rc, bNeedInvalidate);
-		::SetWindowPos(m_hWnd, HWND_TOP, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, SWP_NOZORDER | SWP_NOACTIVATE);
+           CControlUI::SetPos(rc, bNeedInvalidate);
+		   if (m_hWnd)
+		       ::SetWindowPos(m_hWnd, HWND_TOP, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, SWP_NOZORDER | SWP_NOACTIVATE);
       }
    
 	  LPCTSTR GetClass() const {
@@ -237,85 +239,27 @@ class CNativeControlUI: public CControlUI
 	  }
 
 	  CDuiString GetText() const {
-		  CHAR text[MAX_PATH] = {0};
-          #ifdef UNICODE
-		  ::GetWindowText(m_hWnd, (LPWSTR)text, MAX_PATH);
-		  #else
-		  ::GetWindowText(m_hWnd, (LPSTR)text, MAX_PATH);
-		  #endif
-		  
-		  return (LPCTSTR)text;
+		  if (m_hWnd) {
+			    CHAR text[MAX_PATH] = { 0 };
+			    #ifdef UNICODE
+					::GetWindowText(m_hWnd, (LPWSTR)text, MAX_PATH);
+			    #else
+					::GetWindowText(m_hWnd, (LPSTR)text, MAX_PATH);
+				#endif
+			  return (LPCTSTR)text;
+		  }
+		  return _T("");
 	  }
 	  void SetText(LPCTSTR pstrText){
-		  ::SetWindowText(m_hWnd, pstrText);
+		  if (m_hWnd)
+		      ::SetWindowText(m_hWnd, pstrText);
 	  }
+	  void SetNativeHandle(HWND hWd) { m_hWnd = hWd; };
    protected:
       HWND m_hWnd;
 };
 
-
-//-------------------------------------------------------------------------------------
- 
-class CWkeWebbrowserWnd : public CWindowWnd
-{
-public:
-	CWkeWebbrowserWnd():
-		m_pOwner(NULL),
-	    m_hBkBrush(NULL),
-		m_bInit(false){
-	}
-
-	void Init(CControlUI* pOwner){
-		m_pOwner = pOwner;
-		if (m_hWnd == NULL)
-		{
-			RECT rcPos = CalPos();
-			UINT uStyle = WS_CHILD;
-			Create(m_pOwner->GetManager()->GetPaintWindow(), NULL, uStyle, 0, rcPos);
-		}
-		::ShowWindow(m_hWnd, SW_SHOWNOACTIVATE);
-		::SetFocus(m_hWnd);
-
-		m_bInit = true;  
-	}
-	RECT CalPos() {
-		CDuiRect rcPos = m_pOwner->GetPos();
-		CControlUI* pParent = m_pOwner;
-		RECT rcParent;
-		while( pParent = pParent->GetParent() ) {
-			if( !pParent->IsVisible() ) {
-				rcPos.left = rcPos.top = rcPos.right = rcPos.bottom = 0;
-				break;
-			}
-			rcParent = pParent->GetClientPos();
-			if( !::IntersectRect(&rcPos, &rcPos, &rcParent) ) {
-				rcPos.left = rcPos.top = rcPos.right = rcPos.bottom = 0;
-				break;
-			}
-		}
-		return rcPos;
-	}
-
-	LPCTSTR GetWindowClassName() const {
-	  return _T("WkeWebbrowserWnd");
-	}
-
-	void OnFinalMessage(HWND hWnd) {
-		if( m_hBkBrush != NULL ) ::DeleteObject(m_hBkBrush);
-		if( m_pOwner->GetManager()->IsLayered() ) {
-			//m_pOwner->GetManager()->RemovePaintChildWnd(hWnd);
-		} 
-	}
-
-	//LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
-	//LRESULT OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
- 
-protected:
-	CControlUI* m_pOwner;
-	HBRUSH m_hBkBrush;
-	bool m_bInit;
-};
-
+/*
 typedef void(*SetInternVisibleCallback)(LPVOID, bool);
 typedef void(*SetPosCallback)(LPVOID, RECT, bool);
 typedef void(*DoPaintCallback)(LPVOID, HDC, const RECT&, bool&);
@@ -326,31 +270,22 @@ protected:
     SetInternVisibleCallback m_SetInternVisible;
 	SetPosCallback m_SetPos;
 	DoPaintCallback m_DoPaint;
-	CWkeWebbrowserWnd* m_WkeWindow;
 public:
       CWkeWebbrowserUI():
 	    m_Self(NULL),
 		m_DoEvent(NULL),
 		m_SetInternVisible(NULL),
 		m_SetPos(NULL){
-	      //m_WkeWindow = new CWkeWebbrowserWnd;
-		  //m_WkeWindow->Init(this);
-	  }
-
-	  ~CWkeWebbrowserUI() {
-		  //delete m_WkeWindow;
 	  }
 
 	  void SetInternVisible(bool bVisible = true) {
            CControlUI::SetInternVisible(bVisible);
-		   ::ShowWindow(m_WkeWindow->GetHWND(), bVisible);
 		   if(m_SetInternVisible) 
 			   m_SetInternVisible(m_Self, bVisible);
       }
 	  
 	  void SetPos(RECT rc, bool bNeedInvalidate) {
            CControlUI::SetPos(rc, bNeedInvalidate);
-		   ::SetWindowPos(m_WkeWindow->GetHWND(), NULL, rc.left, rc.top, rc.right-rc.left, rc.bottom-rc.top, SWP_NOREDRAW);
 		   if(m_SetPos)
 			   m_SetPos(m_Self, rc, bNeedInvalidate);
       }
@@ -387,7 +322,7 @@ public:
 	void SetDelphiSelf(LPVOID ASelf) { m_Self = ASelf; }
 	void SetDoEventCallback(DoEventCallBack ACallback) { m_DoEvent = ACallback; }
 	void SetDoPaintCallback(DoPaintCallback ACallback) { m_DoPaint = ACallback; }
-};
+};*/
 
 //================================CStdStringPtrMap============================
 
@@ -5710,9 +5645,13 @@ DIRECTUILIB_API void Delphi_NativeControlUI_SetText(CNativeControlUI* handle ,LP
     handle->SetText(pstrText);
 }
 
+DIRECTUILIB_API void Delphi_NativeControlUI_SetNativeHandle(CNativeControlUI* handle, HWND hWd) {
+	handle->SetNativeHandle(hWd);
+}
+
 
 //================================CWkeWebbrowserUI============================
-
+/*
 DIRECTUILIB_API CWkeWebbrowserUI* Delphi_WkeWebbrowserUI_CppCreate() {
     return new CWkeWebbrowserUI();
 }
@@ -5740,3 +5679,4 @@ DIRECTUILIB_API void Delphi_WkeWebbrowserUI_SetDoEventCallback(CWkeWebbrowserUI*
 DIRECTUILIB_API void Delphi_WkeWebbrowserUI_SetDoPaintCallback(CWkeWebbrowserUI* handle ,DoPaintCallback ACallback) {
     handle->SetDoPaintCallback(ACallback);
 }
+*/
