@@ -18,6 +18,10 @@ uses
 type
   TWkeBrowserWindow = class(TDuiWindowImplBase)
   private
+    FEdtURL: CEditUI;
+    FBtnGo: CButtonUI;
+    FTitle: CLabelUI;
+  private
     FWkeWebbrowser: TWkeWebbrowser;
     procedure OnTitleChanged(Sender: TObject; const ATitle: string);
     procedure OnURLChanged(Sender: TObject; const AURL: string);
@@ -84,15 +88,15 @@ end;
 procedure TWkeBrowserWindow.DoInitWindow;
 begin
   inherited;
-
+  FEdtURL := CEditUI(FindControl('edturl'));
+  FBtnGo := CButtonUI(FindControl('btngo'));
+  FTitle := CLabelUI(FindControl('title'));
   FWkeWebbrowser.InitWkeWebBrowser(FindControl('webbrowser'));
   FWkeWebbrowser.UserAgent := 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36';
 
   //FWkeWebbrowser.Navigate('http://www.baidu.com');
 //  FWkeWebbrowser.Navigate('http://www.oschina.net');
   FWkeWebbrowser.LoadFile('skin\testhtml.html');
-
-
 end;
 
 procedure TWkeBrowserWindow.DoNotify(var Msg: TNotifyUI);
@@ -101,7 +105,17 @@ begin
   if Msg.sType = DUI_MSGTYPE_CLICK then
   begin
     if Msg.pSender.Name = 'closebtn' then
-      DuiApplication.Terminate;
+      DuiApplication.Terminate
+    else if Msg.pSender = FBtnGo then
+    begin
+      Writeln(FEdtURL.Text);
+      if FEdtURL.Text <> '' then
+        FWkeWebbrowser.Load(FEdtURL.Text);
+    end;
+  end else if Msg.sType = DUI_MSGTYPE_RETURN then
+  begin
+    if FEdtURL.Text <> '' then
+      FWkeWebbrowser.Load(FEdtURL.Text);
   end;
 end;
 
@@ -114,11 +128,13 @@ procedure TWkeBrowserWindow.OnTitleChanged(Sender: TObject;
   const ATitle: string);
 begin
   Writeln('title=', ATitle);
+  FTitle.Text := ATitle;
 end;
 
 procedure TWkeBrowserWindow.OnURLChanged(Sender: TObject; const AURL: string);
 begin
   Writeln('url=', AURL);
+  FEdtURL.Text := AURL;
 end;
 
 var
