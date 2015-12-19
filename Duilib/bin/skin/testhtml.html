@@ -1,0 +1,17 @@
+﻿<html>
+<head>
+<meta charset="utf8" />
+<title>测试wke</title>
+<script language="javascript">
+  function test() {
+    var obj = document.getElementById("testtext");
+    if(obj != null) 
+      obj.value =  jsMessageBox("消息内容", "标题");
+  }
+</script>
+</head>
+<body>
+<input type="button" name="testbtn" value="测试消息框" onclick="test();"/>
+<input type="text" id="testtext" value="" /> 
+</body>
+</html>
