@@ -397,10 +397,15 @@ type
   TWkeWebView = wkeWebView;
 
 
-// #define JS_CALL __fastcall
-//typedef jsValue (JS_CALL *jsNativeFunction) (jsExecState es);
-  jsNativeFunction = function(es: jsExecState): jsValue;
-
+  // #define JS_CALL __fastcall
+  //typedef jsValue (JS_CALL *jsNativeFunction) (jsExecState es);
+  // 这里有两种写法，按照vc __fastcall的约定与delphi register约定的不一样
+ {$IFDEF UseVcFastCall}
+    jsNativeFunction = function(es: jsExecState): jsValue;
+ {$ELSE}
+     // 前两个参数用来占位用
+    jsNativeFunction = function(p1, p2, es: jsExecState): jsValue;
+ {$ENDIF}
 
   JScript = class
   public
@@ -630,8 +635,23 @@ procedure jsSetGlobal(es: jsExecState; prop: PAnsiChar; v: jsValue); cdecl;
 procedure jsGC; cdecl;
 
 
+{$IFDEF UseVcFastCall}
+   procedure ProcessVcFastCall;
+{$ENDIF UseVcFastCall}
+
 implementation
 
+{$IFDEF UseVcFastCall}
+   // 必须放在函数开始的第一行位置，否则会破坏ecx寄存器
+   procedure ProcessVcFastCall;
+   asm
+   {$IFDEF DEBUG}
+     MOV [EBP-4], ECX
+   {$ELSE}
+     MOV EBX, ECX
+   {$ENDIF DEBUG}
+   end;
+{$ENDIF UseVcFastCall}
 
 { wkeWebView }
 
@@ -1342,7 +1362,6 @@ end;
 class function JScript.String_(es: jsExecState; const AStr: string): jsValue;
 begin
   Result := {$IFDEF UNICODE}jsStringW{$ELSE}jsString{$ENDIF}(es, PChar(AStr));
-
 end;
 
 //class function JScript.StringW(es: jsExecState; const str: Pwchar_t): jsValue;
