@@ -1421,9 +1421,6 @@ var
 
 begin
   try
-    {$IFNDEF UseLowVer}
-    ReportMemoryLeaksOnShutdown := True;
-    {$ENDIF}
 
     hInstRich := LoadLibrary('Riched20.dll');
     CoInitialize(nil);
