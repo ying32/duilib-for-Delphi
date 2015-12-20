@@ -13,8 +13,8 @@
                     <Button name="closebtn" tooltip="关闭" float="true" pos="115,0,0,0" width="25" height="18" normalimage="file=&apos;titlebuttonclose.png&apos; source=&apos;0,0,32,18&apos;" hotimage="file=&apos;titlebuttonclose.png&apos; source=&apos;0,18,32,36&apos;" pushedimage="file=&apos;titlebuttonclose.png&apos; source=&apos;0,54,32,72&apos;" />
                 </VerticalLayout>
             </HorizontalLayout>
-            <HorizontalLayout width="322" height="42">
-                <VerticalLayout width="197" height="25" padding="25,10,75,10" bkimage="file=&apos;searchboxnormal.png&apos; corner=&apos;8,2,8,2&apos;">
+            <HorizontalLayout height="42">
+                <VerticalLayout width="272"height="25" padding="25,10,75,10" bkimage="file=&apos;searchboxnormal.png&apos; corner=&apos;8,2,8,2&apos;">
                     <RichEdit name="edt_Search" menu="true" text="搜索应用" float="true" pos="8,6,0,0" width="240" height="23" multiline="false" vscrollbar="false" autovscroll="false" rich="true" readonly="false" textcolor="#FF94AAB5" />
                     <Button name="btn_Search" tooltip="搜索" float="true" pos="252,6,0,0" width="14" height="14" normalimage="file=&apos;search.png&apos; source=&apos;0,0,14,14&apos;" hotimage="file=&apos;search.png&apos; source=&apos;0,14,14,28&apos;" pushedimage="file=&apos;search.png&apos; source=&apos;0,42,14,56&apos;" />
                 </VerticalLayout>
