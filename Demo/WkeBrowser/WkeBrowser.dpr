@@ -2,6 +2,8 @@ program WkeBrowser;
 
 {$APPTYPE CONSOLE}
 
+{$I DDuilib.inc}
+
 {$R *.res}
 
 uses
@@ -38,17 +40,33 @@ type
 
 { TWkeBrowserWindow }
 
+
+
+{$IFDEF UseVcFastCall}
 function JsMessageBox(es: jsExecState): JsValue;
+{$ELSE}
+function JsMessageBox(p1, p2, es: jsExecState): JsValue;
+{$ENDIF}
 begin
-  Writeln(jsArgCount(es));
+  {$IFDEF UseVcFastCall}
+    ProcessVcFastCall;
+  {$ENDIF}
+
   MessageBox(0, PChar(JScript.ToTempString(es, JScript.Arg(es, 0))),
                 PChar(JScript.ToTempString(es, JScript.Arg(es, 1))),
                 0);
   Result := JScript.String_(es, '这是一个返回值测试');
 end;
 
+{$IFDEF UseVcFastCall}
 function JsFunc2(es: jsExecState): jsValue;
+{$ELSE}
+function JsFunc2(p1, p2, es: jsExecState): jsValue;
+{$ENDIF}
 begin
+  {$IFDEF UseVcFastCall}
+     ProcessVcFastCall;
+  {$ENDIF}
   Result := JScript.Arg(es, 0);
 end;
 
@@ -60,7 +78,7 @@ begin
   FWkeWebbrowser.OnURLChanged := OnURLChanged;
   FWkeWebbrowser.OnDocumentReady := OnDocumentReady;
   CreateWindow(0, 'wke浏览器', UI_WNDSTYLE_FRAME, WS_EX_WINDOWEDGE);
-
+                            //jsMessageBox
   JScript.BindFunction('jsMessageBox', JsMessageBox, 2);
   JScript.BindFunction('JsFunc2', JsFunc2, 1);
 end;
@@ -139,6 +157,9 @@ end;
 
 var
   WkeBrowserWindow: TWkeBrowserWindow;
+
+exports
+  JsMessageBox;
 
 begin
   try

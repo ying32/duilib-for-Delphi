@@ -33,4 +33,8 @@
   {$ENDIF}
 {$ENDIF}
 
+// 因vc中fastcall与delphi中register有不同处，大至为
+// delphi使用  eax, edx, ecx　作为前三个参数
+// vc使用 ecx edx作为前两个参数
+{$DEFINE UseVcFastCall}
 
