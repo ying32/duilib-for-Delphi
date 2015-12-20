@@ -2,6 +2,8 @@ program webbrowser;
 
 {$APPTYPE CONSOLE}
 
+{$I DDuilib.inc}
+
 {$R *.res}
 
 uses
@@ -39,6 +41,7 @@ procedure TWebbrowserWindow.DoInitWindow;
 var
   pActiveXUI: CActiveXUI;
   pWebBrowser: IWebBrowser2;
+  Flags, TargetFrameName, PostData, Headers: OleVariant;
 begin
   inherited;
   pActiveXUI := CActiveXUI(FindControl('ie'));
@@ -46,14 +49,20 @@ begin
   begin
     pActiveXUI.GetControl(IID_IWebBrowser2, pWebBrowser);
     if pWebBrowser <> nil then
-      pWebBrowser.Navigate('http://git.oschina.net/ying32/Duilib-for-Delphi', NULL, NULL, NULL, NULL);
+    begin
+      Flags := NULL;
+      TargetFrameName := NULL;
+      PostData := NULL;
+      Headers := NULL;
+      pWebBrowser.Navigate('http://git.oschina.net/ying32/Duilib-for-Delphi', Flags, TargetFrameName, PostData, Headers);
+    end;
   end;
 end;
 
 procedure TWebbrowserWindow.DoNotify(var Msg: TNotifyUI);
 begin
   inherited;
-  if Msg.sType = DUI_MSGTYPE_CLICK then
+  if Msg.sType{$IFDEF UseLowVer}.m_pstr{$ENDIF} = DUI_MSGTYPE_CLICK then
   begin
     if Msg.pSender.Name = 'closebtn' then
       DuiApplication.Terminate;
