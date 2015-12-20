@@ -119,11 +119,11 @@ type
 //{$IFNDEF UseLowVer}
 //  private
 //{$ENDIF}
-    m_pstr: LPTSTR;
+    m_pstr: LPTSTR{$IFNDEF UseLowVer} deprecated 'do not use'{$ENDIF};
     /// <summary>
     ///   这个不要用，使用　ToString
     /// </summary>
-    m_szBuffer: array[0..MAX_LOCAL_STRING_LEN] of Char;
+    m_szBuffer: array[0..MAX_LOCAL_STRING_LEN] of Char deprecated 'do not use';
 {$IFNDEF UseLowVer}
   public
     class operator Equal(const Lhs, Rhs : CDuiString) : Boolean; overload;
