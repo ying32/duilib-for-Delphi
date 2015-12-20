@@ -52,10 +52,10 @@ begin
     ProcessVcFastCall;
   {$ENDIF}
 
-  MessageBox(0, PChar(JScript.ToTempString(es, JScript.Arg(es, 0))),
-                PChar(JScript.ToTempString(es, JScript.Arg(es, 1))),
+  MessageBox(0, PChar(es.ToTempString(es.Arg(0))),
+                PChar(es.ToTempString(es.Arg(1))),
                 0);
-  Result := JScript.String_(es, '这是一个返回值测试');
+  Result := es.String_('这是一个返回值测试');
 end;
 
 {$IFDEF UseVcFastCall}
@@ -67,7 +67,7 @@ begin
   {$IFDEF UseVcFastCall}
      ProcessVcFastCall;
   {$ENDIF}
-  Result := JScript.Arg(es, 0);
+  Result := es.Arg(0);
 end;
 
 constructor TWkeBrowserWindow.Create;

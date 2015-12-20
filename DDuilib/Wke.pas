@@ -60,14 +60,15 @@ type
   wchar_t = WideChar;
   Pwchar_t = PWideChar;
 
-  jsExecState = Pointer;
+
   jsValue = int64;
   PjsValue = PInt64;
   wkeString = Pointer;
 
   wkeWebView = class;
+  JScript = class;
 
-
+  jsExecState = JScript;
 
 
   {$Z4+}
@@ -414,9 +415,9 @@ type
     class procedure BindFunction(const AName: string; fn: jsNativeFunction; AArgCount: LongInt);{$IFDEF SupportInline}inline;{$ENDIF}
     class procedure BindGetter(const AName: string; fn: jsNativeFunction); {$IFDEF SupportInline}inline;{$ENDIF}
     class procedure BindSetter(const AName: string; fn: jsNativeFunction); {$IFDEF SupportInline}inline;{$ENDIF}
-    class function ArgCount(es: jsExecState): Integer; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function ArgType(es: jsExecState; argIdx: Integer): jsType; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function Arg(es: jsExecState; argIdx: Integer): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function ArgCount: Integer; {$IFDEF SupportInline}inline;{$ENDIF}
+    function ArgType(argIdx: Integer): jsType; {$IFDEF SupportInline}inline;{$ENDIF}
+    function Arg(argIdx: Integer): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
     class function TypeOf(v: jsValue): jsType; {$IFDEF SupportInline}inline;{$ENDIF}
     class function IsNumber(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
     class function IsString(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
@@ -428,12 +429,11 @@ type
     class function IsArray(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
     class function IsTrue(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
     class function IsFalse(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function ToInt(es: jsExecState; v: jsValue): Integer; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function ToFloat(es: jsExecState; v: jsValue): Single; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function ToDouble(es: jsExecState; v: jsValue): Double; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function ToBoolean(es: jsExecState; v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function ToTempString(es: jsExecState; v: jsValue): string; {$IFDEF SupportInline}inline;{$ENDIF}
-//    class function ToTempStringW(es: jsExecState; v: jsValue): pwchar_t;
+    function ToInt(v: jsValue): Integer; {$IFDEF SupportInline}inline;{$ENDIF}
+    function ToFloat(v: jsValue): Single; {$IFDEF SupportInline}inline;{$ENDIF}
+    function ToDouble(v: jsValue): Double; {$IFDEF SupportInline}inline;{$ENDIF}
+    function ToBoolean(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
+    function ToTempString(v: jsValue): string; {$IFDEF SupportInline}inline;{$ENDIF}
     class function Int(n: Integer): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
     class function Float(f: Single): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
     class function Double(d: Double): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
@@ -442,27 +442,25 @@ type
     class function Null: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
     class function True_: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
     class function False_: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function String_(es: jsExecState; const AStr: string): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-//    class function StringW(es: jsExecState; const str: Pwchar_t): jsValue;
-    class function EmptyObject(es: jsExecState): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function EmptyArray(es: jsExecState): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function Object_(es: jsExecState; obj: PjsData): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function Function_(es: jsExecState; obj: PjsData): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function GetData(es: jsExecState; AObject: jsValue): jsData; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function Get(es: jsExecState; AObject: jsValue; const prop: string): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    class procedure Set_(es: jsExecState; AObject: jsValue; const prop: string; v: jsValue); {$IFDEF SupportInline}inline;{$ENDIF}
-    class function GetAt(es: jsExecState; AObject: jsValue; index: Integer): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    class procedure SetAt(es: jsExecState; AObject: jsValue; index: Integer; v: jsValue); {$IFDEF SupportInline}inline;{$ENDIF}
-    class function GetLength(es: jsExecState; AObject: jsValue): Integer; {$IFDEF SupportInline}inline;{$ENDIF}
-    class procedure SetLength(es: jsExecState; AObject: jsValue; length: Integer); {$IFDEF SupportInline}inline;{$ENDIF}
-    class function GlobalObject(es: jsExecState): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function GetWebView(es: jsExecState): wkeWebView; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function Eval(es: jsExecState; const AStr: string): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-//    class function EvalW(es: jsExecState; const str: Pwchar_t): jsValue;
-    class function Call(es: jsExecState; func: jsValue; thisObject: jsValue; args: PjsValue; argCount: Integer): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function CallGlobal(es: jsExecState; func: jsValue; args: PjsValue; argCount: Integer): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function GetGlobal(es: jsExecState; const prop: string): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    class procedure SetGlobal(es: jsExecState; const prop: string; v: jsValue); {$IFDEF SupportInline}inline;{$ENDIF}
+    function String_(const AStr: string): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function EmptyObject: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function EmptyArray: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function Object_(obj: PjsData): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function Function_(obj: PjsData): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function GetData(AObject: jsValue): jsData; {$IFDEF SupportInline}inline;{$ENDIF}
+    function Get(AObject: jsValue; const prop: string): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    procedure Set_(AObject: jsValue; const prop: string; v: jsValue); {$IFDEF SupportInline}inline;{$ENDIF}
+    function GetAt(AObject: jsValue; index: Integer): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    procedure SetAt(AObject: jsValue; index: Integer; v: jsValue); {$IFDEF SupportInline}inline;{$ENDIF}
+    function GetLength(AObject: jsValue): Integer; {$IFDEF SupportInline}inline;{$ENDIF}
+    procedure SetLength(AObject: jsValue; length: Integer); {$IFDEF SupportInline}inline;{$ENDIF}
+    function GlobalObject: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function GetWebView: wkeWebView; {$IFDEF SupportInline}inline;{$ENDIF}
+    function Eval(const AStr: string): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function Call(func: jsValue; thisObject: jsValue; args: PjsValue; argCount: Integer): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function CallGlobal(func: jsValue; args: PjsValue; argCount: Integer): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function GetGlobal(const prop: string): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    procedure SetGlobal(const prop: string; v: jsValue); {$IFDEF SupportInline}inline;{$ENDIF}
     class procedure GC; {$IFDEF SupportInline}inline;{$ENDIF}
   end;
 
@@ -1225,19 +1223,19 @@ begin
   jsBindSetter(PAnsiChar(AnsiString(AName)), fn);
 end;
 
-class function JScript.ArgCount(es: jsExecState): Integer;
+function JScript.ArgCount: Integer;
 begin
-  Result := jsArgCount(es);
+  Result := jsArgCount(Self);
 end;
 
-class function JScript.ArgType(es: jsExecState; argIdx: Integer): jsType;
+function JScript.ArgType(argIdx: Integer): jsType;
 begin
-  Result := jsArgType(es, argIdx);
+  Result := jsArgType(Self, argIdx);
 end;
 
-class function JScript.Arg(es: jsExecState; argIdx: Integer): jsValue;
+function JScript.Arg(argIdx: Integer): jsValue;
 begin
-  Result := jsArg(es, argIdx);
+  Result := jsArg(Self, argIdx);
 end;
 
 class function JScript.TypeOf(v: jsValue): jsType;
@@ -1295,35 +1293,30 @@ begin
   Result := jsIsFalse(v);
 end;
 
-class function JScript.ToInt(es: jsExecState; v: jsValue): Integer;
+function JScript.ToInt(v: jsValue): Integer;
 begin
-  Result := jsToInt(es, v);
+  Result := jsToInt(Self, v);
 end;
 
-class function JScript.ToFloat(es: jsExecState; v: jsValue): Single;
+function JScript.ToFloat(v: jsValue): Single;
 begin
-  Result := jsToFloat(es, v);
+  Result := jsToFloat(Self, v);
 end;
 
-class function JScript.ToDouble(es: jsExecState; v: jsValue): Double;
+function JScript.ToDouble(v: jsValue): Double;
 begin
-  Result := jsToDouble(es, v);
+  Result := jsToDouble(Self, v);
 end;
 
-class function JScript.ToBoolean(es: jsExecState; v: jsValue): Boolean;
+function JScript.ToBoolean(v: jsValue): Boolean;
 begin
-  Result := jsToBoolean(es, v);
+  Result := jsToBoolean(Self, v);
 end;
 
-class function JScript.ToTempString(es: jsExecState; v: jsValue): string;
+function JScript.ToTempString(v: jsValue): string;
 begin
-  Result := {$IFDEF UNICODE}jsToTempStringW(es, v){$ELSE}Utf8ToAnsi(jsToTempString(es, v)){$ENDIF};
+  Result := {$IFDEF UNICODE}jsToTempStringW(Self, v){$ELSE}Utf8ToAnsi(jsToTempString(Self, v)){$ENDIF};
 end;
-
-//class function JScript.ToTempStringW(es: jsExecState; v: jsValue): wchar_t;
-//begin
-//  Result := jsToTempStringW(es, v);
-//end;
 
 class function JScript.Int(n: Integer): jsValue;
 begin
@@ -1365,109 +1358,99 @@ begin
   Result := jsFalse;
 end;
 
-class function JScript.String_(es: jsExecState; const AStr: string): jsValue;
+function JScript.String_(const AStr: string): jsValue;
 begin
-  Result := {$IFDEF UNICODE}jsStringW(es, PChar(AStr)){$ELSE}jsString(es, PChar(AnsiToUtf8(AStr))){$ENDIF};
+  Result := {$IFDEF UNICODE}jsStringW(Self, PChar(AStr)){$ELSE}jsString(Self, PChar(AnsiToUtf8(AStr))){$ENDIF};
 end;
 
-//class function JScript.StringW(es: jsExecState; const str: Pwchar_t): jsValue;
-//begin
-//  Result := jsStringW(es, str);
-//end;
-
-class function JScript.EmptyObject(es: jsExecState): jsValue;
+function JScript.EmptyObject: jsValue;
 begin
-  Result := jsEmptyObject(es);
+  Result := jsEmptyObject(Self);
 end;
 
-class function JScript.EmptyArray(es: jsExecState): jsValue;
+function JScript.EmptyArray: jsValue;
 begin
-  Result := jsEmptyArray(es);
+  Result := jsEmptyArray(Self);
 end;
 
-class function JScript.Object_(es: jsExecState; obj: PjsData): jsValue;
+function JScript.Object_(obj: PjsData): jsValue;
 begin
-  Result := jsObject(es, obj);
+  Result := jsObject(Self, obj);
 end;
 
-class function JScript.Function_(es: jsExecState; obj: PjsData): jsValue;
+function JScript.Function_(obj: PjsData): jsValue;
 begin
-  Result := jsFunction(es, obj);
+  Result := jsFunction(Self, obj);
 end;
 
-class function JScript.GetData(es: jsExecState; AObject: jsValue): jsData;
+function JScript.GetData(AObject: jsValue): jsData;
 begin
-  Result := jsGetData(es, AObject);
+  Result := jsGetData(Self, AObject);
 end;
 
-class function JScript.Get(es: jsExecState; AObject: jsValue; const prop: string): jsValue;
+function JScript.Get(AObject: jsValue; const prop: string): jsValue;
 begin
-  Result := jsGet(es, AObject, PAnsiChar(AnsiString(prop)));
+  Result := jsGet(Self, AObject, PAnsiChar(AnsiString(prop)));
 end;
 
-class procedure JScript.Set_(es: jsExecState; AObject: jsValue; const prop: string; v: jsValue);
+procedure JScript.Set_(AObject: jsValue; const prop: string; v: jsValue);
 begin
-  jsSet(es, AObject, PAnsiChar(AnsiString(prop)), v);
+  jsSet(Self, AObject, PAnsiChar(AnsiString(prop)), v);
 end;
 
-class function JScript.GetAt(es: jsExecState; AObject: jsValue; index: Integer): jsValue;
+function JScript.GetAt(AObject: jsValue; index: Integer): jsValue;
 begin
-  Result := jsGetAt(es, AObject, index);
+  Result := jsGetAt(Self, AObject, index);
 end;
 
-class procedure JScript.SetAt(es: jsExecState; AObject: jsValue; index: Integer; v: jsValue);
+procedure JScript.SetAt(AObject: jsValue; index: Integer; v: jsValue);
 begin
-  jsSetAt(es, AObject, index, v);
+  jsSetAt(Self, AObject, index, v);
 end;
 
-class function JScript.GetLength(es: jsExecState; AObject: jsValue): Integer;
+function JScript.GetLength(AObject: jsValue): Integer;
 begin
-  Result := jsGetLength(es, AObject);
+  Result := jsGetLength(Self, AObject);
 end;
 
-class procedure JScript.SetLength(es: jsExecState; AObject: jsValue; length: Integer);
+procedure JScript.SetLength(AObject: jsValue; length: Integer);
 begin
-  jsSetLength(es, AObject, length);
+  jsSetLength(Self, AObject, length);
 end;
 
-class function JScript.GlobalObject(es: jsExecState): jsValue;
+function JScript.GlobalObject: jsValue;
 begin
-  Result := jsGlobalObject(es);
+  Result := jsGlobalObject(Self);
 end;
 
-class function JScript.GetWebView(es: jsExecState): wkeWebView;
+function JScript.GetWebView: wkeWebView;
 begin
-  Result := jsGetWebView(es);
+  Result := jsGetWebView(Self);
 end;
 
-class function JScript.Eval(es: jsExecState; const AStr: string): jsValue;
+function JScript.Eval(const AStr: string): jsValue;
 begin
-  Result := {$IFDEF UNICODE}jsEvalW(es, PChar(AStr)){$ELSE}jsEval(es, PChar(AnsiToUtf8(AStr))){$ENDIF};
+  Result := {$IFDEF UNICODE}jsEvalW(Self, PChar(AStr)){$ELSE}jsEval(Self, PChar(AnsiToUtf8(AStr))){$ENDIF};
 end;
 
-//class function JScript.EvalW(es: jsExecState; const str: Pwchar_t): jsValue;
-//begin
-//  Result := jsEvalW(es, str);
-//end;
-
-class function JScript.Call(es: jsExecState; func: jsValue; thisObject: jsValue; args: PjsValue; argCount: Integer): jsValue;
+function JScript.Call(func: jsValue; thisObject: jsValue; args: PjsValue; argCount: Integer): jsValue;
 begin
-  Result := jsCall(es, func, thisObject, args, argCount);
+  Result := jsCall(Self, func, thisObject, args, argCount);
 end;
 
-class function JScript.CallGlobal(es: jsExecState; func: jsValue; args: PjsValue; argCount: Integer): jsValue;
+function JScript.CallGlobal(func: jsValue; args: PjsValue; argCount: Integer): jsValue;
 begin
-  Result := jsCallGlobal(es, func, args, argCount);
+  Result := jsCallGlobal(Self, func, args, argCount);
 end;
 
-class function JScript.GetGlobal(es: jsExecState; const prop: string): jsValue;
+function JScript.GetGlobal(const prop: string): jsValue;
 begin
-  Result := jsGetGlobal(es, PAnsiChar(AnsiString(prop)));
+  Result := jsGetGlobal(Self, PAnsiChar(AnsiString(prop)));
 end;
 
-class procedure JScript.SetGlobal(es: jsExecState; const prop: string; v: jsValue);
+procedure JScript.SetGlobal(const prop: string; v: jsValue);
 begin
-  jsSetGlobal(es, PAnsiChar(AnsiString(prop)), v);
+  jsSetGlobal(Self, PAnsiChar(AnsiString(prop)), v);
 end;
 
 class procedure JScript.GC;
