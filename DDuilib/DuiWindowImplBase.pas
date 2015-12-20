@@ -167,7 +167,9 @@ type
   protected
     procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
   public
+  {$IFNDEF UseLowVer}
     procedure ShowBalloonTips(ATitle, AInfo: string; ATimeout: Integer = 1000);
+  {$ENDIF}
   public
     property Hint: string read FHint write SetHint;
     property Icon: HICON read FHIcon write SetHIcon;
@@ -734,7 +736,7 @@ begin
        FTrayData.Wnd := Handle;
        FTrayData.uID := Handle;
        FTrayData.cbSize := Sizeof(TNotifyIconData);
-       FTrayData.uFlags := NIF_MESSAGE or NIF_ICON or NIF_TIP or NIF_INFO;
+       FTrayData.uFlags := NIF_MESSAGE or NIF_ICON or NIF_TIP{$IFNDEF UseLowVer} or NIF_INFO{$ENDIF};
        FTrayData.ucallbackmessage := WM_TRAYICON_MESSAGE;
        // Ä¬ÈÏ¼ÓÔØMAINICON
        FTrayData.hIcon := LoadIcon(HInstance, 'MAINICON');
@@ -790,6 +792,7 @@ begin
   end;
 end;
 
+{$IFNDEF UseLowVer}
 procedure TDuiTrayWindowImplBase.ShowBalloonTips(ATitle, AInfo: string;
   ATimeout: Integer);
 begin
@@ -799,6 +802,7 @@ begin
   StrPLCopy(FTrayData.szInfo, AInfo, Length(FTrayData.szInfo) - 1);
   Shell_NotifyIcon(NIM_MODIFY, @FTrayData);
 end;
+{$ENDIF UseLowVer}
 {$ENDIF FPC}
 {$ENDIF MSWINDOWS}
 

@@ -116,9 +116,9 @@ type
   // 这里定义为一个记录， 因为他内部返回的并不是一个指针，so，字段大小不一样了，只能改record方式来做
   PCDuiString = ^CDuiString; // 这个有点牵强吧
   CDuiString = record
-{$IFNDEF UseLowVer}
-  private
-{$ENDIF}
+//{$IFNDEF UseLowVer}
+//  private
+//{$ENDIF}
     m_pstr: LPTSTR;
     /// <summary>
     ///   这个不要用，使用　ToString
