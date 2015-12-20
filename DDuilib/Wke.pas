@@ -438,8 +438,8 @@ type
     class function Boolean(b: Boolean): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
     class function Undefined: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
     class function Null: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function True: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function False: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    class function True_: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    class function False_: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
     class function String_(es: jsExecState; const AStr: string): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
 //    class function StringW(es: jsExecState; const str: Pwchar_t): jsValue;
     class function EmptyObject(es: jsExecState): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
@@ -1349,12 +1349,12 @@ begin
   Result := jsNull;
 end;
 
-class function JScript.True: jsValue;
+class function JScript.True_: jsValue;
 begin
   Result := jsTrue;
 end;
 
-class function JScript.False: jsValue;
+class function JScript.False_: jsValue;
 begin
   Result := jsFalse;
 end;
@@ -1642,9 +1642,9 @@ procedure jsGC; external wkedll name 'jsGC';
 
 
 {$IFDEF MSWINDOWS}
-{$IFNDEF FPC}
 {$WARN SYMBOL_PLATFORM OFF}
 // 屏掉浮点异常，暂时没办法的办法
+// FPC中竟然无效，还是我设置有问题
 var
   uSaved8087CW: Word;
 initialization
@@ -1652,7 +1652,6 @@ initialization
   Set8087CW($133F);
 finalization
   Set8087CW(uSaved8087CW);
-{$ENDIF}
 {$ENDIF}
 
 end.

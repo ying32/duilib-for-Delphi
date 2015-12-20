@@ -91,6 +91,8 @@ type
     PShort = ^SHORT;
     UIntPtr = Cardinal;
     LONG = Longint;
+  {$ELSE}
+    BOOL = LongBool;
   {$ENDIF FPC}
 {$ENDIF UseLowVer}
 
