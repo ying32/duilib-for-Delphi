@@ -36,5 +36,8 @@
 // 因vc中fastcall与delphi中register有不同处，大至为
 // delphi使用  eax, edx, ecx　作为前三个参数
 // vc使用 ecx edx作为前两个参数
-{$DEFINE UseVcFastCall}
+// fpc中又有不一样，所以才用通用方式吧
+{$IFNDEF FPC}
+  {$DEFINE UseVcFastCall}
+{$ENDIF}
 
