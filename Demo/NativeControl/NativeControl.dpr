@@ -9,7 +9,7 @@ uses
   Messages,
   Classes,
   SysUtils,
-  Vcl.StdCtrls,
+  StdCtrls,
   Duilib,
   DuiConst,
   DuiWindowImplBase;
@@ -45,7 +45,7 @@ end;
 function TDuiNativeControlTest.DoCreateControl(pstrStr: string): CControlUI;
 begin
   Result := nil;
-  if pstrStr.Equals('NativeControl') then
+  if pstrStr = 'NativeControl' then
   begin
     FButton := TButton.Create(nil);
     FButton.ParentWindow := Handle;

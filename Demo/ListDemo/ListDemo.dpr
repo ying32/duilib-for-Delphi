@@ -20,6 +20,11 @@ uses
   DuiListUI;
 
 type
+  {$IFDEF UseLowVer}
+  NaviveInt  = Integer;
+  NativeUInt = Cardinal;
+  {$ENDIF}
+  
   PListItem = ^TListItem;
   TListItem = record
     Col1: string;

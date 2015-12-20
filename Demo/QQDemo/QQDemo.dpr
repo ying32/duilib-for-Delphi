@@ -83,7 +83,7 @@ type
   PSkinChangedParam = ^TSkinChangedParam;
 
 var
-  SkinChangedList: TList<TDuiWindowImplBase>;
+  SkinChangedList: TList;
 
 procedure AddSkinChangedWindow(AWindow: TDuiWindowImplBase); forward;
 
@@ -94,7 +94,7 @@ type
 
   TXGuiFoundation = class(TDuiWindowImplBase)
   private
-    FFirendList: TList<TFriendListItemInfo>;
+    FFirendList: array of TFriendListItemInfo;
     FFirned: TFirendList;
     FMySelfInfo: TFriendListItemInfo;
     FBKImageIndex: Integer;
@@ -200,7 +200,7 @@ type
 constructor TXGuiFoundation.Create;
 begin
   inherited Create('main_frame.xml', '\skin\QQRes\', UILIB_FILE);
-  FFirendList := TList<TFriendListItemInfo>.Create;
+  SetLength(FFirendList, 0);
   CreateWindow(0, 'QQ2010', UI_WNDSTYLE_FRAME, WS_EX_STATICEDGE or WS_EX_APPWINDOW, 0, 0, 600, 800);
 end;
 
@@ -208,19 +208,21 @@ destructor TXGuiFoundation.Destroy;
 begin
   if FFirned <> nil then
     FFirned.Free;
-  FFirendList.Free;
+
+  SetLength(FFirendList, 0);
   PostQuitMessage(0);
   inherited;
 end;
 
 function TXGuiFoundation.DoCreateControl(pstrStr: string): CControlUI;
 begin
-  if pstrStr.Equals('FriendList') then
+  if pstrStr = 'FriendList' then
   begin
     if FFirned = nil then
       FFirned := TFirendList.Create(PaintManagerUI);
     Result := FFirned.ControlUI;
-  end else Result := inherited DoCreateControl(pstrStr);
+  end
+  else Result := inherited DoCreateControl(pstrStr);
 end;
 
 procedure TXGuiFoundation.DoFinalMessage(hWd: HWND);
@@ -229,7 +231,6 @@ begin
   PostQuitMessage(0);
 end;
 
-{$REGION 'DoNotify'}
 procedure TXGuiFoundation.DoNotify(var msg: TNotifyUI);
 var
   left_main_pannel, hide_left_main_pannel, show_left_main_pannel: CControlUI;
@@ -243,18 +244,19 @@ var
 //  pFriendListItem: CListContainerElementUI;
 //  pOperatorPannel: CContainerUI;
   rcWindow: TRect;
+  i: Integer;
 begin
   inherited;
 
   LCtlName := msg.pSender.Name;
-  LType := Msg.sType;
-  if LType.Equals(DUI_MSGTYPE_WINDOWINIT) then
+  LType := Msg.sType{$IFDEF UseLowVer}.m_pstr{$ENDIF};
+  if LType = DUI_MSGTYPE_WINDOWINIT then
   begin
     OnPrepare(msg);
   end
-  else if SameStr(LType, DUI_MSGTYPE_KILLFOCUS) then
+  else if SameText(LType, DUI_MSGTYPE_KILLFOCUS) then
   begin
-    if SameStr(LCtlName, 'signature') then
+    if SameText(LCtlName, 'signature') then
     begin
       msg.pSender.Hide;
       signature_tip := FindControl('signaturetip');
@@ -266,7 +268,7 @@ begin
         signature_tip.Show;
       end;
     end
-    else if SameStr(LCtlName, 'search_edit') then
+    else if SameText(LCtlName, 'search_edit') then
     begin
       msg.pSender.Hide;
       search_tip := FindControl('search_tip');
@@ -279,17 +281,17 @@ begin
       end;
     end;
   end
-  else if SameStr(LType, DUI_MSGTYPE_CLICK) then
+  else if SameText(LType, DUI_MSGTYPE_CLICK) then
   begin
-    if SameStr(LCtlName, kCloseButtonControlName) then
+    if SameText(LCtlName, kCloseButtonControlName) then
       Close
-    else if SameStr(LCtlName, kMinButtonControlName) then
+    else if SameText(LCtlName, kMinButtonControlName) then
       Minimize
-    else if SameStr(LCtlName, kMaxButtonControlName) then
+    else if SameText(LCtlName, kMaxButtonControlName) then
       Maximize
-    else if SameStr(LCtlName, kRestoreButtonControlName) then
+    else if SameText(LCtlName, kRestoreButtonControlName) then
       Restore
-    else if SameStr(LCtlName, 'btnleft') then
+    else if SameText(LCtlName, 'btnleft') then
     begin
       left_main_pannel := FindControl('LeftMainPanel');
       hide_left_main_pannel := FindControl('btnleft');
@@ -301,7 +303,7 @@ begin
         show_left_main_pannel.Show;
       end;
     end
-    else if SameStr(LCtlName, 'btnright') then
+    else if SameText(LCtlName, 'btnright') then
     begin
       left_main_pannel := FindControl('LeftMainPanel');
       hide_left_main_pannel := FindControl('btnleft');
@@ -313,7 +315,7 @@ begin
         show_left_main_pannel.Hide;
       end;
     end
-    else if SameStr(LCtlName, 'signaturetip') then
+    else if SameText(LCtlName, 'signaturetip') then
     begin
       msg.pSender.Hide;
       signature := FindControl('signature');
@@ -323,7 +325,7 @@ begin
         signature.Show;
       end;
     end
-    else if LCtlName.Equals('search_tip') then
+    else if LCtlName = 'search_tip' then
     begin
       msg.pSender.Hide;
       search_edit := FindControl('search_edit');
@@ -333,7 +335,7 @@ begin
         search_edit.Show;
       end;
     end
-    else if LCtlName.Equals(kChangeBkSkinControlName) then
+    else if LCtlName = kChangeBkSkinControlName then
     begin
       background := FindControl(kBackgroundControlName);
       if background <> nil then
@@ -355,17 +357,17 @@ begin
       end;
       SendSkinChanged(skinparam);
     end
-    else if LCtlName.Equals(kChangeColorSkinControlName) then
+    else if LCtlName = kChangeColorSkinControlName then
     begin
       GetWindowRect(Handle, rcWindow);
       rcWindow.top := rcWindow.top + msg.pSender.GetPos.bottom;
       TColorSkinWindow.Create(Self, rcWindow);
     end;
   end
-  else if SameStr(LType, DUI_MSGTYPE_SELECTCHANGED) then
+  else if SameText(LType, DUI_MSGTYPE_SELECTCHANGED) then
   begin
     pTabControl := CTabLayoutUI(FindControl(kTabControlName));
-    if LCtlName.Equals(kFriendButtonControlName) then
+    if LCtlName = kFriendButtonControlName then
     begin
       if (pTabControl <> nil) and (pTabControl.SelectIndex <> 0) then
       begin
@@ -373,7 +375,7 @@ begin
         UpdateFriendsList();
       end;
     end
-    else if LCtlName.Equals(kGroupButtonControlName) then
+    else if LCtlName = kGroupButtonControlName then
     begin
       if (pTabControl <> nil) and (pTabControl.SelectIndex <> 1) then
       begin
@@ -382,7 +384,7 @@ begin
 				//UpdateGroupsList();
       end;
     end
-    else if LCtlName.Equals(kMicroBlogButtonControlName) then
+    else if LCtlName = kMicroBlogButtonControlName then
     begin
       if (pTabControl <> nil) and (pTabControl.SelectIndex <> 2) then
       begin
@@ -391,7 +393,7 @@ begin
       end;
     end;
   end
-  else if SameStr(LType, DUI_MSGTYPE_ITEMACTIVATE) then
+  else if SameText(LType, DUI_MSGTYPE_ITEMACTIVATE) then
   begin
 
     pTabControl := CTabLayoutUI(FindControl(kTabControlName));
@@ -399,17 +401,18 @@ begin
     begin
       if pTabControl.SelectIndex = 0 then
       begin
-        if (FFirned.this <> nil) and (FFirned.this.GetItemIndex(msg.pSender) <> -1) then
+        if (FFirned.this <> nil) and (CDelphi_ListUI(FFirned.this).GetItemIndex(msg.pSender) <> -1) then
         begin
-          if msg.pSender.ClassName.Equals(DUI_CTR_LISTCONTAINERELEMENT_UI) then
+          if msg.pSender.ClassName = DUI_CTR_LISTCONTAINERELEMENT_UI then
           begin
             node := TNode(Pointer(msg.pSender.Tag));
             background := FindControl(kBackgroundControlName);
             if (not FFirned.CanExpand(node)) and (background <> nil) then
             begin
               FillChar(friend_info, SizeOf(friend_info), #0);
-              for citer in FFirendList do
+              for i := Low(FFirendList) to High(FFirendList) do
               begin
+                citer := FFirendList[i];
                 if citer.id = node.NodeData.Value then
                 begin
                   friend_info := citer;
@@ -433,16 +436,16 @@ begin
       end;
     end;
   end
-  else if SameStr(LType, DUI_MSGTYPE_ITEMCLICK) then
+  else if SameText(LType, DUI_MSGTYPE_ITEMCLICK) then
   begin
     pTabControl := CTabLayoutUI(FindControl(kTabControlName));
     if pTabControl <> nil then
     begin
       if pTabControl.GetCurSel() = 0 then
-      begin
-        if (FFirned.this <> nil) and (FFirned.this.GetItemIndex(msg.pSender) <> -1) then
+      begin                    
+        if (FFirned.this <> nil) and (CDelphi_ListUI(FFirned.this).GetItemIndex(msg.pSender) <> -1) then
         begin
-          if msg.pSender.ClassName.Equals(DUI_CTR_LISTCONTAINERELEMENT_UI) then
+          if msg.pSender.ClassName = DUI_CTR_LISTCONTAINERELEMENT_UI then
           begin
             node := TNode(Pointer(msg.pSender.Tag));
             if FFirned.CanExpand(node) then
@@ -466,14 +469,13 @@ begin
     end;
 
   end
-  else if SameStr(LType, DUI_MSGTYPE_ITEMSELECT) then
+  else if SameText(LType, DUI_MSGTYPE_ITEMSELECT) then
   begin
     // firend list
     if msg.pSender = FFirned.this then
       FFirned.DoSelectItem;
   end;
 end;
-{$ENDREGION 'DoNotify'}
 
 procedure TXGuiFoundation.OnPrepare(var Msg: TNotifyUI);
 var
@@ -510,8 +512,7 @@ var
 begin
   if FindControl('friends') <> nil then
   begin
-    if FFirendList.Count > 0 then
-      FFirendList.Clear;
+    SetLength(FFirendList, 0);
     if FFirned.Count > 0 then
       FFirned.RemoveAll;
 
@@ -522,7 +523,8 @@ begin
     item.Empty := False;
     item.NickName := '我的好友';
     root_parent := FFirned.AddNode(item, nil);
-    FFirendList.Add(item);
+    SetLength(FFirendList, Length(FFirendList)+1);
+    FFirendList[High(FFirendList)] := item;
 
     item.Id := '1';
     item.Folder := False;
@@ -530,7 +532,8 @@ begin
     item.NickName := 'ying32';
     item.Description := '1444386932@qq.com';
     FFirned.AddNode(item, root_parent);
-    FFirendList.Add(item);
+    SetLength(FFirendList, Length(FFirendList)+1);
+    FFirendList[High(FFirendList)] := item;
 
     FMySelfInfo := item;
 
@@ -540,7 +543,8 @@ begin
     item.NickName := 'achellies';
     item.Description := 'achellies@hotmail.com';
     FFirned.AddNode(item, root_parent);
-    FFirendList.Add(item);
+    SetLength(FFirendList, Length(FFirendList)+1);
+    FFirendList[High(FFirendList)] := item;;
 
     item.Id := '2';
     item.Folder := False;
@@ -548,7 +552,8 @@ begin
     item.NickName := 'wangchyz';
     item.Description := 'wangchyz@gmail.com';
     FFirned.AddNode(item, root_parent);
-    FFirendList.Add(item);
+    SetLength(FFirendList, Length(FFirendList)+1);
+    FFirendList[High(FFirendList)] := item;
 
     for I := 1 to 5 do
     begin
@@ -558,7 +563,8 @@ begin
       item.NickName := 'duilib';
       item.Description := 'www.duilib.com';
       FFirned.AddNode(item, root_parent);
-      FFirendList.Add(item);
+      SetLength(FFirendList, Length(FFirendList)+1);
+      FFirendList[High(FFirendList)] := item;
     end;
 
     item.Id := '3';
@@ -566,7 +572,8 @@ begin
     item.Empty := False;
     item.NickName := '企业好友';
     root_parent := FFirned.AddNode(item, nil);
-    FFirendList.Add(item);
+    SetLength(FFirendList, Length(FFirendList)+1);
+    FFirendList[High(FFirendList)] := item;
 
     item.Id := '4';
     item.Folder := False;
@@ -574,14 +581,16 @@ begin
     item.NickName := '腾讯企业QQ的官方展示号';
     item.Description := '';
     FFirned.AddNode(item, root_parent);
-    FFirendList.Add(item);
+    SetLength(FFirendList, Length(FFirendList)+1);
+    FFirendList[High(FFirendList)] := item;
 
     item.Id := '5';
     item.Folder := True;
     item.Empty := False;
     item.NickName := '陌生人';
     root_parent := FFirned.AddNode(item, nil);
-    FFirendList.Add(item);
+    SetLength(FFirendList, Length(FFirendList)+1);
+    FFirendList[High(FFirendList)] := item;
 
     item.Id := '6';
     item.Folder := False;
@@ -589,14 +598,16 @@ begin
     item.NickName := '某人1';
     item.Description := '恨恨恨...';
     FFirned.AddNode(item, root_parent);
-    FFirendList.Add(item);
+    SetLength(FFirendList, Length(FFirendList)+1);
+    FFirendList[High(FFirendList)] := item;
 
     item.Id := '7';
     item.Folder := True;
     item.Empty := False;
     item.NickName := '黑名单';
     FFirned.AddNode(item, nil);
-    FFirendList.Add(item);
+    SetLength(FFirendList, Length(FFirendList)+1);
+    FFirendList[High(FFirendList)] := item;
   end;
 end;
 
@@ -636,7 +647,7 @@ begin
     LControl := FindControl(LPoint);
     if LControl <> nil then
     begin
-      if LControl.ClassName.Equals('RichEditUI') then
+      if LControl.ClassName = 'RichEditUI' then
       begin
         PaintManagerUI.SendNotify(LControl, 'RichPopupMenu');
       end;
@@ -654,44 +665,44 @@ var
 begin
   inherited;
   LCtlName := msg.pSender.Name;
-  LType := Msg.sType;
+  LType := Msg.sType{$IFDEF UseLowVer}.m_pstr{$ENDIF};
 
   OutputDebugString(PChar(Format('Type=%s, Name=%s', [LType, LCtlName])));
 
-  if LType.Equals(DUI_MSGTYPE_WINDOWINIT) then
+  if LType = DUI_MSGTYPE_WINDOWINIT then
     OnPrepare(msg)
-  else if SameStr(LType, DUI_MSGTYPE_CLICK) then
+  else if SameText(LType, DUI_MSGTYPE_CLICK) then
   begin
-    if SameStr(LCtlName, kCloseButtonControlName) then
+    if SameText(LCtlName, kCloseButtonControlName) then
       Close
-    else if SameStr(LCtlName, kMinButtonControlName) then
+    else if SameText(LCtlName, kMinButtonControlName) then
       Minimize
-    else if SameStr(LCtlName, kMaxButtonControlName) then
+    else if SameText(LCtlName, kMaxButtonControlName) then
       Maximize
-    else if SameStr(LCtlName, kRestoreButtonControlName) then
+    else if SameText(LCtlName, kRestoreButtonControlName) then
       Restore
-    else if LCtlName.Equals(kSendButtonControlName) then
+    else if LCtlName = (kSendButtonControlName) then
       SendMsg
-    else if LCtlName.Equals(kFontButtonControlName) then
+    else if LCtlName = (kFontButtonControlName) then
     begin
       pFontbar := CContainerUI(FindControl(kFontbarControlName));
       if pFontbar <> nil then
         pFontbar.Visible := not pFontbar.Visible;
     end
-    else if LCtlName.Equals(kEmotionButtonControlName) then
+    else if LCtlName = (kEmotionButtonControlName) then
     begin
       GetWindowRect(Handle, LWindowR);
       TEmotionList.Create(Self, Point(LWindowR.Left + Msg.pSender.GetPos.Left, LWindowR.Top + Msg.pSender.GetPos.Top));
     end;
   end
-  else if LType.Equals(DUI_MSGTYPE_RETURN) then
+  else if LType = (DUI_MSGTYPE_RETURN) then
   begin
-    if LCtlName.Equals(kInputRichEditControlName) then
+    if LCtlName = (kInputRichEditControlName) then
       SendMsg;
   end
-  else if LType.Equals(DUI_MSGTYPE_ITEMSELECT) then
+  else if LType = (DUI_MSGTYPE_ITEMSELECT) then
   begin
-    if LCtlName.Equals(kFontTypeControlName) then
+    if LCtlName = (kFontTypeControlName) then
     begin
       font_type := CComboUI(msg.pSender);
       if font_type <> nil then
@@ -700,24 +711,24 @@ begin
         FontStyleChanged();
       end;
     end;
-  end else if LType.Equals('RichPopupMenu') or LType.Equals(DUI_MSGTYPE_MENU) then
+  end else if (LType = 'RichPopupMenu') or (LType = DUI_MSGTYPE_MENU) then
   begin
     OutputDebugString(PChar(Format('+++++++++++++++++++++RichPopupMenu, Name=%s', [LCtlName])));
     TRichEditSampleMenu.Create(Self);
-  end else if LType.Equals('RichEditPopupClick') then
+  end else if LType = 'RichEditPopupClick' then
   begin
     //LRichEdit := CRichEditUI(FindControl(kInputRichEditControlName));
     //if LRichEdit = nil then
     LRichEdit := CRichEditUI(FindControl(kViewRichEditControlName));
     if LRichEdit <> nil then
     begin
-      if LCtlName.Equals('menu_copy') then
+      if LCtlName = ('menu_copy') then
         LRichEdit.Copy
       else
-      if LCtlName.Equals('menu_cut') then
+      if LCtlName = ('menu_cut') then
         LRichEdit.Cut
       else
-      if LCtlName.Equals('menu_paste') then
+      if LCtlName = ('menu_paste') then
         LRichEdit.Paste;
     end;
   end;
@@ -776,7 +787,7 @@ begin
     background := FindControl(kBackgroundControlName);
     if background <> nil then
     begin
-      if not FBGImage.IsEmpty() then
+      if FBGImage <> '' then
         background.BkImage := Format('file=''%s'' corner=''600,200,1,1''', [FBGImage])
       else
         background.BkImage := '';
@@ -797,8 +808,8 @@ begin
   if pRichEdit = nil then
     Exit;
   pRichEdit.SetFocus();
-  sText := pRichEdit.GetTextRange(0, pRichEdit.GetTextLength);
-  if sText.IsEmpty then
+  sText := pRichEdit.GetTextRange(0, pRichEdit.GetTextLength){$IFDEF UseLowVer}.m_pstr{$ENDIF};
+  if sText = '' then
     Exit;
   pRichEdit.Text := '';
 
@@ -920,7 +931,7 @@ begin
   log_button := CButtonUI(FPaintManager.FindSubControlByName(pListElement, kLogoButtonControlName));
   if log_button <> nil then
   begin
-    if (not AItem.Folder) and (not AItem.Logo.IsEmpty) then
+    if (not AItem.Folder) and (AItem.Logo <> '') then
     begin
       log_button.SetNormalImage(PChar(AItem.Logo));
     end
@@ -959,7 +970,7 @@ begin
     nick_name.Text := html_text;
   end;
 
-  if (not AItem.Folder) and (not AItem.Description.IsEmpty) then
+  if (not AItem.Folder) and (AItem.Description <> '') then
   begin
     description := CLabelUI(FPaintManager.FindSubControlByName(pListElement, kDescriptionControlName));
     if description <> nil then
@@ -1037,7 +1048,7 @@ var
 begin
   if LastSelectIndex <> -1 then
   begin
-    pControl := this.GetItemAt(LastSelectIndex);
+    pControl := CDelphi_ListUI(this).GetItemAt(LastSelectIndex);
     if pControl <> nil then
     begin
       pFriendListItem := CListContainerElementUI(pControl);
@@ -1053,7 +1064,7 @@ begin
   end;
   if CurSel < 0 then
     Exit;
-  pControl := this.GetItemAt(CurSel);
+  pControl := CDelphi_ListUI(this).GetItemAt(CurSel);
   if pControl <> nil then
   begin
     pFriendListItem := CListContainerElementUI(pControl);
@@ -1091,7 +1102,10 @@ var
   I: Integer;
 begin
   if (node = nil) or (node = FRootNode) then
-    Exit(False);
+  begin
+    Result := False;
+    Exit;
+  end;
   for I := 0 to node.Count - 1 do
     RemoveNode(node.Childs[I]);
   Remove(node.NodeData.ListElment);
@@ -1140,8 +1154,8 @@ begin
   LEnd := node.LastChild;
   for I := LBegin.NodeData.ListElment.GetIndex to LEnd.NodeData.ListElment.GetIndex do
   begin
-    control := this.GetItemAt(i);
-    if control.ClassName.Equals(DUI_CTR_LISTCONTAINERELEMENT_UI) then
+    control := CDelphi_ListUI(this).GetItemAt(i);
+    if control.ClassName = (DUI_CTR_LISTCONTAINERELEMENT_UI) then
     begin
       if AVisible then
       begin
@@ -1164,9 +1178,13 @@ end;
 procedure SendSkinChanged;
 var
   LWindow: TDuiWindowImplBase;
+  i: Integer;
 begin
-  for LWindow in SkinChangedList do
+  for i := 0 to SkinChangedList.Count - 1 do
+  begin
+    LWindow := TDuiWindowImplBase(SkinChangedList[i]);
     LWindow.OnReceive(@p);
+  end;
 end;
 
 
@@ -1214,16 +1232,16 @@ var
   r, g, b: Byte;
   crColor: COLORREF;
 begin
-  LType := msg.sType;
+  LType := msg.sType{$IFDEF UseLowVer}.m_pstr{$ENDIF};
   LCtlName := msg.pSender.Name;
-  if LType.Equals(DUI_MSGTYPE_CLICK) then
+  if LType = (DUI_MSGTYPE_CLICK) then
   begin
     pTabControl := CTabLayoutUI(FindControl(kTabControlName));
     if pTabControl <> nil then
     begin
       if pTabControl.SelectIndex = 0 then
       begin
-        if LCtlName.contains('colour_') then
+        if Pos('colour_', LCtlName) <> 0 then
         begin
           AdjustColorSliderR := CSliderUI(FindControl(kAdjustColorSliderRControlName));
           AdjustColorSliderG := CSliderUI(FindControl(kAdjustColorSliderGControlName));
@@ -1244,7 +1262,7 @@ begin
       end;
     end;
   end
-  else if LType.Equals(DUI_MSGTYPE_VALUECHANGED) then
+  else if LType = (DUI_MSGTYPE_VALUECHANGED) then
   begin
     pTabControl := CTabLayoutUI(FindControl(kTabControlName));
     if pTabControl <> nil then
@@ -1256,7 +1274,9 @@ begin
         AdjustColorSliderB := CSliderUI(FindControl(kAdjustColorSliderBControlName));
         if (AdjustColorSliderR <> nil) and (AdjustColorSliderG <> nil) and (AdjustColorSliderB <> nil) then
         begin
-          if LCtlName.Equals(kAdjustColorSliderRControlName) or LCtlName.Equals(kAdjustColorSliderGControlName) or LCtlName.Equals(kAdjustColorSliderBControlName) then
+          if (LCtlName = kAdjustColorSliderRControlName) or
+            (LCtlName = kAdjustColorSliderGControlName) or
+            (LCtlName = kAdjustColorSliderBControlName) then
           begin
             r := AdjustColorSliderR.GetValue();
             g := AdjustColorSliderG.GetValue();
@@ -1271,17 +1291,17 @@ begin
       end;
     end;
   end
-  else if LType.Equals(DUI_MSGTYPE_SELECTCHANGED) then
+  else if LType = (DUI_MSGTYPE_SELECTCHANGED) then
   begin
     pTabControl := CTabLayoutUI(FindControl(kTabControlName));
     if pTabControl <> nil then
     begin
-      if LCtlName.Equals(kAdjustColorControlName) then
+      if LCtlName = (kAdjustColorControlName) then
       begin
         if pTabControl.SelectIndex <> 0 then
           pTabControl.SelectIndex := 0;
       end
-      else if LCtlName.Equals(kAdjustBkControlName) then
+      else if LCtlName = (kAdjustBkControlName) then
       begin
         if pTabControl.SelectIndex <> 1 then
           pTabControl.SelectIndex := 1;
@@ -1332,9 +1352,9 @@ var
   LType, LCtlName: string;
 begin
   inherited;
-  LType := Msg.sType;
+  LType := Msg.sType{$IFDEF UseLowVer}.m_pstr{$ENDIF};
   LCtlName := Msg.pSender.Name;
-  if LType.Equals(DUI_MSGTYPE_CLICK) then
+  if LType = (DUI_MSGTYPE_CLICK) then
   begin
 
   end;
@@ -1379,11 +1399,14 @@ begin
 end;
 
 procedure TRichEditSampleMenu.DoNotify(var Msg: TNotifyUI);
+var
+  LType: string;
 begin
   inherited;
-  if Msg.sType = 'itemselect' then
+  LType := Msg.sType{$IFDEF UseLowVer}.m_pstr{$ENDIF};
+  if LType = 'itemselect' then
     Close
-  else if Msg.sType = 'itemclick' then
+  else if LType = 'itemclick' then
   begin
     if Assigned(FChatDialog) then
       FChatDialog.PaintManagerUI.SendNotify(Msg.pSender, 'RichEditPopupClick');
@@ -1398,13 +1421,15 @@ var
 
 begin
   try
+    {$IFNDEF UseLowVer}
     ReportMemoryLeaksOnShutdown := True;
+    {$ENDIF}
 
     hInstRich := LoadLibrary('Riched20.dll');
     CoInitialize(nil);
     OleInitialize(nil);
 
-    SkinChangedList := TList<TDuiWindowImplBase>.Create;
+    SkinChangedList := TList.Create;
 
     DuiApplication.Initialize;
     XGuiFoundation := TXGuiFoundation.Create;
