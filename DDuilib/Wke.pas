@@ -700,11 +700,6 @@ begin
   Result := wkeCreateWebView;
 end;
 
-//class function wkeWebView.GetWebView(name: Pchar): wkeWebView;
-//begin
-//  Result := wkeGetWebView(name);
-//end;
-
 procedure wkeWebView.DestroyWebView;
 begin
   wkeDestroyWebView(Self);
@@ -732,67 +727,58 @@ end;
 
 procedure wkeWebView.SetUserAgent(const AUserAgent: string);
 begin
-  {$IFDEF UNICODE}wkeSetUserAgentW(Self, PChar(AUserAgent)){$ELSE}wkeSetUserAgent(Self, PChar(AnsiToUtf8(AUserAgent))){$ENDIF};
+{$IFDEF UNICODE}
+   wkeSetUserAgentW(Self, PChar(AUserAgent));
+{$ELSE}
+   wkeSetUserAgent(Self, PChar({$IFDEF FPC}AUserAgent{$ELSE}AnsiToUtf8(AUserAgent){$ENDIF}));
+{$ENDIF};
 end;
-
-//procedure wkeWebView.SetUserAgentW(userAgent: Pwchar_t);
-//begin
-//  wkeSetUserAgentW(Self, userAgent);
-//end;
 
 procedure wkeWebView.LoadURL(const AURL: string);
 begin
-  {$IFDEF UNICODE}wkeLoadURLW(Self, PChar(AURL)){$ELSE}wkeLoadURL(Self, PChar(AnsiToUtf8(AURL))){$ENDIF};
+{$IFDEF UNICODE}
+  wkeLoadURLW(Self, PChar(AURL));
+{$ELSE}
+  wkeLoadURL(Self, PChar({$IFDEF FPC}AURL{$ELSE}AnsiToUtf8(AURL){$ENDIF}));
+{$ENDIF};
 end;
-
-//procedure wkeWebView.LoadURLW(url: Pwchar_t);
-//begin
-//  wkeLoadURLW(Self, url);
-//end;
 
 procedure wkeWebView.PostURL(const AURL, APostData: string; PostLen: Integer);
 begin
-  {$IFDEF UNICODE}
-     wkePostURLW(Self, PChar(AURL), PAnsiChar(AnsiString(APostData)), PostLen);
-  {$ELSE}
-     wkePostURL(Self, PChar(AnsiToUtf8(AURL)), PAnsiChar(AnsiString(APostData)), PostLen);
-  {$ENDIF}
+{$IFDEF UNICODE}
+   wkePostURLW(Self, PChar(AURL), PAnsiChar(AnsiString(APostData)), PostLen);
+{$ELSE}
+   wkePostURL(Self, PChar({$IFDEF FPC}AURL{$ELSE}AnsiToUtf8(AURL){$ENDIF}),
+     PAnsiChar(AnsiString({$IFDEF FPC}Utf8ToAnsi(APostData){$ELSE}APostData{$ENDIF})), PostLen);
+{$ENDIF}
 end;
-
-//procedure wkeWebView.PostURLW(url: Pwchar_t; postData: Pchar; postLen: Integer);
-//begin
-//  wkePostURLW(Self, url, postData, postLen);
-//end;
 
 procedure wkeWebView.LoadHTML(const AHTML: string);
 begin
-  {$IFDEF UNICODE}wkeLoadHTMLW(Self, PChar(AHTML)){$ELSE}wkeLoadHTML(Self, PChar(AnsiToUtf8(AHTML))){$ENDIF};
+{$IFDEF UNICODE}
+  wkeLoadHTMLW(Self, PChar(AHTML));
+{$ELSE}
+  wkeLoadHTML(Self, PChar({$IFDEF FPC}AHTML{$ELSE}AnsiToUtf8(AHTML){$ENDIF}));
+{$ENDIF};
 end;
-
-//procedure wkeWebView.LoadHTMLW(html: Pwchar_t);
-//begin
-//  wkeLoadHTMLW(Self, html);
-//end;
 
 procedure wkeWebView.LoadFile(const AFileName: string);
 begin
-  {$IFDEF UNICODE}wkeLoadFileW(Self, PChar(AFileName)){$ELSE}wkeLoadFile(Self, PChar(AnsiToUtf8(AFileName))){$ENDIF};
+{$IFDEF UNICODE}
+  wkeLoadFileW(Self, PChar(AFileName));
+{$ELSE}
+  wkeLoadFile(Self, PChar({$IFDEF FPC}AFileName{$ELSE}AnsiToUtf8(AFileName){$ENDIF}));
+{$ENDIF};
 end;
-
-//procedure wkeWebView.LoadFileW(filename: Pwchar_t);
-//begin
-//  wkeLoadFileW(Self, filename);
-//end;
 
 procedure wkeWebView.Load(const AStr: string);
 begin
-  {$IFDEF UNICODE}wkeLoadW(Self, PChar(AStr)){$ELSE}wkeLoad(Self, PChar(AnsiToUTf8(AStr))){$ENDIF};
+{$IFDEF UNICODE}
+  wkeLoadW(Self, PChar(AStr))
+{$ELSE}
+  wkeLoad(Self, PChar({$IFDEF FPC}AStr{$ELSE}AnsiToUTf8(AStr){$ENDIF}))
+{$ENDIF};
 end;
-
-//procedure wkeWebView.LoadW(str: Pwchar_t);
-//begin
-//  wkeLoadW(Self, str);
-//end;
 
 //function wkeWebView.IsLoading: Boolean;
 //begin
@@ -831,13 +817,12 @@ end;
 
 function wkeWebView.GetTitle: string;
 begin
-  Result := {$IFDEF UNICODE}wkeGetTitleW(Self){$ELSE}Utf8ToAnsi(wkeGetTitle(Self)){$ENDIF};
+{$IFDEF UNICODE}
+  Result := wkeGetTitleW(Self);
+{$ELSE}
+  Result := {$IFDEF FPC}wkeGetTitle(Self){$ELSE}Utf8ToAnsi(wkeGetTitle(Self)){$ENDIF};
+{$ENDIF};
 end;
-
-//function wkeWebView.GetTitleW: pwchar_t;
-//begin
-//  Result := wkeGetTitleW(Self);
-//end;
 
 procedure wkeWebView.Resize(w: Integer; h: Integer);
 begin
@@ -949,14 +934,13 @@ begin
   wkeEditorDelete(Self);
 end;
 
-//function wkeWebView.GetCookieW: pwchar_t;
-//begin
-//  Result := wkeGetCookieW(Self);
-//end;
-
 function wkeWebView.GetCookie: string;
 begin
-  Result := {$IFDEF UNICODE}wkeGetCookieW(Self){$ELSE}Utf8ToAnsi(wkeGetCookie(Self)){$ENDIF};
+{$IFDEF UNICODE}
+  Result := wkeGetCookieW(Self);
+{$ELSE}
+  Result := {$IFDEF FPC}wkeGetCookie(Self){$ELSE}Utf8ToAnsi(wkeGetCookie(Self)){$ENDIF};
+{$ENDIF};
 end;
 
 procedure wkeWebView.SetCookieEnabled(enable: Boolean);
@@ -1026,13 +1010,12 @@ end;
 
 function wkeWebView.RunJS(const AScript: string): jsValue;
 begin
-  Result := {$IFDEF UNICODE}wkeRunJSW(Self, PChar(AScript)){$ELSE}wkeRunJS(Self, PChar(AnsiToUtf8(AScript))){$ENDIF};
+{$IFDEF UNICODE}
+  Result := wkeRunJSW(Self, PChar(AScript));
+{$ELSE}
+  Result := wkeRunJS(Self, PChar({$IFDEF FPC}AScript{$ELSE}AnsiToUtf8(AScript){$ENDIF}));
+{$ENDIF};
 end;
-
-//function wkeWebView.RunJSW(script: Pwchar_t): jsValue;
-//begin
-//  Result := wkeRunJSW(Self, script);
-//end;
 
 function wkeWebView.GlobalExec: jsExecState;
 begin
@@ -1071,23 +1054,21 @@ end;
 
 class function wkeWebView.GetString(AString: wkeString): string;
 begin
-  Result := {$IFDEF UNICODE}wkeGetStringW(AString){$ELSE}Utf8ToAnsi(wkeGetString(AString)){$ENDIF};
+{$IFDEF UNICODE}
+  Result := wkeGetStringW(AString);
+{$ELSE}
+  Result := {$IFDEF FPC}wkeGetString(AString){$ELSE}Utf8ToAnsi(wkeGetString(AString)){$ENDIF};
+{$ENDIF}
 end;
-
-//class function wkeWebView.GetStringW(AString: wkeString): pwchar_t;
-//begin
-//  Result := wkeGetStringW(AString);
-//end;
 
 class procedure wkeWebView.SetString(AString: wkeString; const AStr: string);
 begin
-  {$IFDEF UNICODE}wkeSetStringW{$ELSE}wkeSetString{$ENDIF}(AString, {$IFDEF UseLowVer}PChar(AnsiToUtf8(AStr)){$ELSE}PChar(AStr){$ENDIF}, Length(AStr));
+{$IFDEF UNICODE}
+  wkeSetStringW(AString, PChar(AStr), Length(AStr));
+{$ELSE}
+  wkeSetString(AString, PChar({$IFDEF FPC}AStr{$ELSE}AnsiToUtf8(AStr){$ENDIF}), Length(AStr));
+{$ENDIF}
 end;
-
-//class procedure wkeWebView.SetStringW(AString: wkeString; str: Pwchar_t; len: size_t);
-//begin
-//  wkeSetStringW(AString, str, len);
-//end;
 
 procedure wkeWebView.SetOnTitleChanged(callback: wkeTitleChangedCallback; callbackParam: Pointer);
 begin
@@ -1197,30 +1178,28 @@ end;
 
 procedure wkeWebView.SetWindowTitle(const ATitle: string);
 begin
-  {$IFDEF UNICODE}wkeSetWindowTitleW(Self, PChar(ATitle)){$ELSE}wkeSetWindowTitle(Self, PChar(AnsiToUtf8(ATitle))){$ENDIF};
+{$IFDEF UNICODE}
+  wkeSetWindowTitleW(Self, PChar(ATitle));
+{$ELSE}
+  wkeSetWindowTitle(Self, PChar({$IFDEF FPC}ATitle{$ELSE}AnsiToUtf8(ATitle){$ENDIF}));
+{$ENDIF}
 end;
-
-//procedure wkeWebView.SetWindowTitleW(title: Pwchar_t);
-//begin
-//  wkeSetWindowTitleW(Self, title);
-//end;
-
 
 { JScript }
 
 class procedure JScript.BindFunction(const AName: string; fn: jsNativeFunction; AArgCount: LongInt);
 begin
-  jsBindFunction(PAnsiChar(AnsiString(AName)), fn, AArgCount);
+  jsBindFunction(PAnsiChar(AnsiString({$IFDEF FPC}Utf8ToAnsi(AName){$ELSE}AName{$ENDIF})), fn, AArgCount);
 end;
 
 class procedure JScript.BindGetter(const AName: string; fn: jsNativeFunction);
 begin
-  jsBindGetter(PAnsiChar(AnsiString(AName)), fn);
+  jsBindGetter(PAnsiChar(AnsiString({$IFDEF FPC}Utf8ToAnsi(AName){$ELSE}AName{$ENDIF})), fn);
 end;
 
 class procedure JScript.BindSetter(const AName: string; fn: jsNativeFunction);
 begin
-  jsBindSetter(PAnsiChar(AnsiString(AName)), fn);
+  jsBindSetter(PAnsiChar(AnsiString({$IFDEF FPC}Utf8ToAnsi(AName){$ELSE}AName{$ENDIF})), fn);
 end;
 
 function JScript.ArgCount: Integer;
@@ -1315,7 +1294,11 @@ end;
 
 function JScript.ToTempString(v: jsValue): string;
 begin
-  Result := {$IFDEF UNICODE}jsToTempStringW(Self, v){$ELSE}Utf8ToAnsi(jsToTempString(Self, v)){$ENDIF};
+{$IFDEF UNICODE}
+  Result := jsToTempStringW(Self, v);
+{$ELSE}
+  Result := {$IFDEF FPC}jsToTempString(Self, v){$ELSE}Utf8ToAnsi(jsToTempString(Self, v)){$ENDIF};
+{$ENDIF}
 end;
 
 class function JScript.Int(n: Integer): jsValue;
@@ -1360,7 +1343,11 @@ end;
 
 function JScript.String_(const AStr: string): jsValue;
 begin
-  Result := {$IFDEF UNICODE}jsStringW(Self, PChar(AStr)){$ELSE}jsString(Self, PChar(AnsiToUtf8(AStr))){$ENDIF};
+{$IFDEF UNICODE}
+  Result := jsStringW(Self, PChar(AStr));
+{$ELSE}
+  Result := jsString(Self, PChar({$IFDEF FPC}AStr{$ELSE}AnsiToUtf8(AStr){$ENDIF}));
+{$ENDIF};
 end;
 
 function JScript.EmptyObject: jsValue;
@@ -1390,12 +1377,12 @@ end;
 
 function JScript.Get(AObject: jsValue; const prop: string): jsValue;
 begin
-  Result := jsGet(Self, AObject, PAnsiChar(AnsiString(prop)));
+  Result := jsGet(Self, AObject, PAnsiChar(AnsiString({$IFDEF FPC}Utf8ToAnsi(prop){$ELSE}prop{$ENDIF})));
 end;
 
 procedure JScript.Set_(AObject: jsValue; const prop: string; v: jsValue);
 begin
-  jsSet(Self, AObject, PAnsiChar(AnsiString(prop)), v);
+  jsSet(Self, AObject, PAnsiChar(AnsiString({$IFDEF FPC}Utf8ToAnsi(prop){$ELSE}prop{$ENDIF})), v);
 end;
 
 function JScript.GetAt(AObject: jsValue; index: Integer): jsValue;
@@ -1430,7 +1417,11 @@ end;
 
 function JScript.Eval(const AStr: string): jsValue;
 begin
-  Result := {$IFDEF UNICODE}jsEvalW(Self, PChar(AStr)){$ELSE}jsEval(Self, PChar(AnsiToUtf8(AStr))){$ENDIF};
+{$IFDEF UNICODE}
+  Result := jsEvalW(Self, PChar(AStr));
+{$ELSE}
+  Result := jsEval(Self, PChar({$IFDEF FPC}AStr{$ELSE}AnsiToUtf8(AStr){$ENDIF}));
+{$ENDIF}
 end;
 
 function JScript.Call(func: jsValue; thisObject: jsValue; args: PjsValue; argCount: Integer): jsValue;
@@ -1445,12 +1436,12 @@ end;
 
 function JScript.GetGlobal(const prop: string): jsValue;
 begin
-  Result := jsGetGlobal(Self, PAnsiChar(AnsiString(prop)));
+  Result := jsGetGlobal(Self, PAnsiChar(AnsiString({$IFDEF FPC}Utf8ToAnsi(prop){$ELSE}prop{$ENDIF})));
 end;
 
 procedure JScript.SetGlobal(const prop: string; v: jsValue);
 begin
-  jsSetGlobal(Self, PAnsiChar(AnsiString(prop)), v);
+  jsSetGlobal(Self, PAnsiChar(AnsiString({$IFDEF FPC}Utf8ToAnsi(prop){$ELSE}prop{$ENDIF})), v);
 end;
 
 class procedure JScript.GC;
@@ -1635,12 +1626,22 @@ procedure jsGC; external wkedll name 'jsGC';
 // 屏掉浮点异常，暂时没办法的办法
 // FPC中竟然无效，还是我设置有问题
 var
-  uSaved8087CW: Word;
+  uOldFPU: Word;
 initialization
-  uSaved8087CW := Default8087CW;
+{$IFNDEF FPC}
+  uOldFPU := Default8087CW;
   Set8087CW($133F);
+{$ELSE FPC}
+   // http://lists.freepascal.org/pipermail/fpc-devel/2010-September/021808.html
+   uOldFPU := GetSSECSR;
+   SetSSECSR(uOldFPU or $0080);
+{$ENDIF FPC}
 finalization
-  Set8087CW(uSaved8087CW);
-{$ENDIF}
+{$IFNDEF FPC}
+   Set8087CW(uOldFPU);
+{$ELSE FPC}
+   SetSSECSR(uOldFPU);
+{$ENDIF FPC}
+{$ENDIF MSWINDOWS}
 
 end.
