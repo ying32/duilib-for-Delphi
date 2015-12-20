@@ -92,8 +92,9 @@ end;
 function TWkeBrowserWindow.DoCreateControl(pstrStr: string): CControlUI;
 begin
   if pstrStr = 'NativeControl' then
-    Exit(CNativeControlUI.CppCreate);
-  Result := nil;
+    Result := CNativeControlUI.CppCreate
+  else
+    Result := nil;
 end;
 
 procedure TWkeBrowserWindow.DoHandleMessage(var Msg: TMessage;
@@ -120,7 +121,7 @@ end;
 procedure TWkeBrowserWindow.DoNotify(var Msg: TNotifyUI);
 begin
   inherited;
-  if Msg.sType = DUI_MSGTYPE_CLICK then
+  if Msg.sType.m_pstr = DUI_MSGTYPE_CLICK then
   begin
     if Msg.pSender.Name = 'closebtn' then
       DuiApplication.Terminate
@@ -130,7 +131,7 @@ begin
       if FEdtURL.Text <> '' then
         FWkeWebbrowser.Load(FEdtURL.Text);
     end;
-  end else if Msg.sType = DUI_MSGTYPE_RETURN then
+  end else if Msg.sType.m_pstr = DUI_MSGTYPE_RETURN then
   begin
     if FEdtURL.Text <> '' then
       FWkeWebbrowser.Load(FEdtURL.Text);
