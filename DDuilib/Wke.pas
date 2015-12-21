@@ -25,8 +25,6 @@ uses
 const
   wkedll = 'wke.dll';
 
-
-
   // wkeMouseFlags
   WKE_LBUTTON = $01;
   WKE_RBUTTON = $02;
@@ -264,7 +262,7 @@ type
   PjsData = ^TjsData;
   jsFinalizeCallback = procedure(data: PjsData); cdecl;
   jsData = packed record
-    typeName: array[0..100-1] of AnsiChar; //char
+    typeName: array[0..99] of AnsiChar; //char
     propertyGet: jsGetPropertyCallback;
     propertySet: jsSetPropertyCallback;
     finalize: jsFinalizeCallback;
@@ -731,7 +729,7 @@ begin
    wkeSetUserAgentW(Self, PChar(AUserAgent));
 {$ELSE}
    wkeSetUserAgent(Self, PChar({$IFDEF FPC}AUserAgent{$ELSE}AnsiToUtf8(AUserAgent){$ENDIF}));
-{$ENDIF};
+{$ENDIF}
 end;
 
 procedure wkeWebView.LoadURL(const AURL: string);
@@ -740,7 +738,7 @@ begin
   wkeLoadURLW(Self, PChar(AURL));
 {$ELSE}
   wkeLoadURL(Self, PChar({$IFDEF FPC}AURL{$ELSE}AnsiToUtf8(AURL){$ENDIF}));
-{$ENDIF};
+{$ENDIF}
 end;
 
 procedure wkeWebView.PostURL(const AURL, APostData: string; PostLen: Integer);
@@ -759,7 +757,7 @@ begin
   wkeLoadHTMLW(Self, PChar(AHTML));
 {$ELSE}
   wkeLoadHTML(Self, PChar({$IFDEF FPC}AHTML{$ELSE}AnsiToUtf8(AHTML){$ENDIF}));
-{$ENDIF};
+{$ENDIF}
 end;
 
 procedure wkeWebView.LoadFile(const AFileName: string);
@@ -768,7 +766,7 @@ begin
   wkeLoadFileW(Self, PChar(AFileName));
 {$ELSE}
   wkeLoadFile(Self, PChar({$IFDEF FPC}AFileName{$ELSE}AnsiToUtf8(AFileName){$ENDIF}));
-{$ENDIF};
+{$ENDIF}
 end;
 
 procedure wkeWebView.Load(const AStr: string);
@@ -777,7 +775,7 @@ begin
   wkeLoadW(Self, PChar(AStr))
 {$ELSE}
   wkeLoad(Self, PChar({$IFDEF FPC}AStr{$ELSE}AnsiToUTf8(AStr){$ENDIF}))
-{$ENDIF};
+{$ENDIF}
 end;
 
 //function wkeWebView.IsLoading: Boolean;
@@ -821,7 +819,7 @@ begin
   Result := wkeGetTitleW(Self);
 {$ELSE}
   Result := {$IFDEF FPC}wkeGetTitle(Self){$ELSE}Utf8ToAnsi(wkeGetTitle(Self)){$ENDIF};
-{$ENDIF};
+{$ENDIF}
 end;
 
 procedure wkeWebView.Resize(w: Integer; h: Integer);
@@ -940,7 +938,7 @@ begin
   Result := wkeGetCookieW(Self);
 {$ELSE}
   Result := {$IFDEF FPC}wkeGetCookie(Self){$ELSE}Utf8ToAnsi(wkeGetCookie(Self)){$ENDIF};
-{$ENDIF};
+{$ENDIF}
 end;
 
 procedure wkeWebView.SetCookieEnabled(enable: Boolean);
@@ -1014,7 +1012,7 @@ begin
   Result := wkeRunJSW(Self, PChar(AScript));
 {$ELSE}
   Result := wkeRunJS(Self, PChar({$IFDEF FPC}AScript{$ELSE}AnsiToUtf8(AScript){$ENDIF}));
-{$ENDIF};
+{$ENDIF}
 end;
 
 function wkeWebView.GlobalExec: jsExecState;
@@ -1347,7 +1345,7 @@ begin
   Result := jsStringW(Self, PChar(AStr));
 {$ELSE}
   Result := jsString(Self, PChar({$IFDEF FPC}AStr{$ELSE}AnsiToUtf8(AStr){$ENDIF}));
-{$ENDIF};
+{$ENDIF}
 end;
 
 function JScript.EmptyObject: jsValue;
@@ -1624,22 +1622,19 @@ procedure jsGC; external wkedll name 'jsGC';
 {$IFDEF MSWINDOWS}
 {$WARN SYMBOL_PLATFORM OFF}
 // 屏掉浮点异常，暂时没办法的办法
-// FPC中竟然无效，还是我设置有问题
 var
-  uOldFPU: Word;
+  {$IFDEF FPC}uOldFPU, {$ENDIF}uOld8087CW: Word;
 initialization
-{$IFNDEF FPC}
-  uOldFPU := Default8087CW;
+  uOld8087CW := Default8087CW;
   Set8087CW($133F);
-{$ELSE FPC}
+{$IFDEF FPC}
    // http://lists.freepascal.org/pipermail/fpc-devel/2010-September/021808.html
    uOldFPU := GetSSECSR;
    SetSSECSR(uOldFPU or $0080);
 {$ENDIF FPC}
 finalization
-{$IFNDEF FPC}
-   Set8087CW(uOldFPU);
-{$ELSE FPC}
+  Set8087CW(uOld8087CW);
+{$IFDEF FPC}
    SetSSECSR(uOldFPU);
 {$ENDIF FPC}
 {$ENDIF MSWINDOWS}
