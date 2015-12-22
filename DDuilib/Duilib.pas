@@ -16,6 +16,7 @@ unit Duilib;
 
 // 根据选择禁用有些提示，最好是确定单元后再这样做
 {$HINTS OFF}
+{$WARN SYMBOL_DEPRECATED OFF}
 
 interface
 
@@ -292,8 +293,10 @@ type
     function GetSize: Integer;
     function GetAt(iIndex: Integer): string;
   public
-    class function CppCreate: CStdStringPtrMap;
-    procedure CppDestroy;
+    class function CppCreate: CStdStringPtrMap; deprecated 'use Create';
+    procedure CppDestroy; deprecated 'use Free';
+    class function Create: CStdStringPtrMap;
+    procedure Free;
     procedure Resize(nSize: Integer = 83);
     function Find(key: string; optimize: Boolean = True): Pointer;
     function Insert(key: string; pData: Pointer): Boolean;
@@ -326,8 +329,10 @@ type
     function GetData: Pointer;
     function GetAt(iIndex: Integer): Pointer;
   public
-    class function CppCreate(iElementSize: Integer; iPreallocSize: Integer = 0): CStdValArray;
-    procedure CppDestroy;
+    class function CppCreate(iElementSize: Integer; iPreallocSize: Integer = 0): CStdValArray; deprecated 'use Create';
+    procedure CppDestroy; deprecated 'use Free';
+    class function Create(iElementSize: Integer; iPreallocSize: Integer = 0): CStdValArray;
+    procedure Free;
     procedure Empty;
     function IsEmpty: Boolean;
     function Add(pData: LPCVOID): Boolean;
@@ -629,8 +634,8 @@ type
 
   CDialogBuilder = class
   public
-    class function CppCreate: CDialogBuilder;
-    procedure CppDestroy;
+    class function CppCreate: CDialogBuilder; //deprecated 'use Create';
+    procedure CppDestroy; //deprecated 'use Free';
     function Create(xml: string; AType: string = ''; pCallback: IDialogBuilderCallback = nil; pManager: CPaintManagerUI = nil; pParent: CControlUI = nil): CControlUI; overload;
     function Create(pCallback: IDialogBuilderCallback = nil; pManager: CPaintManagerUI = nil; pParent: CControlUI = nil): CControlUI; overload;
     function GetMarkup: CMarkup;
@@ -3345,6 +3350,11 @@ begin
   Delphi_StdStringPtrMap_CppDestroy(Self);
 end;
 
+class function CStdStringPtrMap.Create: CStdStringPtrMap;
+begin
+  Result := CppCreate;
+end;
+
 procedure CStdStringPtrMap.Resize(nSize: Integer);
 begin
   Delphi_StdStringPtrMap_Resize(Self, nSize);
@@ -3353,6 +3363,11 @@ end;
 function CStdStringPtrMap.Find(key: string; optimize: Boolean): Pointer;
 begin
   Result := Delphi_StdStringPtrMap_Find(Self, PChar(key), optimize);
+end;
+
+procedure CStdStringPtrMap.Free;
+begin
+  CppDestroy;
 end;
 
 function CStdStringPtrMap.Insert(key: string; pData: Pointer): Boolean;
@@ -3397,9 +3412,20 @@ begin
   Delphi_StdValArray_CppDestroy(Self);
 end;
 
+class function CStdValArray.Create(iElementSize,
+  iPreallocSize: Integer): CStdValArray;
+begin
+  Result := CppCreate(iElementSize, iPreallocSize);
+end;
+
 procedure CStdValArray.Empty;
 begin
   Delphi_StdValArray_Empty(Self);
+end;
+
+procedure CStdValArray.Free;
+begin
+  CppDestroy;
 end;
 
 function CStdValArray.IsEmpty: Boolean;
