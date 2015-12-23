@@ -1012,8 +1012,8 @@ begin
       for I := 0 to LJA.Length - 1 do
       begin
         LItem.Text := LJA[I].S['text'];
-        LItem.Text := LJA[I].S['iconpath'];
-        LItem.Text := LJA[I].S['appfilename'];
+        LItem.IconPath := LJA[I].S['iconpath'];
+        LItem.AppFileName := LJA[I].S['appfilename'];
         Add(LItem);
       end;
     end;
@@ -1131,7 +1131,7 @@ var
   sType: string;
 begin
   inherited;
-  sType :=  Msg.sType{$IFDEF UseLowVer}.m_pstr{$ENDIF};
+  sType :=  Msg.sType.m_pstr;
   if sType = DUI_MSGTYPE_CLICK then
   begin
     if Msg.pSender.Name = kclosebtn then
