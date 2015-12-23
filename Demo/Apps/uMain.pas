@@ -11,13 +11,10 @@ uses
   Classes,
   Math,
   Dialogs,
-  Graphics,
-  pngimage,
   ShellAPI,
   superobject,
   Duilib,
   DuiWindowImplBase,
-  DuiListUI,
   DuiRichEdit,
   DuiConst;
 
@@ -201,6 +198,8 @@ UINT WINAPI PrivateExtractIcons(
   _In_      UINT    flags
 );
 }
+
+uses uIconToPng;
 function PrivateExtractIcons(lpszFile: LPCTSTR; nIconIndex, cxIcon, cyIcon: Integer;
    var phicon: HICON; var piconid: UINT; nIcons, flags: UINT): UINT; stdcall;
     external user32 name 'PrivateExtractIconsW';
@@ -703,41 +702,13 @@ function TAppsWindow.ExtractFileIconToPngAndReturnNewPath(
 var
   LIcon: HICON;
   LIconId: UINT;
-  LSaveIcon: TIcon;
-  LBmp: TBitmap;
-  LPng: {$IFDEF UseLowVer}TPNGObject{$ELSE}TPngImage{$ENDIF};
 begin
   Result := '';
   if PrivateExtractIcons(PChar(AFileName), 0, 48, 48, LIcon, LIconId, 1, LR_LOADFROMFILE) <> 0 then
   begin
-    LSaveIcon := TIcon.Create;
-    try
-      LSaveIcon.Handle := LIcon;
-      LSaveIcon.Transparent := True;
-      LBmp := TBitmap.Create;
-      try
-        // 关于透明问题以后再去解决
-//        LSaveIcon.SaveToFile(GetSaveAbsIconFileName(AFileName).Replace('.png', '.ico'));
-//        LBmp.Assign(LSaveIcon);
-        LBmp.Width := LSaveIcon.Width;
-        LBmp.Height := LSaveIcon.Height;
-//        LBmp.Transparent := True;
-        LBmp.Canvas.Draw(0, 0, LSaveIcon);
-        LPng := {$IFDEF UseLowVer}TPNGObject{$ELSE}TPngImage{$ENDIF}.Create;
-        try
-          LPng.Assign(LBmp);
-          LPng.SaveToFile(GetSaveAbsIconFileName(AFileName));
-          Result := GetIconRelIconFileName(AFileName);
-        finally
-          LPng.Free;
-        end;
-      finally
-        LBmp.Free;
-      end;
-    finally
-      LSaveIcon.Free;
-      DestroyIcon(LIcon);
-    end;
+    ConvertIconToPng(LIcon, GetSaveAbsIconFileName(AFileName));
+    Result := GetIconRelIconFileName(AFileName);
+    DestroyIcon(LIcon);
   end;
 end;
 
