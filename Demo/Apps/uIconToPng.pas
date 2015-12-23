@@ -9,7 +9,7 @@
 //       版权所有 (C) 2015-2015 ying32 All Rights Reserved
 //
 //       原代码为c++代码，由ying32翻译至pascal
-//
+//       http://stackoverflow.com/questions/1818990/save-hicon-as-a-png 
 //***************************************************************************
 unit uIconToPng;
 
