@@ -2,7 +2,8 @@ program Apps;
 
 uses
   DuiWindowImplBase,
-  uMain in 'uMain.pas';
+  uMain in 'uMain.pas',
+  uIconToPng in 'uIconToPng.pas';
 
 {$R *.res}
 
