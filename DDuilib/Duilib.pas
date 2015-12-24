@@ -124,7 +124,7 @@ type
     /// <summary>
     ///   这个不要用，使用　ToString
     /// </summary>
-    m_szBuffer: array[0..MAX_LOCAL_STRING_LEN] of Char deprecated 'do not use';
+    m_szBuffer: array[0..MAX_LOCAL_STRING_LEN] of Char deprecated{$IFNDEF UseLowVer} 'do not use'{$ENDIF};
 {$IFNDEF UseLowVer}
   public
     class operator Equal(const Lhs, Rhs : CDuiString) : Boolean; overload;
@@ -293,8 +293,8 @@ type
     function GetSize: Integer;
     function GetAt(iIndex: Integer): string;
   public
-    class function CppCreate: CStdStringPtrMap; deprecated 'use Create';
-    procedure CppDestroy; deprecated 'use Free';
+    class function CppCreate: CStdStringPtrMap; deprecated{$IFNDEF UseLowver} 'use Create'{$ENDIF};
+    procedure CppDestroy; deprecated{$IFNDEF UseLowVer} 'use Free'{$ENDIF};
     class function Create: CStdStringPtrMap;
     procedure Free;
     procedure Resize(nSize: Integer = 83);
@@ -329,8 +329,8 @@ type
     function GetData: Pointer;
     function GetAt(iIndex: Integer): Pointer;
   public
-    class function CppCreate(iElementSize: Integer; iPreallocSize: Integer = 0): CStdValArray; deprecated 'use Create';
-    procedure CppDestroy; deprecated 'use Free';
+    class function CppCreate(iElementSize: Integer; iPreallocSize: Integer = 0): CStdValArray; deprecated{$IFNDEF UseLowVer} 'use Create'{$ENDIF};
+    procedure CppDestroy; deprecated{$IFNDEF UseLowVer} 'use Free'{$ENDIF};
     class function Create(iElementSize: Integer; iPreallocSize: Integer = 0): CStdValArray;
     procedure Free;
     procedure Empty;
