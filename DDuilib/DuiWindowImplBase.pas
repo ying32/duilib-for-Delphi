@@ -166,6 +166,9 @@ type
     procedure SetHIcon(const Value: HICON);
   protected
     procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
+    procedure TrayLClick; virtual;
+    procedure TrayRClick; virtual;
+    procedure TrayDClick; virtual;
   public
   {$IFNDEF UseLowVer}
     procedure ShowBalloonTips(ATitle, AInfo: string; ATimeout: Integer = 1000);
@@ -752,25 +755,31 @@ begin
     WM_TRAYICON_MESSAGE:
      begin
        case Msg.LParam of
-         WM_LBUTTONDOWN:
-           begin
-             if Assigned(FOnLClick) then
-               FOnLClick(Self);
-           end;
-         WM_RBUTTONDOWN:
-           begin
-             if Assigned(FOnRClick) then
-               FOnRClick(Self);
-           end;
-         WM_LBUTTONDBLCLK:
-           begin
-             if Assigned(FOnLDClick) then
-               FOnLDClick(Self);
-           end;
+         WM_LBUTTONDOWN: TrayLClick;
+         WM_RBUTTONDOWN: TrayRClick;
+         WM_LBUTTONDBLCLK: TrayDClick;
        end;
        bHandled := False;
      end;
   end;
+end;
+
+procedure TDuiTrayWindowImplBase.TrayDClick;
+begin
+ if Assigned(FOnLDClick) then
+   FOnLDClick(Self);
+end;
+
+procedure TDuiTrayWindowImplBase.TrayLClick;
+begin
+  if Assigned(FOnLClick) then
+    FOnLClick(Self);
+end;
+
+procedure TDuiTrayWindowImplBase.TrayRClick;
+begin
+  if Assigned(FOnRClick) then
+   FOnRClick(Self);
 end;
 
 procedure TDuiTrayWindowImplBase.SetHIcon(const Value: HICON);

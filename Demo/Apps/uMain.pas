@@ -44,7 +44,7 @@ const
 
 
   /// <summary>
-  ///   4行，5列 (LTileLayout.GetWidth div 80 * (LTitleLayout.GetHeight div 80)
+  ///   5行，4列 (LTileLayout.GetWidth div 80 * (LTitleLayout.GetHeight div 80)
   /// </summary>
   PAGE_MAX_CHIND = 20;
 
@@ -199,7 +199,10 @@ UINT WINAPI PrivateExtractIcons(
 );
 }
 
-uses uIconToPng;
+uses 
+  uIconToPng;
+
+
 function PrivateExtractIcons(lpszFile: LPCTSTR; nIconIndex, cxIcon, cyIcon: Integer;
    var phicon: HICON; var piconid: UINT; nIcons, flags: UINT): UINT; stdcall;
     external user32 name 'PrivateExtractIconsW';
@@ -259,6 +262,8 @@ end;
 constructor TAppsWindow.Create;
 begin
   inherited Create('MainWindow.xml', kResDir);
+  // 翻看duilib才发现这个函数控制
+  PaintManagerUI.SetHoverTime(30);
   FIsMouseHover := True;
   SetLength(FEvents, 0);
   InitEvents;
@@ -523,22 +528,9 @@ begin
           SetWindowPos(Handle, HWND_NOTOPMOST, 0, R.Top, 0, 0,  SWP_NOREDRAW or SWP_NOSIZE);
       end;
 
-//    WM_MOUSEMOVE :
-//      begin
-//        if not FMouseTracking then
-//        begin
-//          LTrackMouse.cbSize := Sizeof(TTrackMouseEvent);
-//          LTrackMouse.hwndTrack := Handle;
-//          LTrackMouse.dwFlags := TME_LEAVE or TME_HOVER;
-//          LTrackMouse.dwHoverTime := 1;
-//          FMouseTracking := TrackMouseEvent(LTrackMouse);
-//        end;
-//      end;
-
     WM_NCMOUSELEAVE: FIsNcMouseEnter := False;
     WM_MOUSEHOVER, WM_NCMOUSEMOVE :
      begin
-
        if Msg.Msg = WM_NCMOUSEMOVE then
          FIsNcMouseEnter := True;
        if not FIsMouseHover then
