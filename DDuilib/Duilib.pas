@@ -17,6 +17,7 @@ unit Duilib;
 // 根据选择禁用有些提示，最好是确定单元后再这样做
 {$HINTS OFF}
 {$WARN SYMBOL_DEPRECATED OFF}
+{$Z4+}
 
 interface
 
@@ -78,7 +79,10 @@ type
   CControlUI = class;
   CScrollBarUI = class;
   CTreeViewUI = class;
-
+  
+  
+  SHORT = SmallInt;
+  PShort = ^SHORT;
 {$IFDEF UseLowVer}
   TRectF = record
     Left, Top, Right, Bottom: Single;
@@ -89,7 +93,6 @@ type
     LPBYTE = PByte;
     LPCVOID = Pointer;
     SIZE_T = Cardinal;
-    PShort = ^SHORT;
     UIntPtr = Cardinal;
     LONG = Longint;
   {$ELSE}
@@ -117,13 +120,8 @@ type
   // 这里定义为一个记录， 因为他内部返回的并不是一个指针，so，字段大小不一样了，只能改record方式来做
   PCDuiString = ^CDuiString; // 这个有点牵强吧
   CDuiString = record
-//{$IFNDEF UseLowVer}
-//  private
-//{$ENDIF}
     m_pstr: LPTSTR{$IFNDEF UseLowVer} deprecated 'do not use'{$ENDIF};
-    /// <summary>
-    ///   这个不要用，使用　ToString
-    /// </summary>
+    // 只是用来占位用，不要使用
     m_szBuffer: array[0..MAX_LOCAL_STRING_LEN] of Char deprecated{$IFNDEF UseLowVer} 'do not use'{$ENDIF};
 {$IFNDEF UseLowVer}
   public
@@ -145,14 +143,11 @@ type
   end;
 
   /// <summary>
-  ///  来自磁盘文件, 来自磁盘zip压缩包, 来自资源, 来自资源的zip压缩包 , 使用 {$Z4+} 指令对齐4字节
+  ///  来自磁盘文件, 来自磁盘zip压缩包, 来自资源, 来自资源的zip压缩包
   /// </summary>
-  {$Z4+}
   UILIB_RESOURCETYPE  = (UILIB_FILE = 1, UILIB_ZIP, UILIB_RESOURCE, UILIB_ZIPRESOURCE);
   TResourceType = UILIB_RESOURCETYPE;
 
-
-  {$Z4+}
   EVENTTYPE_UI = (
     UIEVENT__FIRST = 1,
     UIEVENT__KEYBEGIN,

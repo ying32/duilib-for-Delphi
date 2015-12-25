@@ -15,6 +15,7 @@
 unit Wke;
 
 {$I DDuilib.inc}
+{$Z4+}
 
 interface
 
@@ -68,8 +69,6 @@ type
 
   jsExecState = JScript;
 
-
-  {$Z4+}
   wkeProxyType = (
     WKE_PROXY_NONE,
     WKE_PROXY_HTTP,
@@ -80,13 +79,11 @@ type
   );
   TwkeProxyType = wkeProxyType;
 
-  {$Z4+}
   wkeSettingMask = (
     WKE_SETTING_PROXY = 1
   );
   TwkeSettingMask = wkeSettingMask;
 
-  {$Z4+}
   wkeNavigationType = (
     WKE_NAVIGATION_TYPE_LINKCLICK,
     WKE_NAVIGATION_TYPE_FORMSUBMITTE,
@@ -97,7 +94,6 @@ type
   );
   TwkeNavigationType = wkeNavigationType;
 
-  {$Z4+}
   wkeLoadingResult = (
     WKE_LOADING_SUCCEEDED,
     WKE_LOADING_FAILED,
@@ -105,7 +101,6 @@ type
   );
   TwkeLoadingResult = wkeLoadingResult;
 
-  {$Z4+}
   wkeWindowType = (
     WKE_WINDOW_TYPE_POPUP,
     WKE_WINDOW_TYPE_TRANSPARENT,
@@ -113,7 +108,6 @@ type
   );
   TwkeWindowType = wkeWindowType;
 
-  {$Z4+}
   jsType = (
     JSTYPE_NUMBER,
     JSTYPE_STRING,
@@ -135,10 +129,10 @@ type
 
   wkeProxy = packed record
     AType: wkeProxyType;
-    hostname: array[0..99] of AnsiChar; //char
+    hostname: array[0..99] of AnsiChar;
     port: Word;
-    username: array[0..49] of AnsiChar; //char
-    password: array[0..49] of AnsiChar; //char
+    username: array[0..49] of AnsiChar;
+    password: array[0..49] of AnsiChar;
   end;
   PwkeProxy = ^TwkeProxy;
   TwkeProxy = wkeProxy;
@@ -166,7 +160,6 @@ type
   PwkeWindowFeatures = ^TwkeWindowFeatures;
   TwkeWindowFeatures = wkeWindowFeatures;
 
-  {$Z4}
   wkeMessageLevel = (
     WKE_MESSAGE_LEVEL_TIP,
     WKE_MESSAGE_LEVEL_LOG,
@@ -175,7 +168,6 @@ type
     WKE_MESSAGE_LEVEL_DEBUG
   );
 
-  {$Z4}
   wkeMessageSource = (
     WKE_MESSAGE_SOURCE_HTML,
     WKE_MESSAGE_SOURCE_XML,
@@ -185,7 +177,6 @@ type
     WKE_MESSAGE_SOURCE_OTHER
   );
 
-  {$Z4}
   wkeMessageType = (
     WKE_MESSAGE_TYPE_LOG,
     WKE_MESSAGE_TYPE_DIR,
@@ -198,7 +189,7 @@ type
   );
 
   PwkeConsoleMessage = ^wkeConsoleMessage;
-  wkeConsoleMessage = record
+  wkeConsoleMessage = packed record
     source: wkeMessageSource;
     type_: wkeMessageType;
     level: wkeMessageLevel;
