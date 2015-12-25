@@ -18,6 +18,7 @@ type
   TDuiNativeControlTest = class(TDuiWindowImplBase)
   private
     FButton: TButton;
+    procedure ButtonClick(Sender: TObject);
   protected
     procedure DoInitWindow; override;
     procedure DoNotify(var Msg: TNotifyUI); override;
@@ -29,6 +30,11 @@ type
   end;
 
 { TDuiNativeControlTest }
+
+procedure TDuiNativeControlTest.ButtonClick(Sender: TObject);
+begin
+   MessageBox(0, '单击了按钮', '消息', 0);
+end;
 
 constructor TDuiNativeControlTest.Create;
 begin
@@ -52,6 +58,7 @@ begin
     FButton.Left := 100;
     FButton.Top := 100;
     FButton.Caption := '按钮1';
+    FButton.OnClick := ButtonClick;
     CNativeControlUI.CppCreate(FButton.Handle);
   end;
 end;
@@ -65,7 +72,7 @@ begin
     Writeln(Format('FButton Ptr=%p, FButton.Handle=%.8x', [Pointer(FButton), FButton.Handle]));
     Writeln(Format('Msg.WParam=%.8x, Msg.LParam=%.8x', [Msg.WParam, Msg.LParam]));
     if Msg.LParam = FButton.Handle then
-      MessageBox(0, nil, nil, 0);
+      FButton.WindowProc(Msg);
   end;
 end;
 

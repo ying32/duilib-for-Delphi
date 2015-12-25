@@ -11,18 +11,15 @@
 
 --------------------duilib更新信息,以此来表示当前Duilib for Delphi是使用的哪个版本----------------------
 
-版本: d24db5144fa1ed308b30d1b20bb0843baf0597e7
+版本: 3407f2391225c4798f473c4fb2ac89d4453ecd18
 作者: wangchyz <wangchyz@gmail.com>
-日期: 2015/12/15 9:44:34
+日期: 2015/12/21 15:43:35
 信息:
-1、修正datetime窗口超出父窗口客户区范围的问题
-
-2、增加ActiveX控件内部调用CoInitialize初始化com环境
-3、TestApp窗口添加WS_CLIPCHILDREN属性
+修正qqdemo的资源
 ----
-已修改: DuiLib/Control/UIActiveX.cpp
-已修改: DuiLib/Control/UIDateTime.cpp
-已修改: TestApp1/App.cpp
+已修改: QQDemo/res/QQRes.zip
+
+
 
 
 
