@@ -73,7 +73,7 @@ type
     function SetSel(const cr: CHARRANGE): Integer; overload;
     function SetSel(nStartChar: LongInt; nEndChar: LongInt): Integer; overload;
     procedure ReplaceSel(lpszNewText: string; bCanUndo: Boolean);
-    procedure ReplaceSelW(lpszNewText: string; bCanUndo: Boolean = False);
+    procedure ReplaceSelW(lpszNewText: WideString; bCanUndo: Boolean = False);
     function GetSelText: string;
     function SetSelAll: Integer;
     function SetSelNone: Integer;
@@ -472,7 +472,7 @@ begin
   Delphi_RichEditUI_ReplaceSel(Self, PChar(lpszNewText), bCanUndo);
 end;
 
-procedure CRichEditUI.ReplaceSelW(lpszNewText: string; bCanUndo: Boolean);
+procedure CRichEditUI.ReplaceSelW(lpszNewText: WideString; bCanUndo: Boolean);
 begin
   Delphi_RichEditUI_ReplaceSelW(Self, PWideChar(lpszNewText), bCanUndo);
 end;
