@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<Window size="268,130" caption="0,0,0,25" roundcorner="3,3">
-    <Font name="微软雅黑" size="13" bold="false" italic="false" />
-    <HorizontalLayout name="bg" bkimage="file=&apos;{00000000-0000-0000-0000-00000000000f}.jpg&apos; corner=&apos;780,620,1,1&apos;">
-        <VerticalLayout bkimage="file=&apos;mainwindow.png&apos; corner=&apos;1,1,1,1&apos; hole=&apos;true&apos;">
+<Window size="268,130" caption="0,0,0,25" roundcorner="3,3" layeredimage="file='menubordernormal.png' corner='6,6,6,6'">
+    <Font id="0" name="微软雅黑" size="13" bold="false" italic="false" defualt="true"  />
+    <HorizontalLayout bkimage="file='menubordernormal.png' corner='6,6,6,6' hole='true'" inset="5,5,5,5" inset="5,5,5,5">
+        <VerticalLayout name="bg" bkimage="file=&apos;{00000000-0000-0000-0000-00000000000f}.jpg&apos; corner=&apos;780,620,1,1&apos;">
             <HorizontalLayout height="25">
                 <VerticalLayout height="25">
                     <Label text="修改信息" float="true" pos="7,3,0,0" width="124" height="18" textcolor="#00FFFBF0" disabledtextcolor="#FFA7A6AA" font="0" />
