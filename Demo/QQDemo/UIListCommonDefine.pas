@@ -102,7 +102,15 @@ begin
 end;
 
 destructor TNode.Destroy;
+{$IFDEF UseLowVer}
+var
+  I: Integer;
+{$ENDIF}
 begin
+{$IFDEF UseLowVer}
+  for I := 0 to FChildrens.Count - 1 do
+    TNode(FChildrens[I]).Free;
+{$ENDIF}
   FChildrens.Free;
   inherited;
 end;
