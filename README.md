@@ -37,7 +37,10 @@
 * 4、Duilib
    * 存放原[duilib](https://github.com/duilib/duilib)工程目录，这里不提供原[duilib](https://github.com/duilib/duilib)的源码，请自行下载。
    * 4.1、 bin
-      * 存放编译后的二进制及图片和xml资源，里面有的包含原duilib的资源文件 
+      * 存放编译后的二进制及图片和xml资源，里面有的包含原duilib的资源文件  
+	  
+* 5、ThirdParty
+   * 存放一些第三方的库或者二进制文件
 
 ### 截图
 ***
