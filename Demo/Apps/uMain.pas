@@ -34,6 +34,8 @@ const
   kbtnSearch = 'btn_Search';
   kbtnopenapp = 'btnopenapp';
 
+  kskinbtn = 'skinbtn';
+
   kSearchEditTextHint = 'ËÑË÷Ó¦ÓÃ';
 
   kRichMenuItemClick = 'RichMenuItemClick';
@@ -176,6 +178,14 @@ type
     constructor Create(AParent: HWND; ATitleControl: CControlUI;  AApps: TAppsJSONObject);
   end;
 
+  TSkinWindow = class(TDuiWindowImplBase)
+  protected
+    procedure DoInitWindow; override;
+    procedure DoNotify(var Msg: TNotifyUI); override;
+    procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
+  public
+    constructor Create;
+  end;
 
 
 var
@@ -595,7 +605,12 @@ begin
         FSelectedRadioIndex := Msg.pSender.Tag;
         ShowPage(FSelectedRadioIndex);
       end;
-    end else ProcesNotifyEvent(Msg.pSender);
+    end else
+    if LCtlName = kskinbtn then
+    begin
+      TSkinWindow.Create;
+    end else
+     ProcesNotifyEvent(Msg.pSender);
   end else
   if LType = DUI_MSGTYPE_KILLFOCUS then
   begin
@@ -1151,4 +1166,39 @@ end;
 
 
 
+{ TSkinWindow }
+
+constructor TSkinWindow.Create;
+begin
+  inherited Create('skinwindow.xml', kResDir);
+  CreateWindow(0, '¸ü»»Æ¤·ô', WS_POPUP, WS_EX_TOOLWINDOW or WS_EX_TOPMOST);
+  CenterWindow;
+  Show;
+end;
+
+procedure TSkinWindow.DoHandleMessage(var Msg: TMessage; var bHandled: BOOL);
+begin
+  inherited;
+  if Msg.Msg = WM_KILLFOCUS then
+  begin
+    Close;
+    Msg.Result := 1;
+  end;
+end;
+
+procedure TSkinWindow.DoInitWindow;
+begin
+  inherited;
+
+end;
+
+
+procedure TSkinWindow.DoNotify(var Msg: TNotifyUI);
+begin
+  inherited;
+
+end;
+
 end.
+
+

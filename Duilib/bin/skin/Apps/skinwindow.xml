@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window size="384,216">
+    <TileLayout columns="3" itemsize="128,72">
+        <VerticalLayout bkimage="wallpapers\s-{00000000-0000-0000-0000-00000000000f}.jpg" />
+        <VerticalLayout bkimage="wallpapers\s-{00000000-0000-0000-0000-000000000001}.jpg" />
+        <VerticalLayout bkimage="wallpapers\s-{00000000-0000-0000-0000-000000000002}.jpg" />
+        <VerticalLayout bkimage="wallpapers\s-{00000000-0000-0000-0000-000000000003}.jpg" />
+        <VerticalLayout bkimage="wallpapers\s-{00000000-0000-0000-0000-000000000004}.jpg" />
+        <VerticalLayout bkimage="wallpapers\s-{00000000-0000-0000-0000-000000000005}.jpg" />
+        <VerticalLayout bkimage="wallpapers\s-{00000000-0000-0000-0000-000000000006}.jpg" />
+        <VerticalLayout bkimage="wallpapers\s-{00000000-0000-0000-0000-000000000007}.jpg" />
+        <VerticalLayout bkimage="wallpapers\s-{00000000-0000-0000-0000-000000000008}.jpg" />
+    </TileLayout>
+</Window>
