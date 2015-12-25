@@ -263,6 +263,7 @@ constructor TAppsWindow.Create;
 begin
   inherited Create('MainWindow.xml', kResDir);
   // 翻看duilib才发现这个函数控制
+  // 如果tooltip出现了，则这个就失效了，貌似有点坑
   PaintManagerUI.SetHoverTime(30);
   FIsMouseHover := True;
   SetLength(FEvents, 0);
