@@ -50,6 +50,8 @@ const
 
   DUI_MSGTYPE_SELECTCHANGED  = 'selectchanged';
 
+  DUI_MSGTYPE_MENUITEMCLICK  = 'menuitemclick';
+
   DUI_CTR_EDIT                  = 'Edit';
   DUI_CTR_LIST                  = 'List';
   DUI_CTR_TEXT                  = 'Text';
@@ -99,6 +101,11 @@ const
   DUI_CTR_LISTCONTAINERELEMENT  = 'ListContainerElement';
   DUI_CTR_LISTCONTAINERELEMENT_UI = 'ListContainerElementUI';
 
+  DUI_CTR_MENU_UI = 'MenuUI';
+  DUI_CTR_MENU = 'Menu';
+
+  DUI_CTR_MENUELEMENT_UI = 'MenuElementUI';
+  DUI_CTR_MENUELEMENT = 'MenuElement';
 
 implementation
 

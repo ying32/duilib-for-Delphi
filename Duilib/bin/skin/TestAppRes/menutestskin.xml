@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Window caption="0,0,0,36" roundcorner="5,5" size="600,450" sizebox="6,6,6,6" mininfo="80,60">
+  <Font name="微软雅黑" size="12" bold="false" default="true" />
+  <Font name="微软雅黑" size="12" bold="true"/>  
+  <VerticalLayout bkcolor="#FFFFFFFF" bordersize="2" bordercolor="#FF0934DA">
+    <HorizontalLayout name="header" height="36" bkcolor="#FF4775CC">
+      <HorizontalLayout>
+        <Control width="10"/>
+        <Label name="apptitle" text="Menu Test" font="1" textcolor="#FFFFFFFF" />
+      </HorizontalLayout>
+      <HorizontalLayout height="25" width="96">
+        <Button name="minbtn" tooltip="最小化" height="18" width="26" normalimage="minimize.png" hotimage="minimize_h.png" pushedimage="minimize_p.png"/>
+        <Button name="maxbtn" tooltip="最大化" height="18" width="25" normalimage="maximize.png" hotimage="maximize_h.png" pushedimage="maximize_p.png"/>
+        <Button name="restorebtn" visible="false" tooltip="恢复" height="18" width="25" normalimage="restore.png" hotimage="restore_h.png" pushedimage="restore_p.png"/>
+        <Button name="closebtn" tooltip="关闭" height="18" width="43" normalimage="close.png" hotimage="close_h.png" pushedimage="close_p.png"/>
+      </HorizontalLayout>
+    </HorizontalLayout>
+
+    <VerticalLayout name="body" padding="2,0,2,2">
+      <HorizontalLayout padding="10,10,10,10">
+        <Button name="btn_menu" text="菜单测试" width="120" height="30" normalimage="button.png" hotimage="bbutton_h.png" pushedimage="button_p.png"/>
+      </HorizontalLayout>
+    </VerticalLayout>
+
+  </VerticalLayout>
+</Window>

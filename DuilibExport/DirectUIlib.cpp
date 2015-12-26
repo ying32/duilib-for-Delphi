@@ -5669,3 +5669,128 @@ DIRECTUILIB_API void Delphi_WkeWebbrowserUI_SetDoPaintCallback(CWkeWebbrowserUI*
     handle->SetDoPaintCallback(ACallback);
 }
 */
+//================================CMenuUI============================
+
+DIRECTUILIB_API CMenuUI* Delphi_MenuUI_CppCreate() {
+	return new CMenuUI();
+}
+
+DIRECTUILIB_API void Delphi_MenuUI_CppDestroy(CMenuUI* handle) {
+	delete handle;
+}
+
+DIRECTUILIB_API LPCTSTR Delphi_MenuUI_GetClass(CMenuUI* handle) {
+	return handle->GetClass();
+}
+
+DIRECTUILIB_API LPVOID Delphi_MenuUI_GetInterface(CMenuUI* handle, LPCTSTR pstrName) {
+	return handle->GetInterface(pstrName);
+}
+
+DIRECTUILIB_API void Delphi_MenuUI_DoEvent(CMenuUI* handle, TEventUI& event) {
+	handle->DoEvent(event);
+}
+
+DIRECTUILIB_API bool Delphi_MenuUI_Add(CMenuUI* handle, CControlUI* pControl) {
+	return handle->Add(pControl);
+}
+
+DIRECTUILIB_API bool Delphi_MenuUI_AddAt(CMenuUI* handle, CControlUI* pControl, int iIndex) {
+	return handle->AddAt(pControl, iIndex);
+}
+
+DIRECTUILIB_API int Delphi_MenuUI_GetItemIndex(CMenuUI* handle, CControlUI* pControl) {
+	return handle->GetItemIndex(pControl);
+}
+
+DIRECTUILIB_API bool Delphi_MenuUI_SetItemIndex(CMenuUI* handle, CControlUI* pControl, int iIndex) {
+	return handle->SetItemIndex(pControl, iIndex);
+}
+
+DIRECTUILIB_API bool Delphi_MenuUI_Remove(CMenuUI* handle, CControlUI* pControl) {
+	return handle->Remove(pControl);
+}
+
+DIRECTUILIB_API void Delphi_MenuUI_EstimateSize(CMenuUI* handle, SIZE szAvailable, SIZE& Result) {
+	Result = handle->EstimateSize(szAvailable);
+}
+
+DIRECTUILIB_API void Delphi_MenuUI_SetAttribute(CMenuUI* handle, LPCTSTR pstrName, LPCTSTR pstrValue) {
+	handle->SetAttribute(pstrName, pstrValue);
+}
+
+//================================CMenuWnd============================
+
+DIRECTUILIB_API CMenuWnd* Delphi_MenuWnd_CppCreate(HWND hParent, CPaintManagerUI* pMainPaint) {
+	return new CMenuWnd(hParent, pMainPaint);
+}
+
+DIRECTUILIB_API void Delphi_MenuWnd_CppDestroy(CMenuWnd* handle) {
+	delete handle;
+}
+
+DIRECTUILIB_API void Delphi_MenuWnd_Init(CMenuWnd* handle, CMenuElementUI* pOwner, STRINGorID xml, LPCTSTR pSkinType, POINT point) {
+	handle->Init(pOwner, xml, pSkinType, point);
+}
+
+DIRECTUILIB_API LPCTSTR Delphi_MenuWnd_GetWindowClassName(CMenuWnd* handle) {
+	return handle->GetWindowClassName();
+}
+
+DIRECTUILIB_API void Delphi_MenuWnd_OnFinalMessage(CMenuWnd* handle, HWND hWnd) {
+	handle->OnFinalMessage(hWnd);
+}
+
+DIRECTUILIB_API LRESULT Delphi_MenuWnd_HandleMessage(CMenuWnd* handle, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	return handle->HandleMessage(uMsg, wParam, lParam);
+}
+
+DIRECTUILIB_API BOOL Delphi_MenuWnd_Receive(CMenuWnd* handle, ContextMenuParam param) {
+	return handle->Receive(param);
+}
+
+//================================CMenuElementUI============================
+
+DIRECTUILIB_API CMenuElementUI* Delphi_MenuElementUI_CppCreate() {
+	return new CMenuElementUI();
+}
+
+DIRECTUILIB_API void Delphi_MenuElementUI_CppDestroy(CMenuElementUI* handle) {
+	delete handle;
+}
+
+DIRECTUILIB_API LPCTSTR Delphi_MenuElementUI_GetClass(CMenuElementUI* handle) {
+	return handle->GetClass();
+}
+
+DIRECTUILIB_API LPVOID Delphi_MenuElementUI_GetInterface(CMenuElementUI* handle, LPCTSTR pstrName) {
+	return handle->GetInterface(pstrName);
+}
+
+DIRECTUILIB_API void Delphi_MenuElementUI_DoPaint(CMenuElementUI* handle, HDC hDC, RECT& rcPaint) {
+	handle->DoPaint(hDC, rcPaint);
+}
+
+DIRECTUILIB_API void Delphi_MenuElementUI_DrawItemText(CMenuElementUI* handle, HDC hDC, RECT& rcItem) {
+	handle->DrawItemText(hDC, rcItem);
+}
+
+DIRECTUILIB_API void Delphi_MenuElementUI_EstimateSize(CMenuElementUI* handle, SIZE szAvailable, SIZE& Result) {
+	Result = handle->EstimateSize(szAvailable);
+}
+
+DIRECTUILIB_API bool Delphi_MenuElementUI_Activate(CMenuElementUI* handle) {
+	return handle->Activate();
+}
+
+DIRECTUILIB_API void Delphi_MenuElementUI_DoEvent(CMenuElementUI* handle, TEventUI& event) {
+	handle->DoEvent(event);
+}
+
+DIRECTUILIB_API CMenuWnd* Delphi_MenuElementUI_GetMenuWnd(CMenuElementUI* handle) {
+	return handle->GetMenuWnd();
+}
+
+DIRECTUILIB_API void Delphi_MenuElementUI_CreateMenuWnd(CMenuElementUI* handle) {
+	handle->CreateMenuWnd();
+}
