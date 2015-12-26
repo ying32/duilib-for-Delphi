@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window layeredimage="file='menu_bk.png' corner='40,8,8,8'">
+  <Font id="0" name="微软雅黑" size="12" bold="false" default="true" />
+  <Default name="Menu" value="inset=&quot;7,7,7,7&quot; itemtextpadding=&quot;33,0,0,0&quot; bkimage=&quot;file='menu_bk.png' corner='40,8,8,8'&quot; hole=&quot;false&quot;" />
+  <Menu>
+	<MenuElement name="test1" text="菜单测试1" />
+	<MenuElement name="test2" text="菜单测试2" />
+	<MenuElement height="1" mouse="false" inset="25,0,0,0">
+	    <HorizontalLayout bkcolor="#FF878787" />
+	</MenuElement>
+	<MenuElement text="菜单测试3">
+	   <HorizontalLayout>
+        <Label />
+        <Label width="20"  bkimage="file='tree_expand.png' source='0,0,16,16' dest='0,5,15,20'"/>
+       </HorizontalLayout>
+	   <MenuElement name="test3" text="菜单测试4" />
+	   <MenuElement name="test4" text="菜单测试5" />
+	   <MenuElement height="1" mouse="false" inset="25,0,0,0">
+	   	   <HorizontalLayout bkcolor="#FF878787" />
+	   </MenuElement>
+	   <MenuElement name="test5" text="测试禁用6" enabled="false" />
+	   <MenuElement text="菜单测试7">
+	   	   <HorizontalLayout>
+             <Label />
+             <Label width="20"  bkimage="file='tree_expand.png' source='0,0,16,16' dest='0,5,15,20'"/>
+           </HorizontalLayout>
+	       <MenuElement name="test6" text="菜单测试8" />
+		   <MenuElement name="test7" text="菜单测试9" />
+		   <MenuElement name="test9" text="菜单测试10" />
+		   <MenuElement name="test10" text="菜单测试11" />
+	   </MenuElement>
+	</MenuElement>
+	<MenuElement name="test11" text="菜单测试12" />
+	<MenuElement name="test12" text="菜单测试13" />
+	<MenuElement height="1" mouse="false" inset="25,0,0,0">
+	   	<HorizontalLayout bkcolor="#FF878787" />
+	</MenuElement>
+	<MenuElement name="test13" text="菜单测试14" />
+	<MenuElement text="菜单测试15">
+	   <HorizontalLayout>
+        <Label />
+        <Label width="20"  bkimage="file='tree_expand.png' source='0,0,16,16' dest='0,5,15,20'"/>
+       </HorizontalLayout>
+	   <MenuElement name="test14" text="菜单测试16" />
+	   <MenuElement name="test15" text="菜单测试17" />
+	   <MenuElement name="test16" text="菜单测试18" />
+	   <MenuElement name="test17" text="菜单测试19" />
+	</MenuElement>
+	<MenuElement name="test18" text="菜单测试20" />
+	<MenuElement height="1" mouse="false" inset="25,0,0,0">
+	   	<HorizontalLayout bkcolor="#FF878787" />
+	</MenuElement>
+	<MenuElement name="test19" text="菜单测试21" />
+  </Menu>
+</Window>
