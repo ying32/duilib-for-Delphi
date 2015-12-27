@@ -32,7 +32,9 @@ PS: 另欢迎大家加入QQ群[429151353](http://shang.qq.com/wpa/qunwpa?idkey=d
 使用DDuilib需要具备一定的Delphi基础，其次，最好了解下[duilib](https://github.com/duilib/duilib)以及如何建立UI的xml布局文件，这样学习起来会少走很多弯路。
 
 > 简单示例：完整示例可查看[Duilib for Delphi入门](http://blog.csdn.net/zyjying520/article/details/50184759)
+
 ```delphi
+
 // dpr文件
 program Apps;
 
@@ -98,7 +100,8 @@ begin
   DuiApplication.Run;
   AppsWindow.Free;
 end.
-```
+
+``` 
 
 #### **自行编译** 
 正常情况下本人已经提供了编译好后的各个版本duilib二进制，存放在**Duilib\bin**目录下。
