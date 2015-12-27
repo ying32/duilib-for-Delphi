@@ -414,8 +414,6 @@ begin
 end;
 
 procedure TWkeWebbrowser.InitWkeWebBrowser(ANativeCtrl: CControlUI);
-var
-  R: TRect;
 begin
   if (ANativeCtrl <> nil) and (ANativeCtrl <> FNativeCtrl) then
   begin
@@ -436,10 +434,8 @@ begin
     FWebView.SetOnDocumentReady(OnwkeDocumentReadyCallback, Self);
     FWebView.SetOnConsoleMessage(OnwkeConsoleMessageCallback, Self);
 
-    FNativeCtrl.SetNativeHandle(FWebView.WindowHandle);
-    R := FNativeCtrl.GetPos;
-    FWebView.MoveWindow(R.Left, R.Top, R.Right - R.Left, R.Bottom - R.Top);
-    FWebView.ShowWindow(True);
+    FNativeCtrl.SetNativeHandle(FWindowHandle);
+    FNativeCtrl.Show;
   end;
 end;
 
