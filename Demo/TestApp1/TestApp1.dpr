@@ -102,10 +102,10 @@ begin
     end else
     if LCtlName = 'changeskinbtn' then
     begin
-      if CPaintManagerUI.GetResourcePath = CPaintManagerUI.GetInstancePath then
-        CPaintManagerUI.SetResourcePath(CPaintManagerUI.GetInstancePath + 'skin\FlashRes')
+      if CPaintManagerUI.GetResourcePath = CPaintManagerUI.GetInstancePath + 'skin\' then
+        CPaintManagerUI.SetResourcePath(CPaintManagerUI.GetInstancePath + 'skin\TestAppRes')
       else
-        CPaintManagerUI.SetResourcePath(CPaintManagerUI.GetInstancePath);
+        CPaintManagerUI.SetResourcePath(CPaintManagerUI.GetInstancePath + 'skin\');
       CPaintManagerUI.ReloadSkin;
     end;
   end else if LType = 'menuitemclick' then

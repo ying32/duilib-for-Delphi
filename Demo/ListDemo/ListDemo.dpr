@@ -65,7 +65,8 @@ type
 
 constructor TListMainForm.Create;
 begin
-  inherited Create('skin.xml', 'skin\ListRes');
+  // 后面两参数置空了，交由入口函数设置值
+  inherited Create('skin.xml', '', '');
   CreateWindow(0, 'ListDemo', UI_WNDSTYLE_FRAME, WS_EX_STATICEDGE or WS_EX_APPWINDOW , 0, 0, 600, 320);
   FList := TList{$IFNDEF UseLowVer}<TListItem>{$ENDIF}.Create;
 end;
@@ -216,7 +217,7 @@ end;
 
 constructor TDuiPopupMenu.Create(AListUI: CListUI);
 begin
-  inherited Create('menu.xml', ExtractFilePath(ParamStr(0)) + 'skin\ListRes');
+  inherited Create('menu.xml', '', '');
   FListUI := AListUI;
   CreateWindow(AListUI.GetManager.GetPaintWindow, '', WS_POPUP, WS_EX_TOOLWINDOW);
   Show;
@@ -279,10 +280,12 @@ end;
 var
   ListMainForm: TListMainForm;
 
-
 begin
   try
+
     DuiApplication.Initialize;
+    DuiApplication.SetResourcePath(ExtractFilePath(ParamStr(0)) + 'skin\');
+    DuiApplication.SetResourceZip('ListRes.zip');
     ListMainForm := TListMainForm.Create;
     ListMainForm.CenterWindow;
     ListMainForm.Show;

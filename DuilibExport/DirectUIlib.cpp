@@ -114,7 +114,13 @@ public:
 	LPCTSTR GetWindowClassName() const { return m_ClassName; }
 	CDuiString GetSkinFile() { return m_SkinFile; };
 	CDuiString GetSkinFolder() { return m_SkinFolder; };
-	CDuiString GetZIPFileName() const { return m_ZipFileName; };
+	CDuiString GetZIPFileName() const {
+		// 直接 m_ZipFileName == NULL 竟然错误，调试时又显示为0真无语了
+		CDuiString temp = m_ZipFileName;
+		if (temp.IsEmpty())
+			return CPaintManagerUI::GetResourceZip();
+		return m_ZipFileName; 
+	};
 	UILIB_RESOURCETYPE GetResourceType() const { return m_RType; };
 	UINT GetClassStyle() const { return m_GetClassStyle; };
 	LRESULT MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
