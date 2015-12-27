@@ -31,7 +31,6 @@ type
   protected
     procedure DoInitWindow; override;
     procedure DoNotify(var Msg: TNotifyUI); override;
-    function DoCreateControl(pstrStr: string): CControlUI; override;
     procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
   public
     constructor Create;
@@ -89,14 +88,6 @@ begin
   inherited;
 end;
 
-function TWkeBrowserWindow.DoCreateControl(pstrStr: string): CControlUI;
-begin
-  if pstrStr = 'NativeControl' then
-    Result := CNativeControlUI.CppCreate
-  else
-    Result := nil;
-end;
-
 procedure TWkeBrowserWindow.DoHandleMessage(var Msg: TMessage;
   var bHandled: BOOL);
 begin
@@ -112,9 +103,6 @@ begin
   FTitle := CLabelUI(FindControl('title'));
   FWkeWebbrowser.InitWkeWebBrowser(FindControl('webbrowser'));
   FWkeWebbrowser.UserAgent := 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36';
-
-  //FWkeWebbrowser.Navigate('http://www.baidu.com');
-//  FWkeWebbrowser.Navigate('http://www.oschina.net');
   FWkeWebbrowser.LoadFile('skin\testhtml.html');
 end;
 

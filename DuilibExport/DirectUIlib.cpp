@@ -17,6 +17,63 @@ using namespace DuiLib;
 #pragma warning(disable:4190)
 
 
+class CNativeControlUI : public CControlUI
+{
+private:
+	void UpdateWindowParent(HWND hWd) {
+		if (hWd != NULL && ::IsWindow(hWd)) {
+			HWND hParent = this->GetManager()->GetPaintWindow();
+			if (::GetParent(hWd) != hParent){}
+				::SetParent(hWd, hParent);
+		}
+	}
+public:
+	CNativeControlUI(HWND hWnd) :
+		m_hWnd(hWnd){
+		UpdateWindowParent(hWnd);
+	}
+	void SetInternVisible(bool bVisible = true) {
+		CControlUI::SetInternVisible(bVisible);
+		if (m_hWnd)
+			::ShowWindow(m_hWnd, bVisible ? SW_SHOWNOACTIVATE : SW_HIDE);
+	}
+	void SetVisible(bool bVisible = true) {
+		CControlUI::SetVisible(bVisible);
+		if (m_hWnd)
+			::ShowWindow(m_hWnd, bVisible ? SW_SHOWNOACTIVATE : SW_HIDE);
+	}
+	void SetPos(RECT rc, bool bNeedInvalidate) {
+		CControlUI::SetPos(rc, bNeedInvalidate);
+		if (m_hWnd)
+			::SetWindowPos(m_hWnd, HWND_TOP, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, SWP_NOZORDER | SWP_NOACTIVATE);
+	}
+	LPCTSTR GetClass() const {
+		return _T("NativeControlUI");
+	}
+	CDuiString GetText() const {
+		if (m_hWnd) {
+			CHAR text[MAX_PATH] = { 0 };
+#ifdef UNICODE
+			::GetWindowText(m_hWnd, (LPWSTR)text, MAX_PATH);
+#else
+			::GetWindowText(m_hWnd, (LPSTR)text, MAX_PATH);
+#endif
+			return (LPCTSTR)text;
+		}
+		return _T("");
+	}
+	void SetText(LPCTSTR pstrText){
+		if (m_hWnd)
+			::SetWindowText(m_hWnd, pstrText);
+	}
+	void SetNativeHandle(HWND hWd) {
+		UpdateWindowParent(hWd);
+		m_hWnd = hWd;
+	};
+protected:
+	HWND m_hWnd;
+};
+
 
 typedef LRESULT(*HandleMessageCallBack)(LPVOID, UINT, WPARAM, LPARAM, BOOL&);
 typedef void(*NotifyCallBack)(LPVOID, TNotifyUI&);
@@ -27,6 +84,7 @@ typedef CControlUI*(*CreateControlCallBack)(LPVOID, LPCTSTR);
 typedef LPCTSTR(*GetItemTextCallBack)(LPVOID, CControlUI*, int, int);
 typedef LRESULT(*ResponseDefaultKeyEventCallBack)(LPVOID, WPARAM);
 
+ 
 class CDelphi_WindowImplBase : // 好吧，你赢了,我认输
 	                           public IListCallbackUI, //这个貌似只能放第一个，他取的时候就是取第一个的，要不就另行建立一个类
 							   public WindowImplBase
@@ -101,6 +159,10 @@ public:
 	}
 
 	CControlUI* CreateControl(LPCTSTR pstrClass) {
+		// 直接创建
+		if (_tcsicmp(pstrClass, _T("NativeControl")) == 0)
+			return new CNativeControlUI(NULL);
+
 		if (m_CreateControl)
 			return	m_CreateControl(m_Self, pstrClass);
 		return NULL;
@@ -115,9 +177,7 @@ public:
 	CDuiString GetSkinFile() { return m_SkinFile; };
 	CDuiString GetSkinFolder() { return m_SkinFolder; };
 	CDuiString GetZIPFileName() const {
-		// 直接 m_ZipFileName == NULL 竟然错误，调试时又显示为0真无语了
-		CDuiString temp = m_ZipFileName;
-		if (temp.IsEmpty())
+		if (_tcsicmp(m_ZipFileName, _T("")) == 0)
 			return CPaintManagerUI::GetResourceZip();
 		return m_ZipFileName; 
 	};
@@ -222,48 +282,7 @@ public:
 };
 
 
-class CNativeControlUI: public CControlUI
-{
-   public: 	 
-	  CNativeControlUI(HWND hWnd):
-		   m_hWnd(hWnd){}
 
-      void SetInternVisible(bool bVisible = true) {
-           CControlUI::SetInternVisible(bVisible);
-		   if (m_hWnd)
-		       ::ShowWindow(m_hWnd, bVisible);
-      }
-	  
-	  void SetPos(RECT rc, bool bNeedInvalidate) {
-           CControlUI::SetPos(rc, bNeedInvalidate);
-		   if (m_hWnd)
-		       ::SetWindowPos(m_hWnd, HWND_TOP, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, SWP_NOZORDER | SWP_NOACTIVATE);
-      }
-   
-	  LPCTSTR GetClass() const {
-	     return _T("NativeControlUI");
-	  }
-
-	  CDuiString GetText() const {
-		  if (m_hWnd) {
-			    CHAR text[MAX_PATH] = { 0 };
-			    #ifdef UNICODE
-					::GetWindowText(m_hWnd, (LPWSTR)text, MAX_PATH);
-			    #else
-					::GetWindowText(m_hWnd, (LPSTR)text, MAX_PATH);
-				#endif
-			  return (LPCTSTR)text;
-		  }
-		  return _T("");
-	  }
-	  void SetText(LPCTSTR pstrText){
-		  if (m_hWnd)
-		      ::SetWindowText(m_hWnd, pstrText);
-	  }
-	  void SetNativeHandle(HWND hWd) { m_hWnd = hWd; };
-   protected:
-      HWND m_hWnd;
-};
 
 /*
 typedef void(*SetInternVisibleCallback)(LPVOID, bool);
@@ -5624,6 +5643,10 @@ DIRECTUILIB_API void Delphi_NativeControlUI_SetInternVisible(CNativeControlUI* h
     handle->SetInternVisible(bVisible);
 }
 
+DIRECTUILIB_API void Delphi_NativeControlUI_SetVisible(CNativeControlUI* handle, bool bVisible) {
+	handle->SetVisible(bVisible);
+}
+
 DIRECTUILIB_API void Delphi_NativeControlUI_SetPos(CNativeControlUI* handle ,RECT rc, bool bNeedInvalidate) {
     handle->SetPos(rc, bNeedInvalidate);
 }
@@ -5643,6 +5666,7 @@ DIRECTUILIB_API void Delphi_NativeControlUI_SetText(CNativeControlUI* handle ,LP
 DIRECTUILIB_API void Delphi_NativeControlUI_SetNativeHandle(CNativeControlUI* handle, HWND hWd) {
 	handle->SetNativeHandle(hWd);
 }
+
 
 
 //================================CWkeWebbrowserUI============================

@@ -6,6 +6,10 @@ program TestApp1;
 
 {$R *.res}
 
+// 不引用时间控件就会出错。。。
+{$R WindowsXP.res}
+
+
 uses
   Windows,
   Messages,

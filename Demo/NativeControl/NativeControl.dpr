@@ -23,7 +23,6 @@ type
     procedure DoInitWindow; override;
     procedure DoNotify(var Msg: TNotifyUI); override;
     procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
-    function DoCreateControl(pstrStr: string): CControlUI; override;
   public
     constructor Create;
     destructor Destroy; override;
@@ -39,28 +38,19 @@ end;
 constructor TDuiNativeControlTest.Create;
 begin
   inherited Create('NativeControlTest.xml', 'skin');
+
+  // 之前创建
+  FButton := TButton.Create(nil);
+  FButton.Caption := '按钮1';
+  FButton.OnClick := ButtonClick;
+
   CreateDuiWindow(0, 'NativeControl测试');
 end;
 
 destructor TDuiNativeControlTest.Destroy;
 begin
-  if Assigned(FButton) then FButton.Free;
+  FButton.Free;
   inherited;
-end;
-
-function TDuiNativeControlTest.DoCreateControl(pstrStr: string): CControlUI;
-begin
-  Result := nil;
-  if pstrStr = 'NativeControl' then
-  begin
-    FButton := TButton.Create(nil);
-    FButton.ParentWindow := Handle;
-    FButton.Left := 100;
-    FButton.Top := 100;
-    FButton.Caption := '按钮1';
-    FButton.OnClick := ButtonClick;
-    CNativeControlUI.CppCreate(FButton.Handle);
-  end;
 end;
 
 procedure TDuiNativeControlTest.DoHandleMessage(var Msg: TMessage;
@@ -69,17 +59,24 @@ begin
   inherited;
   if Msg.Msg = WM_COMMAND then
   begin
-    Writeln(Format('FButton Ptr=%p, FButton.Handle=%.8x', [Pointer(FButton), FButton.Handle]));
-    Writeln(Format('Msg.WParam=%.8x, Msg.LParam=%.8x', [Msg.WParam, Msg.LParam]));
+    // 在WM_COMMAND中接收
     if Msg.LParam = FButton.Handle then
       FButton.WindowProc(Msg);
   end;
 end;
 
 procedure TDuiNativeControlTest.DoInitWindow;
+var
+  LNativeCtl: CNativeControlUI;
 begin
   inherited;
-
+  LNativeCtl := CNativeControlUI(FindControl('test1'));
+  if LNativeCtl <> nil then
+  begin
+    // 这个只能使用delphi设置parent
+    FButton.ParentWindow := Handle;
+    LNativeCtl.SetNativeHandle(FButton.Handle);
+  end;
 end;
 
 procedure TDuiNativeControlTest.DoNotify(var Msg: TNotifyUI);

@@ -1926,6 +1926,7 @@ type
     class function CppCreate(hWnd: HWND = 0): CNativeControlUI;
     procedure CppDestroy;
     procedure SetInternVisible(bVisible: Boolean = True);
+    procedure SetVisible(bVisible: Boolean = True);
     procedure SetPos(rc: TRect; bNeedInvalidate: Boolean);
     function GetClass: string;
     function GetText: string;
@@ -3216,6 +3217,7 @@ procedure Delphi_TileLayoutUI_SetAttribute(Handle: CTileLayoutUI; pstrName: LPCT
 function Delphi_NativeControlUI_CppCreate(hWnd: HWND): CNativeControlUI; cdecl;
 procedure Delphi_NativeControlUI_CppDestroy(Handle: CNativeControlUI); cdecl;
 procedure Delphi_NativeControlUI_SetInternVisible(Handle: CNativeControlUI; bVisible: Boolean); cdecl;
+procedure Delphi_NativeControlUI_SetVisible(Handle: CNativeControlUI; bVisible: Boolean); cdecl;
 procedure Delphi_NativeControlUI_SetPos(Handle: CNativeControlUI; rc: TRect; bNeedInvalidate: Boolean); cdecl;
 function Delphi_NativeControlUI_GetClass(Handle: CNativeControlUI): LPCTSTR; cdecl;
 function Delphi_NativeControlUI_GetText(Handle: CNativeControlUI): CDuiString; cdecl;
@@ -9363,6 +9365,11 @@ begin
   Delphi_NativeControlUI_SetInternVisible(Self, bVisible);
 end;
 
+procedure CNativeControlUI.SetVisible(bVisible: Boolean);
+begin
+  Delphi_NativeControlUI_SetVisible(Self, bVisible);
+end;
+
 procedure CNativeControlUI.SetPos(rc: TRect; bNeedInvalidate: Boolean);
 begin
   Delphi_NativeControlUI_SetPos(Self, rc, bNeedInvalidate);
@@ -10663,6 +10670,7 @@ procedure Delphi_TileLayoutUI_SetAttribute; external DuiLibdll name 'Delphi_Tile
 function Delphi_NativeControlUI_CppCreate; external DuiLibdll name 'Delphi_NativeControlUI_CppCreate';
 procedure Delphi_NativeControlUI_CppDestroy; external DuiLibdll name 'Delphi_NativeControlUI_CppDestroy';
 procedure Delphi_NativeControlUI_SetInternVisible; external DuiLibdll name 'Delphi_NativeControlUI_SetInternVisible';
+procedure Delphi_NativeControlUI_SetVisible; external DuiLibdll name 'Delphi_NativeControlUI_SetVisible';
 procedure Delphi_NativeControlUI_SetPos; external DuiLibdll name 'Delphi_NativeControlUI_SetPos';
 function Delphi_NativeControlUI_GetClass; external DuiLibdll name 'Delphi_NativeControlUI_GetClass';
 function Delphi_NativeControlUI_GetText; external DuiLibdll name 'Delphi_NativeControlUI_GetText';
