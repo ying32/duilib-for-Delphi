@@ -215,7 +215,7 @@ uses
 
 function PrivateExtractIcons(lpszFile: LPCTSTR; nIconIndex, cxIcon, cyIcon: Integer;
    var phicon: HICON; var piconid: UINT; nIcons, flags: UINT): UINT; stdcall;
-    external user32 name 'PrivateExtractIconsW';
+    external user32 name {$IFDEF UICODE}'PrivateExtractIconsW'{$ELSE}'PrivateExtractIconsA'{$ENDIF};
 
 function CreateIconInfo(AText, AIconPath: string): TIconInfo;
 begin
