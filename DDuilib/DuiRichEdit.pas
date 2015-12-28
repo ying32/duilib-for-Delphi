@@ -35,8 +35,10 @@ type
     procedure _SetAutoURLDetect(const Value: Boolean);
     procedure _SetEventMask(const Value: DWORD);
   public
-    class function CppCreate: CRichEditUI;
-    procedure CppDestroy;
+    class function CppCreate: CRichEditUI; deprecated {$IFNDEF UseLowVer}'use Create'{$ENDIF};
+    procedure CppDestroy; deprecated {$IFNDEF UseLowVer}'use Free'{$ENDIF};
+    class function Create: CRichEditUI;
+    procedure Free;
     function GetClass: string;
     function GetInterface(pstrName: string): Pointer;
     function GetControlFlags: UINT;
@@ -284,6 +286,16 @@ begin
 end;
 
 procedure CRichEditUI.CppDestroy;
+begin
+  Delphi_RichEditUI_CppDestroy(Self);
+end;
+
+class function CRichEditUI.Create: CRichEditUI;
+begin
+  Result := Delphi_RichEditUI_CppCreate;
+end;
+
+procedure CRichEditUI.Free;
 begin
   Delphi_RichEditUI_CppDestroy(Self);
 end;

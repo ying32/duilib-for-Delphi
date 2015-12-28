@@ -15,8 +15,10 @@
 //***************************************************************************
 unit DuiMenu;
 
-{$Z4+}
+
+{$WARN SYMBOL_DEPRECATED OFF}
 {$I DDuilib.inc}
+{$Z4+}
 
 interface
 
@@ -47,8 +49,10 @@ type
 
   CMenuUI = class(CListUI)
   public
-    class function CppCreate: CMenuUI;
-    procedure CppDestroy;
+    class function CppCreate: CMenuUI; deprecated {$IFNDEF UseLowVer}'use Create'{$ENDIF};
+    procedure CppDestroy; deprecated {$IFNDEF UseLowVer}'use Free'{$ENDIF};
+    class function Create: CMenuUI;
+    procedure Free;
     function GetClass: string;
     function GetInterface(pstrName: string): Pointer;
     procedure DoEvent(var event: TEventUI);
@@ -63,8 +67,10 @@ type
 
   CMenuWnd = class//(CWindowWnd)
   public
-    class function CppCreate(hParent: HWND = 0; pMainPaint: CPaintManagerUI = nil): CMenuWnd;
-    procedure CppDestroy;
+    class function CppCreate(hParent: HWND = 0; pMainPaint: CPaintManagerUI = nil): CMenuWnd; deprecated {$IFNDEF UseLowVer}'use Create'{$ENDIF};
+    procedure CppDestroy; deprecated {$IFNDEF UseLowVer}'use Free'{$ENDIF};
+    class function Create(hParent: HWND = 0; pMainPaint: CPaintManagerUI = nil): CMenuWnd;
+    procedure Free;
     procedure Init(pOwner: CMenuElementUI; xml: string; pSkinType: string; point: TPoint);
     function GetWindowClassName: string;
     procedure OnFinalMessage(hWnd: HWND);
@@ -74,8 +80,10 @@ type
 
   CMenuElementUI = class(CListContainerElementUI)
   public
-    class function CppCreate: CMenuElementUI;
-    procedure CppDestroy;
+    class function CppCreate: CMenuElementUI; deprecated {$IFNDEF UseLowVer}'use Create'{$ENDIF};
+    procedure CppDestroy; deprecated {$IFNDEF UseLowVer}'use Free'{$ENDIF};
+    class function Create: CMenuElementUI;
+    procedure Free;
     function GetClass: string;
     function GetInterface(pstrName: string): Pointer;
     procedure DoPaint(hDC: HDC; var rcPaint: TRect);
@@ -146,6 +154,16 @@ begin
   Delphi_MenuUI_CppDestroy(Self);
 end;
 
+class function CMenuUI.Create: CMenuUI;
+begin
+  Result := Delphi_MenuUI_CppCreate;
+end;
+
+procedure CMenuUI.Free;
+begin
+  Delphi_MenuUI_CppDestroy(Self);
+end;
+
 function CMenuUI.GetClass: string;
 begin
   Result := Delphi_MenuUI_GetClass(Self);
@@ -208,6 +226,16 @@ begin
   Delphi_MenuWnd_CppDestroy(Self);
 end;
 
+class function CMenuWnd.Create(hParent: HWND = 0; pMainPaint: CPaintManagerUI = nil): CMenuWnd;
+begin
+  Result := Delphi_MenuWnd_CppCreate(hParent, pMainPaint);
+end;
+
+procedure CMenuWnd.Free;
+begin
+  Delphi_MenuWnd_CppDestroy(Self);
+end;
+
 procedure CMenuWnd.Init(pOwner: CMenuElementUI; xml: string; pSkinType: string; point: TPoint);
 begin
   Delphi_MenuWnd_Init(Self, pOwner, STRINGorID(xml), LPCTSTR(pSkinType), point);
@@ -241,6 +269,16 @@ begin
 end;
 
 procedure CMenuElementUI.CppDestroy;
+begin
+  Delphi_MenuElementUI_CppDestroy(Self);
+end;
+
+class function CMenuElementUI.Create: CMenuElementUI;
+begin
+  Result := Delphi_MenuElementUI_CppCreate;
+end;
+
+procedure CMenuElementUI.Free;
 begin
   Delphi_MenuElementUI_CppDestroy(Self);
 end;

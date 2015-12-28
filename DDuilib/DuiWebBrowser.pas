@@ -12,6 +12,8 @@
 //***************************************************************************
 unit DuiWebBrowser;
 
+{$WARN SYMBOL_DEPRECATED OFF}
+
 interface
 
 uses
@@ -33,8 +35,10 @@ type
     function IsAutoNavigation: Boolean;
     procedure SetWebBrowserEventHandler(pEventHandler: CWebBrowserEventHandler);
   public
-    class function CppCreate: CWebBrowserUI;
-    procedure CppDestroy;
+    class function CppCreate: CWebBrowserUI; deprecated {$IFNDEF UseLowVer}'use Create'{$ENDIF};
+    procedure CppDestroy; deprecated {$IFNDEF UseLowVer}'use Free'{$ENDIF};
+    class function Create: CWebBrowserUI;
+    procedure Free;
     function GetClass: string;
     function GetInterface(pstrName: string): Pointer;
     procedure Refresh;
@@ -96,6 +100,16 @@ begin
 end;
 
 procedure CWebBrowserUI.CppDestroy;
+begin
+  Delphi_WebBrowserUI_CppDestroy(Self);
+end;
+
+class function CWebBrowserUI.Create: CWebBrowserUI;
+begin
+  Result := Delphi_WebBrowserUI_CppCreate;
+end;
+
+procedure CWebBrowserUI.Free;
 begin
   Delphi_WebBrowserUI_CppDestroy(Self);
 end;
