@@ -3338,7 +3338,12 @@ end;
 
 class function CStdStringPtrMap.Create: CStdStringPtrMap;
 begin
-  Result := CppCreate;
+  Result := Delphi_StdStringPtrMap_CppCreate;
+end;
+
+procedure CStdStringPtrMap.Free;
+begin
+  Delphi_StdStringPtrMap_CppDestroy(Self);
 end;
 
 procedure CStdStringPtrMap.Resize(nSize: Integer);
@@ -3349,11 +3354,6 @@ end;
 function CStdStringPtrMap.Find(key: string; optimize: Boolean): Pointer;
 begin
   Result := Delphi_StdStringPtrMap_Find(Self, PChar(key), optimize);
-end;
-
-procedure CStdStringPtrMap.Free;
-begin
-  CppDestroy;
 end;
 
 function CStdStringPtrMap.Insert(key: string; pData: Pointer): Boolean;
@@ -3401,17 +3401,17 @@ end;
 class function CStdValArray.Create(iElementSize,
   iPreallocSize: Integer): CStdValArray;
 begin
-  Result := CppCreate(iElementSize, iPreallocSize);
+  Result := Delphi_StdValArray_CppCreate(iElementSize, iPreallocSize);
+end;
+
+procedure CStdValArray.Free;
+begin
+  Delphi_StdValArray_CppDestroy(Self);
 end;
 
 procedure CStdValArray.Empty;
 begin
   Delphi_StdValArray_Empty(Self);
-end;
-
-procedure CStdValArray.Free;
-begin
-  CppDestroy;
 end;
 
 function CStdValArray.IsEmpty: Boolean;

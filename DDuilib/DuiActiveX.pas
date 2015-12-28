@@ -33,8 +33,10 @@ type
     procedure SetVisible(bVisible: Boolean = True);
     procedure SetInternVisible(bVisible: Boolean = True);
   public
-    class function CppCreate: CActiveXUI;
-    procedure CppDestroy;
+    class function CppCreate: CActiveXUI; deprecated {$IFNDEF UseLowVer}'use Create'{$ENDIF};
+    procedure CppDestroy; deprecated {$IFNDEF UseLowVer}'use Free'{$ENDIF};
+    class function Create: CActiveXUI;
+    procedure Free;
     function GetClass: string;
     function GetInterface(pstrName: string): Pointer;
     function GetControlFlags: UINT;
@@ -90,6 +92,16 @@ begin
 end;
 
 procedure CActiveXUI.CppDestroy;
+begin
+  Delphi_ActiveXUI_CppDestroy(Self);
+end;
+
+class function CActiveXUI.Create: CActiveXUI;
+begin
+  Result := Delphi_ActiveXUI_CppCreate;
+end;
+
+procedure CActiveXUI.Free;
 begin
   Delphi_ActiveXUI_CppDestroy(Self);
 end;
