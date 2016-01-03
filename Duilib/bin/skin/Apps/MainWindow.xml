@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<Window size="324,600" caption="0,0,0,24" mininfo="324,600" maxinfo="324,600" roundcorner="2,2" layeredimage="file='menubordernormal.png' corner='6,6,6,6'" >
+<Window size="324,600" caption="0,0,0,32" mininfo="324,600" maxinfo="324,600" roundcorner="2,2" layeredimage="file='menubordernormal.png' corner='6,6,6,6'" >
     <Font id="0" name="微软雅黑" size="12" bold="false" italic="false" defualt="true" />
     <HorizontalLayout width="379" height="551" bkimage="file='menubordernormal.png' corner='6,6,6,6' hole='true'" inset="5,5,5,5">
-        <VerticalLayout name="bg"  bkimage="file=&apos;wallpapers\{00000000-0000-0000-0000-00000000000f}.jpg&apos; corner=&apos;780,620,1,1&apos;">
+        <VerticalLayout name="bg"  bkimage="file=&apos;wallpapers\{00000000-0000-0000-0000-000000000008}.jpg&apos; corner=&apos;780,620,1,1&apos;">
             <HorizontalLayout height="24">
                 <VerticalLayout height="24">
                     <Label text="Apps" height="24" padding="10,0,0,0" textcolor="#FFFFFFFF" disabledtextcolor="#FFA7A6AA" />

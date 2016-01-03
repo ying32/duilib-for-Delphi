@@ -70,7 +70,7 @@ extern const TCHAR* const kMenuElementUIClassName;// = _T("MenuElementUI");
 extern const TCHAR* const kMenuElementUIInterfaceName;// = _T("MenuElement);
 
 class CMenuElementUI;
-class CMenuWnd : public CWindowWnd, public ContextMenuReceiver
+class CMenuWnd : public CWindowWnd, public INotifyUI, public ContextMenuReceiver
 {
 public:
 	CMenuWnd(HWND hParent = NULL, CPaintManagerUI* pMainPaint = NULL);
@@ -82,6 +82,7 @@ public:
     LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
 	BOOL Receive(ContextMenuParam param);
 
+	void Notify(TNotifyUI& msg);
 public:
 	HWND m_hParent;
 	POINT m_BasedPoint;
@@ -115,7 +116,7 @@ public:
 	bool Activate();
 
 	void DoEvent(TEventUI& event);
-
+	void SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue);
 
 	CMenuWnd* GetMenuWnd();
 

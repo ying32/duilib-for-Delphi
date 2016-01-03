@@ -79,6 +79,9 @@ begin
   begin
     Writeln(Format('Type=%s, Name=%s, Text=%s', [LType, LCtlName, Msg.pSender.Text]));
     MessageBox(Handle, PChar(Format('点击了"%s"菜单项', [LCtlName])), '菜单点击', 0);
+  end else if LType = DUI_MSGTYPE_MENUITEMCHILDCLICK then
+  begin
+    Writeln(Format('子项目单击 Type=%s, Name=%s, Text=%s', [LType, LCtlName, Msg.pSender.Text]));
   end;
 end;
 

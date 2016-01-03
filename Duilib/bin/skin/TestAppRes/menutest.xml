@@ -3,7 +3,13 @@
   <Font id="0" name="微软雅黑" size="12" bold="false" default="true" />
   <Default name="Menu" value="inset=&quot;7,7,7,7&quot; itemtextpadding=&quot;33,0,0,0&quot; bkimage=&quot;file='menu_bk.png' corner='40,8,8,8'&quot; hole=&quot;false&quot;" />
   <Menu>
-	<MenuElement name="test1" text="菜单测试1" />
+	<MenuElement height="100" mousechild="true">
+        <VerticalLayout inset="40,10,0,0">
+            <Button text="测试按钮" height="25" width="60" normalimage="file='button.png'" hotimage="file='button_h.png'" pushedimage="file='button_p.png'"/>
+			<Option text="radio" height="25" textpadding="20,0,0,0" align="left"  normalimage="file='radio.png' dest='0,5,15,20'" hotimage="file='radio_h.png' dest='0,5,15,20'" selectedimage="file='radio_p.png' dest='0,5,15,20'" width="60"/>
+            <Option text="按键提示音" height="25" textpadding="20,0,0,0" align="left"  normalimage="file='radio.png' dest='0,5,15,20'" hotimage="file='radio_h.png' dest='0,5,15,20'" selectedimage="file='radio_p.png' dest='0,5,15,20'" width="90" />
+        </VerticalLayout>
+	</MenuElement>
 	<MenuElement name="test2" text="菜单测试2" />
 	<MenuElement height="1" mouse="false" inset="25,0,0,0">
 	    <HorizontalLayout bkcolor="#FF878787" />
@@ -14,7 +20,14 @@
         <Label width="20"  bkimage="file='tree_expand.png' source='0,0,16,16' dest='0,5,15,20'"/>
        </HorizontalLayout>
 	   <MenuElement name="test3" text="菜单测试4" />
-	   <MenuElement name="test4" text="菜单测试5" />
+	   <!--<MenuElement name="test4" text="菜单测试5" />-->
+	   	<MenuElement height="100" mousechild="true">
+        <VerticalLayout inset="40,10,0,0">
+            <Button text="测试按钮" height="25" width="60" normalimage="file='button.png'" hotimage="file='button_h.png'" pushedimage="file='button_p.png'"/>
+			<Option text="radio" height="25" textpadding="20,0,0,0" align="left"  normalimage="file='radio.png' dest='0,5,15,20'" hotimage="file='radio_h.png' dest='0,5,15,20'" selectedimage="file='radio_p.png' dest='0,5,15,20'" width="60"/>
+            <Option text="按键提示音" height="25" textpadding="20,0,0,0" align="left"  normalimage="file='radio.png' dest='0,5,15,20'" hotimage="file='radio_h.png' dest='0,5,15,20'" selectedimage="file='radio_p.png' dest='0,5,15,20'" width="90" />
+        </VerticalLayout>
+	</MenuElement>
 	   <MenuElement height="1" mouse="false" inset="25,0,0,0">
 	   	   <HorizontalLayout bkcolor="#FF878787" />
 	   </MenuElement>
