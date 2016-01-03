@@ -786,6 +786,7 @@ procedure TDuiTrayWindowImplBase.SetHIcon(const Value: HICON);
 begin
   if FHIcon <> Value then
   begin
+    FHIcon = Value;
     FTrayData.hIcon := FHIcon;
     Shell_NotifyIcon(NIM_MODIFY, @FTrayData);
   end;
