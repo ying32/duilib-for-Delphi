@@ -18,6 +18,12 @@ CMenuElementUI s_TempMenuElement;
 const TCHAR* const kMenuUIClassName = _T("MenuUI");
 const TCHAR* const kMenuUIInterfaceName = _T("Menu");
 
+// MenuElementUI
+const TCHAR* const kMenuElementUIClassName = _T("MenuElementUI");
+const TCHAR* const kMenuElementUIInterfaceName = _T("MenuElement");
+const TCHAR* const kmenuitemclick = _T("menuitemclick");
+const TCHAR* const kmenuitemchildclick = _T("menuitemchildclick");
+
 CMenuUI::CMenuUI()
 {
 	if (GetHeader() != NULL)
@@ -223,6 +229,9 @@ void CMenuWnd::OnFinalMessage(HWND hWnd)
 				(static_cast<CMenuElementUI*>(m_pOwner->GetItemAt(i)->GetInterface(kMenuElementUIInterfaceName)))->SetInternVisible(false);
 			}
 		}
+		m_pm.RemoveNotifier(this);
+		m_pm.ReapObjects(m_pm.GetRoot());
+	
 		m_pOwner->m_pWindow = NULL;
 		m_pOwner->m_uButtonState &= ~ UISTATE_PUSHED;
 		m_pOwner->Invalidate();
@@ -241,7 +250,7 @@ LRESULT CMenuWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 			::GetClientRect(*this, &rcClient);
 			::SetWindowPos(*this, NULL, rcClient.left, rcClient.top, rcClient.right - rcClient.left, \
 				rcClient.bottom - rcClient.top, SWP_FRAMECHANGED);
-
+			//printf("create\n");
 			m_pm.Init(m_hWnd);
 
 			// ying32修改，这里为支持带阴影的图片背景
@@ -273,6 +282,7 @@ LRESULT CMenuWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 				}
 			}
 			m_pm.AttachDialog(m_pLayout);
+			m_pm.AddNotifier(this);
 
 			// Position the popup window in absolute space
 			RECT rcOwner = m_pOwner->GetPos();
@@ -400,6 +410,7 @@ LRESULT CMenuWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 			CControlUI* pRoot = builder.Create(m_xml, m_sType.GetData(), &menuCallback, &m_pm);
 			m_pm.AttachDialog(pRoot);
+			m_pm.AddNotifier(this);
 
 #if defined(WIN32) && !defined(UNDER_CE)
 			MONITORINFO oMonitor = {}; 
@@ -508,13 +519,22 @@ LRESULT CMenuWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
     return CWindowWnd::HandleMessage(uMsg, wParam, lParam);
 }
 
+void CMenuWnd::Notify(TNotifyUI& msg) {
+	if (_tcscmp(msg.sType, DUI_MSGTYPE_CLICK) == 0) {
+		//printf("Notify=%d\n", msg.dwTimestamp);
+		// 这里添加代码通知就好了
+		if (s_pMainPaint) {
+			// 只能使用异步方式传递,　不然就bug了
+			s_pMainPaint->SendNotify(msg.pSender, kmenuitemchildclick, 0, 0, true);
+			return;
+		}
+	}
+}
+
 /////////////////////////////////////////////////////////////////////////////////////
 //
 
-// MenuElementUI
-const TCHAR* const kMenuElementUIClassName = _T("MenuElementUI");
-const TCHAR* const kMenuElementUIInterfaceName = _T("MenuElement");
-const TCHAR* const kmenuitemclick = _T("menuitemclick");
+
 
 
 CMenuElementUI::CMenuElementUI():
@@ -522,7 +542,7 @@ m_pWindow(NULL)
 {
 	m_cxyFixed.cy = 25;
 	m_bMouseChildEnabled = true;
-
+	//SetMouseEnabled(false);
 	SetMouseChildEnabled(false);
 }
 
@@ -543,7 +563,9 @@ LPVOID CMenuElementUI::GetInterface(LPCTSTR pstrName)
 void CMenuElementUI::DoPaint(HDC hDC, const RECT& rcPaint)
 {
     if( !::IntersectRect(&m_rcPaint, &rcPaint, &m_rcItem) ) return;
-	CMenuElementUI::DrawItemBk(hDC, m_rcItem);
+	// ying32修改，当禁用时不画背景了
+	if (IsEnabled())
+	    CMenuElementUI::DrawItemBk(hDC, m_rcItem);
 	DrawItemText(hDC, m_rcItem);
 	for (int i = 0; i < GetCount(); ++i)
 	{
@@ -663,6 +685,7 @@ void CMenuElementUI::DoEvent(TEventUI& event)
 
 	if( event.Type == UIEVENT_BUTTONDOWN )
 	{
+		
 		if( IsEnabled() ){
 			CListContainerElementUI::DoEvent(event);
 
@@ -689,6 +712,7 @@ void CMenuElementUI::DoEvent(TEventUI& event)
 				s_TempMenuElement.SetName(this->GetName());
 				s_TempMenuElement.SetPos(this->GetClientPos());
 				s_TempMenuElement.SetText(this->GetText());
+				s_TempMenuElement.SetTag(this->GetTag());
 			 
 				ContextMenuParam param;
 				param.hWnd = m_pManager->GetPaintWindow();
@@ -703,11 +727,19 @@ void CMenuElementUI::DoEvent(TEventUI& event)
 				}
 				
 			}
-        }
+		}
         return;
     }
 
     CListContainerElementUI::DoEvent(event);
+}
+
+// ying32添加,当使用了mousechild=true时禁用this
+void CMenuElementUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue) {
+	if (_tcscmp(pstrName, _T("mousechild")) == 0 && _tcscmp(pstrValue, _T("true")) == 0) {
+	    SetEnabled(false);
+	}	
+	CListContainerElementUI::SetAttribute(pstrName, pstrValue);
 }
 
 bool CMenuElementUI::Activate()

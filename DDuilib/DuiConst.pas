@@ -51,6 +51,7 @@ const
   DUI_MSGTYPE_SELECTCHANGED  = 'selectchanged';
 
   DUI_MSGTYPE_MENUITEMCLICK  = 'menuitemclick';
+  DUI_MSGTYPE_MENUITEMCHILDCLICK = 'menuitemchildclick';
 
   DUI_CTR_EDIT                  = 'Edit';
   DUI_CTR_LIST                  = 'List';
