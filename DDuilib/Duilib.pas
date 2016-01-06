@@ -83,17 +83,19 @@ type
   
   SHORT = SmallInt;
   PShort = ^SHORT;
+  // cpux86
+  SIZE_T = Cardinal;
+  UIntPtr = Cardinal;
+  UINT_PTR = Cardinal;
+  LPCVOID = Pointer;
+	
 {$IFDEF UseLowVer}
   TRectF = record
     Left, Top, Right, Bottom: Single;
   end;
   {$IFNDEF FPC}
     LPVOID = Pointer;
-    UINT_PTR = Cardinal;
     LPBYTE = PByte;
-    LPCVOID = Pointer;
-    SIZE_T = Cardinal;
-    UIntPtr = Cardinal;
     LONG = Longint;
   {$ELSE}
     BOOL = LongBool;
@@ -3276,12 +3278,12 @@ end;
 
 function CDuiString.IsEmpty: Boolean;
 begin
-  Result := ToString.IsEmpty;
+  Result := Self.Length = 0;
 end;
 
 function CDuiString.Length: Integer;
 begin
-  Result := ToString.Length;
+  Result := System.Length(ToString);
 end;
 
 class operator CDuiString.NotEqual(const Lhs, Rhs: CDuiString): Boolean;
@@ -3301,7 +3303,7 @@ end;
 
 function CDuiString.ToString: string;
 begin
-  Result := m_pstr; //PChar(@m_szBuffer[0]);
+  Result := m_pstr;
 end;
 {$ELSE UseLowVer}
 function StringToDuiString(const AStr: string): CDuiString;
