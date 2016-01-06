@@ -13,7 +13,7 @@ uses
   Types,
   RichEdit,
  {$IFNDEF UseLowVer}
-  System.Generics.Collections,
+  Generics.Collections,
  {$ENDIF}
   Duilib,
   DuiListUI,

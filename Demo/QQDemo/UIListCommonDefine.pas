@@ -17,7 +17,7 @@ uses
   Classes,
   SysUtils,
 {$IFNDEF UseLowVer}
-  System.Generics.Collections,
+  Generics.Collections,
 {$ENDIF}
   Duilib;
 
