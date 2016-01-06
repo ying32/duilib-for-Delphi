@@ -80,7 +80,7 @@ type
   CScrollBarUI = class;
   CTreeViewUI = class;
   
-{$IF not Declared(SHORT)}
+{$IF not Declared(SHORT) or not Declared(PShort)}
   SHORT = SmallInt;
   PShort = ^SHORT;
 {$IFEND}
