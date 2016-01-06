@@ -84,6 +84,7 @@ type
   SHORT = SmallInt;
   PShort = ^SHORT;
 
+  PCOLORREF = ^COLORREF;
   
 // cpux86
 {$IF not Declared(SIZE_T)}
@@ -288,6 +289,22 @@ type
   PListInfoUI = ^TListInfoUI;
   TListInfoUI = tagTListInfoUI;
 
+  // CommCtrol
+  tagTOOLINFO = packed record
+    cbSize: UINT;
+    uFlags: UINT;
+    hwnd: HWND;
+    uId: UIntPtr;
+    Rect: TRect;
+    hInst: HINST;
+    lpszText: PChar;
+    lParam: LPARAM;
+    lpReserved: Pointer;
+  end;
+  PToolInfo = ^TToolInfo;
+  TToolInfo = tagTOOLINFO;
+  TOOLINFO = TToolInfo;
+
 
   TNotifyUI = packed record
     sType: CDuiString;
@@ -469,6 +486,74 @@ type
   end;
 
   CPaintManagerUI = class
+  protected
+    m_sName: CDuiString;
+    m_hWndPaint: HWND;
+    m_hDcPaint: HDC;
+    m_hDcOffscreen: HDC;
+    m_hDcBackground: HDC;
+    m_hbmpOffscreen: HBITMAP;
+    m_pOffscreenBits: PCOLORREF;
+    m_hbmpBackground: HBITMAP;
+    m_pBackgroundBits: PCOLORREF;
+    m_iTooltipWidth: Integer;
+    m_hwndTooltip: HWND;
+    m_ToolTip: TOOLINFO;
+    m_iHoverTime: Integer;
+    m_bShowUpdateRect: Boolean;
+    //
+    m_pRoot: CControlUI;
+    m_pFocus: CControlUI;
+    m_pEventHover: CControlUI;
+    m_pEventClick: CControlUI;
+    m_pEventKey: CControlUI;
+
+    m_ptLastMousePos: TPoint;
+    m_szMinWindow: TSize;
+    m_szMaxWindow: TSize;
+    m_szInitWindowSize: TSize;
+    m_rcSizeBox: TRect;
+    m_szRoundCorner: TSize;
+    m_rcCaption: TRect;
+    m_uTimerID: UINT;
+    m_bFirstLayout: Boolean;
+    m_bUpdateNeeded: Boolean;
+    m_bFocusNeeded: Boolean;
+    m_bOffscreenPaint: Boolean;
+
+    m_nOpacity: Byte;
+    m_bLayered: Boolean;
+    m_rcLayeredInset: TRect;
+    m_bLayeredChanged: TRect;
+    m_rcLayeredUpdate: TRect;
+    m_diLayered: TDrawInfo;
+
+    m_bMouseTracking: Boolean;
+    m_bMouseCapture: Boolean;
+    m_bIsPainting: Boolean;
+    m_bUsedVirtualWnd: Boolean;
+    m_bAsyncNotifyPosted: Boolean;
+{
+    //
+    CStdPtrArray m_aNotifiers;
+    CStdPtrArray m_aTimers;
+    CStdPtrArray m_aPreMessageFilters;
+    CStdPtrArray m_aMessageFilters;
+    CStdPtrArray m_aPostPaintControls;
+    CStdPtrArray m_aNativeWindow;
+    CStdPtrArray m_aNativeWindowControl;
+    CStdPtrArray m_aDelayedCleanup;
+    CStdPtrArray m_aAsyncNotify;
+    CStdPtrArray m_aFoundControls;
+    CStdStringPtrMap m_mNameHash;
+    CStdStringPtrMap m_mWindowCustomAttrHash;
+    CStdStringPtrMap m_mOptionGroup;
+
+    //
+    bool m_bForceUseSharedRes;
+    TResInfo m_ResInfo;
+}
+
   public
     class function CppCreate: CPaintManagerUI;
     procedure CppDestroy;
@@ -668,6 +753,51 @@ type
     OnNotify: CEventSource;
     OnPaint: CEventSource;
     OnPostPaint: CEventSource;
+
+  protected
+    m_pManager: CPaintManagerUI;
+    m_pParent: CControlUI;
+    m_sVirtualWnd: CDuiString;
+    m_sName: CDuiString;
+    m_bUpdateNeeded: Boolean;
+    m_bMenuUsed: Boolean;
+    m_rcItem: TRect;
+    m_rcPadding: TRect;
+    m_cXY: TSize;
+    m_cxyFixed: TSize;
+    m_cxyMin: TSize;
+    m_cxyMax: TSize;
+    m_bVisible: Boolean;
+    m_bInternVisible: Boolean;
+    m_bEnabled: Boolean;
+    m_bMouseEnabled: Boolean;
+    m_bKeyboardEnabled: Boolean;
+    m_bFocused: Boolean;
+    m_bFloat: Boolean;
+    m_piFloatPercent: TPercentInfo;
+    m_bSetPos: Boolean;
+
+    m_sText: CDuiString;
+    m_sToolTip: CDuiString;
+    m_chShortcut: Char;
+    m_sUserData: CDuiString;
+    m_pTag: UINT_PTR;
+
+    m_dwBackColor: DWORD;
+    m_dwBackColor2: DWORD;
+    m_dwBackColor3: DWORD;
+    m_diBk: TDrawInfo;
+    m_diFore: TDrawInfo;
+    m_dwBorderColor: DWORD;
+    m_dwFocusBorderColor: DWORD;
+    m_bColorHSL: Boolean;
+    m_nBorderStyle: Integer;
+    m_nTooltipWidth: Integer;
+    m_cxyBorderRound: TSize;
+    m_rcPaint: TRect;
+    m_rcBorderSize: TRect;
+    // m_mCustomAttrHash: CStdStringPtrMap;
+
   public
     class function CppCreate: CControlUI;
     procedure CppDestroy;
