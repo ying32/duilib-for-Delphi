@@ -198,9 +198,9 @@ type
     lineNumber: LongInt;
   end;
 
-{$IFDEF UseLowVer}
-  size_t = Cardinal;
-{$ENDIF}
+{$IF not Declared(SIZE_T)}
+  SIZE_T = Cardinal;
+{$IFEND}
 
 //typedef void* (*FILE_OPEN) (const char* path);
   FILE_OPEN = function(path: PAnsiChar): Pointer; cdecl;

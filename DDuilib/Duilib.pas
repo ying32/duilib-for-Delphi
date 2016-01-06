@@ -80,28 +80,42 @@ type
   CScrollBarUI = class;
   CTreeViewUI = class;
   
-  
+{$IF not Declared(SHORT)}
   SHORT = SmallInt;
   PShort = ^SHORT;
-  // cpux86
+{$IFEND}
+  
+// cpux86
+{$IF not Declared(SIZE_T)}
   SIZE_T = Cardinal;
+{$IFEND}
+{$IF not Declared(UIntPtr)} 
   UIntPtr = Cardinal;
+{$IFEND}
+{$IF not Declared(UINT_PTR)} 
   UINT_PTR = Cardinal;
+{$IFEND}
+{$IF not Declared(LPCVOID)} 
   LPCVOID = Pointer;
-	
-{$IFDEF UseLowVer}
+{$IFEND}
+{$IF not Declared(LONG)} 
+  LONG = Longint;
+{$IFEND}
+{$IF not Declared(TRectF)} 
   TRectF = record
     Left, Top, Right, Bottom: Single;
   end;
-  {$IFNDEF FPC}
-    LPVOID = Pointer;
-    LPBYTE = PByte;
-    LONG = Longint;
-  {$ELSE}
-    BOOL = LongBool;
-  {$ENDIF FPC}
-{$ENDIF UseLowVer}
-
+{$IFEND}
+{$IF not Declared(LPVOID)} 
+  LPVOID = Pointer;
+{$IFEND}
+{$IF not Declared(LPBYTE)} 
+  LPBYTE = PByte;
+{$IFEND}
+{$IF not Declared(BOOL)} 
+  BOOL = LongBool;
+{$IFEND}
+ 
   FINDCONTROLPROC = function(AControl: CControlUI; P: LPVOID): CControlUI; cdecl;
   TFindControlProc = FINDCONTROLPROC;
   INotifyUI = Pointer;
