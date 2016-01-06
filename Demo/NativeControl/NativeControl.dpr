@@ -37,13 +37,11 @@ end;
 
 constructor TDuiNativeControlTest.Create;
 begin
-  inherited Create('NativeControlTest.xml', 'skin');
-
-  // 之前创建
+  // 有点奇怪，delphi7下放到create与CreateDuiWindow之间就报错，高版本则无此问题
   FButton := TButton.Create(nil);
   FButton.Caption := '按钮1';
   FButton.OnClick := ButtonClick;
-
+  inherited Create('NativeControlTest.xml', 'skin');
   CreateDuiWindow(0, 'NativeControl测试');
 end;
 
@@ -81,6 +79,7 @@ end;
 
 procedure TDuiNativeControlTest.DoNotify(var Msg: TNotifyUI);
 begin
+  Writeln(string(Msg.sType.m_pstr));
   inherited;
 end;
 
