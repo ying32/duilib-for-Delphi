@@ -13,6 +13,7 @@
 unit DuiWebBrowser;
 
 {$WARN SYMBOL_DEPRECATED OFF}
+{$I DDuilib.inc}
 
 interface
 
