@@ -327,12 +327,12 @@ type
 
 // Delphi 5 and up don't allow interfaces in variant records
 // so we have to use pointers instead (which can be type-casted into interfaces):
-
-{$IFDEF COMPILER5_UP}
+// 这里要不就找份高点的jedi.inc要不就这样吧
+//{$IFDEF COMPILER5_UP}
   PDirectDrawSurface = Pointer;
-{$ELSE}
-  PDirectDrawSurface = IDirectDrawSurface;
-{$ENDIF}
+//{$ELSE}
+//  PDirectDrawSurface = IDirectDrawSurface;
+//{$ENDIF}
 
 (*
  * TDDBltFX
