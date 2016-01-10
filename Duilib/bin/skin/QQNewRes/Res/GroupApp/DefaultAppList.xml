@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DefaultAppList>
+	<plugin_app>
+		<App uint64_app_id="1" uint32_uin32_app_type="2" bytes_app_name="群共享" bytes_app_intro="群共享" 
+			bytes_app_url="147B18A9-F6A8-4494-B9A3-14AB182D2E39"
+			size_24="platformres:GroupApp\DefaultAppIcons\1_24.png"/>
+		<App uint64_app_id="2" uint32_uin32_app_type="2" bytes_app_name="群相册" bytes_app_intro="群相册" uint32_app_width="800" uint32_app_height="600" 
+			bytes_report_id="26" 
+			bytes_app_url="54DEF7F5-4A32-4E00-A575-042546943DA6"
+			bytes_app_param="http://qzs.qq.com/qzone/photo/v7/page/photo.html#init=photo.v7/module/groupPhoto/main/index"
+			size_24="platformres:GroupApp\DefaultAppIcons\2_24.png"/>
+		<App uint64_app_id="8" uint32_uin32_app_type="2" bytes_app_name="讨论组" bytes_app_intro="创建讨论组" 
+			bytes_report_id="25" 
+			bytes_app_url="20765B53-5594-4405-B34F-CE07D5814911"
+			size_24="platformres:GroupApp\DefaultAppIcons\8_24.png"/>
+		<App uint64_app_id="11" uint32_uin32_app_type="4" bytes_app_name="群论坛" bytes_app_intro="群论坛" 
+			bytes_report_id="27" 
+			bytes_app_url="http://ptlogin2.qq.com/group_bbs?ptlang=$LANG$&amp;clientuin=$UIN$&amp;clientkey=$KEY$&amp;gId=$GCODE$"
+			size_24="platformres:GroupApp\DefaultAppIcons\11_24.png"/>
+		<App uint64_app_id="20" uint32_uin32_app_type="2" bytes_app_name="群语音" bytes_app_intro="群语音" 
+			bytes_report_id="41" 
+			bytes_app_url="7C2DEFBF-4049-4BC7-A113-8D06E2AE5176"
+			size_24="platformres:GroupApp\DefaultAppIcons\20_24.png"/>
+		<App uint64_app_id="21" uint32_uin32_app_type="2" bytes_app_name="群视频" bytes_app_intro="群视频" 
+			bytes_app_url="FAA18075-62CC-4C81-B136-E6E62809DE44"
+			size_24="platformres:GroupApp\DefaultAppIcons\21_24.png"/>			
+	</plugin_app>
+	<default_apps>
+		<id uint64_app_id="2"/>
+		<id uint64_app_id="1"/>
+		<id uint64_app_id="11"/>
+		<id uint64_app_id="8"/>
+		<id uint64_app_id="21"/>
+		<id uint64_app_id="20"/>
+	</default_apps>
+</DefaultAppList>

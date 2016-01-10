@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<theme-config PackID="" PackPreview="preview.png" PackLogonPreview="logon_preview.png" PackRecentPreview="recent_preview.png" PackVersion="2.0" PackMinVer="3073" PackName="默认皮肤">
+  <backgroundlist>
+    <background preview="bg_preview.png" mainfile="main_bkg.gft" mainloc="topleft" aioloc="topleft" bkgstyle="stretch" color="ff1e7db9" maincolor="0xFF069DD5"/>
+  </backgroundlist>
+</theme-config>

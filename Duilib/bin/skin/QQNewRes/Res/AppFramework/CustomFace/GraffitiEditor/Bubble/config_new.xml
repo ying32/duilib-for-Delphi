@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<BubbleList num = "18">
+  <Bubble id="0" image="TextFrame0.png" thumb="TextFrameThumb0.png" leftmargin = "0.03" rightmargin = "0.03" topmargin = "0.03" bottommargin = "0.1" placemode = "0"/>
+  <Bubble id="1" image="TextFrame1.png" thumb="TextFrameThumb1.png" leftmargin = "0.1"  rightmargin = "0.1"  topmargin = "0.1"  bottommargin = "0.3" placemode = "0"/>
+  <Bubble id="2" image="TextFrame2.png" thumb="TextFrameThumb2.png" leftmargin = "0.18" rightmargin = "0.15" topmargin = "0.16" bottommargin = "0.21" placemode = "0"/>
+  <Bubble id="3" image="TextFrame3.png" thumb="TextFrameThumb3.png" leftmargin = "0.18" rightmargin = "0.18" topmargin = "0.20" bottommargin = "0.21" placemode = "1"/>
+  <Bubble id="4" image="TextFrame4.png" thumb="TextFrameThumb4.png" leftmargin = "0.03" rightmargin = "0.03" topmargin = "0.05" bottommargin = "0.40" placemode = "0"/>
+  <Bubble id="5" image="TextFrame5.png" thumb="TextFrameThumb5.png" leftmargin = "0.1" rightmargin = "0.1" topmargin = "0.1" bottommargin = "0.18" placemode = "0"/>
+  <Bubble id="6" image="TextFrame6.png" thumb="TextFrameThumb6.png" leftmargin = "0.1" rightmargin = "0.1" topmargin = "0.1" bottommargin = "0.18" placemode = "1"/>
+  <Bubble id="7" image="TextFrame7.png" thumb="TextFrameThumb7.png" leftmargin = "0.1" rightmargin = "0.1" topmargin = "0.1" bottommargin = "0.16" placemode = "0"/>
+  <Bubble id="8" image="TextFrame8.png" thumb="TextFrameThumb8.png" leftmargin = "0.1" rightmargin = "0.1" topmargin = "0.1" bottommargin = "0.18" placemode = "0"/>
+  <Bubble id="9" image="TextFrame9.png" thumb="TextFrameThumb9.png" leftmargin = "0.1" rightmargin = "0.1" topmargin = "0.1" bottommargin = "0.18" placemode = "0"/>
+  <Bubble id="10" image="TextFrame10.png" thumb="TextFrameThumb10.png" leftmargin = "0.1" rightmargin = "0.1" topmargin = "0.1" bottommargin = "0.18" placemode = "0"/>
+  <Bubble id="11" image="TextFrame11.png" thumb="TextFrameThumb11.png" leftmargin = "0.18" rightmargin = "0.15" topmargin = "0.16" bottommargin = "0.21" placemode = "1"/>
+  <Bubble id="12" image="TextFrame12.png" thumb="TextFrameThumb12.png" leftmargin = "0.18" rightmargin = "0.15" topmargin = "0.16" bottommargin = "0.21" placemode = "0"/>
+  <Bubble id="13" image="TextFrame13.png" thumb="TextFrameThumb13.png" leftmargin = "0.22" rightmargin = "0.1" topmargin = "0.20" bottommargin = "0.21" placemode = "1"/>
+  <Bubble id="14" image="TextFrame14.png" thumb="TextFrameThumb14.png" leftmargin = "0.20" rightmargin = "0.15" topmargin = "0.17" bottommargin = "0.19" placemode = "0"/>
+  <Bubble id="15" image="TextFrame15.png" thumb="TextFrameThumb15.png" leftmargin = "0.18" rightmargin = "0.15" topmargin = "0.16" bottommargin = "0.21" placemode = "0"/>
+  <Bubble id="16" image="TextFrame16.png" thumb="TextFrameThumb16.png" leftmargin = "0.07" rightmargin = "0.07" topmargin = "0.07" bottommargin = "0.5" placemode = "0"/>
+  <Bubble id="17" image="TextFrame17.png" thumb="TextFrameThumb17.png" leftmargin = "0.1" rightmargin = "0.1" topmargin = "0.1" bottommargin = "0.45" placemode = "0"/>
+  <Bubble id="18" image="TextFrame18.png" thumb="TextFrameThumb18.png" leftmargin = "0.07" rightmargin = "0.07" topmargin = "0.07" bottommargin = "0.45" placemode = "0"/>
+</BubbleList>

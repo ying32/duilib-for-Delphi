@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Config>
+	<ConfigAgent name="LoginPanelPreview_Std" configType="IGFImageStatic">
+		<configProp>
+			<prop field="file" value="@thisres:ConfigCenter\stdloginpanel_preview2.jpg"/>
+		</configProp>
+	</ConfigAgent>
+	<ConfigAgent name="LoginPanelPreview_Mini" configType="IGFImageStatic">
+		<configProp>
+			<prop field="file" value="@thisres:ConfigCenter\miniloginpanel_preview2.jpg"/>
+		</configProp>
+	</ConfigAgent>
+	<ConfigAgent name="MiniLoginPanel_window" configType="IGFStandardWin">
+		<configProp>
+			<prop field="clientAreaSize" value="378,243"/>
+			<prop field="ncArea" value="-1, 31, -1, 2"/>
+			<prop field="titleGap" value="3"/>
+			<prop field="titleTextActivateColor" value="0xFFFFFF"/>
+			<prop field="titleTextInactivateColor" value="0xD8E8F3"/>
+			<prop field="titleTextFont" value="#@this.Font.Title"/>
+			<prop field="titleOffset" value="-16, 2"/>
+			<prop field="ownerDrawTitle" value="false"/>
+			<prop field="sysButtonConfig" value="sysbutton"/>
+			<prop field="sysButtonOffset" value="-3,4"/>
+			<prop field="border" value="7, 7, 7, 7"/>
+			<prop field="material">
+				<value>
+					<Texture file="sysres:LoginPanel\\safeminilogin_png_bkg.gft"/>
+				</value>
+			</prop>
+			<prop field="topground">
+				<value>
+					<Canvas>
+						<background>
+							<Texture file="@thisres:SkinMgr\\whilt_bkg.png.gft"/>
+						</background>
+						<Texture file="@thisres:SkinMgr\\fringe_bkg.png.gft"/>
+					</Canvas>
+				</value>
+			</prop>
+			<prop field="layered" value="false"/>
+			<prop field="aero" value="false"/>
+		</configProp>
+	</ConfigAgent>
+	<ConfigAgent name="NewLoginPanelMain" configType="IGFControl">
+		<configProp>
+			<prop field="material">
+				<value>
+					<Texture file="@thisres:loginpanel2\\texture.gft"/>
+				</value>
+			</prop>
+			<prop field="topground">
+				<value>
+					<Canvas>
+						<background>
+							<Texture file="@thisres:SkinMgr\\whilt_bkg.png.gft"/>
+						</background>
+						<Texture file="@thisres:loginpanel2\\projection.gft"/>
+						<Texture file="@thisres:loginpanel2\\stroke.gft"/>
+					</Canvas>
+				</value>
+			</prop>
+			<prop field="layered" value="false"/>
+			<!--<prop field="aero" value="false"/>-->
+		</configProp>
+	</ConfigAgent>
+	<ConfigAgent name="NewLoginPanelSetting" configType="IGFControl">
+		<configProp>
+			<prop field="material">
+				<value>
+					<Texture file="@thisres:loginpanel2\\netsetting5.gft"/>
+				</value>
+			</prop>
+			<prop field="topground">
+				<value>
+					<Canvas>
+						<background>
+							<Texture file="@thisres:SkinMgr\\whilt_bkg.png.gft"/>
+						</background>
+						<Texture file="@thisres:loginpanel2\\projection.gft"/>
+						<Texture file="@thisres:loginpanel2\\stroke.gft"/>
+					</Canvas>
+				</value>
+			</prop>
+			<prop field="layered" value="false"/>
+			<!--<prop field="aero" value="false"/>-->
+		</configProp>
+	</ConfigAgent>
+	<ConfigAgent name="MiniLoginPanel2_window" configType="IGFStandardWin">
+		<configProp>
+			<prop field="clientAreaSize" value="378,290"/>
+			<prop field="ncArea" value="-1, 31, -1, 2"/>
+			<prop field="titleGap" value="3"/>
+			<prop field="titleTextActivateColor" value="0xFFFFFF"/>
+			<prop field="titleTextInactivateColor" value="0xD8E8F3"/>
+			<prop field="titleTextFont" value="#@this.Font.Title"/>
+			<prop field="titleOffset" value="-16, 2"/>
+			<prop field="ownerDrawTitle" value="false"/>
+			<prop field="sysButtonConfig" value="sysbutton"/>
+			<prop field="sysButtonOffset" value="-3,4"/>
+			<prop field="border" value="7, 7, 7, 7"/>
+			<prop field="material">
+				<value>
+					<Texture file="@thisres:loginpanel2\\netsetting5.gft"/>
+				</value>
+			</prop>
+			<prop field="topground">
+				<value>
+					<Canvas>
+						<background>
+							<Texture file="@thisres:SkinMgr\\whilt_bkg.png.gft"/>
+						</background>
+						<Texture file="@thisres:loginpanel2\\projection.gft"/>
+						<Texture file="@thisres:loginpanel2\\stroke.gft"/>
+					</Canvas>
+				</value>
+			</prop>
+			<prop field="layered" value="false"/>
+			<prop field="aero" value="false"/>
+		</configProp>
+	</ConfigAgent>
+	<ConfigAgent name="StdLoginPanel_window" configType="IGFStandardWin">
+		<configProp>
+			<prop field="background">
+				<value>
+					<Canvas>
+						<background>
+							<Texture file="@thistheme:LoginPanel\\Background\\up.png.gft"/>
+						</background>
+						<Texture file="@thistheme:LoginPanel\\Background\\mid.png.gft" Canvas.autoHeight="true" Canvas.anchor="TOPLEFT,RIGHT" Canvas.margin="0,254,0,0"/>
+						<Texture file="@thistheme:LoginPanel\\Background\\down.png.gft" Canvas.anchor="TOPLEFT,BOTTOMRIGHT" Canvas.margin="0,612,0,0"/>
+					</Canvas>
+				</value>
+			</prop>
+			<prop field="ncArea" value="-1, 20, -1, -2"/>
+			<!--MainPanel_window和StdLoginPanel_window的ncArea请保持一致，否则登录成功后，窗口大小会变-->
+			<prop field="titleGap" value="3"/>
+			<prop field="titleTextActivateColor" value="0xFFFFFF"/>
+			<prop field="titleTextInactivateColor" value="0xD8E8F3"/>
+			<prop field="titleTextFont" value="#@this.Font.Title"/>
+			<prop field="titleOffset" value="-16,2"/>
+			<prop field="ownerDrawTitle" value="false"/>
+			<prop field="sysButtonConfig" value="sysbutton"/>
+			<prop field="sysButtonOffset" value="-3,4"/>
+			<prop field="border" value="7, 7, 7, 7"/>
+			<prop field="material">
+				<value>
+					<Texture file="">
+					</Texture>
+				</value>
+			</prop>
+			<prop field="topground">
+				<value>
+					<Canvas>
+						<background>
+							<Texture file="@thisres:SkinMgr\\whilt_bkg.png.gft"/>
+						</background>
+						<Texture file="@thisres:SkinMgr\\fringe_bkg.png.gft"/>
+					</Canvas>
+				</value>
+			</prop>
+			<prop field="layered" value="false"/>
+			<prop field="aero" value="false"/>
+		</configProp>
+	</ConfigAgent>
+
+	<ConfigAgent name="FaceLoginButton" configType="IGFButton" >
+		<configProp>
+			<prop field="autoHeight" value="true"/>
+			<prop field="animate" value="true"/>
+			<prop field="pushedBackground">
+				<value>
+					<Texture file="@thisres:facelogin\button_normal.png">
+					</Texture>
+				</value>
+			</prop>
+			<prop field="highlightBackground">
+				<value>
+					<Texture file="@thisres:facelogin\button_hover.png">
+					</Texture>
+				</value>
+			</prop>
+			<prop field="normalBackground">
+				<value>
+					<Texture file="@thisres:facelogin\button_normal.png">
+					</Texture>
+				</value>
+			</prop>
+			<prop field="textInching" value="0,0"/>
+		</configProp>
+	</ConfigAgent>
+</Config>

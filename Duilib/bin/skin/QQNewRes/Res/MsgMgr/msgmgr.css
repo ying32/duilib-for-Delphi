@@ -1,0 +1,36 @@
+BODY
+{
+ 	font-size:8.5pt;
+	margin:2px;
+	margin-right:0px;
+}
+
+TD
+{
+	font-size:9pt;
+	border:solid 1px transparent;   
+	_border-color:tomato;   
+	_filter:chroma(color=tomato); 
+}
+
+.pageDiv
+{
+	width: 100%;
+	height: 100%
+}
+
+.msgContentDiv
+{	
+	float:top;
+	margin-top:5px;
+	padding-left:20px;
+	width:300px;
+	overflow-x: hidden;
+}
+
+.msgContentDiv1
+{	
+	float:top;
+	margin-top:5px;
+	padding-left:20px;
+}

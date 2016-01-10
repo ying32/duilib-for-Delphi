@@ -1,0 +1,50 @@
+BODY
+{
+ 	font-size:8.5pt;
+	margin:2px;
+	margin-right:0px;
+}
+
+TD
+{
+	font-size:9pt;
+	border:1px solid transparent;     
+	_border-color:tomato;   
+	_filter:chroma(color=tomato); 
+}
+
+.pageDiv
+{
+	width: 100%;
+	height: 100%
+}
+
+.msgContentDiv
+{	
+	float:top;
+	margin-top:5px;
+	padding-left:20px;
+}
+
+.sysmsgContentDiv
+{	
+	float:top;
+	margin-top:5px;
+	padding-left:10px;
+}
+
+.imgHead
+{
+	width: 16;
+	height: 16;
+	margin-right:5px;
+	vertical-align: middle;
+	margin-left: 12px;
+}
+
+.tableItem
+{
+	word-wrap:break-word;
+	word-break:break-all;
+	width: 100%;
+}

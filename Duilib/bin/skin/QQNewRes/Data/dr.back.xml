@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DRItems  path="Bin" path-debug="BinDebug">
+  
+  <!--增加上报模式 mode = 【0x01：表示单次上报 0x02：表示多次上报 0x03：表示实时上报 by gavinhuang 2007.7.4】-->
+  
+	<!-- ****************************** AIO **************************************** -->
+	<!--c_QualityofSendCustomFace_SingleReport-->
+	<DRItem rid="0x18005003" clsid="9CDF9193-1BFB-4E30-A3B2-E3AC21ECABAA" dllname="KernelUtil.dll" mode="0x01"/>
+	<!--c_QualityofSendImage_SingleReport-->
+	<DRItem rid="0x18005004" clsid="9CDF9193-1BFB-4E30-A3B2-E3AC21ECABAA" dllname="KernelUtil.dll" mode="0x01"/>
+	<!--c_CountofHitsOnTheDropMenuOfVideoAudioInAIO-->
+	<DRItem rid="0x20005000" clsid="9CDF9193-1BFB-4E30-A3B2-E3AC21ECABAA" dllname="KernelUtil.dll" mode="0x02"/>
+	<!--c_QualityofSendReceiveC2CInterimMessage_SingleReport-->
+	<DRItem rid="0x20005001" clsid="9CDF9193-1BFB-4E30-A3B2-E3AC21ECABAA" dllname="KernelUtil.dll" mode="0x01"/>
+	<!--c_QualityofSendReceiveC2CInterimMessagePack_SingleReport-->
+	<DRItem rid="0x20005002" clsid="9CDF9193-1BFB-4E30-A3B2-E3AC21ECABAA" dllname="KernelUtil.dll" mode="0x01"/>
+  <DRItem rid="0x20005003" clsid="9CDF9193-1BFB-4E30-A3B2-E3AC21ECABAA" dllname="KernelUtil.dll" mode="0x01"/>
+  <!-- c_dwQualityofSendReceiveGroupInterimMessage_SingleReport = 0x20005004 -->
+  <DRItem rid="0x20005004" clsid="9CDF9193-1BFB-4E30-A3B2-E3AC21ECABAA" dllname="KernelUtil.dll" mode="0x01"/>
+
+  <!--c_dwQualityofSendReceiveDiscussInterimMessagePack_SingleReport-->
+  <DRItem rid="0x20005005" clsid="9CDF9193-1BFB-4E30-A3B2-E3AC21ECABAA" dllname="KernelUtil.dll" mode="0x02"/>
+  <!--c_dwIMBuddyRelatedReport-->
+  <DRItem rid="0xbc005000" clsid="9CDF9193-1BFB-4E30-A3B2-E3AC21ECABAA" dllname="KernelUtil.dll" mode="0x01"/>
+  <!--c_dwSettingRelatedReport-->
+  <DRItem rid="0xbc005001" clsid="9CDF9193-1BFB-4E30-A3B2-E3AC21ECABAA" dllname="KernelUtil.dll" mode="0x01"/>
+  <!--c_dwDefaultFaceRelatedReport-->
+  <DRItem rid="0xbc005002" clsid="9CDF9193-1BFB-4E30-A3B2-E3AC21ECABAA" dllname="KernelUtil.dll" mode="0x01"/>
+  <!--AIO打开速度1 多次上报-->
+  <DRItem rid="0x20001000" clsid="9CDF9193-1BFB-4E30-A3B2-E3AC21ECABAA" dllname="KernelUtil.dll" mode="0x02"/>
+  <!--AIO打开速度2 多次上报-->
+  <DRItem rid="0x20001001" clsid="9CDF9193-1BFB-4E30-A3B2-E3AC21ECABAA" dllname="KernelUtil.dll" mode="0x02"/>
+  <!--dwStatusSpan-->
+  <DRItem rid="0x20000001" clsid="B9254BF1-5A7F-4669-8B24-949086A1E6DA" dllname="KernelMisc.dll" mode="0x01"/>
+  <DRItem rid="0x38000002" clsid="B9254BF1-5A7F-4669-8B24-949086A1E6DA" dllname="KernelMisc.dll" mode="0x01"/>
+  <DRItem rid="0x38000006" clsid="B9254BF1-5A7F-4669-8B24-949086A1E6DA" dllname="KernelMisc.dll" mode="0x01"/>
+  
+  <!--dwStatusCount-->
+  <!--DRItem rid="0x20000002" clsid="B9254BF1-5A7F-4669-8B24-949086A1E6DA" dllname="KernelMisc.dll" mode="0x01"/-->
+  <DRItem rid="0x38000007" clsid="B9254BF1-5A7F-4669-8B24-949086A1E6DA" dllname="KernelMisc.dll" mode="0x01"/>
+  <DRItem rid="0x38000005" clsid="B9254BF1-5A7F-4669-8B24-949086A1E6DA" dllname="KernelMisc.dll" mode="0x01"/>  
+  
+  <DRItem rid="0x38000003" clsid="B9254BF1-5A7F-4669-8B24-949086A1E6DA" dllname="KernelMisc.dll" mode="0x01"/> 
+  <DRItem rid="0x38000004" clsid="B9254BF1-5A7F-4669-8B24-949086A1E6DA" dllname="KernelMisc.dll" mode="0x01"/>  
+  <!--dwSpecialContactCount-->
+  <DRItem rid="0x94002000" clsid="B9254BF1-5A7F-4669-8B24-949086A1E6DA" dllname="KernelMisc.dll" mode="0x01"/>
+
+  <!-- 群 -->
+  <!-- GROUP_STAT_MAINFRAME_MENU -->
+  <DRItem rid="0x08007000" clsid="8D2BDFD7-FC41-4106-91C4-00E1CBE8A859" dllname="KernelMisc.dll"  mode="0x01"/>
+  <!-- GROUP_STAT_SELECT_CONTACT -->
+  <DRItem rid="0x10007000" clsid="8D2BDFD7-FC41-4106-91C4-00E1CBE8A859" dllname="KernelMisc.dll"  mode="0x01"/>
+  <!-- GROUP_STAT_USERLIST_CLICK -->
+  <DRItem rid="0x18007000" clsid="8D2BDFD7-FC41-4106-91C4-00E1CBE8A859" dllname="KernelMisc.dll"  mode="0x01"/>
+  <!-- GROUP_STAT_MSG -->
+  <DRItem rid="0x20007000" clsid="8D2BDFD7-FC41-4106-91C4-00E1CBE8A859" dllname="KernelMisc.dll"  mode="0x01"/>
+  <!-- GROUP_STAT_HEAD_MENU -->
+  <DRItem rid="0x20007001" clsid="8D2BDFD7-FC41-4106-91C4-00E1CBE8A859" dllname="KernelMisc.dll"  mode="0x01"/>
+  <!-- GROUP_STAT_MNG_MENU -->
+  <DRItem rid="0x28007000" clsid="8D2BDFD7-FC41-4106-91C4-00E1CBE8A859" dllname="KernelMisc.dll"  mode="0x01"/>
+  <!-- GROUP_STAT_USERLIST_MENU -->
+  <DRItem rid="0x28007001" clsid="8D2BDFD7-FC41-4106-91C4-00E1CBE8A859" dllname="KernelMisc.dll"  mode="0x01"/>
+  <!-- GROUP_STAT_MSG_SET_MENU -->
+  <DRItem rid="0xbc007000" clsid="8D2BDFD7-FC41-4106-91C4-00E1CBE8A859" dllname="KernelMisc.dll"  mode="0x01"/>
+  <!-- GROUP_STAT_MSG_SET_ALL -->
+  <DRItem rid="0x28007003" clsid="8D2BDFD7-FC41-4106-91C4-00E1CBE8A859" dllname="KernelMisc.dll"  mode="0x01"/>
+
+  <!--c_CountofHitsOnAccountInfoButton_MultiReport-->
+  <DRItem rid="0x1800001e" clsid="8D2BDFD7-FC41-4106-91C4-00E1CBE8A859" dllname="KernelMisc.dll"  mode="0x01"/>
+  <!--c_CountofFriendOnBuddyPanel_MultiReport-->
+  <DRItem rid="0x98000001" clsid="8D2BDFD7-FC41-4106-91C4-00E1CBE8A859" dllname="KernelMisc.dll"  mode="0x01"/>
+
+  <!-- UI -->
+  <!-- UI_STAT_HEAD_MODE -->
+  <DRItem rid="0x10008000" clsid="02757FC7-70C6-4EE6-8BF2-D9670FE9D788" dllname="KernelMisc.dll" mode="0x01"/>
+  <!-- UI_STAT_MSGGET -->
+  <DRItem rid="0x30008000" clsid="02757FC7-70C6-4EE6-8BF2-D9670FE9D788" dllname="KernelMisc.dll" mode="0x01"/>
+  <!-- UI_STAT_WNDMISC -->
+  <DRItem rid="0x38008000" clsid="02757FC7-70C6-4EE6-8BF2-D9670FE9D788" dllname="KernelMisc.dll" mode="0x01"/>
+  <!-- UI_STAT_MAINFRAME -->
+  <DRItem rid="0xb8008000" clsid="02757FC7-70C6-4EE6-8BF2-D9670FE9D788" dllname="KernelMisc.dll" mode="0x01"/>
+
+  <!-- ****************************** CAddrBookStatItemistics ********************************** -->
+  <!-- c_StatOfFilterCondition -->
+  <DRItem rid="0x18006000" clsid="1AAF49BF-DFB2-4ef2-A3C8-75FB439046CE" dllname="KernelMisc.dll" mode="0x01"/>
+  <!-- c_StatOfModifyStartSession -->
+  <DRItem rid="0x18006001" clsid="1AAF49BF-DFB2-4ef2-A3C8-75FB439046CE" dllname="KernelMisc.dll" mode="0x01"/>
+  <!-- c_StatOfStartSessionByDiffWay -->
+  <DRItem rid="0x18006002" clsid="1AAF49BF-DFB2-4ef2-A3C8-75FB439046CE" dllname="KernelMisc.dll" mode="0x01"/>
+  <!-- c_StatOfClickButtonInABMainToolBar1 -->
+  <DRItem rid="0x18006003" clsid="1AAF49BF-DFB2-4ef2-A3C8-75FB439046CE" dllname="KernelMisc.dll" mode="0x01"/>
+  <!-- c_StatOfClickButtonInABMainToolBar2 -->
+  <DRItem rid="0x18006004" clsid="1AAF49BF-DFB2-4ef2-A3C8-75FB439046CE" dllname="KernelMisc.dll" mode="0x01"/>
+  <!-- c_StatOfClickButtonInABMainToolBar3 -->
+  <DRItem rid="0x18006005" clsid="1AAF49BF-DFB2-4ef2-A3C8-75FB439046CE" dllname="KernelMisc.dll" mode="0x01"/>
+  <!-- c_StatOfPersonalAndWorkCardOperation1 -->
+  <DRItem rid="0x18006006" clsid="1AAF49BF-DFB2-4ef2-A3C8-75FB439046CE" dllname="KernelMisc.dll" mode="0x01"/>
+  <!-- c_StatOfPersonalAndWorkCardOperation2 -->
+  <DRItem rid="0x18006007" clsid="1AAF49BF-DFB2-4ef2-A3C8-75FB439046CE" dllname="KernelMisc.dll" mode="0x01"/>
+  <!-- c_StatOfPersonalAndWorkCardOperation3 -->
+  <DRItem rid="0x18006008" clsid="1AAF49BF-DFB2-4ef2-A3C8-75FB439046CE" dllname="KernelMisc.dll" mode="0x01"/>
+  <!-- c_StatOfAddContactWay1 -->
+  <DRItem rid="0x28006000" clsid="1AAF49BF-DFB2-4ef2-A3C8-75FB439046CE" dllname="KernelMisc.dll" mode="0x01"/>
+  <!-- c_StatOfAddContactWay2 -->
+  <DRItem rid="0x28006001" clsid="1AAF49BF-DFB2-4ef2-A3C8-75FB439046CE" dllname="KernelMisc.dll" mode="0x01"/>
+  <!-- c_StatOfViewContactInfoByDiffWay -->
+  <DRItem rid="0x28008000" clsid="1AAF49BF-DFB2-4ef2-A3C8-75FB439046CE" dllname="KernelMisc.dll" mode="0x01"/>
+  <!-- c_StatOfAddDelFolderWay -->
+  <DRItem rid="0x20006000" clsid="1AAF49BF-DFB2-4ef2-A3C8-75FB439046CE" dllname="KernelMisc.dll" mode="0x01"/>
+  <!-- c_StatOfUserViews -->
+  <DRItem rid="0x10006000" clsid="1AAF49BF-DFB2-4ef2-A3C8-75FB439046CE" dllname="KernelMisc.dll" mode="0x01"/>
+  <!-- c_StatOfDirectNoContact -->
+  <DRItem rid="0x08006000" clsid="1AAF49BF-DFB2-4ef2-A3C8-75FB439046CE" dllname="KernelMisc.dll" mode="0x01"/>
+
+  <DRItem rid="0x10001000" clsid="A4BE1C34-C120-456C-90A3-B1416E52CD2E" dllname="KernelMisc.dll" mode="0x01"/>
+  <DRItem rid="0x90001001" clsid="A4BE1C34-C120-456C-90A3-B1416E52CD2E" dllname="KernelMisc.dll" mode="0x01"/>
+
+  <DRItem rid="0xbc000001" clsid="5FD12A15-B0E2-4A84-B3EE-07763109CE28" dllname="KernelMisc.dll" mode="0x01"/>
+  <DRItem rid="0x20001002" clsid="5FD12A15-B0E2-4A84-B3EE-07763109CE28" dllname="KernelMisc.dll" mode="0x02"/>
+  <!-- ****************************** UserSetting ********************************** -->
+  <DRItem rid="0x10002000" clsid="8BAAA27D-283D-4674-8629-66A425EE4A7D" dllname="KernelMisc.dll"  mode="0x02"/>
+  <DRItem rid="0x20005006" clsid="8BAAA27D-283D-4674-8629-66A425EE4A7D" dllname="KernelMisc.dll"  mode="0x02"/>
+
+  <DRItem rid="0x20000003" clsid="5FD12A15-B0E2-4A84-B3EE-07763109CE28" dllname="KernelMisc.dll"  mode="0x02"/>
+
+  <!-- ****************************** LongCnnReport ********************************** -->
+  <DRItem rid="0x80003000" clsid="49775116-DF08-479d-8B3B-368439D10CD7" dllname="LongCnn.dll"  mode="0x03"/>
+
+
+  <!-- ****************************** PerformanceReport ********************************** -->
+  <DRItem rid="0x38001000" clsid="3982FD5E-70C6-4EE6-8BF2-D9670FE9D123" dllname="KernelUtil.dll"  mode="0x01"/>
+  <DRItem rid="0x38001001" clsid="3982FD5E-70C6-4EE6-8BF2-D9670FE9D123" dllname="KernelUtil.dll"  mode="0x01"/>
+  <DRItem rid="0x38001002" clsid="3982FD5E-70C6-4EE6-8BF2-D9670FE9D123" dllname="KernelUtil.dll"  mode="0x01"/>
+  <DRItem rid="0x38001003" clsid="3982FD5E-70C6-4EE6-8BF2-D9670FE9D123" dllname="KernelUtil.dll"  mode="0x01"/>
+  <DRItem rid="0x38001004" clsid="3982FD5E-70C6-4EE6-8BF2-D9670FE9D123" dllname="KernelUtil.dll"  mode="0x01"/>
+  <DRItem rid="0x18001000" clsid="3982FD5E-70C6-4EE6-8BF2-D9670FE9D123" dllname="KernelUtil.dll"  mode="0x01"/>
+  <DRItem rid="0x30001001" clsid="3982FD5E-70C6-4EE6-8BF2-D9670FE9D123" dllname="KernelUtil.dll"  mode="0x01"/>
+
+  <!-- ****************************** MainFrameReport ********************************** -->
+  <DRItem rid="0xbc008001" clsid="F3EE811A-2F8D-4A5A-B2D9-1077C68732FD" dllname="KernelMisc.dll" mode="0x02"/>
+  <DRItem rid="0x10005000" clsid="F3EE811A-2F8D-4A5A-B2D9-1077C68732FD" dllname="KernelMisc.dll" mode="0x01"/>
+  <DRItem rid="0x10005002" clsid="F3EE811A-2F8D-4A5A-B2D9-1077C68732FD" dllname="KernelMisc.dll" mode="0x01"/>
+  <DRItem rid="0x10005003" clsid="F3EE811A-2F8D-4A5A-B2D9-1077C68732FD" dllname="KernelMisc.dll" mode="0x01"/>
+  <DRItem rid="0x10005004" clsid="F3EE811A-2F8D-4A5A-B2D9-1077C68732FD" dllname="KernelMisc.dll" mode="0x01"/>
+  <DRItem rid="0x18005000" clsid="F3EE811A-2F8D-4A5A-B2D9-1077C68732FD" dllname="KernelMisc.dll" mode="0x01"/>
+  <DRItem rid="0x18005001" clsid="F3EE811A-2F8D-4A5A-B2D9-1077C68732FD" dllname="KernelMisc.dll" mode="0x02"/>
+  <DRItem rid="0x18005005" clsid="F3EE811A-2F8D-4A5A-B2D9-1077C68732FD" dllname="KernelMisc.dll" mode="0x01"/>
+  <DRItem rid="0x18005006" clsid="F3EE811A-2F8D-4A5A-B2D9-1077C68732FD" dllname="KernelMisc.dll" mode="0x02"/>
+  <DRItem rid="0x18005007" clsid="F3EE811A-2F8D-4A5A-B2D9-1077C68732FD" dllname="KernelMisc.dll" mode="0x02"/>
+  <DRItem rid="0x38005000" clsid="F3EE811A-2F8D-4A5A-B2D9-1077C68732FD" dllname="KernelMisc.dll" mode="0x02"/>
+  <DRItem rid="0x18000000" clsid="F3EE811A-2F8D-4A5A-B2D9-1077C68732FD" dllname="KernelMisc.dll" mode="0x02"/>
+  <DRItem rid="0x98005000" clsid="F3EE811A-2F8D-4A5A-B2D9-1077C68732FD" dllname="KernelMisc.dll" mode="0x02"/>
+  <DRItem rid="0x28009000" clsid="F3EE811A-2F8D-4A5A-B2D9-1077C68732FD" dllname="KernelMisc.dll" mode="0x01"/>
+  
+  <DRItem rid="0x18002000" clsid="F3EE811A-2F8D-4A5A-B2D9-1077C68732FD" dllname="KernelMisc.dll" mode="0x01"/>
+  <DRItem rid="0xbc008000" clsid="F3EE811A-2F8D-4A5A-B2D9-1077C68732FD" dllname="KernelMisc.dll" mode="0x01"/>
+  <DRItem rid="0x38000001" clsid="8BAAA27D-283D-4674-8629-66A425EE4A7D" dllname="KernelMisc.dll" mode="0x02"/>
+  <DRItem rid="0x38000008" clsid="8BAAA27D-283D-4674-8629-66A425EE4A7D" dllname="KernelMisc.dll" mode="0x01"/>
+  
+  <DRItem rid="0x30005001" clsid="F3EE811A-2F8D-4A5A-B2D9-1077C68732FD" dllname="KernelMisc.dll" mode="0x01"/>
+  <DRItem rid="0xbc000002" clsid="5FD12A15-B0E2-4A84-B3EE-07763109CE28" dllname="KernelMisc.dll" mode="0x01"/>  
+  
+  
+  <!-- ****************************** SecurityChnDataReport ********************************** -->
+  <DRItem rid="0xbc00b000" clsid="0DE785F2-A340-4190-A929-9A79190595EF" dllname="IM.dll" mode="0x03"/>
+  <DRItem rid="0xbc00b001" clsid="0DE785F2-A340-4190-A929-9A79190595EF" dllname="IM.dll" mode="0x03"/>
+ 
+  <!-- ****************************** Vip ********************************** -->
+  <DRItem rid="0x20009001" clsid="B9254BF1-5A7F-4669-8B24-949086A1E6DA" dllname="KernelMisc.dll" mode="0x01"/>
+
+</DRItems>

@@ -1,0 +1,247 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<cmds>
+    <cmd name="AddContact"  comment="添加好友">
+        <subcmd name="all" comment="添加所有好友，不过滤">
+            <param name="uin" comment="需要添加的uin"/>
+            <param name="fromid" comment="从何处业务发起的添加好友,主来源ID"/>
+            <param name="fromsubid" comment="从何处业务发起的添加好友，子来源ID"/>
+        </subcmd>
+    </cmd>
+    <cmd name="StartupVas"  comment="启动业务功能，如宠物，QQ音乐等">
+        <subcmd name="QQPet" comment="启动QQ宠物">
+            <param name="exparam" comment="透传给宠物的参数"/>
+        </subcmd>
+    </cmd>
+    <cmd name="WblogApply"  comment="微博应用">
+        <subcmd name="Rebroad" comment="调用客户端微博的转播消息对话框">
+            <param name="MsgID" comment="转播的微博消息ID"/>
+        </subcmd>
+        <subcmd name="Reply" comment="调用客户端微博的对话消息对话框">
+            <param name="MsgID" comment="转播的微博消息ID"/>
+        </subcmd>
+    </cmd>
+    <cmd name="ContactInfo"  comment="联系人资料相关功能">
+        <subcmd name="ViewInfo" comment="查看联系人资料">
+            <param name="uin" comment="需要查看的好友帐号"/>
+        </subcmd>
+    </cmd>
+    <cmd name="QTalk"  comment="团队语音相关功能">
+        <subcmd name="Startup" comment="启动团队语音，进入房间">
+            <param name="account" comment="帐号"/>
+            <param name="roomid" comment="房间号"/>
+            <param name="extparam" comment="扩展参数，QT可以在这里自定义更多参数的格式"/>
+        </subcmd>
+    </cmd>
+    <cmd name="QPlusEvent"  comment="QPlus事件通知">
+        <subcmd name="OnHidden" comment="QPlus隐藏通知">
+            <param name="uin" comment="QPlus登录的QQ帐号"/>
+        </subcmd>
+        <subcmd name="OnExit" comment="QPlus退出通知">
+            <param name="uin" comment="QPlus登录的QQ帐号"/>
+        </subcmd>
+        <subcmd name="OnShowMainPanel" comment="QPlus调用QQ显示主面板">
+            <param name="uin" comment="QPlus登录的QQ帐号"/>
+        </subcmd>
+        <!--Begin->2012-06-10 Added by lovekidchen for Qplus-->
+        <subcmd name="OnOpenAppFromDesktop" call_after_login="true" comment="QPlus调用添加/打开应用">
+            <param name="appid" comment="QPlus添加/打开应用的id"/>
+        </subcmd>
+        <!--End->2012-06-10 Added by lovekidchen for Qplus-->
+    </cmd>
+    <cmd name="QPlusAppTest" comment="页面调用QQ试玩窗口">
+        <subcmd name="OpenQPlusAppExpress" call_after_login="true" comment="调用QQ试玩窗口">
+            <param name="dwAppId" comment="应用程序 id"/>
+            <param name="strAppName" comment="应用程序名"/>
+            <param name="intWidth" comment="试玩窗口宽"/>
+            <param name="intHeight" comment="试玩窗口高"/>
+            <param name="dwFromUin" comment="推荐好友 uin"/>
+        </subcmd>
+    </cmd>
+    <cmd name="AudioVideo" comment="AudioVideo事件通知">
+        <subcmd name="JoinGVideo" call_after_login="true" comment="飞机票加入多人视通知">
+            <param name="ticket" comment="多人视频飞机票内容"/>
+        </subcmd>
+    </cmd>
+    <cmd name="SpeedDating" comment="SpeedDating事件通知">
+        <subcmd name="Startup"  comment="SpeedDating启动闪约">
+            <param name="uin" comment="帐号"/>
+            <param name="extparam" comment="扩展参数"/>
+        </subcmd>
+    </cmd>
+    <cmd name="qplusprotocol" comment="web拉起QPlus">
+        <subcmd name="runapp" call_after_login="true" comment="web拉起QPlus的应用app">
+            <param name="appid" comment="appID"/>
+        </subcmd>
+    </cmd>
+    <cmd name="groupwpa"  comment="群WPA">
+        <subcmd name="all" call_after_login="true" comment="添加并打开">
+            <param name="param" comment="json参数串"/>
+        </subcmd>
+        <subcmd name="OpenGroup" call_after_login="true" comment="添加并打开">
+            <param name="param" comment="json参数串"/>
+        </subcmd>
+        <subcmd name="OpenApp" call_after_login="true" comment="打开app">
+            <param name="param" comment="json参数串"/>
+        </subcmd>
+    </cmd>
+    <cmd name="QQInternet" comment="qq互联">
+        <subcmd name="savemsg" call_after_login="true" comment="保存消息记录">
+            <param name="dwFromUin" comment="发起方的uin"/>
+            <param name="msgcontent" comment="消息内容"/>
+            <param name="shareto" comment="json参数保存接收方的uin列表"/>
+        </subcmd>
+    </cmd>
+    <cmd name="openchat" comment="打開聊天會話">
+        <subcmd name="opengroup" call_after_login="true" comment="打開群">
+            <param name="id" comment="群id"/>
+        </subcmd>
+        <subcmd name="opendiscuss" call_after_login="true" comment="打開討論組">
+            <param name="id" comment="討論組id"/>
+        </subcmd>
+    </cmd>
+    <cmd name="finger"  comment="查找">
+        <subcmd name="qiaoyuka" comment="巧遇卡">
+            <param name="param" comment="json参数串"/>
+        </subcmd>
+        <subcmd name="OpenWebSearch" call_after_login="true" comment="打开web查找指定页面">
+            <param name="exparam" comment="这个参数直接透传给网页"/>
+        </subcmd>
+    </cmd>
+    <cmd name="QQGame"  comment="QQGame">
+        <!--这样写是不科学的，必须要有子命令！
+        因为老协议已经写成这样了，被迫迁就下。ramonji 2013/1/14-->
+        <subcmd name="null" comment="无子命令号">
+            <param name="cmdID" comment="cmdID"/>
+            <param name="GameID" comment="GameID"/>
+            <param name="ServerID" comment="ServerID"/>
+            <param name="RoomID" comment="RoomID"/>
+        </subcmd>
+    </cmd>
+    <cmd name="QQMicroGameHall" comment="微端">
+        <subcmd name="OpenQQGameHall" comment="打开QQ游戏下载">
+        </subcmd>
+    </cmd>
+    <cmd name="friendcircle" comment="圈子">
+        <subcmd name="showmainframe"  comment="打开圈子主面板">
+            <param name="qid" comment="圈号"/>
+            <param name="qfid" comment="圈内id"/>
+            <param name="params" comment="扩展参数"/>
+        </subcmd>
+    </cmd>
+    <cmd name="AppBox" comment="web拉起应用管理器">
+        <subcmd name="OpenTab" call_after_login="true" comment="web拉起应用器定位到对应的Tab">
+            <param name="appID" comment="应用ID"/>
+            <param name="tabName" comment="需要定位的Tab页名字"/>
+            <param name="action" comment="对应用进行的操作"/>
+        </subcmd>
+    </cmd>
+    <cmd name="StartupApp"  comment="启动，进入房间">
+        <subcmd name="TianTian" comment="guagua相关功能">
+            <param name="account" comment="帐号"/>
+            <param name="roomid" comment="房间号"/>
+            <param name="extparam" comment="扩展参数，guagua可以在这里自定义更多参数的格式"/>
+            <param name="srcid"  comment="来源id，用于数据统计"/>
+        </subcmd>
+    </cmd>
+    <cmd name="Discuss" comment="Discuss飞机票">
+        <subcmd name="JoinDiscuss" call_after_login="true" comment="飞机票加入讨论组">
+            <param name="ticket" comment="讨论组飞机票内容"/>
+        </subcmd>
+    </cmd>
+    <cmd name="OpenPublicAccInfo" comment="打开公众帐号资料框">
+        <subcmd name="Coupon" call_after_login="true" comment="打开优惠卷框">
+            <param name="accountid" comment="公众帐号ID(UIN)"/>
+            <param name="subid" comment="子ID(优惠卷ID)"/>
+            <param name="width" comment="窗口宽度(0表示使用默认)"/>
+            <param name="height" comment="窗口高度(0表示使用默认)"/>
+            <param name="extparam" comment="扩展参数"/>
+        </subcmd>
+    </cmd>
+    <cmd name="QQDataLine" comment="打开QQ数据线">
+        <subcmd name="OpenMainFrame" call_after_login="true" comment="打开数据线窗口"/>
+        <subcmd name="Send" call_after_login="true" comment="发送文件">
+            <param name="param0" comment="文件路径，必须经过EecodeUrl。param0~paramN"/>
+            <param name="paramcount" comment="文件个数"/>
+            <!--tencent://QQDataline/?subcmd=Send&param0=file1&param1=file2&paramcount=2-->
+        </subcmd>
+        <subcmd name="Send2" call_after_login="true" comment="发送文件">
+            <param name="filelist" comment="文件列表，指向一个文件路径，必须经过EecodeUrl。该文件列出要发送的文件，以换行符为分隔"/>
+            <!--tencent://QQDataline/?subcmd=Send2&filelist=file-->        
+        </subcmd>
+        <subcmd name="OpenWifiPhotoMainFrame" call_after_login="true" comment="打开WifiPhoto主窗口"/>
+    </cmd>
+  <cmd name="MobileAssist" comment="应用宝手机助手">
+    <subcmd name="installapk" call_after_login="true" commnet="安装手机应用">
+      <param name="appid" comment="应用ID"/>
+      <param name="package" comment="安装包"/>
+      <param name="extra" comment="其他参数"/>
+    </subcmd>
+    <subcmd name="webapp" call_after_login="true" commnet="网页应用">
+      <param name="business" comment="业务类型"/>
+      <param name="extra" comment="其他参数"/>
+      <param name="source" comment="来源"/>
+    </subcmd>
+  </cmd>
+
+  <cmd name="OpenHotWordApp" comment="打开热词应用（轻应用）">
+        <subcmd name="AIORight" call_after_login="true" comment="在AIO右侧打开应用">
+            <param name="buddyuin" comment="当前会话的对方UIN"/>
+            <param name="chattype" comment="会话类型"/>
+            <param name="exparam" comment="这个参数直接透传给网页"/>
+        </subcmd>
+    </cmd>
+    <cmd name="OpenGroupConfig" comment="打开群资料">
+        <subcmd name="GroupConfigCard" call_after_login="true" comment="打开群资料卡">
+            <param name="groupUin" comment="群UIN"/>
+            <param name="extParam" conment="透传参数"/>
+        </subcmd>
+    </cmd>
+    <cmd name="VisitPublicGroup" comment="访问公开群">
+        <subcmd name="VisitPublicGroup" call_after_login="true" comment="访问公开群或者加群">
+            <param name="param" comment="json参数串"/>
+        </subcmd>
+        <subcmd name="VisitPublicGroupEx" call_after_login="true" comment="访问公开群或者加群,透传app参数">
+            <param name="param" comment="json参数串"/>
+        </subcmd>
+    </cmd>
+	    <cmd name="groupoperation"  comment="群相关">
+        <subcmd name="OpenGroup" call_after_login="true" comment="添加并打开">
+            <param name="param" comment="json参数串"/>
+        </subcmd>
+		<subcmd name="OpenApp" call_after_login="true" comment="打开群app">
+            <param name="param" comment="json参数串"/>
+        </subcmd>
+    </cmd>
+  <cmd name="QQNewsMini" comment="腾讯新闻迷你版">
+    <subcmd name="OpenMiniportal" call_after_login="true" comment="打开腾讯新闻迷你版">
+    </subcmd>
+  </cmd>
+  <!--Begin->20140508 lovekidchen:#QQ5.6#系统右键菜单发起转发入口-->
+  <cmd name="QQForwardFile" comment="转发文件">
+    <subcmd name="ForwardFromOsMenu" call_after_login="true" comment="转发文件">
+      <param name="inParam" comment="文件列表，指向一个文件路径，必须经过EecodeUrl。该文件列出要发送的文件，以换行符为分隔"/>
+      <!--tencent://QQForwardFile/?subcmd=Send2&filelist=-->
+    </subcmd>
+  </cmd>
+  <cmd name="QQEducation" comment="在线教育">
+    <subcmd name="ShareCard" call_after_login="true" comment="请说明">    
+    </subcmd>
+  </cmd>
+  <!--End->20140508 lovekidchen:#QQ5.6#系统右键菜单发起转发入口-->
+  <!--Begin leezyli: 浏览器插件调起客户端-->
+  <cmd name="QQWebGarb" comment="浏览器插件">
+    <subcmd name="ForwardWebGarb" call_after_login="true" comment="浏览器插件数据转发">
+      <param name="category" comment="类别"></param>
+    </subcmd>
+  </cmd>
+  <!--End 浏览器插件调起客户端-->
+  <cmd name="MedalWall" comment="勋章墙">
+    <subcmd name="OpenMedalWall" call_after_login="true" comment="网页打开勋章墙">
+    </subcmd>
+  </cmd>
+  <cmd name="Conference" comment="音视频会议相关">
+    <subcmd name="JoinConfByVerifyCode" call_after_login="true" comment="根据验证码加入会议">
+      <param name="param" comment="json参数串" />
+    </subcmd>
+  </cmd>
+</cmds>

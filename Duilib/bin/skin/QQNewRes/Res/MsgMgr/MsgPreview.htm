@@ -1,0 +1,609 @@
+﻿<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>QQ消息管理器</title>
+    <style type="text/css">
+        BODY
+        {
+ 	        font-size:8.5pt;
+	        margin:2px;
+	        margin-right:0px;
+        }
+        TD
+        {
+	        font-size:9pt;
+	        border:solid 1px transparent;   
+	        _border-color:tomato;   
+	        _filter:chroma(color=tomato); 
+        }
+        .pageDiv
+        {
+	        width: 100%;
+	        height: 100%
+        }
+        .msgContentDiv
+        {	
+	        float:top;
+	        margin-top:5px;
+	        padding-left:20px;
+	        width:300px;
+	        overflow-x: hidden;
+        }
+        .msgContentDiv1
+        {	
+	        float:top;
+	        margin-top:5px;
+	        padding-left:20px;
+        }
+
+        ::-webkit-scrollbar
+        {
+            width: 12px;
+            height: 12px;
+        }
+        ::-webkit-scrollbar-button
+        {
+            width: 0;
+            height: 0;
+        }
+        ::-webkit-scrollbar-button:start:decrement, ::-webkit-scrollbar-button:end:increment
+        {
+            display: block;
+        }
+        ::-webkit-scrollbar-button:vertical:start:increment, ::-webkit-scrollbar-button:vertical:end:decrement
+        {
+            display: none;
+        }
+        ::-webkit-scrollbar-corner
+        {
+            display: block;
+        }
+        ::-webkit-scrollbar-thumb
+        {
+            background-clip: padding-box;
+            background-color: rgba(0,0,0,.2);
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb:hover
+        {
+            background-clip: padding-box;
+            background-color: rgba(0,0,0,.5);
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-track:vertical, ::-webkit-scrollbar-thumb:vertical
+        {
+            border-left: 1px solid transparent;
+            border-right: 1px solid transparent;
+        }
+        ::-webkit-scrollbar-track:horizontal, ::-webkit-scrollbar-thumb:horizontal
+        {
+            border-top: 1px solid transparent;
+            border-bottom: 1px solid transparent;
+        }
+        ::-webkit-scrollbar-track:hover
+        {
+            background-clip: padding-box;
+            background-color: rgba(0,0,0,.15);
+        }
+        
+        ::-webkit-scrollbar-button:vertical:start
+        {
+            width: 12px;
+            height: 12px;
+            background: url(qq:///txfile/systheme:ScrollBar/scrollbar_arrow.png) no-repeat 0 0;
+        }
+        ::-webkit-scrollbar-button:vertical:start:hover
+        {
+            background: url(qq:///txfile/systheme:ScrollBar/scrollbar_arrow.png) no-repeat -15px 0;
+        }
+        ::-webkit-scrollbar-button:vertical:start:active
+        {
+            background: url(qq:///txfile/systheme:ScrollBar/scrollbar_arrow.png) no-repeat -30px 0;
+        }
+        ::-webkit-scrollbar-button:vertical:end
+        {
+            width: 12px;
+            height: 12px;
+            background: url(qq:///txfile/systheme:ScrollBar/scrollbar_arrow.png) no-repeat 0 -18px;
+        }
+        ::-webkit-scrollbar-button:vertical:end:hover
+        {
+            background: url(qq:///txfile/systheme:ScrollBar/scrollbar_arrow.png) no-repeat -15px -18px;
+        }
+        ::-webkit-scrollbar-button:vertical:end:active
+        {
+            background: url(qq:///txfile/systheme:ScrollBar/scrollbar_arrow.png) no-repeat -30px -18px;
+        }
+    </style>
+    <script language="javascript">
+        var last;
+        var lastkeysel;
+        var g_itemcount = 0;
+        var clr_selbackground;
+        var clr_borderclr1;
+        var clr_borderclr2;
+        var clr_selborder;
+        var multiselidlist = "";
+        var g_notify = true;
+        var g_gotoBottom = false;
+
+        function OnThemeColorChange() {
+            clr_selbackground = "#ffedc4";
+            clr_borderclr1 = "#FAFBFB00";
+            clr_borderclr2 = "#F5F8FA00";
+            clr_selborder = "#ffdb8d";
+
+            try {
+                
+                if (ItemTable.rows.length > 0) {
+                    for (i = 0; i < ItemTable.rows.length; i++) {
+                        if (last == ItemTable.rows[i]) {
+                            ItemTable.rows[i].style.backgroundColor = clr_selbackground;
+                            if (ItemTable.rows[i].cells.length > 0) {
+                                ItemTable.rows[i].cells[0].style.cssText = "border:1px " + clr_selborder + " solid;";
+                            }
+                        }
+                        else {
+                            var bkIndex = ItemTable.rows[i].bkIndex;
+                            var bdclr = clr_borderclr1;
+                            if (bkIndex == 2) {
+                                bdclr = clr_borderclr2;
+                            }
+                            ItemTable.rows[i].style.backgroundColor = bdclr;
+                            ItemTable.rows[i].style.borderColor = bdclr;
+                            if (ItemTable.rows[i].cells.length > 0) { ItemTable.rows[i].cells[0].style.cssText = "border:1px " + bdclr + " solid;"; }
+                        }
+                    }
+                }
+            } catch (e) { }
+        }
+
+        function GetRealRow(rowObj) {
+            if (rowObj != null) {
+                return rowObj.rowIndex;
+            }
+
+            return 0;
+        }      
+        
+        function OnDblClickImage(bsError, dwMsgIndex, dwElemIndex, dwRowId) {            
+            external.DblClickImage(bsError, dwMsgIndex, dwElemIndex, dwRowId);
+        }
+        
+        function OnClickImage(bsError, dwMsgIndex, dwElemIndex, dwRowId, nToDownload) {
+    
+            g_notify = false;
+            try {
+                var item = document.getElementById("itemId_" + dwRowId);
+                external.ClickImage(bsError, dwMsgIndex, dwElemIndex, dwRowId, nToDownload);
+                OnClickItem(item);
+            }
+            catch (e) { }
+            g_notify = true;
+        }
+
+        function OnRClickImage(bsError, dwMsgIndex, dwElemIndex, dwRowId) {
+            external.RClickImage(bsError, dwMsgIndex, dwElemIndex, dwRowId);
+        }
+
+        function OnDisposeItem(rowObj) {
+            var index = GetRealRow(rowObj)
+            external.OnDisposeItem(index);
+        }
+
+        function OnDbClickItem(rowObj) {
+            var index = GetRealRow(rowObj)
+            external.ClickItem(index);
+        }
+        
+          function ReplacePic(msgid, inerid, bsPicPath, bclick) {            
+            var item = document.getElementById("embed_" + msgid + "_" + inerid);
+            if(bclick == 1 && item){
+                item.onload = '';
+            }
+            if (item) {
+                item.src = bsPicPath;
+            }
+        }
+
+        function AddToMultiSel(rowObj, bCheck) {
+            if (!bCheck) {
+                SetSelStyle(rowObj);
+                multiselidlist += GetRealRow(rowObj);
+                multiselidlist += ",";
+            }
+            else {
+                var id = GetRealRow(rowObj);
+                if (multiselidlist != "") {
+                    var bfind = false;
+                    var d = new Array();
+                    d = multiselidlist.split(",");
+                    multiselidlist = "";
+                    for (var i = 0; i < d.length; i++) {
+                        var m = d[i];
+                        if (m != "") {
+                            if (m == id) {
+                                bfind = true;
+                            }
+                            else {
+                                multiselidlist += m;
+                                multiselidlist += ",";
+                            }
+                        };
+                    }
+
+                    if (!bfind) {
+                        multiselidlist += id;
+                        multiselidlist += ",";
+                        SetSelStyle(rowObj);
+                    }
+                    else {
+                        var item = document.getElementById("itemId_" + id);
+
+                        ResetStyle(item);
+                    }
+                }
+                else {
+                    var rowlast = GetRealRow(last);
+                    if (rowlast != id) {
+                        multiselidlist += rowlast;
+                        multiselidlist += ",";
+                    };
+
+                    multiselidlist += id;
+                    multiselidlist += ",";
+                    SetSelStyle(rowObj);
+                }
+            }
+
+        }
+
+        function ClearMultiSel() {
+            multiselidlist = "";
+        }
+
+        function ResetMultiSel() {
+            if (multiselidlist == "") return;
+            var d = new Array();
+            d = multiselidlist.split(",");
+            for (var i = 0; i < d.length; i++) {
+                m = d[i];
+
+                var item = document.getElementById("itemId_" + m);
+
+                ResetStyle(item);
+            }
+
+            multiselidlist = "";
+        }
+
+        function ResetStyle(rowObj) {
+            if (rowObj == null) return;
+
+            rowObj.style.backgroundColor = null;
+            rowObj.style.borderColor = null;
+
+            if (rowObj.cells.length > 0) { rowObj.cells[0].style.cssText = "border:1px solid transparent;"; }
+        }
+
+        function SetSelStyle(rowObj) {
+            if (rowObj == null) return;
+
+            rowObj.style.backgroundColor = clr_selbackground;
+
+            if (rowObj.cells.length > 0) {
+                rowObj.cells[0].style.cssText = "border:1px " + clr_selborder + " solid;";
+            }
+        };
+
+        function GetMultiSel() {
+            return multiselidlist;
+        }
+
+        function OnClickItem(rowObj) {
+            lastkeysel = rowObj;
+            var bMultiSel = false;
+            if (external.EnableMultiSel() && (last != null) && (external.GetKeyState(17) < 0 || external.GetKeyState(16) < 0)) {
+                bMultiSel = true;
+
+                if (external.GetKeyState(16) < 0) ///shift
+                {
+                    ResetMultiSel();
+                    var row1 = GetRealRow(rowObj);
+                    var row2 = GetRealRow(last);
+                    if (row1 < row2) {
+                        for (i = row1; i <= row2; i++) {
+                            var item = document.getElementById("itemId_" + i);
+                            AddToMultiSel(item, false);
+                        }
+                    }
+                    else {
+                        for (i = row2; i <= row1; i++) {
+                            var item = document.getElementById("itemId_" + i);
+                            AddToMultiSel(item, false);
+                        }
+                    }
+                }
+                else {
+                    AddToMultiSel(rowObj, true);  //ctrl
+                }
+            }
+            else {
+                ResetMultiSel();
+                ResetStyle(last);
+                SetSelStyle(rowObj);
+            }
+
+            if (!bMultiSel) {
+                last = rowObj;
+                if (g_notify) {
+                    external.SetCurSel(GetRealRow(last));
+                }
+            }
+            else {
+                if (g_notify) {
+                    external.SetMultiCurSel(GetMsgIndex(rowObj));
+                }
+            }
+        }
+
+        function GetCurSel() {
+            if (last != null) {
+                return GetRealRow(last);
+            }
+            else {
+                return -1;
+            }
+        }
+
+        function DeleteCurRow() {
+            if (last != null) {
+                ItemTable.deleteRow(last.rowIndex);
+                last = null;
+            }
+        }
+
+        function DeleteRow(msgid) {
+            var item = document.getElementById("itemId_" + msgid);
+            if (item) {
+                ItemTable.deleteRow(item.rowIndex);
+            }
+        }
+        function SelectMsg(msgid, bsel) {
+            g_notify = true;
+            try {
+                var item = document.getElementById("itemId_" + msgid);
+                if (bsel) {
+                    OnClickItem(item)
+                }
+
+                var top = item.offsetTop;
+                if (msgid == 0) {   //选第0条要显示最顶
+                    top = 0;
+                }
+
+                if (top < document.body.scrollTop) {
+                    document.body.scrollTop = top;
+                }
+                else if ((item.offsetTop + item.clientHeight) > (document.body.clientHeight + document.body.scrollTop)) {
+                    document.body.scrollTop = (item.offsetTop + item.clientHeight - document.body.clientHeight);
+                }
+            }
+            catch (e) { }
+            g_notify = true;
+        }
+
+        function ScrollToBottom() {
+            g_itemcount = external.GetCount();
+            if (g_itemcount > 0) {
+                scrollTo(0, document.body.scrollHeight);
+            }
+        }
+
+        function ScrollToTop() {
+            scrollTo(0, 0);
+        }
+
+		function CreateFrame(npframeId)
+        {
+			var npframe = document.getElementById(npframeId);
+			if(npframe)
+			{
+				external.OnCreateFrame(npframe.getAttribute("nodetype"),npframe.getAttribute("key"),parseInt(npframe.getAttribute("mid")),parseInt(npframe.getAttribute("im")),npframe.frame);
+			}
+		}
+
+        function SelFirstItem() {
+            var row = 0;
+            SelectMsg(row, true);
+            lastkeysel = document.getElementById("itemId_" + row);
+        }
+        function SelLastItem() {
+            var row = external.GetCount();
+            row = row - 1;
+            SelectMsg(row, true);
+            lastkeysel = document.getElementById("itemId_" + row);
+        }
+
+        function InsertRow(index) {
+            var itemTable = document.getElementById("ItemTable");
+
+            var nRowCount = itemTable.rows.length;
+
+            var DefaultIndex = 888;
+            if (index == DefaultIndex) {
+                index = nRowCount;
+            }
+
+            for (i = index; i < nRowCount; i++) {
+                var Row = itemTable.rows(i);
+                if (Row) {
+                    var j = i + 1;
+                    Row.id = "itemId_" + j;
+                }
+            }
+
+            var bkIndex = 2;
+            var hdclr = "";
+
+            var msginfo = external.GetInsertMsg();
+		        
+            if (msginfo!=undefined) {
+                var sender = msginfo[0];        //"sender"
+                var recver = msginfo[1];        //"recver";
+                var msgtext = msginfo[2];       //"html";
+                var date = msginfo[3];          //"date";
+                var time = msginfo[4];          //"time";
+                var bself = msginfo[5];         //"bself";
+                var bshowhead = msginfo[6];     //"bshowhead";
+                var bcustomhead = msginfo[7];   //"bCustomHead";
+                var bcustombody = msginfo[8];   //"bCustomBody";
+
+                if (bself) {
+                    hdclr = "#42B475";
+                }
+                else {
+                    hdclr = "#006EFE";
+                }
+
+                var InsertIndex = index;
+                if (index == nRowCount) {
+                    InsertIndex = -1;
+                }
+                var newRow = itemTable.insertRow(InsertIndex);
+
+                newRow.bkIndex = bkIndex;
+                newRow.style.borderColor = null; //clr_borderclr1;
+                newRow.bgcolor = null; // = clr_borderclr1;       
+                newRow.id = "itemId_" + index;
+                newRow.onclick = function () { OnClickItem(this) };
+                newRow.ondblclick = function () { OnDbClickItem(this) };
+                newRow.dCount = 0;
+
+                var newTd = newRow.insertCell();
+                var strTd;
+                if (bcustomhead) {
+                    strTd = external.GetInsertMsg("customHeadHtml");
+                } else {
+                    strTd = "<div style=color:" + hdclr + ";padding-left:10px;>" + "<font style=\"font-family:'Tahoma'\">" + "<div style=float:left;margin-right:6px;>" + sender + "</div></font>" + time + "</div>";
+                }
+                if (bcustombody) {
+                    strTd = strTd + "<div class=msgContentDiv>" + external.GetInsertMsg("customBodyHtml") + "</div>";
+                } else {
+                    strTd = strTd + "<div class=msgContentDiv>" + msgtext + "</div>";
+                }
+                newTd.innerHTML = strTd;
+
+
+                var nRowCount = itemTable.rows.length;
+                var nMaxCount = external.GetPageMaxCount();
+                if (nRowCount > nMaxCount) {
+                    for (i = nMaxCount; i < nRowCount; i++) {
+                        var Row = itemTable.rows(i);
+                        Row.removeNode(true);
+                    }
+                }
+            }
+        }
+
+        function RespondKeyDown(keyCode) {
+            if (keyCode == 38) {
+                if (lastkeysel == null) {
+                    lastkeysel = last;
+                }
+                var rowlast = GetRealRow(lastkeysel);
+                if (rowlast > 0) {
+                    rowlast--;
+                    SelectMsg(rowlast, true);
+                    lastkeysel = document.getElementById("itemId_" + rowlast);
+                    external.OnSelcetChange()
+
+                }
+                else {
+                    external.NotifyChangePage(1);
+                    ScrollToBottom();
+                };
+            }
+            else if (keyCode == 40) {
+                if (lastkeysel == null) {
+                    lastkeysel = last;
+                }
+                var rowlast = GetRealRow(lastkeysel);
+                g_itemcount = external.GetCount();
+
+                if (rowlast < g_itemcount - 1) {
+                    rowlast++;
+                    SelectMsg(rowlast, true);
+                    lastkeysel = document.getElementById("itemId_" + rowlast);
+                    external.OnSelcetChange()
+                }
+                else {
+                    external.NotifyChangePage(0);
+                    ScrollToTop();
+
+                };
+            }
+            else if (keyCode == 36)///Home
+            {
+                if (lastkeysel != null) {
+
+                    SelectMsg(0, true);
+                    lastkeysel = document.getElementById("itemId_" + 0);
+                };
+            }
+            else if (keyCode == 35)///End
+            {
+
+                if (lastkeysel != null) {
+                    g_itemcount = external.GetCount();
+                    SelectMsg(g_itemcount - 1, true);
+                    lastkeysel = document.getElementById("itemId_" + (g_itemcount - 1));
+                };
+            }
+            else if (keyCode == 33)  ///pageUp
+            {
+
+                ScrollToTop();
+            }
+            else if (keyCode == 34)  ///pageDown
+            {
+                ScrollToBottom();
+            }
+        }
+        
+        function LoadDispStr(str) {
+            g_nRowObjCount = 0;
+            var Curpage = document.getElementById("Curpage");
+            ClearMultiSel();
+            if (Curpage != null) {
+                Curpage.innerHTML = str;
+                OnThemeColorChange();
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="pageDiv" id="ThePage">
+        <div class=pageDiv id="Curpage">CurpageContent</div>
+    </div>
+    <script language="javascript">
+	    setTimeout("OnThemeColorChange();", 100);
+    </script>
+    <script>
+        document.onselectstart = function () {
+            if (external.GetKeyState(17) < 0 || external.GetKeyState(16) < 0) {
+                event.returnValue = false;
+            }
+            else {
+                event.returnValue = true;
+            };
+        }
+        document.onkeydown = function () {
+            if (window.event.keyCode == 116) {
+                event.keyCode = 0;
+                event.cancelBubble = true;
+                event.returnValue = false;
+            }           
+    </script>
+</body>
+</html>

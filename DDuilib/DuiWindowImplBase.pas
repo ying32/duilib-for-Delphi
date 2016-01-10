@@ -21,6 +21,7 @@ uses
   Windows,
   Messages,
   ShellAPI,
+  MultiMon,
 {$ENDIF}
   Classes,
   Types,
@@ -81,7 +82,34 @@ type
     procedure DoHandleCustomMessage(var Msg: TMessage; var bHandled: BOOL); virtual;
     function DoCreateControl(pstrStr: string): CControlUI; virtual;
     function DoGetItemText(pControl: CControlUI; iIndex, iSubItem: Integer): string; virtual;
-    procedure DoResponseDefaultKeyEvent(wParam: WPARAM; var AResult: LRESULT); cdecl;
+    procedure DoResponseDefaultKeyEvent(wParam: WPARAM; var AResult: LRESULT); virtual;
+
+    // 准备函数，重写下CDelphi_WindowImplBase之用，尽可能的使用pascal
+//    function DoGetClassStyle: LongWord; virtual;
+    {function DoGetResourceType: TResourceType; virtual;
+    function DoGetZIPFileName: string; virtual;
+    function DoGetResourceID: string; virtual;
+    procedure DoClose(var Msg: TMessage; var bHandled: Boolean); virtual;
+    procedure DoDestroy(var Msg: TMessage; var bHandled: Boolean); virtual;
+    procedure DoNcActivate(var Msg: TMessage; var bHandled: Boolean); virtual;
+    procedure DoNcCalcSize(var Msg: TMessage; var bHandled: Boolean); virtual;
+    procedure DoNcPaint(var Msg: TMessage; var bHandled: Boolean); virtual;
+    procedure DoNcHitTest(var Msg: TMessage; var bHandled: Boolean); virtual;
+    procedure DoGetMinMaxInfo(var Msg: TMessage; var bHandled: Boolean); virtual;
+    procedure DoMouseWheel(var Msg: TMessage; var bHandled: Boolean); virtual;
+    procedure DoMouseHover(var Msg: TMessage; var bHandled: Boolean); virtual;
+    procedure DoSize(var Msg: TMessage; var bHandled: Boolean); virtual;
+    procedure DoChar(var Msg: TMessage; var bHandled: Boolean); virtual;
+    procedure DoSysCommand(var Msg: TMessage; var bHandled: Boolean); virtual;
+    procedure DoCreate(var Msg: TMessage; var bHandled: Boolean); virtual;
+    procedure DoKeyDown(var Msg: TMessage; var bHandled: Boolean); virtual;
+    procedure DoKillFocus(var Msg: TMessage; var bHandled: Boolean); virtual;
+    procedure DoSetFocus(var Msg: TMessage; var bHandled: Boolean); virtual;
+    procedure DoLButtonDown(var Msg: TMessage; var bHandled: Boolean); virtual;
+    procedure DoLButtonUp(var Msg: TMessage; var bHandled: Boolean); virtual;
+    procedure DoMouseMove(var Msg: TMessage; var bHandled: Boolean); virtual;
+    //procedure DoHandleCustomMessage(var Msg: TMessage; var bHandled: Boolean);
+    function DoGetStyle: Longint; virtual;}
   public
     procedure Show;
     procedure Hide;
@@ -204,6 +232,14 @@ var
 
 implementation
 
+
+procedure RectOffset(var ARect: TRect; const DX, DY: Integer);
+begin
+  Inc(ARect.Left, DX);
+  Inc(ARect.Top, DY);
+  Inc(ARect.Right, DX);
+  Inc(ARect.Bottom, DY);
+end;
 
 
 { TWindowImplBase }
@@ -590,6 +626,212 @@ procedure TDuiWindowImplBase.Close;
 begin
   {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.Close;
 end;
+
+
+//function TDuiWindowImplBase.DoGetClassStyle: LongWord;
+//begin
+//  Result := CS_DBLCLKS;
+//end;
+(*
+
+function TDuiWindowImplBase.DoGetResourceType: TResourceType;
+begin
+  Result := UILIB_FILE;
+end;
+
+function TDuiWindowImplBase.DoGetZIPFileName: string;
+begin
+  Result := '';
+end;
+
+function TDuiWindowImplBase.DoGetResourceID: string;
+begin
+  Result := '';
+end;
+
+procedure TDuiWindowImplBase.DoClose(var Msg: TMessage; var bHandled: Boolean);
+begin
+	bHandled := False;
+	Msg.Result := 0;
+end;
+
+procedure TDuiWindowImplBase.DoDestroy(var Msg: TMessage; var bHandled: Boolean);
+begin
+	bHandled := False;
+	Msg.Result := 0;
+end;
+
+procedure TDuiWindowImplBase.DoNcActivate(var Msg: TMessage; var bHandled: Boolean);
+begin
+	if IsIconic(Handle) then
+    bHandled := False;
+  Msg.Result := LRESULT(Msg.WParam = 0);
+end;
+
+procedure TDuiWindowImplBase.DoNcCalcSize(var Msg: TMessage; var bHandled: Boolean);
+var
+  LPRect: PRect;
+  LPParam: PNCCalcSizeParams;
+  oMonitor: TMonitorInfo;
+  rcWork, rcMonitor: TRect;
+begin
+	if Msg.WParam <> 0 then
+	begin
+	  LPParam := PNCCalcSizeParams(Msg.LParam);
+		LPRect := @LPParam^.rgrc[0];
+	end	else
+		LPRect := PRect(Msg.LParam);
+
+  if  IsZoomed(Handle) then
+  begin
+    FillChar(oMonitor, SizeOf(oMonitor), #0);
+    oMonitor.cbSize := sizeof(oMonitor);
+    GetMonitorInfo(MonitorFromWindow(Handle, MONITOR_DEFAULTTONEAREST), @oMonitor);
+    rcWork := oMonitor.rcWork;
+    rcMonitor := oMonitor.rcMonitor;
+
+    RectOffset(rcWork, -oMonitor.rcMonitor.Left, -oMonitor.rcMonitor.Top);
+   //   rcWork.Offset(-oMonitor.rcMonitor.left, -oMonitor.rcMonitor.top);
+
+    LPRect^.Right := LPRect^.Left + (rcWork.Right - rcWork.Left);
+    LPRect^.Bottom := LPRect^.Top + (rcWork.Bottom - rcWork.Top);
+    Msg.Result := WVR_REDRAW;
+    Exit;
+  end;
+
+	Msg.Result := 0;
+end;
+
+procedure TDuiWindowImplBase.DoNcPaint(var Msg: TMessage; var bHandled: Boolean);
+begin
+  Msg.Result := 0;
+end;
+
+procedure TDuiWindowImplBase.DoNcHitTest(var Msg: TMessage; var bHandled: Boolean);
+begin
+end;
+
+procedure TDuiWindowImplBase.DoGetMinMaxInfo(var Msg: TMessage; var bHandled: Boolean);
+begin
+end;
+
+procedure TDuiWindowImplBase.DoMouseWheel(var Msg: TMessage; var bHandled: Boolean);
+begin
+	bHandled := False;
+	Msg.Result := 0;
+end;
+
+procedure TDuiWindowImplBase.DoMouseHover(var Msg: TMessage; var bHandled: Boolean);
+begin
+	bHandled := False;
+	Msg.Result := 0;
+end;
+
+procedure TDuiWindowImplBase.DoSize(var Msg: TMessage; var bHandled: Boolean);
+var
+  szRoundCorner: TSize;
+  rcWnd: TRect;
+  LhRgn: HRGN;
+begin
+  szRoundCorner := FPaintManagerUI.GetRoundCorner;
+	if IsIconic(Handle) and ((szRoundCorner.cx <> 0) or (szRoundCorner.cy <> 0)) then
+  begin
+		GetWindowRect(Handle, rcWnd);
+    RectOffset(rcWnd, -rcWnd.Left, -rcWnd.Top);
+    Inc(rcWnd.Right);
+    Inc(rcWnd.Bottom);
+		LhRgn := CreateRoundRectRgn(rcWnd.Left, rcWnd.Top, rcWnd.Right, rcWnd.Bottom, szRoundCorner.cx, szRoundCorner.cy);
+		SetWindowRgn(Handle, LhRgn, True);
+		DeleteObject(LhRgn);
+	end;
+	bHandled := False;
+	Msg.Result := 0;
+end;
+
+procedure TDuiWindowImplBase.DoChar(var Msg: TMessage; var bHandled: Boolean);
+begin
+	bHandled := False;
+	Msg.Result := 0;
+end;
+
+procedure TDuiWindowImplBase.DoSysCommand(var Msg: TMessage; var bHandled: Boolean);
+var
+  bZoomed: Boolean;
+  lRes: LRESULT;
+  pbtnMax, pbtnRestore: CControlUI;
+begin
+  if Msg.WParam = SC_CLOSE then
+  begin
+    bHandled := True;
+    Perform(WM_CLOSE);
+    Msg.Result := 0;
+    Exit;
+  end;
+  bZoomed := IsZoomed(Handle);
+  //lRes := CWindowWnd::HandleMessage(uMsg, wParam, lParam);
+  if IsZoomed(Handle) <> bZoomed then
+  begin
+    pbtnMax := FindControl('maxbtn');         // max button
+    pbtnRestore := FindControl('restorebtn'); // restore button
+    // toggle status of max and restore button
+    if Assigned(pbtnMax) and Assigned(pbtnRestore) then
+    begin
+      pbtnMax.Visible := True = bZoomed;
+      pbtnRestore.Visible := False = bZoomed;
+    end;
+  end;
+  Msg.Result := lRes;
+end;
+
+procedure TDuiWindowImplBase.DoCreate(var Msg: TMessage; var bHandled: Boolean);
+begin
+end;
+
+procedure TDuiWindowImplBase.DoKeyDown(var Msg: TMessage; var bHandled: Boolean);
+begin
+	bHandled := False;
+	Msg.Result := 0;
+end;
+
+procedure TDuiWindowImplBase.DoKillFocus(var Msg: TMessage; var bHandled: Boolean);
+begin
+	bHandled := False;
+	Msg.Result := 0;
+end;
+
+procedure TDuiWindowImplBase.DoSetFocus(var Msg: TMessage; var bHandled: Boolean);
+begin
+	bHandled := False;
+	Msg.Result := 0;
+end;
+
+procedure TDuiWindowImplBase.DoLButtonDown(var Msg: TMessage; var bHandled: Boolean);
+begin
+	bHandled := False;
+	Msg.Result := 0;
+end;
+
+procedure TDuiWindowImplBase.DoLButtonUp(var Msg: TMessage; var bHandled: Boolean);
+begin
+	bHandled := False;
+	Msg.Result := 0;
+end;
+
+procedure TDuiWindowImplBase.DoMouseMove(var Msg: TMessage; var bHandled: Boolean);
+begin
+	bHandled := False;
+	Msg.Result := 0;
+end;
+
+//procedure TDuiWindowImplBase.DoHandleCustomMessage(var Msg: TMessage; var bHandled: Boolean);
+//begin
+//end;
+
+function TDuiWindowImplBase.DoGetStyle: Longint;
+begin
+	Result := GetWindowLong(Handle, GWL_STYLE);
+	Result := Result and not WS_CAPTION;
+end; *)
 
 
 

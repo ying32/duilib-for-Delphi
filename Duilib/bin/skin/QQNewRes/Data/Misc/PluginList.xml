@@ -1,0 +1,9 @@
+﻿<!-- 对应于 ISession.h 中的各个 SESSIONRIGHTMASK，rightbit 代表 2 的幂，计算数值即为 SESSIONRIGHTMASK 的值。 -->
+<?xml version="1.0" encoding="utf-8"?>
+<plugins>
+  <plugin guid="4FB16D0E-EAEE-4FDA-A858-405F27C00268" rightbit="2" name="File"/>
+  <plugin guid="943306B1-0122-43D8-AE45-99C92A6AE35A" rightbit="3" name="Audio"/>
+  <plugin guid="FAF61A7E-5D50-4F8B-A320-BF682016A8FA" rightbit="4" name="Video"/>
+  <plugin guid="FAF17D69-670E-461E-AC71-9E77F7B7F277" rightbit="5" name="Wireless"/>
+  <plugin guid="5D16C078-EFB3-48a9-981E-A292EAFDBB45" rightbit="7" name="RemoteHelp" />
+</plugins>

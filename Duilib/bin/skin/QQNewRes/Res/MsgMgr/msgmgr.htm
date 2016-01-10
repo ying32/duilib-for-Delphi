@@ -1,0 +1,1060 @@
+﻿<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>QQ消息管理器</title>
+    <style type="text/css">
+        BODY
+        {
+ 	        font-size:8.5pt;
+	        margin:2px;
+	        margin-right:0px;
+        }
+        TD
+        {
+	        font-size:9pt;
+	        border:solid 1px transparent;   
+	        _border-color:tomato;   
+	        _filter:chroma(color=tomato); 
+        }
+        .pageDiv
+        {
+	        width: 100%;
+	        height: 100%
+        }
+        .msgContentDiv
+        {	
+	        float:top;
+	        margin-top:5px;
+	        padding-left:20px;
+	        width:300px;
+	        overflow-x: hidden;
+        }
+        .msgContentDiv1
+        {	
+	        float:top;
+	        margin-top:5px;
+	        padding-left:20px;
+        }
+        .imageZoomMsk
+        {
+	        position:relative
+        }
+
+        .imageZoomMsk .icon_zoom
+        {
+	        display:block;
+	        width:20px;
+	        height:20px;
+	        cursor:pointer;
+	        position:absolute;
+	        right:5px;
+	        bottom:5px;
+	        background:url(qq:///txfile/platformres:AppFramework/ChatFrame/AIOZoomMask.png) no-repeat 0 0;
+        }
+
+        .imageZoomMsk .icon_zoom_hover
+        {
+	        display:block;
+	        width:20px;
+	        height:20px;
+	        cursor:pointer;
+	        position:absolute;
+	        right:5px;
+	        bottom:5px;
+	        background:url(qq:///txfile/platformres:AppFramework/ChatFrame/AIOZoomMask_hover.png) no-repeat 0 0;
+        }
+        ::-webkit-scrollbar
+        {
+            width: 12px;
+            height: 12px;
+        }
+        ::-webkit-scrollbar-button
+        {
+            width: 0;
+            height: 0;
+        }
+        ::-webkit-scrollbar-button:start:decrement, ::-webkit-scrollbar-button:end:increment
+        {
+            display: block;
+        }
+        ::-webkit-scrollbar-button:vertical:start:increment, ::-webkit-scrollbar-button:vertical:end:decrement
+        {
+            display: none;
+        }
+        ::-webkit-scrollbar-corner
+        {
+            display: block;
+        }
+        
+        ::-webkit-scrollbar-thumb
+        {
+            background-clip: padding-box;
+            background-color: rgba(0,0,0,.2);
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb:hover
+        {
+            background-clip: padding-box;
+            background-color: rgba(0,0,0,.5);
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-track:vertical, ::-webkit-scrollbar-thumb:vertical
+        {
+            border-left: 1px solid transparent;
+            border-right: 1px solid transparent;
+        }
+        ::-webkit-scrollbar-track:horizontal, ::-webkit-scrollbar-thumb:horizontal
+        {
+            border-top: 1px solid transparent;
+            border-bottom: 1px solid transparent;
+        }
+        ::-webkit-scrollbar-track:hover
+        {
+            background-clip: padding-box;
+            background-color: rgba(0,0,0,.15);
+        }
+        
+        ::-webkit-scrollbar-button:vertical:start
+        {
+            width: 12px;
+            height: 12px;
+            background: url(qq:///txfile/systheme:ScrollBar/scrollbar_arrow.png) no-repeat 0 0;
+        }
+        ::-webkit-scrollbar-button:vertical:start:hover
+        {
+            background: url(qq:///txfile/systheme:ScrollBar/scrollbar_arrow.png) no-repeat -15px 0;
+        }
+        ::-webkit-scrollbar-button:vertical:start:active
+        {
+            background: url(qq:///txfile/systheme:ScrollBar/scrollbar_arrow.png) no-repeat -30px 0;
+        }
+        ::-webkit-scrollbar-button:vertical:end
+        {
+            width: 12px;
+            height: 12px;
+            background: url(qq:///txfile/systheme:ScrollBar/scrollbar_arrow.png) no-repeat 0 -18px;
+        }
+        ::-webkit-scrollbar-button:vertical:end:hover
+        {
+            background: url(qq:///txfile/systheme:ScrollBar/scrollbar_arrow.png) no-repeat -15px -18px;
+        }
+        ::-webkit-scrollbar-button:vertical:end:active
+        {
+            background: url(qq:///txfile/systheme:ScrollBar/scrollbar_arrow.png) no-repeat -30px -18px;
+        }
+    </style>
+    <script language="javascript">
+        var g_rowObjLastSave;
+        var g_rowObjLastSelByKeyDown;
+        var g_nRowObjCount = 0;
+        var clr_selbackground;
+        var clr_borderclr1;
+        var clr_borderclr2;
+        var clr_selborder;
+        var g_listMsgIndex = "";
+        var g_notify = true;
+        var g_selmsgid = -1;
+        var g_usermousewheel = 0;
+				        	
+			  var $ = function() {
+		var selection;
+		
+		function getSelection() {
+			return selection || (selection = window.getSelection()) || false;
+		}
+		
+		function getRange() {
+			return getSelection().rangeCount ? selection
+							.getRangeAt(0) : null;
+		}
+		
+		function setRange(range) {
+			if(range && getSelection() && selection.addRange){
+					selection.removeAllRanges();
+					selection.addRange(range);
+				}
+		}
+	
+		return {
+			getSelection: getSelection,
+			getRange: getRange,
+			setRange: setRange,
+			insertToRange: function(html,range) {
+				var _range = range || getRange();
+				if (_range) {
+					 _range.deleteContents();
+					 _range.insertNode(typeof html == 'string' ? _range.createContextualFragment(html) : html);
+					 !range && setRange(_range);
+				}
+			},
+			getNode: function(tagName, properties) {
+				tagName = document.createElement(tagName);
+				if (properties) {
+					for (var i in properties) {
+						tagName.style[i] = properties[i];
+					}
+				}
+				
+				return tagName;
+			}
+		};
+	}();
+	
+	window.getSelectedInfo = function() {
+		function createTestNode() {
+				return $.getNode('span', {display: 'inline-block', width: 0, height: 0});
+			}
+			
+		var START_NODE = createTestNode(), END_NODE = createTestNode(), rIndex = /\d+$/;
+		
+		function removeNode(node) {
+				node && node.parentNode && node.parentNode.removeChild(node);
+			}
+			
+		function getSelectedInfo() {
+				var range = $.getRange();
+				if (!range || (range.startOffset == range.endOffset && range.startContainer == range.endContainer)) {
+					return false;
+				}
+				var table = document.getElementById('ItemTable'), items;
+				if (!table.firstChild || !(items = table.firstChild.childNodes).length) {
+					return false;
+				}
+				var startRange = range.cloneRange();
+				startRange.collapse(true);
+				var endRange = range.cloneRange();
+				endRange.collapse(false);
+				$.insertToRange(START_NODE, startRange);
+				$.insertToRange(END_NODE, endRange);
+				var first = START_NODE.nextSibling || START_NODE.parentNode;
+				var last = END_NODE.previousSibling || END_NODE.parentNode;
+				
+				if (first && last && first != END_NODE) {
+					while((first.nodeName != 'TR' || !first.getAttribute('bkindex')) && (first = first.parentNode)) {}
+					while((last.nodeName != 'TR' || !last.getAttribute('bkindex')) && (last = last.parentNode)) {}
+					!first && (first = items[0]);
+					!last && (last = items[items.length - 1]);
+					if (first.id || first != last) {
+						!first.id && (first = first.nextSibling);
+						!last.id && (last = last.previousSibling);
+						first = (first.id || '').match(rIndex);
+						last = (last.id || '').match(rIndex);
+						if (first && last && (first = parseInt(first[0], 10)) > -1 
+						&& (last = parseInt(last[0], 10) - first + 1) > 0) {
+							return '{"start":' +  first + ', "count":' + last + '}';
+						}
+					}
+				}
+				removeNode(START_NODE);
+				removeNode(END_NODE);
+				return false;
+			}
+		
+		return function() {
+			var selectedInfo = getSelectedInfo();
+			return selectedInfo || '{"start": -1,"count": 0}';
+		};
+	}();
+
+        function OnThemeColorChange() {
+            clr_selbackground = "#ffedc4";
+            clr_borderclr1 = "#FAFBFB00";
+            clr_borderclr2 = "#F5F8FA00";
+            clr_selborder = "#ffdb8d";
+            
+            try {
+                if (ItemTable.rows.length > 0) {
+                    for (i = 0; i < ItemTable.rows.length; i++) {
+                        if (g_rowObjLastSave == ItemTable.rows[i]) {
+                            ItemTable.rows[i].style.backgroundColor = clr_selbackground;
+                            if (ItemTable.rows[i].cells.length > 0) {
+                                ItemTable.rows[i].cells[0].style.cssText = "border:1px " + clr_selborder + " solid;";
+                            }
+                        }
+                        else {
+                            var bkIndex = ItemTable.rows[i].getAttribute("bkIndex");
+                            var bdclr = clr_borderclr1;
+                            if (bkIndex == 2) {
+                                bdclr = clr_borderclr2;
+                            }
+                            ItemTable.rows[i].style.backgroundColor = bdclr;
+                            ItemTable.rows[i].style.borderColor = bdclr;
+                            if (ItemTable.rows[i].cells.length > 0) {
+                                ItemTable.rows[i].cells[0].style.cssText = "border:1px " + bdclr + " solid;";
+                            }
+                        }
+                    }
+                }
+            }
+            catch (e) { }
+        }
+
+        function GetMsgIndex(rowObj) {
+            if (rowObj != null)
+                return rowObj.rowIndex - rowObj.getAttribute("dCount");
+
+            return 0;
+        }
+
+        function OnDblClickImage(bsError, dwMsgIndex, dwElemIndex, dwRowId) {
+            var rowObj = document.getElementById("itemId_" + dwRowId);
+            if (rowObj != null) {
+                external.DblClickImage(bsError, dwMsgIndex, dwElemIndex, GetMsgIndex(rowObj));
+            }
+        }
+        
+       function OnClickImage(bsError, dwMsgIndex, dwElemIndex, dwRowId, nToDownload) {
+            g_notify = false;
+            var rowObj = document.getElementById("itemId_" + dwRowId);
+            if (rowObj != null) {
+                g_selmsgid = dwRowId;
+                OnClickItem(rowObj);                
+                external.ClickImage(bsError, dwMsgIndex, dwElemIndex, GetMsgIndex(rowObj), nToDownload);
+            }
+            g_notify = true;
+        }
+
+        function OnRClickImage(bsError, dwMsgIndex, dwElemIndex, dwRowId) {    
+            var rowObj = document.getElementById("itemId_" + dwRowId);
+            if (rowObj != null)
+                external.RClickImage(bsError, dwMsgIndex, dwElemIndex, GetMsgIndex(rowObj));
+        }
+
+        function OnDisposeItem(rowObj, datetime) {
+            var index = GetMsgIndex(rowObj)
+            external.OnDisposeItem(index);
+        }
+
+        function OnDbClickItem(rowObj) {
+            var index = GetMsgIndex(rowObj)
+            external.ClickItem(index);
+            
+            // 阻止事件冒泡
+            if (window.event) {
+                // Chrome,IE6,Opera
+                window.event.cancelBubble = true;
+            } else {
+                // FireFox 3
+                // evt.stopPropagation();
+            }
+        }
+
+        function OnMouseDownItem(rowObj) {
+            if (2 != event.button) {
+                return;
+            }
+            g_rowObjLastSelByKeyDown = rowObj;
+            var bMultiSel = false;
+            if (external.EnableMultiSel() && (g_rowObjLastSave != null) && (external.GetKeyState(17) < 0 || external.GetKeyState(16) < 0)) {
+                bMultiSel = true;
+
+                if (external.GetKeyState(16) < 0) ///shift
+                {
+                    ResetMultiSel();
+                    var row1 = GetMsgIndex(rowObj);
+                    var row2 = GetMsgIndex(g_rowObjLastSave);
+                    if (row1 < row2) {
+                        for (i = row1; i <= row2; i++) {
+                            var item = document.getElementById("itemId_" + i);
+                            AddToMultiSel(item, false);
+                        }
+                    }
+                    else {
+                        for (i = row2; i <= row1; i++) {
+                            var item = document.getElementById("itemId_" + i);
+                            AddToMultiSel(item, false);
+                        }
+                    }
+                }
+                else {
+                    AddToMultiSel(rowObj, false);  //ctrl
+                }
+            }
+            else {
+                ResetMultiSel();
+                ResetStyle(g_rowObjLastSave);
+                SetSelStyle(rowObj);
+            }
+            if (!bMultiSel) {
+                g_rowObjLastSave = rowObj;
+                if (g_notify) {
+                    external.SetCurSel(GetMsgIndex(g_rowObjLastSave));
+                }
+            }
+            else {
+                if (g_notify) {
+                    external.SetMultiCurSel(GetMsgIndex(rowObj));
+                }
+            }
+        }
+
+        function VisibilitySet(rowObj, value) {
+            var childs = rowObj.childNodes;
+            for (var i = 0; i < childs.length; i++) {
+                if (childs[i].getAttribute("id") == 'tn') {
+                    var grandchilds = childs[i].childNodes;
+                    for (var j = 0; j < grandchilds.length; j++) {
+                        var reply = grandchilds[j];
+                        if (reply == null) {
+                            continue;
+                        }
+
+                        if (reply.getAttribute("id") == 'tv') {
+                            reply.style.visibility = value;
+                        }
+                    }
+                    if (childs[i].firstChild != null) {
+                        var reply = childs[i].firstChild.firstChild;
+                        if (reply == null) {
+                            continue;
+                        }
+
+                        if (reply.getAttribute("id") == 'tv') {
+                            reply.style.visibility = value;
+                        }
+                    }
+                }
+            }
+        }
+        function OnMouseTrackIn(rowObj) {
+            VisibilitySet(rowObj, 'visible');
+        }
+
+        function OnMouseTrackOut(rowObj) {
+            VisibilitySet(rowObj, 'hidden');
+        }
+
+        function AddToMultiSel(rowObj, bCheck) {
+            if (!bCheck) {
+                SetSelStyle(rowObj);
+                g_listMsgIndex += GetMsgIndex(rowObj);
+                g_listMsgIndex += ",";
+            }
+            else {
+                var id = GetMsgIndex(rowObj);
+                if (g_listMsgIndex != "") {
+                    var bfind = false;
+                    var d = new Array();
+                    d = g_listMsgIndex.split(",");
+                    g_listMsgIndex = "";
+                    for (var i = 0; i < d.length; i++) {
+                        var m = d[i];
+                        if (m != "") {
+                            if (m == id) {
+                                bfind = true;
+                            }
+                            else {
+                                g_listMsgIndex += m;
+                                g_listMsgIndex += ",";
+                            }
+                        }
+                    }
+
+                    if (!bfind) {
+                        g_listMsgIndex += id;
+                        g_listMsgIndex += ",";
+                        SetSelStyle(rowObj);
+                    }
+                    else {
+                        var item = document.getElementById("itemId_" + id);
+                        ResetStyle(item);
+                    }
+                }
+                else {
+                    var rowlast = GetMsgIndex(g_rowObjLastSave);
+                    if (rowlast != id) {
+                        g_listMsgIndex += rowlast;
+                        g_listMsgIndex += ",";
+                    }
+                    g_listMsgIndex += id;
+                    g_listMsgIndex += ",";
+                    SetSelStyle(rowObj);
+                }
+            }
+        }
+
+        function ClearMultiSel() {
+            g_listMsgIndex = "";
+        }
+
+        function ResetMultiSel() {
+            if (g_listMsgIndex == "")
+                return;
+            var d = new Array();
+            d = g_listMsgIndex.split(",");
+            for (var i = 0; i < d.length; i++) {
+                m = d[i];
+                var item = document.getElementById("itemId_" + m);
+                ResetStyle(item);
+            }
+
+            g_listMsgIndex = "";
+        }
+
+        function ResetStyle(rowObj) {
+            if (rowObj == null) return;
+            rowObj.style.backgroundColor = null;
+            rowObj.style.borderColor = null;
+
+            if (rowObj.cells.length > 0) { rowObj.cells[0].style.cssText = "border:1px solid transparent;"; }
+        }
+
+        function SetSelStyle(rowObj) {
+            if (rowObj == null) return;
+            rowObj.style.backgroundColor = clr_selbackground;
+
+            if (rowObj.cells.length > 0) {
+                rowObj.cells[0].style.cssText = "border:1px " + clr_selborder + " solid;";
+            }
+        }
+
+        function GetMultiSel() {
+            return g_listMsgIndex;
+        }
+
+        function OnClickItem(rowObj) {
+            g_rowObjLastSelByKeyDown = rowObj;
+            var bMultiSel = false;
+            if (external.EnableMultiSel() && (g_rowObjLastSave != null) && (external.GetKeyState(17) < 0 || external.GetKeyState(16) < 0)) {
+                bMultiSel = true;
+
+                if (external.GetKeyState(16) < 0) ///shift
+                {
+                    ResetMultiSel();
+                    var row1 = GetMsgIndex(rowObj);
+                    var row2 = GetMsgIndex(g_rowObjLastSave);
+                    if (row1 < row2) {
+                        for (i = row1; i <= row2; i++) {
+                            var item = document.getElementById("itemId_" + i);
+                            AddToMultiSel(item, false);
+                        }
+                    }
+                    else {
+                        for (i = row2; i <= row1; i++) {
+                            var item = document.getElementById("itemId_" + i);
+                            AddToMultiSel(item, false);
+                        }
+                    }
+                }
+                else {
+                    AddToMultiSel(rowObj, true);  //ctrl
+                }
+            }
+            else {
+                ResetMultiSel();
+                ResetStyle(g_rowObjLastSave);
+                SetSelStyle(rowObj);
+            }
+            if (!bMultiSel) {
+                g_rowObjLastSave = rowObj;
+                if (g_notify) {
+                    external.SetCurSel(GetMsgIndex(g_rowObjLastSave));
+                }
+            }
+            else {
+                if (g_notify) {
+                    external.SetMultiCurSel(GetMsgIndex(rowObj));
+                }
+            }
+        }      
+        
+        function ReplacePic(msgid, inerid, bsPicPath, bclick) {            
+            var item = document.getElementById("embed_" + msgid + "_" + inerid);
+            if(bclick == 1 && item){
+                item.onload = '';
+            }
+            if (item) {
+                item.src = bsPicPath;
+            }
+        }
+
+        
+        function getOffset(el) {
+            var _x = 0, _y = 0;
+            while (el && !isNaN(el.offsetLeft) && !isNaN(el.offsetTop)) {
+                _x += el.offsetLeft - el.scrollLeft;
+                _y += el.offsetTop - el.scrollTop;
+                el = el.offsetParent;
+            }
+            return { top: _y, left: _x };
+        }     
+        function consolemsg(msg){            
+                var p = document.createElement("p");
+                p.innerHTML = msg;    
+                document.getElementById("console").appendChild(p);  
+        }
+        
+        function getTop(el) {
+            var _y = 0;
+            while (el && !isNaN(el.offsetTop)) {
+                _y += el.offsetTop - el.scrollTop;
+                el = el.offsetParent;
+            }
+            return _y;
+        }
+
+        function OnLoad(id) {
+            ScrollToItem();
+        }
+        
+        function getCurMsgId()
+        {
+            return "" + g_selmsgid;
+        }
+        
+        function syncLoad(content)
+        {
+            var src_h = document.documentElement.clientHeight;
+            var src_sy = window.scrollY;
+            //loading here
+            document.getElementById("Curpage").innerHTML = content;
+            window.scrollTo(0,document.documentElement.clientHeight - src_h + src_sy);
+        }
+        
+        function GetCurSel() {
+            if (g_rowObjLastSave != null) {
+                return GetMsgIndex(g_rowObjLastSave);
+            }
+            else {
+                return -1;
+            }
+        }
+
+        function DeleteCurRow() {
+            if (g_rowObjLastSave != null) {
+                ItemTable.deleteRow(g_rowObjLastSave.rowIndex);
+                g_rowObjLastSave = null;
+            }
+        }
+
+
+        function SetCurSelIndex(msgid) {
+            var selObj = window.getSelection();
+            if (selObj != null) {
+                selObj.removeAllRanges();
+            }
+            var item = document.getElementById("itemId_" + msgid);
+            if (item != null && msgid >= 0) {
+                g_selmsgid = msgid;
+                // OnClickItem(item) 蛋疼，调来调去
+                g_rowObjLastSelByKeyDown = item;
+                      
+                ResetMultiSel();
+                ResetStyle(g_rowObjLastSave);
+                SetSelStyle(item);
+                g_rowObjLastSave = item;
+            }
+        }
+        
+        function SelectMsgFromMonthCal(msgid) {
+            SetCurSelIndex(msgid);
+            g_notify = false;
+            try {
+                var item = document.getElementById("itemId_" + msgid);
+                var dateHeight = 26;    //显示消息记录上面的日期
+                var top = item.offsetTop - dateHeight;
+                if (top < 0) {
+                    top = 0;
+                }
+                if (top < document.body.scrollTop) {
+                    document.body.scrollTop = top;
+                }
+                else if ((item.offsetTop + item.clientHeight) > (document.body.clientHeight + document.body.scrollTop)) {
+                    document.body.scrollTop = (item.offsetTop + item.clientHeight - document.body.clientHeight);
+                }
+            }
+            catch (e) { }
+            g_notify = true;
+        }
+
+        function SelectMsg1(msgid, bsel) {  
+            SetCurSelIndex(msgid);
+            SelectMsg(msgid, bsel);
+        }
+
+        function SelectMsg(msgid, bsel) {
+            g_usermousewheel = 0;
+            g_notify = false;
+            try {           
+                g_selmsgid = msgid;
+                var item = document.getElementById("itemId_" + msgid);
+                if (bsel) {
+                    OnClickItem(item)
+                }
+                
+                ScrollToItem();
+//                 var top = item.offsetTop;
+//                 if (msgid == 0) {   //选第0条要显示最顶
+//                     top = 0;
+//                 }
+//                 if (top < document.body.scrollTop) {
+//                     document.body.scrollTop = top;
+//                 }
+//                 else if ((item.offsetTop + item.clientHeight) > (document.body.clientHeight + document.body.scrollTop)) {
+//                     if (GetMsgIndex(item) == (external.GetCount() - 1))
+//                         document.body.scrollTop = document.body.scrollHeight - document.body.clientHeight;
+//                     else
+//                         document.body.scrollTop = (item.offsetTop + item.clientHeight - document.body.clientHeight);
+//                 }
+            }
+            catch (e) { }
+            g_notify = true;
+        }
+
+        function ScrollToItem() {
+            if (g_usermousewheel == 0)
+            {
+                if (g_selmsgid != -1) {     
+                    var item = document.getElementById("itemId_" + g_selmsgid);
+                    if (g_selmsgid == 0) {   //选第0条要显示最顶
+                        document.body.scrollTop = 0;
+                    }
+                    else {
+                        document.body.scrollTop = (item.offsetTop + item.clientHeight+2 - document.body.clientHeight);
+                    }
+                } else {
+                    scrollTo(0, document.body.scrollHeight);
+                }
+            }
+        }
+
+        function LoadNothing() {
+            g_nRowObjCount = 0;
+            var Curpage = document.getElementById("Curpage");
+            ClearMultiSel();
+            if (Curpage != null) {
+                Curpage.innerHTML = external.loadstring("MSGMGR_NOMSG");
+            }
+        }
+        
+        function LoadDispStr(str) {
+            g_nRowObjCount = 0;
+            var Curpage = document.getElementById("Curpage");
+            ClearMultiSel();
+            if (Curpage != null) {
+                Curpage.innerHTML = str;
+            }
+        }
+
+        function LoadSearchRlt(bAIO, index) {
+            var Curpage = document.getElementById("Curpage");
+            var head = "<table id='ItemTable' width=100% cellspacing=0  style='word-wrap:break-word;word-break:break-all;'>";
+            var foot = "</table>";
+            var nitem = external.GetCount();
+            var fontName = external.GetFontName();
+            var fontHeight = external.GetFontHeight();
+            var ShowmsgHtml = "";
+            var dCount = 0;
+            if (nitem == 0) {
+                ClearMultiSel();
+                Curpage.innerHTML = "";
+                window.scrollTo(0,0);  
+                return;
+            }
+            g_nRowObjCount = nitem;
+            var v1 = external.loadstring("MSGMGR_VIEWSYS");
+            var v2 = external.loadstring("MSGMGR_VIEWMSG");
+            var lastpath = "";
+            var i = 0;
+            var bbackchange = true;
+            for (i = 0; i < nitem; i++) {  
+		        var msginfo = external.GetAt(i);
+
+                if (msginfo!=undefined) {
+		            var sender = msginfo[0];        // "sender"
+		            var msgtext = msginfo[1];       // "html";
+		            var date   = msginfo[2];        // "date";
+		            var time  = msginfo[3];         //"time";
+		            var path  = msginfo[4];         //"path";
+		            var candispose = msginfo[5];    //"candispose";
+		            var id = msginfo[6];            //"id";
+		            var type = msginfo[7];          //"type";			
+		            var nodeuin = msginfo[8];       //"nodeuin";
+		            var datetime = msginfo[9];      //"datetime";
+		            var bself = msginfo[10];        //"bself";			
+        		
+                    var view = "";
+                    if (candispose) {
+                        view = "<a href='#' onclick='javascript:OnDisposeItem(itemId_"+i+","+ datetime +");return false;'>"+v1+"</a>";
+                    }
+                    else {
+                        view = "<a href='#' onclick='javascript:OnDbClickItem(itemId_"+i+");return false;'>"+v2+"</a>";
+                    }
+                
+                    var bdclr = clr_borderclr1;
+                    
+                    var bkIndex = 1;
+                    if (i%2 != 0) {
+                        bkIndex = 2;
+                        bdclr = clr_borderclr2;
+                    }
+                    if (bAIO == false) {
+			            var b0x4cmsg = external.GetAt(i,"b0x4cmsg");
+                        if (path != lastpath) {
+                            ShowmsgHtml +=  "<tr style=color:#898989><td>"+path+"</td></tr>";
+                            lastpath = path;
+                            dCount++;
+                        }
+                        if (b0x4cmsg)
+                            ShowmsgHtml += "<tr bkIndex="+bkIndex+" style=bgcolor="+bdclr+" id=itemId_"+i+" onclick='OnClickItem(this)' ondblclick ='OnDbClickItem(this)'  onMouseOver='OnMouseTrackIn(this)' onMouseDown='OnMouseDownItem(this)' onMouseOut='OnMouseTrackOut(this)' dCount="+dCount+"><td id='tn'><div style=color:#000000;padding-left:10px;float:left;font-weight:bold;font-size:"+fontHeight+"px;font-family:"+fontName+";>"+sender+"</div><div id='tv' valign='top' align='right'  style=float:right;color:#898989;visibility:hidden;padding-left:20px;padding-right:8px;>"+view+"</div>";
+                        else {
+                            if (bself)
+                                ShowmsgHtml += "<tr bkIndex="+bkIndex+" style=bgcolor="+bdclr+" id=itemId_"+i+" onclick='OnClickItem(this)' ondblclick ='OnDbClickItem(this)'  onMouseOver='OnMouseTrackIn(this)' onMouseDown='OnMouseDownItem(this)' onMouseOut='OnMouseTrackOut(this)' dCount="+dCount+"><td id='tn'><div style=color:#42B475;padding-left:10px;float:left;font-size:"+fontHeight+"px;font-family:"+fontName+";>"+sender+"   "+date+" "+time+"</div><div id='tv' valign='top' align='right'  style=float:right;color:#898989;visibility:hidden;padding-left:20px;padding-right:8px;>"+view+"</div>";
+                            else
+                                ShowmsgHtml += "<tr bkIndex="+bkIndex+" style=bgcolor="+bdclr+" id=itemId_"+i+" onclick='OnClickItem(this)' ondblclick ='OnDbClickItem(this)'  onMouseOver='OnMouseTrackIn(this)' onMouseDown='OnMouseDownItem(this)' onMouseOut='OnMouseTrackOut(this)' dCount="+dCount+"><td id='tn'><div style=color:#006EFE;padding-left:10px;float:left;font-size:"+fontHeight+"px;font-family:"+fontName+";>"+sender+"   "+date+" "+time+"</div><div id='tv' valign='top' align='right'  style=float:right;color:#898989;visibility:hidden;padding-left:20px;padding-right:8px;>"+view+"</div>";
+                        }
+                     
+                        if (b0x4cmsg)
+                            ShowmsgHtml += "<div style=float:top;margin-top:20px;padding-left:10px;>"+msgtext+"</div></td></tr>";
+                        else
+                            ShowmsgHtml += "<div style=float:top;margin-top:20px;padding-left:20px;>"+msgtext+"</div></td></tr>";
+                    }  
+                    else {
+                        if (bself)
+                            ShowmsgHtml += "<tr bkIndex="+bkIndex+" style=bgcolor="+bdclr+" id=itemId_"+i+" onclick='OnClickItem(this)' ondblclick ='OnDbClickItem(this)'  onMouseOver='OnMouseTrackIn(this)' onMouseDown='OnMouseDownItem(this)' onMouseOut='OnMouseTrackOut(this)' dCount="+dCount+"><td id='tn'><div style=color:#42B475;padding-left:10px;float:left;font-size:"+fontHeight+"px;font-family:"+fontName+";>"+sender+"   "+date+" "+time+"</div><div id='tv' valign='top' align='right'  style=float:right;color:#898989;visibility:hidden;padding-left:10px;>"+view+"</div>";
+                        else
+                            ShowmsgHtml += "<tr bkIndex="+bkIndex+" style=bgcolor="+bdclr+" id=itemId_"+i+" onclick='OnClickItem(this)' ondblclick ='OnDbClickItem(this)'  onMouseOver='OnMouseTrackIn(this)' onMouseDown='OnMouseDownItem(this)' onMouseOut='OnMouseTrackOut(this)' dCount="+dCount+"><td id='tn'><div style=color:#006EFE;padding-left:10px;float:left;font-size:"+fontHeight+"px;font-family:"+fontName+";>"+sender+"   "+date+" "+time+"</div><div id='tv' valign='top' align='right'  style=float:right;color:#898989;visibility:hidden;padding-left:10px;>"+view+"</div>";
+                    
+                        ShowmsgHtml += "<div class=msgContentDiv>"+msgtext+"</div></td></tr>";
+                    }
+                }
+                else
+                    ShowmsgHtml += "<tr bkIndex="+bkIndex+" bgcolor="+bdclr+" id=itemId_"+i+" onclick='OnClickItem(this)' ondblclick ='OnDbClickItem(this)'  onMouseOver='OnMouseTrackIn(this)' onMouseDown='OnMouseDownItem(this)' onMouseOut='OnMouseTrackOut(this)' dCount="+dCount+"><td id='tn'></td></tr>";        
+            }
+
+            ClearMultiSel();
+            Curpage.innerHTML = head +ShowmsgHtml + foot;
+            CreateFrames(0, 0);
+            SelectMsg1(index);
+        }
+        
+        function LoadSearchResult(index){
+            LoadSearchRlt(false, index);
+        }
+
+        function LoadAIOSearchResult(index) {
+            LoadSearchRlt(true, index);
+        }
+
+        function OnFrameSizeChanged()
+        {
+            ScrollToItem();
+		}
+        function CreateFrame(npframeId, frame)
+        {
+			var npframe = document.getElementById(npframeId);
+			if(npframe)
+			{
+			    external.OnCreateFrame(function (ret) { }, npframe.getAttribute("nodetype"), npframe.getAttribute("key"), parseInt(npframe.getAttribute("mid")), parseInt(npframe.getAttribute("mip")), parseInt(npframe.getAttribute("im")), frame);
+			}
+		}
+        function CreateFrames(delaySetp, delayCount) {
+            var type = new Array();
+            var key = new Array();
+            var indexInDoc = new Array();
+            var indexInPage = new Array();
+            var elemIndex = new Array();
+            var addr = new Array();
+            
+            var end = 0;
+            var num = 1000;// call once
+            var i = 0;
+            var id = 0;
+            if (document.all.oleFrame!=null) {
+                if (document.all.oleFrame.length!=null) {
+                    if (delaySetp == 0) {
+                        if (document.all.oleFrame.length > num) {
+                            delayCount = (document.all.oleFrame.length-document.all.oleFrame.length%num)/num;
+                            if (document.all.oleFrame.length%num!=0) {
+                                delayCount += 1;
+                            }
+                            delaySetp = delayCount;
+                            end = document.all.oleFrame.length-num;
+                        }
+                        for (i=document.all.oleFrame.length-1; i>=end; i--, id++) {
+				            var npframe = document.all.oleFrame[i];
+				            type[id] = npframe.getAttribute("nodetype");
+				            key[id] = npframe.getAttribute("key");
+				            indexInDoc[id] = parseInt(npframe.getAttribute("mid"));
+				            indexInPage[id] = parseInt(npframe.getAttribute("mip"));
+				            elemIndex[id] = parseInt(npframe.getAttribute("im"));
+				            addr[id] = npframe.frame;
+			            }
+			            if (delaySetp != 0) {
+			                delaySetp--;
+                            setTimeout(function(){CreateFrames(delaySetp, delayCount);}, 0);
+			            }
+			        } else
+			        {
+                        end = document.all.oleFrame.length-1-num*(delayCount-delaySetp)-num;
+                        for (i=end+num; i>end && i>=0; i--, id++) {
+				            var npframe = document.all.oleFrame[i];
+				            type[id] = npframe.getAttribute("nodetype");
+				            key[id] = npframe.getAttribute("key");
+				            indexInDoc[id] = parseInt(npframe.getAttribute("mid"));
+				            indexInPage[id] = parseInt(npframe.getAttribute("mip"));
+				            elemIndex[id] = parseInt(npframe.getAttribute("im"));
+				            addr[id] = npframe.frame;
+			            }
+                        delaySetp--;
+			            if (delaySetp > 0) {
+                            setTimeout(function(){CreateFrames(delaySetp, delayCount);}, 0);
+			            }
+			        }
+                }
+                else {
+			        var npframe = document.all.oleFrame;
+                    type[0] = npframe.getAttribute("nodetype");
+			        key[0] = npframe.getAttribute("key");
+			        indexInDoc[0] = parseInt(npframe.getAttribute("mid"));
+			        indexInPage[id] = parseInt(npframe.getAttribute("mip"));
+			        elemIndex[0] = parseInt(npframe.getAttribute("im"));
+			        addr[0] = npframe.frame;
+                }
+			    external.OnCreateFrame(type, key, indexInDoc, indexInPage, elemIndex, addr);
+            }
+        }
+        function OnUserKeyDown() {
+            if (window.event.ctrlKey && (window.event.keyCode == 70)) // 屏蔽trl+F
+            {   
+                window.event.keyCode = 0;
+                window.event.returnValue = false;   
+            }
+            else if (window.event.keyCode == 8) {
+                external.OnBackKeyDown();
+       	        window.event.keyCode = 0;
+                window.event.returnValue = false;
+            }
+        } 
+         
+        function SetBodyFont() {	
+	        var os = navigator.userAgent.toUpperCase();
+	        if (os.indexOf("NT 6.") > -1) {
+		        document.body.style.fontFamily="微软雅黑,Tahoma,Verdana,Arial,Helvetica,sans-serif;";
+	        }
+        }
+        function ImageZoom(image)
+        {
+	        var parent = image.parentNode;
+	        if (parent) 
+	        {
+		        var span = parent.lastChild;
+		        if (span) span.style.display='block';
+	        }
+        }
+    </script>
+</head>
+<body  onkeydown="OnUserKeyDown()">
+    <div class=pageDiv id="ThePage">
+        <div class=pageDiv id="Curpage">CurpageContent</div>
+    </div>
+
+    <script language="javascript">
+	    setTimeout("OnThemeColorChange();", 100);
+    </script>
+    <script>
+        document.onmousewheel = function () {
+            g_usermousewheel = 1;
+        }
+        document.onselectstart = function() {
+            if (external.GetKeyState(17) < 0 || external.GetKeyState(16)<0)
+                event.returnValue=false;
+            else
+                event.returnValue=true;
+        }
+        document.onkeydown = function() {
+            if (window.event.keyCode == 38)///up
+            {
+                if (g_rowObjLastSelByKeyDown == null)
+                    g_rowObjLastSelByKeyDown = g_rowObjLastSave;
+
+                event.returnValue=false;
+                var rowlast = GetMsgIndex(g_rowObjLastSelByKeyDown);
+                if (rowlast > 0) {
+                    rowlast --;
+                    SelectMsg(rowlast,true);
+                    g_rowObjLastSelByKeyDown = document.getElementById("itemId_"+rowlast);
+                    external.SetCurSel(rowlast);
+                }
+                else
+                    event.returnValue=true;
+            }
+            else if (window.event.keyCode == 40) //down
+            {
+                if (g_rowObjLastSelByKeyDown == null)
+                    g_rowObjLastSelByKeyDown = g_rowObjLastSave;
+
+                event.returnValue=false;
+                var rowlast = GetMsgIndex(g_rowObjLastSelByKeyDown);
+                g_nRowObjCount = external.GetCount();
+
+                if (rowlast < g_nRowObjCount-1) {
+                    rowlast ++;
+                    SelectMsg(rowlast,true);
+                    g_rowObjLastSelByKeyDown = document.getElementById("itemId_"+rowlast);
+                    external.SetCurSel(rowlast);
+                }
+                else
+                    event.returnValue=true;
+            }
+            else
+                event.returnValue=true;
+        }
+        //setTimeout("CreateFrames();", 0);
+        CreateFrames(0, 0);
+        
+
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+////////////////////    异步加载消息漫游      ///////////////////////
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+
+
+window.syncloading = {
+    throldHold : 50,
+    currentId : 0,
+    init : function(){
+    },
+
+    GetCurMsgId : function(){
+        this.currentId = this.getCurrentItem();
+        return ""+this.currentId;
+    },
+
+    getCurrentItem : function(){
+       var trs = document.querySelectorAll("#ItemTable tr");
+       return trs[trs.length-1].id.match(/\d+/)[0];
+    },
+    render :function (fn,keep){
+        if(keep){
+            var src_h = document.documentElement.clientHeight;
+            var src_sy = window.scrollY;
+            //loading here
+            fn();
+            window.scrollTo(0,document.documentElement.clientHeight - src_h + src_sy);
+        }else{
+            fn();
+        }
+    },
+
+    replace : function(content){
+        this.render(function(){
+           document.getElementById("Curpage").innerHTML =content;
+        },true);
+    }
+};
+    </script>
+    <style>
+        #console{background:#fff}
+        #console p{margin:0;padding:0;}
+        
+    </style>
+    <!--<div id="console" style="position:fixed;width:50%;top:10px;">
+        <p>
+        <button onclick="alert(document.body.scrollTop);">scrollTop</button>
+        <button onclick="document.body.scrollTop = document.body.scrollTop + 10">scrollTop add</button>
+        </p>
+    </div>-->
+</body>
+</html>

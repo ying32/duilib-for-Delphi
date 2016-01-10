@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AppList>
+
+	<!-- 特别注意：
+				在分配ID时要避免id重复，新增加的QQ侧进入应用管理器的id字段必须为1000-2000范围（如易迅网ID为1028）。
+				(约定开平侧新申请的应用id都是9位数的长id)
+				如有问题，请咨询viennaliu or winstonhe or rexchang
+    -->
+
+
+  <simple_app>
+    <App app_id="10003" app_text="QQ空间" app_tips="QQ空间"
+         app_icon_16="platformres:MainPanel\AppBox\DefaultApp\qzone\app_icon_16.png"
+         app_icon_40="platformres:MainPanel\AppBox\DefaultApp\qzone\app_icon_40.png"
+         clk_report_id="0x8001975" fav_report_id="0x8001976"
+         win_size="796, 568" win_title="QQ空间"
+         win_ico_16="platformres:MainPanel\AppBox\DefaultApp\qzone\win_icon_16.ico"
+         win_url="http://ptlogin2.qq.com/qzone_qqbox?clientuin=$UIN$&amp;clientkey=$KEY$&amp;nickname=$NICK$&amp;qqboxuin=$UIN$"/>
+
+    <!--    <App app_id="10004" app_text="腾讯订阅" app_tips="腾讯订阅"
+         app_icon_16="platformres:MainPanel\AppBox\DefaultApp\news_subscripton\app_icon_16.png"
+         app_icon_40="platformres:MainPanel\AppBox\DefaultApp\news_subscripton\app_icon_40.png"
+         clk_report_id="0x8001989" fav_report_id="0x800198a"
+         win_size="796, 568"  win_title="腾讯订阅"
+         win_ico_16="platformres:MainPanel\AppBox\DefaultApp\news_subscripton\win_icon_16.ico"
+         win_url="http://ptlogin2.qq.com/qreader?clientuin=$UIN$&amp;clientkey=$KEY$&amp;nickname=$NICK$"/>-->
+
+    <App app_id="10005" app_text="3366" app_tips="3366小游戏"
+         app_icon_16="platformres:MainPanel\AppBox\DefaultApp\3366\app_icon_16.png"
+         app_icon_40="platformres:MainPanel\AppBox\DefaultApp\3366\app_icon_40.png"
+         clk_report_id="0x8001b78" fav_report_id="0x8001b79"
+         win_size="796, 568"  win_title="3366小游戏"
+         win_ico_16="platformres:MainPanel\AppBox\DefaultApp\3366\win_icon_16.ico"
+         win_url="http://ptlogin2.3366.com/im3366?clientuin=$UIN$&amp;clientkey=$KEY$&amp;nickname=$NICK$"/>
+		 
+	 <App app_id="10006" app_text="游戏商城" app_tips="游戏商城"
+	 app_icon_16="platformres:MainPanel\AppBox\DefaultApp\paipai_game_mall\app_icon_16.png"
+	 app_icon_40="platformres:MainPanel\AppBox\DefaultApp\paipai_game_mall\app_icon_40.png"
+	 clk_report_id="0x8001eef" fav_report_id="0x8001f1f"
+	 win_size="596, 418"  win_title="游戏商城"
+	 win_ico_16="platformres:MainPanel\AppBox\DefaultApp\paipai_game_mall\win_icon_16.ico"
+	 win_url="http://ptlogin2.paipai.com/client_jump_paipai?clientuin=$UIN$&amp;clientkey=$KEY$&amp;u1=http%3A//member.paipai.com/cgi-bin/ptlogin%3Fu1%3Dhttp%253A//www.paipai.com/chong/app/gmall/gmall_frame.shtml"/>
+	 
+	 <App app_id="10007" app_text="游戏特权" app_tips="游戏特权"
+	 app_icon_16="platformres:MainPanel\AppBox\DefaultApp\vip_game_privilege\app_icon_16.png"
+	 app_icon_40="platformres:MainPanel\AppBox\DefaultApp\vip_game_privilege\app_icon_40.png"
+	 clk_report_id="0x8001ef0" fav_report_id="0x8001f20"
+	 win_size="796, 568"  win_title="游戏特权"
+	 win_ico_16="platformres:MainPanel\AppBox\DefaultApp\vip_game_privilege\win_icon_16.ico"
+	 win_url="http://ptlogin2.qq.com/vipgameappbox?clientuin=$UIN$&amp;clientkey=$KEY$&amp;nickname=$NICK$&amp;qqboxuin=$UIN$"/>
+	 
+	 <App app_id="10008" app_text="手机QQ游戏" app_tips="手机QQ游戏"
+	 app_icon_16="platformres:MainPanel\AppBox\DefaultApp\mobile_game\app_icon_16.png"
+	 app_icon_40="platformres:MainPanel\AppBox\DefaultApp\mobile_game\app_icon_40.png"
+	 clk_report_id="0x8001eee" fav_report_id="0x8001f21"
+	 win_size="796, 568"  win_title="手机QQ游戏"
+	 win_ico_16="platformres:MainPanel\AppBox\DefaultApp\mobile_game\win_icon_16.ico"
+	 win_url="http://mgame.qq.com/appIndex.web"/>
+	 
+	  <App app_id="10009" app_text="NBA会员" app_tips="NBA会员"
+	 app_icon_16="platformres:MainPanel\AppBox\DefaultApp\nba\app_icon_16.png"
+	 app_icon_40="platformres:MainPanel\AppBox\DefaultApp\nba\app_icon_40.png"
+	 clk_report_id="0x8001f23" fav_report_id="0x8001f22"
+	 win_size="796, 568"  win_title="NBA会员"
+	 win_ico_16="platformres:MainPanel\AppBox\DefaultApp\nba\win_icon_16.ico"
+	 win_url="http://ptlogin2.qq.com/clientnba_001?clientuin=$UIN$&amp;clientkey=$KEY$&amp;"/>
+	 
+<!--	 <App app_id="10012" app_text="网络收藏夹" app_tips="网络收藏夹"
+         app_icon_16="platformres:MainPanel\AppBox\DefaultApp\network_favorites\app_icon_16.png"
+         app_icon_40="platformres:MainPanel\AppBox\DefaultApp\network_favorites\app_icon_40.png"
+         clk_report_id="0x8002024" fav_report_id="0x8002025"
+         win_size="640, 487" win_title="网络收藏夹" 
+         win_ico_16="platformres:MainPanel\AppBox\DefaultApp\network_favorites\win_icon_16.ico"
+         win_url="http://ptlogin2.qq.com/clubclient?ptlang=$LANG$&amp;from=434&amp;clientuin=$UIN$&amp;clientkey=$KEY$"/> -->
+         
+  <App app_id="10011" app_text="QQ旅游" app_tips="QQ旅游"
+	 app_icon_16="platformres:MainPanel\AppBox\DefaultApp\qq_travel\app_icon_16.png"
+	 app_icon_40="platformres:MainPanel\AppBox\DefaultApp\qq_travel\app_icon_40.png"
+	 clk_report_id="0x8002044" fav_report_id="0x8002045"
+	 win_size="596, 418" win_title="QQ旅游"
+	 win_ico_16="platformres:MainPanel\AppBox\DefaultApp\qq_travel\win_icon_16.ico"
+	 win_url="http://ptlogin2.qq.com/wallet?clientuin=$UIN$&amp;clientkey=$KEY$&amp;qqboxuin=$UIN$&amp;cmd=17"/>
+
+    <App app_id="10013" app_text="QQ速递" app_tips="QQ速递"
+    app_icon_16="platformres:MainPanel\AppBox\DefaultApp\sudi\app_icon_16.png"
+    app_icon_40="platformres:MainPanel\AppBox\DefaultApp\sudi\app_icon_40.png"
+    clk_report_id="0x800218e" fav_report_id="0x800218f"
+    win_size="596, 418" win_title="QQ速递"
+    win_ico_16="platformres:MainPanel\AppBox\DefaultApp\sudi\win_icon_16.ico"
+    win_url="http://ptlogin2.qq.com/jump?clientuin=$UIN$&amp;clientkey=$KEY$&amp;u1=http://sudi.qq.com?ADTAG=appbox"/>
+	
+    <App app_id="10014" app_text="手机软件" app_tips="手机软件"
+         app_icon_16="platformres:MainPanel\AppBox\DefaultApp\mobile_soft\app_icon_16.png"
+         app_icon_40="platformres:MainPanel\AppBox\DefaultApp\mobile_soft\app_icon_40.png"
+         clk_report_id="0x8001989" fav_report_id="0x800198a"
+         win_size="789, 568"  win_title="手机软件"
+         win_ico_16="platformres:MainPanel\AppBox\DefaultApp\mobile_soft\win_icon_16.ico"
+         win_url="http://ptlogin2.qq.com/mobilesoft?clientuin=$UIN$"/> 
+		 
+	<App app_id="10015" app_text="机票订购" app_tips="机票订购"
+         app_icon_16="platformres:MainPanel\AppBox\DefaultApp\jipiao\app_icon_16.png"
+         app_icon_40="platformres:MainPanel\AppBox\DefaultApp\jipiao\app_icon_40.png"
+         clk_report_id="0x800252f" fav_report_id="0x8002530"
+         win_size="598, 418"  win_title="机票订购"
+         win_ico_16="platformres:MainPanel\AppBox\DefaultApp\jipiao\win_icon_16.ico"
+         win_url="http://ptlogin2.qq.com/qyjipiao?clientuin=$UIN$&amp;clientkey=$KEY$&amp;nickname=$NICK$"/>	 
+		 	 
+	<App app_id="10017" app_text="QQ保险" app_tips="QQ保险"
+         app_icon_16="platformres:MainPanel\AppBox\DefaultApp\qq_baoxian\app_icon_16.png"
+         app_icon_40="platformres:MainPanel\AppBox\DefaultApp\qq_baoxian\app_icon_40.png"
+         clk_report_id="0x80025e8" fav_report_id="0x80025e9"
+         win_size="598, 418"  win_title="QQ保险"
+         win_ico_16="platformres:MainPanel\AppBox\DefaultApp\qq_baoxian\win_icon_16.ico"
+         win_url="http://jump.paipai.com/client_jump?clickid=167&amp;clientuin=$UIN$&amp;clientkey=$KEY$&amp;url=http%3A//chong.paipai.com/app/baoxian/baoxian_index.shtml"/>
+
+    <!--<App app_id="10018" app_text="微云" app_tips="微云"
+        app_icon_16="platformres:MainPanel\AppBox\DefaultApp\weiyun\app_icon_16.png"
+        app_icon_40="platformres:MainPanel\AppBox\DefaultApp\weiyun\app_icon_40.png"
+        clk_report_id="0x8001973" fav_report_id="0x8001974"
+        win_size="800, 566" win_title="微云"
+        win_ico_16="platformres:MainPanel\AppBox\DefaultApp\weiyun\win_icon_16.ico"
+        win_url="http://ptlogin2.weiyun.com/wyclient_jump?ptlang=2052&amp;from=2001&amp;clientuin=$UIN$&amp;clientkey=$KEY$&amp;nickname=$NICK$"/>-->
+		
+	<App app_id="10019" app_text="QQ相册" app_tips="QQ相册"
+        app_icon_16="platformres:MainPanel\AppBox\DefaultApp\qzone_photo\app_icon_16.png"
+        app_icon_40="platformres:MainPanel\AppBox\DefaultApp\qzone_photo\app_icon_40.png"
+        clk_report_id="0x8002a46" fav_report_id="0x8002a47"
+        win_size="800, 600" win_title="QQ相册"
+        win_ico_16="platformres:MainPanel\AppBox\DefaultApp\qzone_photo\win_icon_16.ico"
+        win_url="http://ptlogin2.qq.com/qzone_photoapp?clientuin=$UIN$&amp;clientkey=$KEY$&amp;nickname=$NICK$"/>
+    <App app_id="10022" app_text="开心购" app_tips="开心购"
+    app_icon_16="platformres:MainPanel\AppBox\DefaultApp\kaixingou\app_icon_16.png"
+    app_icon_40="platformres:MainPanel\AppBox\DefaultApp\kaixingou\app_icon_40.png"
+    clk_report_id="0x800300f" fav_report_id="0x8003010"
+    win_size="775, 615" win_title="开心购"
+    win_ico_16="platformres:MainPanel\AppBox\DefaultApp\kaixingou\win_icon_16.ico"
+	win_ico_32="platformres:MainPanel\AppBox\DefaultApp\kaixingou\win_icon_32.ico"
+    win_url="jump.paipai.com/client_jump?clickid=188&amp;clientuin=$UIN$&amp;clientkey=$KEY$&amp;nickname=$NICK$"/>
+    
+  </simple_app>
+  <plugin_app>
+    <!--<App app_id="0001" name="应用市场" appext_id="4A5FC661-1A42-4BBC-B698-4CC7FF020DC7"/>-->
+    <App app_id="1001" name="手机生活" appext_id="EDC4CA89-24F8-4790-8DF6-B2273C5FB166"/>
+    <App app_id="1002" name="QQ游戏"   appext_id="A3B52791-0521-4D82-87D1-E9534EA404B7"/>
+    <App app_id="1003" name="QQ宠物"   appext_id="1F9CDF8B-2D38-4B1A-B592-B0693E3F9A38"/>
+    <App app_id="1004" name="QQ音乐"   appext_id="B65B6FC1-5A5A-43E7-9B88-E014F794BAAC"/>
+    <App app_id="1005" name="QQLive"   appext_id="5FE8AE97-866D-4E47-93DD-95914FB6580A"/>
+    <App app_id="1006" name="QQ团购"   appext_id="6AAF5BA5-2EAD-425C-9D70-AD8E1A77FE14"/>
+    <App app_id="1007" name="电脑管家" appext_id="097406C5-70CB-42C6-93E6-51C274F5FFF0"/>
+    <App app_id="1009" name="WebQQ"    appext_id="45D1A942-BFAE-420A-86A6-4FF2E1BADB59"/>
+    <App app_id="1011" name="便民充值" appext_id="8265FD0B-5837-47D4-AE1A-7E331DB314AF"/>
+    <App app_id="1012" name="通讯录"   appext_id="0664607D-59B1-413E-A52D-235E33426D1B"/>
+    <App app_id="1013" name="网络硬盘" appext_id="CC188A56-2A72-417A-9ECD-2BB362507AF5"/>
+    <App app_id="1014" name="QQ短信"   appext_id="88C08523-9D97-4EE3-BE08-5ADFF5BEC1E1"/>
+    <App app_id="1015" name="QQ股票"   appext_id="2893ABE9-3668-46d1-80F3-D0E4B4B42D34"/>
+    <App app_id="1016" name="QQ返利"   appext_id="774A47CC-CE4B-4B25-86B1-541215589A2F"/>
+    <App app_id="1017" name="QQ网吧"   appext_id="C1E96931-DE5D-4880-9EA0-D5FA1F672D31"/>
+    <App app_id="1018" name="QQ硬盘"   appext_id="25C96128-9A72-4d4c-8D27-250C4A578DF1"/>
+    <App app_id="1019" name="QQ书签"   appext_id="C68E4E5B-E23F-4873-AB0B-88EA0E505C8E"/>
+    <App app_id="1020" name="游戏人生" appext_id="DF713F0C-4919-45B4-AF24-0E5EF1ED30E7"/>
+    <App app_id="1021" name="彩票"     appext_id="FB4ACBEA-9D0C-490E-92B5-19F3B48C7593"/>
+    <App app_id="1022" name="QQ浏览器" appext_id="73104A41-EECD-43A8-845C-79DF054CE6EF"/>
+    <App app_id="1008" name="易迅网"   appext_id="84C57ED4-FBB5-4a4b-AC41-7AF13759099E"/>
+    <App app_id="1029" name="QQ互联"   appext_id="8A1531D7-0D52-4aca-87F1-FBA22DCF3FB1"/>
+  </plugin_app>
+
+  <fav_list>
+  	<App app_id="1001" name="手机生活"/>
+    <App app_id="1002" name="QQ游戏"  />
+    <App app_id="1003" name="QQ宠物"  />
+    <App app_id="1004" name="QQ音乐"  />
+    <App app_id="1005" name="QQLive"  />
+    <App app_id="1006" name="QQ团购"/>
+    <App app_id="1007" name="电脑管家"/>
+    <App app_id="1008" name="易迅网"/>
+    <App app_id="10019" name="QQ相册"/>
+  </fav_list>
+</AppList>

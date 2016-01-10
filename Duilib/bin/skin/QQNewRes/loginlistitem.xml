@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window size="400,44">
+	<ListContainerElement height="44">
+		<HorizontalLayout inset="0,2,0,2">
+			<HorizontalLayout width="44" bkimage="file=&apos;Data\Head\187_100.gif&apos;"/>
+				<VerticalLayout padding="5,0,0,0">
+				  <Label text="不在乎"  height="22" textcolor="#FF000000" />
+				  <Label text="1444386932" height="22" textcolor="#FFFFFFFF" />
+				</VerticalLayout>
+				<VerticalLayout width="22">
+				  <Button float="true" pos="3,14,0,0" width="15" height="15" normalimage="file=&apos;Default\AppFramework\ComboBox\comboboxEraseButton_Normal.png&apos; mask=&apos;0xffff00ff&apos;" hotimage="Default\AppFramework\ComboBox\comboboxEraseButton_Hover.png" pushedimage="Default\AppFramework\ComboBox\comboboxEraseButton_Push.png" />
+				</VerticalLayout>
+		</HorizontalLayout>   
+	</ListContainerElement>
+</Window>

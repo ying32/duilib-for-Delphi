@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items>
+	<item title="Not signed in for 1 month" tips="Contacts below have not signed in for 1 month." value="31" />
+	<item title="Not signed in for 3 months" tips="Contacts below have not signed in for 3 months." value="91" />
+	<item title="Not signed in for 6 months or more" tips="Contacts below have not signed in for 6 months or more." value="184" />
+</items>
+

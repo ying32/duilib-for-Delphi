@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Configs ShowNew="30" AutoConfigCilckTimes="20" >
+  <Quickbar name="CustomFont" ext_id="378D5C57-01A3-4E0D-A577-14DDDB0DFEB3" tips="您获得了$NUM$套炫彩字免费字体。">
+    <priv_id value="1001"/>
+    <priv_id value="1002"/>
+    <priv_id value="1003"/>
+  </Quickbar>
+  <Quickbar name="Winks" ext_id="9B9076AA-65B5-4254-A329-34A818C48904" tips="您获得了$NUM$套免费魔法表情和$NUM2$套免费超级表情。">
+    <priv_id value="1004" value2="1007"/>
+    <priv_id value="1005" value2="1008"/>
+    <priv_id value="1006" value2="1009"/>
+  </Quickbar>
+  <Quickbar name="VIEWHISTORY" ext_id="0FFBF7E4-75E6-4266-B7AB-A250DED3AC63" tips="您当前QQ等级可以漫游最近$NUM$天的消息记录啦。">
+    <priv_id value="1042"/>
+    <priv_id value="1043"/>
+    <priv_id value="1044"/>
+  </Quickbar>
+  <Independ name="DIYFace" ext_id ="A38464E3-4E25-4925-9D9B-5E71E8F94024" tips="您获得了上传自定义头像特权，赶紧秀出自己的风采吧。">
+    <priv_id value="1010"/>
+  </Independ>
+  <Independ name="QQSMS" ext_id="F4347250-A67B-4888-A242-713255765CB5" tips="您获得了短信群发特权，赶紧给大伙发短信吧。">
+    <priv_id value="1011"/>
+  </Independ>
+  <Independ name="QQGroup" ext_id="7AE3B632-ACBB-4EEC-8878-D6028E8D483C" tips="您当前QQ等级获得免费创建$NUM$个群的特权啦。">
+    <priv_id value="1059"/>
+    <priv_id value="1013"/>
+    <priv_id value="1014"/>
+    <priv_id value="1015"/>
+  </Independ>
+
+  <!--ID:特权名字的-->
+  <Type2Name id ="101" name="炫彩字"/>
+  <Type2Name id ="102" name="魔法表情"/>
+  <Type2Name id ="103" name="超级表情"/>
+  <Type2Name id ="104" name="上传自定义头像"/>
+  <Type2Name id ="105" name="QQ短信群发"/>
+  <Type2Name id ="106" name="QQ截图滤镜"/>
+  <Type2Name id ="111" name="消息记录漫游"/>
+</Configs>

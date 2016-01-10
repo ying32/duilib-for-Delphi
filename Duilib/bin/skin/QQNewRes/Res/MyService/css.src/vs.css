@@ -1,0 +1,760 @@
+﻿BODY,TD,TH,A,SPAN,DIV,SELECT,OPTION
+{
+	line-height:20px;
+	font-size:12px;
+	color:#464646;
+	direction:ltr;
+	font-family:Verdana,"宋体";
+}
+
+INPUT
+{
+	font-size:12px;
+	color:#464646;
+	direction:ltr;
+	font-family:Verdana,"宋体";
+}
+
+BODY
+{
+	background-color:white;
+	margin:0 0 0 0;
+	overflow-y:scroll;
+	/*
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr='#CFE2EB', EndColorStr='#FFFFFF');
+	*/
+}
+
+IMG
+{
+	border:0px
+}
+
+.fill
+{
+	width:100%;
+	height:100%;
+}
+
+.winDiv
+{
+	margin-bottom:8px;
+}
+
+.winBorder/*边框*/
+{
+	border:solid 1px #ccdfe8;
+	margin-bottom:8px;
+	width:expression(resizeByRule());
+}
+
+.winClient
+{
+	background-color:white;
+	overflow:auto;
+	margin:0 0 0 0;
+	padding:0 0 0 0;
+}
+
+.winClientD
+{
+	background-color:white;
+	overflow:auto;
+	margin:0 0 0 0;
+	padding:0 0 0 0;
+	filter:alpha(opacity=50);
+	opacity:0.5;
+}
+.winIcon
+{
+	margin-left:2px;
+	margin-right:2px;
+}
+
+/*标题部分*/
+.winCap
+{
+	/*background-color:#E1F0FB;*/
+	color:#003860;
+	font-weight:bold;
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr='#bcdff6', EndColorStr='#E1F0FB');
+}
+
+.winCapB
+{
+	border-bottom:solid 1px #D1DCEE;
+}
+
+/*提供标题部分的白色边框*/
+.winCapBar
+{
+	background-color:#FFFFFF;
+	/*background-color:#e1f4ff;*/
+	height:24px;
+	padding: 1 1 1 1;
+	cursor:default;
+}
+
+.ctrlBtn
+{
+	cursor:pointer!important;
+	cursor:hand;
+	margin-right:3px;
+}
+
+.ctrlBtnInvisible
+{
+	cursor:pointer!important;
+	cursor:hand;
+	margin-right:3px;
+	visibility:hidden;
+}
+
+.winBottom
+{
+	color:#062E8D;
+	height:27px;
+	background-color:#ECF5FE;
+}
+
+.winBottomB
+{
+	color:#062E8D;
+	height:27px;
+	border-top:solid 1px #D1DCEE;
+	background-color:#ECF5FE;
+}
+
+.winCapLine
+{
+	position:relative;
+	height:1px;
+	border-bottom:solid 1px white;
+	overflow:hidden;
+}
+
+.winCorner
+{
+	position:relative;
+	width:1px;
+	height:1px;
+	border-left:solid 1px white;
+	overflow:hidden;
+}
+
+.dragHSpan
+{
+	width:100%;
+	font-size:1px;
+	height:2px;
+	overflow:hidden;
+	color:blue;
+	background-color:blue;
+	line-height:2px;
+}
+
+.vsMenuBar
+{
+	width:20px;
+	font-size:1px;
+	border-right:solid 1px #9FACCC;
+	background-color:#E9F2FE;
+	background-repeat:no-repeat;
+	background-position:bottom center;
+}
+
+.vsMenu
+{
+	background-color:#FFFFFF;
+	border:solid 1px #9FACCC;
+	position:absolute;
+	display:none;
+}
+
+.vsMI1
+{
+	color:#0078C1;
+	width:100%;
+	height:22px;
+	border:solid 1px #FFFFFF;
+	border-right:0px;
+}
+
+.vsMI2
+{
+	color:#0078C1;
+	width:100%;
+	height:22px;
+	border:0px;
+	border-top:solid 1px #FFFFFF;
+	border-bottom:solid 1px #FFFFFF;
+}
+
+.vsMI3
+{
+	color:#0078C1;
+	width:100%;
+	height:22px;
+	border:solid 1px #FFFFFF;
+	border-left:0px;
+}
+
+.vsMIHi1
+{
+	background-color:#E8F1FE;
+	color:#0078C1;
+	cursor:pointer!important;
+	cursor:hand;
+	width:100%;
+	height:22px;
+	border:solid 1px #C5CDE0;
+	border-right:0px;
+}
+
+.vsMIHi2
+{
+	background-color:#E8F1FE;
+	color:#0078C1;
+	cursor:pointer!important;
+	cursor:hand;
+	width:100%;
+	height:22px;
+	border:0px;
+	border-top:solid 1px #C5CDE0;
+	border-bottom:solid 1px #C5CDE0;
+}
+.vsMIHi3
+{
+	background-color:#E8F1FE;
+	color:#0078C1;
+	cursor:pointer!important;
+	cursor:hand;
+	width:100%;
+	height:22px;
+	border:solid 1px #C5CDE0;
+	border-left:0px;
+}
+
+.vsShade
+{
+	background-color:#808080;
+	position:absolute;
+	display:none;
+	overflow:hidden;
+	margin:0 0 0 0;
+	padding:0 0 0 0;
+	filter:alpha(opacity=50);
+	opacity:0.5;
+}
+
+.vsCMB
+{
+	cursor:pointer!important;
+	cursor:hand;
+	border:solid 1px navy;
+}
+
+.vsCMBDD
+{
+	cursor:pointer!important;
+	cursor:hand;
+	display:none;
+	position:absolute;
+	background-color:white;
+	border:solid 1px navy;
+	overflow:auto;
+}
+
+.vsCMBItem
+{
+	color:black;
+	cursor:pointer!important;
+	cursor:hand;
+}
+
+.vsCMBHi
+{
+	background-color:navy;
+	color:white;
+	cursor:pointer!important;
+	cursor:hand;
+}
+
+.tmns
+{
+	margin-left:12px;
+	margin-right:12px;	
+	color:#0278C2;
+}
+
+A.tmn,A.tmn:link,A.tmn:visited,A.tmn:active
+{
+	color:#0278C2;
+	text-decoration:underline;
+	background-color:transparent;
+}
+A.well,A.well:link,A.well:visited,A.well:active
+{
+	color:#565656;
+	text-decoration:underline;
+	background-color:transparent;
+}
+
+.menu
+{
+	height:24px;
+	background-color:#7FA1E8;
+	color:white;
+}
+
+.menuSel
+{
+	background-color:#F4B30F;
+}
+
+.mnLine
+{
+	position:relative;
+	top:0px!important;
+	top:-1px;
+	width:100%;
+	height:1px;
+	background-color:white;
+	overflow:hidden;
+	filter:alpha(opacity=50);
+	opacity:0.5;
+}
+
+.mnLineL
+{
+	position:absolute;
+	width:2px;
+	height:23px;
+	border-top:solid 1px #7FA1E8;
+	border-left:solid 1px #7FA1E8;
+	margin-top:-2px!important;
+	margin-top:-3px;
+	overflow:hidden;
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr='#C8D9F7', EndColorStr='#93ADEA');
+}
+
+.mnLineLS
+{
+	position:absolute;
+	width:2px;
+	height:23px;
+	border-top:solid 1px #F4B30F;
+	border-left:solid 1px #F4B30F;
+	margin-top:-2px!important;
+	margin-top:-3px;
+	overflow:hidden;
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr='#F9D987', EndColorStr='#F7C64A');
+}
+
+.mnLineR
+{
+	position:absolute;
+	width:2px;
+	height:23px;
+	border-top:solid 1px #7FA1E8;
+	border-right:solid 1px #7FA1E8;
+	margin-top:-11px!important;
+	margin-top:-12px;
+	margin-left:-3px;
+	overflow:hidden;
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr='#C8D9F7', EndColorStr='#93ADEA');
+}
+
+.mnLineRS
+{
+	position:absolute;
+	width:2px;
+	height:23px;
+	border-top:solid 1px #F4B30F;
+	border-right:solid 1px #F4B30F;
+	margin-top:-11px!important;
+	margin-top:-12px;
+	margin-left:-3px;
+	overflow:hidden;
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr='#F9D987', EndColorStr='#F7C64A');
+}
+
+.topBK
+{
+	position:absolute;
+	left:0px;
+	top:0px;
+	width:100%;
+	height:131px;
+	border-bottom:solid 1px #D1DCEE;
+	z-index:-1000;
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr='#FFFFFF', EndColorStr='#E8F2FE');
+}
+
+.BK
+{
+	background-color: #F4F9FA;
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr='#CFE2EB', EndColorStr='#FFFFFF');
+}
+
+SPAN.mn
+{
+	color:white;
+	font-weight:bold;
+}
+
+A.mn,A.mn:link,A.mn:visited,A.mn:active
+{
+	color:white;
+	text-decoration:none;
+	font-weight:bold;
+}
+
+A.mn1,A.mn1:link,A.mn1:visited,A.mn1:active
+{
+	color:white;
+	font-weight:bold;
+	text-decoration:none;
+}
+
+A.smn,A.smn:link,A.smn:visited,A.smn:active
+{
+	color:#007AC0;
+	text-decoration:none;
+}
+
+A.smn1,A.smn1:link,A.smn1:visited,A.smn1:active
+{
+	color:#FDA804;
+	font-weight:bold;
+	text-decoration:none;
+}
+
+.copyright
+{
+	line-height:19px;
+	color:#8C8C8C;
+}
+
+A.cmn,A.cmn:link,A.cmn:visited,A.cmn:active
+{
+	color:#818181;
+	text-decoration:none;
+}
+
+A.cmn:hover
+{
+	color:#818181;
+	text-decoration:underline;
+	background-color:white;
+}
+
+A,A:link,A:visited,A:active/*link的颜色*/
+{
+	color:#003860;
+	text-decoration:none;
+	background-color:transparent;
+}
+
+A.capa,A.capa:link,A.capa:visited,A.capa:active
+{
+	color:#043089;
+	text-decoration:none;
+	background-color:transparent;
+}
+
+/*链接hover时*/
+A:hover,A.tmn:hover,A.mn:hover,A.mn1:hover,A.smn:hover,A.smn1:hover,A.capa:hover,A.well:hover
+{
+	color:#0370da;
+	background-color:transparent;
+	text-decoration:underline;
+}
+
+A.imga,A.imga:link,A.imga:visited,A.imga:active,A.imga:hover
+{
+	text-decoration:none;
+	background-color:transparent;
+}
+
+.pagSel
+{
+	color:#FF5A00;
+	font-weight:bold;
+}
+
+.vsH
+{
+	text-align:center;
+	font-weight:bold;
+}
+
+.vsR
+{
+	background-color:#F6F6FA;
+}
+
+.vsR1
+{
+}
+
+.btn
+{
+	font-size:12px;
+	color:#053188;
+	text-decoration:none;
+	text-align:center;
+	border-right:1px solid #8DA1CF;
+	border-bottom:1px solid #8DA1CF;
+	background-color:#E8F1FA;
+	padding:3px 3px 2px 3px;
+	line-height:28px;
+}
+
+A.btn:link,A.btn:visited,A.btn:active
+{
+	text-decoration:none;
+	color:#053188;
+	border:solid 1px #E8F1FA;
+	background-color:transparent;
+	padding:3px 3px 2px 3px;
+}
+
+A.btn:hover
+{
+	color:#FFFFFF;
+	border-left:1px solid #BBCCEF;
+	border-top:1px solid #BBCCEF;
+	border-right:1px solid #5974AE;
+	border-bottom:1px solid #5974AE;
+	background-color:#8DA2CF;
+	padding:3px 3px 2px 3px;
+}
+.Tsearch
+{
+	border:1px solid #B9C3DC;
+	width:235px;
+	height:19px;
+	color:464646;
+}
+
+.Tsearch_b
+{
+	border:1px solid #B9C3DC;
+	width:235px;
+	height:19px;	
+	color:#aaaaaa;
+}
+
+.search
+{
+	border:1px solid #B9C3DC;
+	height:19px;
+	color:464646;
+}
+
+.search_b
+{
+	border:1px solid #B9C3DC;
+	height:19px;	
+	color:#aaaaaa;
+}
+
+
+.submn_unsel
+{
+}
+
+.submn_sel
+{
+}
+
+A.ba,A.ba:link,A.ba:visited,A.ba:active
+{
+	color:#0278C2;
+	text-decoration:none;
+	background-color:transparent;
+}
+
+A.ba:hover
+{
+	color:#FF9A00;
+	background-color:transparent;
+	text-decoration:underline;
+}
+.WinTitle
+{
+	color:#0278C2;
+	font-weight:bold;
+}
+
+A.pg_num_r
+{
+	padding-top:0px;
+	padding-bottom:1px;
+	padding-left:4px;
+	padding-right:4px;
+}
+
+A.pg_num_r:hover
+{
+	padding-top:0px;
+	padding-bottom:1px;
+	padding-left:4px;
+	padding-right:4px;
+	background-color:#849eef;
+	text-decoration:none;
+	color:white;
+}
+
+.pg_num_cur_r
+{
+	padding-top:0px;
+	padding-bottom:1px;
+	padding-left:3px;
+	padding-right:3px;
+	border:1px solid #ffffff;
+	color:#FDA804;
+	font-weight:bold;
+}
+
+A.abv
+{
+	border:2px solid #cccccc;
+}
+A.abv:hover
+{
+	border:2px solid #6a93e3;
+	background-color:white;
+}
+A.aav
+{
+	border:1px solid #cccccc;
+}
+A.aav:hover
+{
+	border:1px solid #6a93e3;
+	background-color:white;	
+}
+.tbImg
+{
+	BORDER: white 5px solid; 
+}
+.divOut{
+	border: 1px solid #cccccc;
+}
+.divOver
+{
+	border:1px solid #6a93e3;
+}
+TD.tabSel_1
+{
+	color:#0278C2;
+	font-weight:bold;
+	background-color:#e8f2fe;
+	border-left:solid 1px #D1DCEE;
+
+}
+
+
+TD.tab_empty
+{
+border-bottom:solid 1px #D1DCEE;
+border-left:solid 1px #D1DCEE;
+background-color:#F6F9FF;
+}
+
+TD.tabSel_s
+{
+	color:#0278C2;
+	font-weight:bold;
+	background-color:#e8f2fe;
+}
+
+
+TD.tabUnSel_1
+{
+	cursor:"hand";
+	cursor:pointer!important;		
+	border-left:solid 1px #D1DCEE;
+	background-color:#F6F9FF;
+	color:0278C2;
+	border-bottom:solid 1px #D1DCEE;
+}
+
+TD.tabSel_2
+{
+	color:#0278C2;
+	background-color:#E2EAF7;
+
+}
+
+TD.tabUnSel_2
+{
+	cursor:"hand";
+	cursor:pointer!important;		
+	border-right:solid 1px #D1DCEE;
+	background-color:#E2EAF7;
+	border-left:solid 1px #D1DCEE;
+	color:black;
+	font-weight:bold;
+	border-bottom:solid 1px #D1DCEE;
+}
+
+.menuImg
+{
+	margin-top:2px;
+	margin-right:2px;
+}
+
+.defaultPageIcon
+{
+	position:relative;
+	padding-top:1px;
+}
+
+.defaultPageText
+{
+	position:relative;
+	color:#0278C2;
+	font-size:10pt;
+	padding-top:1px;
+	padding-left:2px;
+}
+
+.loadText
+{
+	position:relative;
+	vertical-align:middle;
+	text-align:center;
+	color:#0278C2;
+	width:100%;
+	height:100%;
+	top:30%;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

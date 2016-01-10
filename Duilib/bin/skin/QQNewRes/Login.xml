@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window size="442,342" caption="0,0,0,182" layeredimage="file='Default\LoginPanel\login_bkg.png' corner='7,7,7,7'">
+	<Font id="0" name="微软雅黑" size="12" bold="false" italic="false" default="true" />
+	<Default name="Button" value="fadedelta=&quot;25&quot;" />
+	<Default name="Option" value="fadedelta=&quot;25&quot;" />
+    <Font name="微软雅黑" size="19" bold="false" italic="false" />
+    <Default name="Option" value="float=&quot;true&quot; textpadding=&quot;1,0,0,0&quot; align=&quot;center&quot; normalimage=&quot;file=&apos;Default\AppFramework\CheckButton\checkbox_normal.png&apos; dest=&apos;0,0,17,17&apos; source=&apos;0,0,17,17&apos;&quot; hotimage=&quot;file=&apos;Default\AppFramework\CheckButton\checkbox_hightlight.png&apos; dest=&apos;0,0,17,17&apos; source=&apos;0,0,17,17&apos;&quot; pushedimage=&quot;file=&apos;Default\AppFramework\CheckButton\checkbox_pushed.png&apos; dest=&apos;0,0,17,17&apos; source=&apos;0,0,17,17&apos;&quot; selectedimage=&quot;file=&apos;Res\LoginUI\checkbox_tick_pushed1.png&apos; dest=&apos;0,0,17,17&apos;&quot; " />
+    <VerticalLayout inset="5,5,5,5">
+        <HorizontalLayout height="184" bkimage="Res\LoginUI\afternoon.jpg">
+            <VerticalLayout />
+            <VerticalLayout width="90">
+                <HorizontalLayout>
+                    <Button name="setbtn" width="30" height="30" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="Res\LoginUI\btn_set_normal.png" hotimage="Res\LoginUI\btn_set_hover.png" pushedimage="Res\LoginUI\btn_set_press.png" />
+                    <Button name="minbtn" width="30" height="30" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="Default\AppFramework\SysButton\btn_mini_normal.png" hotimage="Default\AppFramework\SysButton\btn_mini_highlight.png" pushedimage="Default\AppFramework\SysButton\btn_mini_down.png" />
+                    <Button name="closebtn" width="30" height="30" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="Default\AppFramework\SysButton\btn_close_normal.png" hotimage="Default\AppFramework\SysButton\btn_close_highlight.png" pushedimage="Default\AppFramework\SysButton\btn_close_down.png" />
+                </HorizontalLayout>
+            </VerticalLayout>
+        </HorizontalLayout>
+        <HorizontalLayout bkimage="Res\LoginUI\bk_bottom.png">
+            <VerticalLayout>
+                <HorizontalLayout height="14" />
+                <HorizontalLayout>
+                    <HorizontalLayout>
+                        <VerticalLayout width="43" />
+                        <VerticalLayout width="90">
+                            <VerticalLayout width="80" height="80" bkimage="file=&apos;Data\Head\187_100.gif&apos;">
+                                <VerticalLayout />
+                                <VerticalLayout />
+                                <VerticalLayout height="16">
+                                    <HorizontalLayout>
+                                        <VerticalLayout />
+                                        <VerticalLayout width="16">
+                                            <Button width="16" height="16" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="Res\SkinMgr\succ.png" />
+                                        </VerticalLayout>
+                                    </HorizontalLayout>
+                                </VerticalLayout>
+                            </VerticalLayout>
+                        </VerticalLayout>
+                        <VerticalLayout width="200">
+                            <Combo float="true" pos="0,0,0,0" width="194" height="30" itemtextcolor="#FF000000" itembkcolor="#FFFFFFFF" itemselectedtextcolor="#FF000000" itemselectedbkcolor="#FFC1E3FF" itemhottextcolor="#FF000000" itemhotbkcolor="#FF09A3DC" itemdisabledtextcolor="#FFCCCCCC" itemdisabledbkcolor="#FFFFFFFF" normalimage="combo_frame_normal_reversed.png" hotimage="combo_frame_hover_reversed.png" pushedimage="combo_frame_down_reversed.png" dropboxsize="0,150">
+                                <ListContainerElement height="44">
+									<HorizontalLayout inset="0,2,0,2">
+										<HorizontalLayout width="44" bkimage="file=&apos;Data\Head\187_100.gif&apos;"/>
+											<VerticalLayout padding="5,0,0,0">
+											  <Label text="不在乎"  height="22" textcolor="#FF000000" />
+											  <Label text="1444386932" height="22" textcolor="#FFFFFFFF" />
+											</VerticalLayout>
+											<VerticalLayout width="22">
+											  <Button float="true" pos="3,14,0,0" width="15" height="15" normalimage="file=&apos;Default\AppFramework\ComboBox\comboboxEraseButton_Normal.png&apos; mask=&apos;0xffff00ff&apos;" hotimage="Default\AppFramework\ComboBox\comboboxEraseButton_Hover.png" pushedimage="Default\AppFramework\ComboBox\comboboxEraseButton_Push.png" />
+											</VerticalLayout>
+									</HorizontalLayout>   
+								</ListContainerElement>
+                                <ListContainerElement height="44">
+									<HorizontalLayout inset="0,2,0,2">
+										<HorizontalLayout width="44" bkimage="file=&apos;Data\Head\187_100.gif&apos;"/>
+											<VerticalLayout padding="5,0,0,0">
+											  <Label text="不在乎"  height="22" textcolor="#FF000000" />
+											  <Label text="1444386932" height="22" textcolor="#FFFFFFFF" />
+											</VerticalLayout>
+											<VerticalLayout width="22">
+											  <Button float="true" pos="3,14,0,0" width="15" height="15" normalimage="file=&apos;Default\AppFramework\ComboBox\comboboxEraseButton_Normal.png&apos; mask=&apos;0xffff00ff&apos;" hotimage="Default\AppFramework\ComboBox\comboboxEraseButton_Hover.png" pushedimage="Default\AppFramework\ComboBox\comboboxEraseButton_Push.png" />
+											</VerticalLayout>
+									</HorizontalLayout>   
+								</ListContainerElement>
+								<ListContainerElement height="44" />
+								<ListContainerElement height="44" />
+								<ListContainerElement height="44" />
+								<ListContainerElement height="44" />
+								<ListContainerElement height="44" />
+								<ListContainerElement height="44" />
+								<ListContainerElement height="44" />
+								<ListContainerElement height="44" />
+                            </Combo>
+							
+                            <Edit float="true" pos="0,30,0,0" width="194" height="30" bkcolor="#FFFFFFFF" textpadding="4,3,4,3" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" font="1" password="true" normalimage="file=&apos;Res\LoginUI\edit_frame_normal.png&apos; source=&apos;0,1,194,30&apos;" hotimage="Res\LoginUI\edit_frame_hover.png" focusedimage="Res\LoginUI\edit_frame_hover.png" />
+                            <Option text="记住密码" float="true" pos="0,65,0,0" width="86" height="17" textpadding="1,0,0,0" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" font="0" align="center"  />
+                            <Option text="自动登录" float="true" pos="129,66,0,0" width="80" height="17" textpadding="1,0,0,0" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" font="0" align="center"  />
+                            <Edit float="true" pos="1,2,0,0" width="169" height="26" bkcolor="#FFFFFFFF" textpadding="2,3,4,3" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" font="1" normalimage="file=&apos;Res\LoginUI\edit_frame_normal_reversed.png&apos; dest=&apos;2,2,160,26&apos; source=&apos;2,2,160,26&apos;" hotimage="file=&apos;Res\LoginUI\edit_frame_hover_reversed.png&apos; dest=&apos;2,2,160,26&apos; source=&apos;2,2,160,26&apos;" focusedimage="file=&apos;Res\LoginUI\edit_frame_hover_reversed.png&apos; dest=&apos;2,2,160,26&apos; source=&apos;2,2,160,26&apos;" />
+                        </VerticalLayout>
+                        <VerticalLayout>
+                            <Button float="true" pos="0,9,0,0" width="48" height="11" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="Res\LoginUI\mima.png" hotimage="Res\LoginUI\mima_hover.png" pushedimage="Res\LoginUI\mima_press.png" />
+                            <Button float="true" pos="0,38,0,0" width="48" height="11" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="Res\LoginUI\zhuce.png" hotimage="Res\LoginUI\zhuce_hover.png" pushedimage="Res\LoginUI\zhuce_press.png" />
+                        </VerticalLayout>
+                    </HorizontalLayout>
+                </HorizontalLayout>
+                <HorizontalLayout height="45">
+                    <VerticalLayout>
+                        <Button float="true" pos="8,15,0,0" width="24" height="24" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="Res\LoginUI\switch_single_normal.png" hotimage="Res\LoginUI\switch_single_hover.png" pushedimage="Res\LoginUI\switch_single_down.png" />
+                    </VerticalLayout>
+                    <VerticalLayout width="194">
+                        <Button text="登  录" width="194" height="30" textcolor="#00FFFFFF" disabledtextcolor="#FFA7A6AA" align="center" normalimage="Res\LoginUI\button_login_normal.png" hotimage="Res\LoginUI\button_login_hover.png" pushedimage="Res\LoginUI\button_login_down.png" />
+                    </VerticalLayout>
+                    <VerticalLayout>
+                        <HorizontalLayout>
+                            <VerticalLayout />
+                            <VerticalLayout width="32">
+                                <Button float="true" pos="0,15,0,0" width="24" height="24" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="Res\LoginUI\corner_right_normal_breath.png" hotimage="Res\LoginUI\corner_right_hover.png" pushedimage="Res\LoginUI\corner_right_normal_down.png" />
+                            </VerticalLayout>
+                        </HorizontalLayout>
+                    </VerticalLayout>
+                </HorizontalLayout>
+            </VerticalLayout>
+        </HorizontalLayout>
+    </VerticalLayout>
+</Window>

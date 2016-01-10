@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<items>
+	<item id="1" value="在校学生" />
+  <item id="2" value="销售" />
+  <item id="3" value="个体经营/零售"/>
+  <item id="4" value="市场/市场拓展/公关"/>
+  <item id="5" value="商务/采购/贸易"/>
+  <item id="6" value="酒店/餐饮/旅游/其他服务"/>
+  <item id="7" value="客户服务/技术支持"/>
+  <item id="8" value="计算机/互联网/IT"/>
+  <item id="9" value="通信技术"/>
+  <item id="10" value="美术/设计/创意"/>
+  <item id="11" value="电子/半导体/仪器仪表"/>
+  <item id="12" value="电气/能源/动力"/>
+  <item id="13" value="生产/加工/制造"/>
+  <item id="14" value="工程/机械"/>
+  <item id="15" value="技工"/>
+  <item id="16" value="交通/仓储/物流"/>
+  <item id="17" value="建筑/房地产/装修/物管"/>
+  <item id="18" value="金融/银行/证券/投资"/>
+  <item id="19" value="财务/审计/统计"/>
+  <item id="20" value="保险"/>
+  <item id="21" value="法律"/>
+  <item id="22" value="教育/培训"/>
+  <item id="23" value="医疗/卫生"/>
+  <item id="24" value="经营管理/高级管理"/>
+  <item id="25" value="人力资源"/>
+  <item id="26" value="政府工作人员"/>
+  <item id="27" value="美容/保健"/>
+  <item id="28" value="行政/后勤"/>
+  <item id="29" value="生物/制药/医疗器械"/>
+  <item id="30" value="化工"/>
+  <item id="31" value="能源/矿产/地质勘察"/>
+  <item id="32" value="军人/警察"/>
+  <item id="33" value="文体/影视/写作/媒体"/>
+  <item id="34" value="学术/科研"/>
+  <item id="35" value="翻译"/>
+  <item id="36" value="农村外出务工人员"/>
+  <item id="37" value="农林牧渔劳动者"/>
+  <item id="38" value="自由职业者"/>
+  <item id="39" value="待业/无业/失业"/>
+  <item id="40" value="退休"/>
+  <item id="41" value="其他"/>
+</items>

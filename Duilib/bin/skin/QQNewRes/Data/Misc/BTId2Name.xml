@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<BTId2Name version="1.0">
+  <BTArray>
+    <BT id="1" name="AIO.Banner.click"/>
+    <BT id="2" name="AIO.Banner.dsp"/>
+    <BT id="54901" name="这是一个大T名字"/>
+  </BTArray>
+  
+  <EnvArray>
+    <Env id="1" name="AIO.OpenTime"/>
+    <Env id="2" name="QQ.IsVip"/>
+  </EnvArray>
+</BTId2Name>

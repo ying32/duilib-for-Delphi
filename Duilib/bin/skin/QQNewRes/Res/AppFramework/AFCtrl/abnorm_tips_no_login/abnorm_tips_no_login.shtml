@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>登录限制</title>
+<link rel="stylesheet" rev="stylesheet" href="<%=STATIC_PATH%>/../limit_login/css/style.css" />
+<script type="text/javascript" src="js/html.js"></script>
+</head>
+<body>
+<div id="wrapper" class="wrapper_2013"> 
+	
+	<!--Web-->
+	<div id="container">
+		<div class="limit">
+			<i class="i11"></i>
+			<h2>QQ存在被盗风险</h2>
+			<dl>
+				<dd>您的QQ密码可能已泄漏，为避免遭受损失，请尽快改密</dd>
+			</dl>
+		</div>
+		<div id="operation_button">
+			<a href="javascript:JumpGm()" class="btn_green"><span>更换密码</span></a>
+		</div>
+	</div>
+	<!--Web End--> 
+	
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+function JumpGm()
+{
+	external.ClickBtnHandle();
+}
+
+</script>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items>
+  <item title="一個月未登入" tips="該分組中一個月未登入好友" value="31" />
+  <item title="三個月未登入" tips="該分組中三個月未登入好友" value="91" />
+  <item title="半年未登入" tips="該分組中半年未登入好友" value="184" />
+</items>

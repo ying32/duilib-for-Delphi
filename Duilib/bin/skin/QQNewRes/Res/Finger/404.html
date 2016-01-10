@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta charset="UTF-8">
+<title>404</title>
+<style>
+*{margin:0;padding:0;font-family:Microsoft YaHei,Tahoma,Verdana;font-size:12px;color:#646f83;overflow:hidden;background-color: #fff}
+.wrapper {height: 110px; width: 400px; margin: 200px auto; border: 1px solid #ccc; border-radius: 5px}
+.err-w{background:url(http://3.url.cn/q/img/404.png) no-repeat -78px 0; height:19px; width:385px;line-height:19px;text-align:center; margin:20px auto 5px;}
+a{text-decoration:none;}
+.func{height:26px;width:100%;text-align:center;padding-top:17px;}
+.func a{width:78px;height:26px;line-height:26px;background:url(http://3.url.cn/q/img/404.png) no-repeat 0 0;display:inline-block;text-align:center;outline:none;}
+.func a:hover{background:url(http://3.url.cn/q/img/404.png) no-repeat 0 -26px;}
+</style>
+</head>
+<body>
+<div class="wrapper">
+<div class="err-w">出错啦！请检查网络状态是否正常，或点击刷新或切换到老版本</div>
+<div class="func">
+<a href="#" onclick="reTry()">刷新</a>
+<a href="#" onclick="switch2OldWin()">切换到老版本</a>
+<!--<a href="#" onclick="closeWin()">关闭</a>-->
+</div>
+</div>
+<script type="text/javascript">
+	var reportM = function(param){
+        param = '0-0-' + param
+        var img = new Image();
+        img.onload = img.onerror = function(){
+            this.onload = this.onerror = null;
+            img = null;
+        };
+        img.src = 'http://jsreport.qq.com/cgi-bin/report?id=119&rs='+ param +'&r=' + Date.now();
+    };
+
+	function reTry(){
+        try{
+            reportM(224173);
+            external.refresh();
+        }catch(e){}
+	}
+	function switch2OldWin() {
+	    try{
+	        external.switch2OldWnd();
+	    }
+	    catch(e){}
+	}
+	function closeWin(){
+		try{
+            reportM(224174);
+			var res = external.Hummer_Window_Close();
+		}catch(e){}
+	}
+	reportM(224172);
+</script>
+</body>
+</html>

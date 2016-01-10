@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Config>
+  <ConfigAgent name="GroupTopToolBar_TabButton" configType="IGFTabButton">
+    <configProp>
+      <prop field="unpushedHighlightTextColor" value="0xFFFFFFFF"/>
+      <prop field="unpushedNormalTextColor" value="0xFFFFFFFF"/>
+      <prop field="unpushedPushedTextColor" value="0xFFFFFFFF"/>
+      <prop field="pushedHighlightBkg">
+        <value>
+          <Texture file="@thisres:ContactInfoFrame\tabbtn_bgk_pushed.png" colorize="false">
+          </Texture>
+        </value>
+      </prop>
+      <prop field="pushedHighlightTextColor" value="#@this.TextColor.Reverse"/>
+      <prop field="pushedNormalBkg">
+        <value>
+          <Texture file="@thisres:ContactInfoFrame\tabbtn_bgk_pushed.png" colorize="false">
+          </Texture>
+        </value>
+      </prop>
+      <prop field="pushedNormalTextColor" value="#@this.TextColor.Reverse"/>
+      <prop field="pushedPushedBkg">
+        <value>
+          <Texture file="@thisres:ContactInfoFrame\tabbtn_bgk_pushed.png" colorize="false">
+          </Texture>
+        </value>
+      </prop>
+      <prop field="pushedPushedTextColor" value="#@this.TextColor.Reverse"/>
+      <prop field="margin" value="0,0,0,0"/>
+      <prop field="autoWidth" value="false"/>
+      <prop field="size" value="71,36"/>
+      <prop field="border" value="8,6,9,10"/>
+    </configProp>
+  </ConfigAgent>
+</Config>
