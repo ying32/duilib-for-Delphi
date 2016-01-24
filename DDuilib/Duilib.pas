@@ -757,9 +757,12 @@ type
     ____OnPaint: CEventSource;
     ____OnPostPaint: CEventSource;
   private
-  	m_DelphiSelf: LPVOID;
-	  m_DoEventCallback: LPVOID;
-    m_DoPaintCallback: LPVOID;
+	  m_DoEventCallback: TMethod;
+    m_DoPaintCallback: TMethod;
+    function GetDuiEvent: TDuiEvent;
+    procedure SetDuiEvent(const Value: TDuiEvent);
+    function GetDuiPaint: TDuiPaintEvent;
+    procedure SetDuiPaint(const Value: TDuiPaintEvent);
   protected
     m_pManager: CPaintManagerUI;
     m_pParent: CControlUI;
@@ -924,8 +927,6 @@ type
   public
     procedure Hide;
     procedure Show;
-    procedure SetDoEvent(const Value: TDuiEvent);
-    procedure SetDoPaint(const Value: TDuiPaintEvent);
   public
     property Attribute[AName: string]: string write SetAttribute;
     property ControlFlags: UINT read GetControlFlags;
@@ -952,6 +953,9 @@ type
     property Visible: Boolean read IsVisible write SetVisible;
     property Tag: UIntPtr read GetTag write SetTag;
     property FixedHeight: Integer read GetFixedHeight write SetFixedHeight;
+
+    property OnDuiEvent: TDuiEvent read GetDuiEvent write SetDuiEvent;
+    property OnDuiPaint: TDuiPaintEvent read GetDuiPaint write SetDuiPaint;
   end;
 
   CDelphi_WindowImplBase = class
@@ -4294,20 +4298,24 @@ begin
   Delphi_ControlUI_SetContextMenuUsed(Self, bMenuUsed);
 end;
 
-procedure CControlUI.SetDoEvent(const Value: TDuiEvent);
+procedure CControlUI.SetDuiEvent(const Value: TDuiEvent);
 begin
-  m_DelphiSelf := Self;
   if Assigned(Value) then
-    m_DoEventCallback := @Value
-  else m_DoEventCallback := nil;
+  begin
+    TMethod(m_DoEventCallback).Data := TMethod(Value).Data;
+    TMethod(m_DoEventCallback).Code := TMethod(Value).Code;
+  end else
+    FillChar(m_DoEventCallback, SizeOf(m_DoEventCallback), #0);
 end;
 
-procedure CControlUI.SetDoPaint(const Value: TDuiPaintEvent);
+procedure CControlUI.SetDuiPaint(const Value: TDuiPaintEvent);
 begin
-  m_DelphiSelf := Self;
   if Assigned(Value) then
-    m_DoPaintCallback := @Value
-  else m_DoPaintCallback := nil;
+  begin
+    TMethod(m_DoPaintCallback).Data := TMethod(Value).Data;
+    TMethod(m_DoPaintCallback).Code := TMethod(Value).Code;
+  end else
+    FillChar(m_DoPaintCallback, SizeOf(m_DoPaintCallback), #0);
 end;
 
 function CControlUI.GetUserData: string;
@@ -4412,6 +4420,16 @@ end;
 function CControlUI.GetCustomAttribute(pstrName: string): string;
 begin
   Result := Delphi_ControlUI_GetCustomAttribute(Self, LPCTSTR(pstrName));
+end;
+
+function CControlUI.GetDuiEvent: TDuiEvent;
+begin
+ Result := TDuiEvent(m_DoEventCallback);
+end;
+
+function CControlUI.GetDuiPaint: TDuiPaintEvent;
+begin
+  Result := TDuiPaintEvent(m_DoPaintCallback);
 end;
 
 function CControlUI.RemoveCustomAttribute(pstrName: string): Boolean;

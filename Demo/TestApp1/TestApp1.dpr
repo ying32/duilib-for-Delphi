@@ -80,8 +80,9 @@ begin
   Fchangeskinbtn :=  FindControl('changeskinbtn');
   if Fchangeskinbtn <> nil then
   begin
-    Fchangeskinbtn.SetDoEvent(OnDoEvent);
-    Fchangeskinbtn.SetDoPaint(OnDoPaint);
+    Writeln('set callback');
+    Fchangeskinbtn.OnDuiEvent := OnDoEvent;
+    Fchangeskinbtn.OnDuiPaint := OnDoPaint;
   end;
 end;
 
@@ -142,7 +143,7 @@ begin
     writeln('mouse leave');
     Sender.Text := 'Êó±êÀë¿ª';
   end;
- // Writeln('AEvent=', Integer(AEvent));
+  Writeln('AEvent=', Integer(AEvent));
 end;
 
 procedure TFrameWindowWnd.OnDoPaint(Sender: CControlUI; DC: HDC;

@@ -7,17 +7,25 @@
     CMarkupNode(CMarkup* pOwner, int iPos);
 3、修改UIControl.cpp和UIControl.h
 UIControl.h
+添加 struct TDelphiMethod {
+       LPVOID Code;
+       LPVOID Data;
+     }
 
   在CEventSource OnPostPaint;语句下添加
-	LPVOID m_DelphiSelf;
-	LPVOID m_DoEventCallback;
-	LPVOID m_DoPaintCallback;
+private:
+	TDelphiMethod m_DoEventCallback;
+	TDelphiMethod m_DoPaintCallback;
+构造下面添加初始化代码
+ 
+	m_DoEventCallback = { NULL, NULL };
+	m_DoPaintCallback = { NULL, NULL };
 
 UIControl.cpp
   在void CControlUI::Event(TEventUI& event)下添加
 
-  if (m_DelphiSelf != NULL && m_DoEventCallback != NULL)
-    ((void(*)(LPVOID, CControlUI*, TEventUI&))m_DoEventCallback)(m_DelphiSelf, this, event);
+  if (m_DoEventCallback.Code != NULL && m_DoEventCallback.Data != NULL)
+	((void(*)(LPVOID, CControlUI*, TEventUI&))m_DoEventCallback.Code)(m_DoEventCallback.Data, this, event);
 
   在void CControlUI::Paint(HDC hDC, const RECT& rcPaint)后面添加
   if (m_DelphiSelf != NULL && m_DoPaintCallback != NULL)
