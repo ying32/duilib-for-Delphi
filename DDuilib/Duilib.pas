@@ -196,6 +196,9 @@ type
   );
   TEventTypeUI = EVENTTYPE_UI;
 
+  TDuiEvent = procedure(Sender: CControlUI; var AEvent: TEventTypeUI) cdecl of object;
+  TDuiPaintEvent = procedure(Sender: CControlUI; DC: HDC; const rcPaint: TRect) cdecl of object;
+
   tagTEventUI = packed record
     AType: TEventTypeUI;
     pSender: CControlUI;
@@ -744,16 +747,19 @@ type
   {$IFNDEF UseLowVer}strict {$ENDIF}private
     // 占位用
     ____: Pointer;
-  public
+  private // 先占个位用
     // 根据c++初始化的规则，此时对应的地址会被填充到变量中
-    OnInit: CEventSource;
-    OnDestroy: CEventSource;
-    OnSize: CEventSource;
-    OnEvent: CEventSource;
-    OnNotify: CEventSource;
-    OnPaint: CEventSource;
-    OnPostPaint: CEventSource;
-
+    ____OnInit: CEventSource;
+    ____OnDestroy: CEventSource;
+    ____OnSize: CEventSource;
+    ____OnEvent: CEventSource;
+    ____OnNotify: CEventSource;
+    ____OnPaint: CEventSource;
+    ____OnPostPaint: CEventSource;
+  private
+  	m_DelphiSelf: LPVOID;
+	  m_DoEventCallback: LPVOID;
+    m_DoPaintCallback: LPVOID;
   protected
     m_pManager: CPaintManagerUI;
     m_pParent: CControlUI;
@@ -918,6 +924,8 @@ type
   public
     procedure Hide;
     procedure Show;
+    procedure SetDoEvent(const Value: TDuiEvent);
+    procedure SetDoPaint(const Value: TDuiPaintEvent);
   public
     property Attribute[AName: string]: string write SetAttribute;
     property ControlFlags: UINT read GetControlFlags;
@@ -4284,6 +4292,22 @@ end;
 procedure CControlUI.SetContextMenuUsed(bMenuUsed: Boolean);
 begin
   Delphi_ControlUI_SetContextMenuUsed(Self, bMenuUsed);
+end;
+
+procedure CControlUI.SetDoEvent(const Value: TDuiEvent);
+begin
+  m_DelphiSelf := Self;
+  if Assigned(Value) then
+    m_DoEventCallback := @Value
+  else m_DoEventCallback := nil;
+end;
+
+procedure CControlUI.SetDoPaint(const Value: TDuiPaintEvent);
+begin
+  m_DelphiSelf := Self;
+  if Assigned(Value) then
+    m_DoPaintCallback := @Value
+  else m_DoPaintCallback := nil;
 end;
 
 function CControlUI.GetUserData: string;

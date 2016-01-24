@@ -28,6 +28,9 @@ type
 
   TFrameWindowWnd = class(TDuiWindowImplBase)
   private
+    Fchangeskinbtn: CControlUI;
+    procedure OnDoEvent(Sender: CControlUI; var AEvent: TEventTypeUI); cdecl;
+    procedure OnDoPaint(Sender: CControlUI; DC: HDC; const rcPaint: TRect); cdecl;
   protected
     procedure DoInitWindow; override;
     procedure DoNotify(var Msg: TNotifyUI); override;
@@ -74,6 +77,12 @@ procedure TFrameWindowWnd.DoInitWindow;
 begin
   inherited;
   Writeln(Format('mainpaint=%p', [Pointer(PaintManagerUI)]));
+  Fchangeskinbtn :=  FindControl('changeskinbtn');
+  if Fchangeskinbtn <> nil then
+  begin
+    Fchangeskinbtn.SetDoEvent(OnDoEvent);
+    Fchangeskinbtn.SetDoPaint(OnDoPaint);
+  end;
 end;
 
 procedure TFrameWindowWnd.DoNotify(var Msg: TNotifyUI);
@@ -118,6 +127,30 @@ begin
   end;
 end;
 
+
+procedure TFrameWindowWnd.OnDoEvent(Sender: CControlUI;
+  var AEvent: TEventTypeUI);
+begin
+  Writeln(Format('CControlUI.Name=%s', [Sender.Name]));
+  if AEvent = UIEVENT_MOUSEENTER then
+  begin
+    Writeln('mouse enter');
+    Sender.Text := '鼠标进入';
+  end
+  else if AEvent = UIEVENT_MOUSELEAVE then
+  begin
+    writeln('mouse leave');
+    Sender.Text := '鼠标离开';
+  end;
+ // Writeln('AEvent=', Integer(AEvent));
+end;
+
+procedure TFrameWindowWnd.OnDoPaint(Sender: CControlUI; DC: HDC;
+  const rcPaint: TRect);
+begin
+  Writeln('DoPaint');
+end;
+
 var
   FrameWindowWnd: TFrameWindowWnd;
 
@@ -126,6 +159,8 @@ begin
     Writeln(SizeOf(UILIB_RESOURCETYPE));
     Writeln(SizeOf(TResourceType));
     Writeln(SizeOf(TEventTypeUI));
+
+
     DuiApplication.Initialize;
     FrameWindowWnd := TFrameWindowWnd.Create;
     FrameWindowWnd.CenterWindow;

@@ -5,8 +5,25 @@
    private: // 替换为public
     CMarkupNode();
     CMarkupNode(CMarkup* pOwner, int iPos);
+3、修改UIControl.cpp和UIControl.h
+UIControl.h
+
+  在CEventSource OnPostPaint;语句下添加
+	LPVOID m_DelphiSelf;
+	LPVOID m_DoEventCallback;
+	LPVOID m_DoPaintCallback;
+
+UIControl.cpp
+  在void CControlUI::Event(TEventUI& event)下添加
+
+  if (m_DelphiSelf != NULL && m_DoEventCallback != NULL)
+    ((void(*)(LPVOID, CControlUI*, TEventUI&))m_DoEventCallback)(m_DelphiSelf, this, event);
+
+  在void CControlUI::Paint(HDC hDC, const RECT& rcPaint)后面添加
+  if (m_DelphiSelf != NULL && m_DoPaintCallback != NULL)
+    ((void(*)(LPVOID, CControlUI*, HDC, const RECT&))m_DoPaintCallback)(m_DelphiSelf, this, hDC, rcPaint);
 	
-3、根据需求选择是Unicode还是多字节集工程。
+4、根据需求选择是Unicode还是多字节集工程。
 
 
 --------------------duilib更新信息,以此来表示当前Duilib for Delphi是使用的哪个版本----------------------
