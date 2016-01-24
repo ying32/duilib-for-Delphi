@@ -29,7 +29,7 @@ type
   TFrameWindowWnd = class(TDuiWindowImplBase)
   private
     Fchangeskinbtn: CControlUI;
-    procedure OnDoEvent(Sender: CControlUI; var AEvent: TEventTypeUI); cdecl;
+    procedure OnDoEvent(Sender: CControlUI; var AEvent: TEventUI); cdecl;
     procedure OnDoPaint(Sender: CControlUI; DC: HDC; const rcPaint: TRect); cdecl;
   protected
     procedure DoInitWindow; override;
@@ -130,20 +130,20 @@ end;
 
 
 procedure TFrameWindowWnd.OnDoEvent(Sender: CControlUI;
-  var AEvent: TEventTypeUI);
+  var AEvent: TEventUI);
 begin
   Writeln(Format('CControlUI.Name=%s', [Sender.Name]));
-  if AEvent = UIEVENT_MOUSEENTER then
+  if AEvent.AType = UIEVENT_MOUSEENTER then
   begin
     Writeln('mouse enter');
     Sender.Text := '鼠标进入';
   end
-  else if AEvent = UIEVENT_MOUSELEAVE then
+  else if AEvent.AType = UIEVENT_MOUSELEAVE then
   begin
     writeln('mouse leave');
     Sender.Text := '鼠标离开';
   end;
-  Writeln('AEvent=', Integer(AEvent));
+  Writeln('AEvent=', Integer(AEvent.AType));
 end;
 
 procedure TFrameWindowWnd.OnDoPaint(Sender: CControlUI; DC: HDC;

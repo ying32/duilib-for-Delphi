@@ -196,9 +196,6 @@ type
   );
   TEventTypeUI = EVENTTYPE_UI;
 
-  TDuiEvent = procedure(Sender: CControlUI; var AEvent: TEventTypeUI) cdecl of object;
-  TDuiPaintEvent = procedure(Sender: CControlUI; DC: HDC; const rcPaint: TRect) cdecl of object;
-
   tagTEventUI = packed record
     AType: TEventTypeUI;
     pSender: CControlUI;
@@ -211,6 +208,10 @@ type
   end;
   PEventUI = ^TEventUI;
   TEventUI = tagTEventUI;
+
+  TDuiEvent = procedure(Sender: CControlUI; var AEvent: TEventUI) cdecl of object;
+  TDuiPaintEvent = procedure(Sender: CControlUI; DC: HDC; const rcPaint: TRect) cdecl of object;
+
 
   tagTFontInfo = packed record
     hFont: HFONT;
