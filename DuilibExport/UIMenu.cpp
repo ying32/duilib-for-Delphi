@@ -230,12 +230,13 @@ void CMenuWnd::OnFinalMessage(HWND hWnd)
 			}
 		}
 		m_pm.RemoveNotifier(this);
-		m_pm.ReapObjects(m_pm.GetRoot());
+		//m_pm.ReapObjects(m_pm.GetRoot());
 	
 		m_pOwner->m_pWindow = NULL;
 		m_pOwner->m_uButtonState &= ~ UISTATE_PUSHED;
 		m_pOwner->Invalidate();
 	}
+
     delete this;
 }
 
@@ -250,7 +251,7 @@ LRESULT CMenuWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 			::GetClientRect(*this, &rcClient);
 			::SetWindowPos(*this, NULL, rcClient.left, rcClient.top, rcClient.right - rcClient.left, \
 				rcClient.bottom - rcClient.top, SWP_FRAMECHANGED);
-			//printf("create\n");
+		 
 			m_pm.Init(m_hWnd);
 
 			// ying32修改，这里为支持带阴影的图片背景
@@ -269,6 +270,7 @@ LRESULT CMenuWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 			
 			if (pDefaultAttributes) 
 				m_pLayout->ApplyAttributeList(pDefaultAttributes);
+
 			// 这里去掉
 			//m_pLayout->SetBkColor(0xFFFFFFFF);
 			//m_pLayout->SetBorderColor(0xFF85E4FF);
@@ -283,6 +285,14 @@ LRESULT CMenuWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 			}
 			m_pm.AttachDialog(m_pLayout);
 			m_pm.AddNotifier(this);
+
+			//CButtonUI *pControl = static_cast<CButtonUI*>(m_pm.FindControl(_T("aabc")));
+			//if (pControl != NULL) {
+				//pControl->SetVisible(false);
+				//OutputDebugString(pControl->GetNormalImage());
+				//printf("find....%s\n", pControl->GetNormalImage());
+				//pControl->SetVisible(true);
+			//}
 
 			// Position the popup window in absolute space
 			RECT rcOwner = m_pOwner->GetPos();
@@ -524,7 +534,6 @@ void CMenuWnd::Notify(TNotifyUI& msg) {
 		//printf("Notify=%d\n", msg.dwTimestamp);
 		// 这里添加代码通知就好了
 		if (s_pMainPaint) {
-			// 只能使用异步方式传递,　不然就bug了
 			s_pMainPaint->SendNotify(msg.pSender, kmenuitemchildclick, 0, 0, true);
 			return;
 		}
@@ -542,7 +551,7 @@ m_pWindow(NULL)
 {
 	m_cxyFixed.cy = 25;
 	m_bMouseChildEnabled = true;
-	//SetMouseEnabled(false);
+
 	SetMouseChildEnabled(false);
 }
 
@@ -560,7 +569,7 @@ LPVOID CMenuElementUI::GetInterface(LPCTSTR pstrName)
     return CListContainerElementUI::GetInterface(pstrName);
 }
 
-void CMenuElementUI::DoPaint(HDC hDC, const RECT& rcPaint)
+void CMenuElementUI::DoPaint(HDC hDC, const RECT& rcPaint, CControlUI* pStopControl)
 {
     if( !::IntersectRect(&m_rcPaint, &rcPaint, &m_rcItem) ) return;
 	// ying32修改，当禁用时不画背景了
@@ -604,7 +613,6 @@ void CMenuElementUI::DrawItemText(HDC hDC, const RECT& rcItem)
         CRenderEngine::DrawText(hDC, m_pManager, rcText, m_sText, iTextColor, \
         pInfo->nFont, DT_SINGLELINE | pInfo->uTextStyle);
 }
-
 
 SIZE CMenuElementUI::EstimateSize(SIZE szAvailable)
 {
@@ -740,6 +748,10 @@ void CMenuElementUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue) {
 	    SetEnabled(false);
 	}	
 	CListContainerElementUI::SetAttribute(pstrName, pstrValue);
+}
+
+void CMenuElementUI::SetVisible(bool bVisible) {
+	CListContainerElementUI::SetVisible(bVisible);
 }
 
 bool CMenuElementUI::Activate()

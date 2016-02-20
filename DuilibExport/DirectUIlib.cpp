@@ -86,8 +86,13 @@ typedef LRESULT(*ResponseDefaultKeyEventCallBack)(LPVOID, WPARAM);
 
  
 class CDelphi_WindowImplBase : // 好吧，你赢了,我认输
-	                           public IListCallbackUI, //这个貌似只能放第一个，他取的时候就是取第一个的，要不就另行建立一个类
-							   public WindowImplBase
+	                           public IListCallbackUI //这个貌似只能放第一个，他取的时候就是取第一个的，要不就另行建立一个类
+							   ,public WindowImplBase
+							   /*, public CWindowWnd
+							   , public CNotifyPump
+							   , public INotifyUI
+							   , public IMessageFilterUI
+							   , public IDialogBuilderCallback*/
 {
 protected:
 	LPVOID m_Self;
@@ -107,6 +112,7 @@ protected:
 	CreateControlCallBack m_CreateControl;
 	GetItemTextCallBack m_GetItemText;
 	ResponseDefaultKeyEventCallBack m_ResponseDefaultKeyEvent;
+	//CPaintManagerUI m_PaintManager;
 public:
 	CDelphi_WindowImplBase() :
 		WindowImplBase(),
@@ -135,7 +141,6 @@ public:
 	}
 	void OnFinalMessage(HWND hWnd)
 	{
-		//WindowImplBase::OnFinalMessage(hWnd); // 另作处理，不然有些窗口不想关的结果资源被释放了
 		if (m_FinalMessage)
 			m_FinalMessage(m_Self, hWnd);
 	}
@@ -143,6 +148,7 @@ public:
 	{
 		if (m_Notify)
 			m_Notify(m_Self, msg);	
+		//return CNotifyPump::NotifyPump(msg);
 		return WindowImplBase::Notify(msg);
 	}
 	void OnClick(TNotifyUI& msg)
@@ -1081,12 +1087,16 @@ DIRECTUILIB_API CControlUI* Delphi_ControlUI_ApplyAttributeList(CControlUI* hand
     return handle->ApplyAttributeList(pstrList);
 }
 
+DIRECTUILIB_API CDuiString Delphi_ControlUI_GetAttributeList(CControlUI* handle) {
+	return handle->GetAttributeList();
+}
+
 DIRECTUILIB_API void Delphi_ControlUI_EstimateSize(CControlUI* handle ,SIZE szAvailable, SIZE& Result) {
     Result = handle->EstimateSize(szAvailable);
 }
 
-DIRECTUILIB_API void Delphi_ControlUI_DoPaint(CControlUI* handle ,HDC hDC, RECT& rcPaint) {
-    handle->DoPaint(hDC, rcPaint);
+DIRECTUILIB_API void Delphi_ControlUI_DoPaint(CControlUI* handle, HDC hDC, RECT& rcPaint, CControlUI* pStopControl) {
+	handle->DoPaint(hDC, rcPaint, pStopControl);
 }
 
 DIRECTUILIB_API void Delphi_ControlUI_PaintBkColor(CControlUI* handle ,HDC hDC) {
@@ -1324,6 +1334,10 @@ DIRECTUILIB_API void Delphi_PaintManagerUI_Invalidate_02(CPaintManagerUI* handle
 
 DIRECTUILIB_API HDC Delphi_PaintManagerUI_GetPaintDC(CPaintManagerUI* handle) {
     return handle->GetPaintDC();
+}
+
+DIRECTUILIB_API HBITMAP Delphi_PaintManagerUI_GetPaintOffscreenBitmap(CPaintManagerUI* handle) {
+	return handle->GetPaintOffscreenBitmap();
 }
 
 DIRECTUILIB_API HWND Delphi_PaintManagerUI_GetPaintWindow(CPaintManagerUI* handle) {
@@ -1654,6 +1668,10 @@ DIRECTUILIB_API bool Delphi_PaintManagerUI_InitControls(CPaintManagerUI* handle 
     return handle->InitControls(pControl, pParent);
 }
 
+DIRECTUILIB_API bool Delphi_PaintManagerUI_RenameControl(CPaintManagerUI* handle, CControlUI* pControl, LPCTSTR pstrName) {
+	return handle->RenameControl(pControl, pstrName);
+}
+
 DIRECTUILIB_API void Delphi_PaintManagerUI_ReapObjects(CPaintManagerUI* handle ,CControlUI* pControl) {
     handle->ReapObjects(pControl);
 }
@@ -1768,6 +1786,10 @@ DIRECTUILIB_API bool Delphi_PaintManagerUI_SetPostPaintIndex(CPaintManagerUI* ha
 
 DIRECTUILIB_API int Delphi_PaintManagerUI_GetNativeWindowCount(CPaintManagerUI* handle) {
 	return handle->GetNativeWindowCount();
+}
+
+DIRECTUILIB_API void Delphi_PaintManagerUI_GetNativeWindowRect(CPaintManagerUI* handle, HWND hChildWnd, RECT& Result) {
+	Result = handle->GetNativeWindowRect(hChildWnd);
 }
 
 DIRECTUILIB_API bool Delphi_PaintManagerUI_AddNativeWindow(CPaintManagerUI* handle, CControlUI* pControl, HWND hChildWnd) {
@@ -2013,6 +2035,22 @@ DIRECTUILIB_API void Delphi_ContainerUI_SetChildPadding(CContainerUI* handle ,in
     handle->SetChildPadding(iPadding);
 }
 
+DIRECTUILIB_API UINT Delphi_ContainerUI_GetChildAlign(CContainerUI* handle) {
+	return handle->GetChildAlign();
+}
+
+DIRECTUILIB_API void Delphi_ContainerUI_SetChildAlign(CContainerUI* handle, UINT iAlign) {
+	handle->SetChildAlign(iAlign);
+}
+
+DIRECTUILIB_API UINT Delphi_ContainerUI_GetChildVAlign(CContainerUI* handle) {
+	return handle->GetChildVAlign();
+}
+
+DIRECTUILIB_API void Delphi_ContainerUI_SetChildVAlign(CContainerUI* handle, UINT iVAlign) {
+	handle->SetChildVAlign(iVAlign);
+}
+
 DIRECTUILIB_API bool Delphi_ContainerUI_IsAutoDestroy(CContainerUI* handle) {
     return handle->IsAutoDestroy();
 }
@@ -2053,8 +2091,8 @@ DIRECTUILIB_API void Delphi_ContainerUI_Move(CContainerUI* handle ,SIZE szOffset
     handle->Move(szOffset, bNeedInvalidate);
 }
 
-DIRECTUILIB_API void Delphi_ContainerUI_DoPaint(CContainerUI* handle ,HDC hDC, RECT& rcPaint) {
-    handle->DoPaint(hDC, rcPaint);
+DIRECTUILIB_API void Delphi_ContainerUI_DoPaint(CContainerUI* handle, HDC hDC, RECT& rcPaint, CControlUI* pStopControl) {
+	handle->DoPaint(hDC, rcPaint, pStopControl);
 }
 
 DIRECTUILIB_API void Delphi_ContainerUI_SetAttribute(CContainerUI* handle ,LPCTSTR pstrName, LPCTSTR pstrValue) {
@@ -2634,6 +2672,14 @@ DIRECTUILIB_API UINT Delphi_LabelUI_GetTextStyle(CLabelUI* handle) {
     return handle->GetTextStyle();
 }
 
+DIRECTUILIB_API bool Delphi_LabelUI_IsMultiLine(CLabelUI* handle) {
+	return handle->IsMultiLine();
+}
+
+DIRECTUILIB_API void Delphi_LabelUI_SetMultiLine(CLabelUI* handle, bool bMultiLine) {
+	handle->SetMultiLine(bMultiLine);
+}
+
 DIRECTUILIB_API void Delphi_LabelUI_SetTextColor(CLabelUI* handle ,DWORD dwTextColor) {
     handle->SetTextColor(dwTextColor);
 }
@@ -2932,7 +2978,7 @@ DIRECTUILIB_API void Delphi_ButtonUI_SetFadeAlphaDelta(CButtonUI* handle, BYTE u
 	handle->SetFadeAlphaDelta(uDelta);
 }
 
-DIRECTUILIB_API bool Delphi_ButtonUI_GetFadeAlphaDelta(CButtonUI* handle) {
+DIRECTUILIB_API BYTE Delphi_ButtonUI_GetFadeAlphaDelta(CButtonUI* handle) {
 	return handle->GetFadeAlphaDelta();
 }
 
@@ -3142,8 +3188,8 @@ DIRECTUILIB_API void Delphi_ListContainerElementUI_SetAttribute(CListContainerEl
     handle->SetAttribute(pstrName, pstrValue);
 }
 
-DIRECTUILIB_API void Delphi_ListContainerElementUI_DoPaint(CListContainerElementUI* handle ,HDC hDC, RECT& rcPaint) {
-    handle->DoPaint(hDC, rcPaint);
+DIRECTUILIB_API void Delphi_ListContainerElementUI_DoPaint(CListContainerElementUI* handle, HDC hDC, RECT& rcPaint, CControlUI* pStopControl) {
+	handle->DoPaint(hDC, rcPaint, pStopControl);
 }
 
 DIRECTUILIB_API void Delphi_ListContainerElementUI_DrawItemText(CListContainerElementUI* handle ,HDC hDC, RECT& rcItem) {
@@ -3464,8 +3510,8 @@ DIRECTUILIB_API void Delphi_ComboUI_SetAttribute(CComboUI* handle ,LPCTSTR pstrN
     handle->SetAttribute(pstrName, pstrValue);
 }
 
-DIRECTUILIB_API void Delphi_ComboUI_DoPaint(CComboUI* handle ,HDC hDC, RECT& rcPaint) {
-    handle->DoPaint(hDC, rcPaint);
+DIRECTUILIB_API void Delphi_ComboUI_DoPaint(CComboUI* handle, HDC hDC, RECT& rcPaint, CControlUI* pStopControl) {
+	handle->DoPaint(hDC, rcPaint, pStopControl);
 }
 
 DIRECTUILIB_API void Delphi_ComboUI_PaintText(CComboUI* handle ,HDC hDC) {
@@ -3590,6 +3636,14 @@ DIRECTUILIB_API void Delphi_EditUI_SetPasswordChar(CEditUI* handle ,TCHAR cPassw
 
 DIRECTUILIB_API TCHAR Delphi_EditUI_GetPasswordChar(CEditUI* handle) {
     return handle->GetPasswordChar();
+}
+
+DIRECTUILIB_API bool Delphi_EditUI_IsAutoSelAll(CEditUI* handle) {
+	return handle->IsAutoSelAll();
+}
+
+DIRECTUILIB_API void Delphi_EditUI_SetAutoSelAll(CEditUI* handle, bool bAutoSelAll) {
+	handle->SetAutoSelAll(bAutoSelAll);
 }
 
 DIRECTUILIB_API void Delphi_EditUI_SetNumberOnly(CEditUI* handle ,bool bNumberOnly) {
@@ -3720,14 +3774,6 @@ DIRECTUILIB_API bool Delphi_ProgressUI_IsHorizontal(CProgressUI* handle) {
 
 DIRECTUILIB_API void Delphi_ProgressUI_SetHorizontal(CProgressUI* handle ,bool bHorizontal) {
     handle->SetHorizontal(bHorizontal);
-}
-
-DIRECTUILIB_API bool Delphi_ProgressUI_IsStretchForeImage(CProgressUI* handle) {
-    return handle->IsStretchForeImage();
-}
-
-DIRECTUILIB_API void Delphi_ProgressUI_SetStretchForeImage(CProgressUI* handle ,bool bStretchForeImage) {
-    handle->SetStretchForeImage(bStretchForeImage);
 }
 
 DIRECTUILIB_API int Delphi_ProgressUI_GetMinValue(CProgressUI* handle) {
@@ -4176,8 +4222,8 @@ DIRECTUILIB_API void Delphi_RichEditUI_EstimateSize(CRichEditUI* handle ,SIZE sz
     Result = handle->EstimateSize(szAvailable);
 }
 
-DIRECTUILIB_API void Delphi_ControlUI_Paint(CControlUI* handle, HDC hDC, RECT& rcPaint) {
-	handle->Paint(hDC, rcPaint);
+DIRECTUILIB_API void Delphi_ControlUI_Paint(CControlUI* handle, HDC hDC, RECT& rcPaint, CControlUI* pStopControl) {
+	handle->Paint(hDC, rcPaint, pStopControl);
 }
 
 DIRECTUILIB_API void Delphi_RichEditUI_SetPos(CRichEditUI* handle ,RECT rc, bool bNeedInvalidate) {
@@ -4192,8 +4238,8 @@ DIRECTUILIB_API void Delphi_RichEditUI_DoEvent(CRichEditUI* handle ,TEventUI& ev
     handle->DoEvent(event);
 }
 
-DIRECTUILIB_API void Delphi_RichEditUI_DoPaint(CRichEditUI* handle ,HDC hDC, RECT& rcPaint) {
-    handle->DoPaint(hDC, rcPaint);
+DIRECTUILIB_API void Delphi_RichEditUI_DoPaint(CRichEditUI* handle, HDC hDC, RECT& rcPaint, CControlUI* pStopControl) {
+	handle->DoPaint(hDC, rcPaint, pStopControl);
 }
 
 DIRECTUILIB_API void Delphi_RichEditUI_SetAttribute(CRichEditUI* handle ,LPCTSTR pstrName, LPCTSTR pstrValue) {
@@ -4482,8 +4528,8 @@ DIRECTUILIB_API void Delphi_ScrollBarUI_SetAttribute(CScrollBarUI* handle ,LPCTS
     handle->SetAttribute(pstrName, pstrValue);
 }
 
-DIRECTUILIB_API void Delphi_ScrollBarUI_DoPaint(CScrollBarUI* handle ,HDC hDC, RECT& rcPaint) {
-    handle->DoPaint(hDC, rcPaint);
+DIRECTUILIB_API void Delphi_ScrollBarUI_DoPaint(CScrollBarUI* handle, HDC hDC, RECT& rcPaint, CControlUI* pStopControl) {
+	handle->DoPaint(hDC, rcPaint, pStopControl);
 }
 
 DIRECTUILIB_API void Delphi_ScrollBarUI_PaintBk(CScrollBarUI* handle ,HDC hDC) {
@@ -4546,6 +4592,14 @@ DIRECTUILIB_API void Delphi_SliderUI_SetThumbSize(CSliderUI* handle ,SIZE szXY) 
 
 DIRECTUILIB_API void Delphi_SliderUI_GetThumbRect(CSliderUI* handle, RECT& Result) {
     Result = handle->GetThumbRect();
+}
+
+DIRECTUILIB_API bool Delphi_SliderUI_IsImmMode(CSliderUI* handle) {
+	return handle->IsImmMode();
+}
+
+DIRECTUILIB_API void Delphi_SliderUI_SetImmMode(CSliderUI* handle, bool bImmMode) {
+	handle->SetImmMode(bImmMode);
 }
 
 DIRECTUILIB_API LPCTSTR Delphi_SliderUI_GetThumbImage(CSliderUI* handle) {
@@ -5107,8 +5161,8 @@ DIRECTUILIB_API void Delphi_ActiveXUI_Move(CActiveXUI* handle ,SIZE szOffset, bo
     handle->Move(szOffset, bNeedInvalidate);
 }
 
-DIRECTUILIB_API void Delphi_ActiveXUI_DoPaint(CActiveXUI* handle ,HDC hDC, RECT& rcPaint) {
-    handle->DoPaint(hDC, rcPaint);
+DIRECTUILIB_API void Delphi_ActiveXUI_DoPaint(CActiveXUI* handle, HDC hDC, RECT& rcPaint, CControlUI* pStopControl) {
+	handle->DoPaint(hDC, rcPaint, pStopControl);
 }
 
 DIRECTUILIB_API void Delphi_ActiveXUI_SetAttribute(CActiveXUI* handle ,LPCTSTR pstrName, LPCTSTR pstrValue) {
@@ -5266,12 +5320,20 @@ DIRECTUILIB_API void Delphi_RenderEngine_FreeImage(TImageInfo* bitmap, bool bDel
     CRenderEngine::FreeImage(bitmap, bDelete);
 }
 
-DIRECTUILIB_API void Delphi_RenderEngine_DrawImage_01(HDC hDC, HBITMAP hBitmap, RECT& rc, RECT& rcPaint, RECT& rcBmpPart, RECT& rcCorners, bool alphaChannel, BYTE uFade, bool hole, bool xtiled, bool ytiled) {
-    CRenderEngine::DrawImage(hDC, hBitmap, rc, rcPaint, rcBmpPart, rcCorners, alphaChannel, uFade, hole, xtiled, ytiled);
+DIRECTUILIB_API void Delphi_RenderEngine_DrawImage_01(HDC hDC, HBITMAP hBitmap, RECT& rc, RECT& rcPaint, RECT& rcBmpPart, RECT& rcScale9, bool alphaChannel, BYTE uFade, bool hole, bool xtiled, bool ytiled) {
+	CRenderEngine::DrawImage(hDC, hBitmap, rc, rcPaint, rcBmpPart, rcScale9, alphaChannel, uFade, hole, xtiled, ytiled);
 }
 
 DIRECTUILIB_API bool Delphi_RenderEngine_DrawImage_02(HDC hDC, CPaintManagerUI* pManager, RECT& rcItem, RECT& rcPaint, TDrawInfo& drawInfo) {
     return CRenderEngine::DrawImage(hDC, pManager, rcItem, rcPaint, drawInfo);
+}
+
+DIRECTUILIB_API HBITMAP Delphi_RenderEngine_GenerateBitmap_01(CPaintManagerUI* pManager, RECT rc, CControlUI* pStopControl, DWORD dwFilterColor) {
+	return CRenderEngine::GenerateBitmap(pManager, rc, pStopControl, dwFilterColor);
+}
+
+DIRECTUILIB_API HBITMAP Delphi_RenderEngine_GenerateBitmap_02(CPaintManagerUI* pManager, CControlUI* pControl, RECT rc, DWORD dwFilterColor) {
+	return CRenderEngine::GenerateBitmap(pManager, pControl, rc, dwFilterColor);
 }
 
 DIRECTUILIB_API void Delphi_RenderEngine_DrawColor(HDC hDC, RECT& rc, DWORD color) {
@@ -5419,8 +5481,8 @@ DIRECTUILIB_API void Delphi_ListLabelElementUI_EstimateSize(CListLabelElementUI*
 	Result = handle->EstimateSize(szAvailable);
 }
 
-DIRECTUILIB_API void Delphi_ListLabelElementUI_DoPaint(CListLabelElementUI* handle, HDC hDC, RECT& rcPaint) {
-	handle->DoPaint(hDC, rcPaint);
+DIRECTUILIB_API void Delphi_ListLabelElementUI_DoPaint(CListLabelElementUI* handle, HDC hDC, RECT& rcPaint, CControlUI* pStopControl) {
+	handle->DoPaint(hDC, rcPaint, pStopControl);
 }
 
 DIRECTUILIB_API void Delphi_ListLabelElementUI_DrawItemText(CListLabelElementUI* handle, HDC hDC, RECT& rcItem) {
@@ -5500,8 +5562,8 @@ DIRECTUILIB_API void Delphi_GifAnimUI_DoInit(CGifAnimUI* handle) {
 	handle->DoInit();
 }
 
-DIRECTUILIB_API void Delphi_GifAnimUI_DoPaint(CGifAnimUI* handle, HDC hDC, RECT& rcPaint) {
-	handle->DoPaint(hDC, rcPaint);
+DIRECTUILIB_API void Delphi_GifAnimUI_DoPaint(CGifAnimUI* handle, HDC hDC, RECT& rcPaint, CControlUI* pStopControl) {
+	handle->DoPaint(hDC, rcPaint, pStopControl);
 }
 
 DIRECTUILIB_API void Delphi_GifAnimUI_DoEvent(CGifAnimUI* handle, TEventUI& event) {
@@ -5608,20 +5670,36 @@ DIRECTUILIB_API void Delphi_TileLayoutUI_SetPos(CTileLayoutUI* handle, RECT rc, 
 	handle->SetPos(rc, bNeedInvalidate);
 }
 
+DIRECTUILIB_API int Delphi_TileLayoutUI_GetFixedColumns(CTileLayoutUI* handle) {
+	return handle->GetFixedColumns();
+}
+
+DIRECTUILIB_API void Delphi_TileLayoutUI_SetFixedColumns(CTileLayoutUI* handle, int iColums) {
+	handle->SetFixedColumns(iColums);
+}
+
+DIRECTUILIB_API int Delphi_TileLayoutUI_GetChildVPadding(CTileLayoutUI* handle) {
+	return handle->GetChildVPadding();
+}
+
+DIRECTUILIB_API void Delphi_TileLayoutUI_SetChildVPadding(CTileLayoutUI* handle, int iPadding) {
+	handle->SetChildVPadding(iPadding);
+}
+
 DIRECTUILIB_API void Delphi_TileLayoutUI_GetItemSize(CTileLayoutUI* handle, SIZE& Result) {
 	Result = handle->GetItemSize();
 }
 
-DIRECTUILIB_API void Delphi_TileLayoutUI_SetItemSize(CTileLayoutUI* handle, SIZE szItem) {
-	handle->SetItemSize(szItem);
+DIRECTUILIB_API void Delphi_TileLayoutUI_SetItemSize(CTileLayoutUI* handle, SIZE szSize) {
+	handle->SetItemSize(szSize);
 }
 
 DIRECTUILIB_API int Delphi_TileLayoutUI_GetColumns(CTileLayoutUI* handle) {
 	return handle->GetColumns();
 }
 
-DIRECTUILIB_API void Delphi_TileLayoutUI_SetColumns(CTileLayoutUI* handle, int nCols) {
-	handle->SetColumns(nCols);
+DIRECTUILIB_API int Delphi_TileLayoutUI_GetRows(CTileLayoutUI* handle) {
+	return handle->GetRows();
 }
 
 DIRECTUILIB_API void Delphi_TileLayoutUI_SetAttribute(CTileLayoutUI* handle, LPCTSTR pstrName, LPCTSTR pstrValue) {
@@ -5797,8 +5875,9 @@ DIRECTUILIB_API LPVOID Delphi_MenuElementUI_GetInterface(CMenuElementUI* handle,
 	return handle->GetInterface(pstrName);
 }
 
-DIRECTUILIB_API void Delphi_MenuElementUI_DoPaint(CMenuElementUI* handle, HDC hDC, RECT& rcPaint) {
-	handle->DoPaint(hDC, rcPaint);
+// void DoPaint();
+DIRECTUILIB_API void Delphi_MenuElementUI_DoPaint(CMenuElementUI* handle, HDC hDC, const RECT& rcPaint, CControlUI* pStopControl) {
+	handle->DoPaint(hDC, rcPaint, pStopControl);
 }
 
 DIRECTUILIB_API void Delphi_MenuElementUI_DrawItemText(CMenuElementUI* handle, HDC hDC, RECT& rcItem) {

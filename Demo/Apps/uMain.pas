@@ -856,7 +856,7 @@ begin
     // 清除之前的控件
     FTileLayout.RemoveAll;
     if FTileLayout.GetColumns <> 4 then
-      FTileLayout.SetColumns(4);
+      FTileLayout.FixedColumns := 4;
 
     LStartIndex := AIndex * PAGE_MAX_CHIND;
     LEndIndex := Min((AIndex + 1) * PAGE_MAX_CHIND, FApps.Count);

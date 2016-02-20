@@ -141,7 +141,7 @@ type
     procedure SetPos(rc: TRect; bNeedInvalidate: Boolean = True);
     procedure Move(szOffset: TSize; bNeedInvalidate: Boolean = True);
     procedure DoEvent(var event: TEventUI);
-    procedure DoPaint(hDC: HDC; var rcPaint: TRect);
+    procedure DoPaint(hDC: HDC; var rcPaint: TRect; pStopControl: CControlUI);
     procedure SetAttribute(pstrName: string; pstrValue: string);
   public
     property DefaultCharFormat: TCharFormat2 read _GetDefaultCharFormat write _SetDefaultCharFormat;
@@ -272,7 +272,7 @@ procedure Delphi_RichEditUI_EstimateSize(Handle: CRichEditUI; szAvailable: TSize
 procedure Delphi_RichEditUI_SetPos(Handle: CRichEditUI; rc: TRect; bNeedInvalidate: Boolean); cdecl;
 procedure Delphi_RichEditUI_Move(Handle: CRichEditUI; szOffset: TSize; bNeedInvalidate: Boolean); cdecl;
 procedure Delphi_RichEditUI_DoEvent(Handle: CRichEditUI; var event: TEventUI); cdecl;
-procedure Delphi_RichEditUI_DoPaint(Handle: CRichEditUI; hDC: HDC; var rcPaint: TRect); cdecl;
+procedure Delphi_RichEditUI_DoPaint(Handle: CRichEditUI; hDC: HDC; var rcPaint: TRect; pStopControl: CControlUI); cdecl;
 procedure Delphi_RichEditUI_SetAttribute(Handle: CRichEditUI; pstrName: LPCTSTR; pstrValue: LPCTSTR); cdecl;
 
 
@@ -874,9 +874,9 @@ begin
   Delphi_RichEditUI_DoEvent(Self, event);
 end;
 
-procedure CRichEditUI.DoPaint(hDC: HDC; var rcPaint: TRect);
+procedure CRichEditUI.DoPaint(hDC: HDC; var rcPaint: TRect; pStopControl: CControlUI);
 begin
-  Delphi_RichEditUI_DoPaint(Self, hDC, rcPaint);
+  Delphi_RichEditUI_DoPaint(Self, hDC, rcPaint, pStopControl);
 end;
 
 procedure CRichEditUI.SetAttribute(pstrName: string; pstrValue: string);

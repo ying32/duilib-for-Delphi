@@ -46,7 +46,7 @@ type
     function GetControl(const iid: TIID; {ppRet: PPointer}out ppRet): HRESULT;
     procedure SetPos(rc: TRect; bNeedInvalidate: Boolean = True);
     procedure Move(szOffset: TSize; bNeedInvalidate: Boolean = True);
-    procedure DoPaint(hDC: HDC; var rcPaint: TRect);
+    procedure DoPaint(hDC: HDC; var rcPaint: TRect; pStopControl: CControlUI);
     procedure SetAttribute(pstrName: string; pstrValue: string);
   public
     property Clisd: TCLSID read GetClisd;
@@ -78,7 +78,7 @@ procedure Delphi_ActiveXUI_SetVisible(Handle: CActiveXUI; bVisible: Boolean); cd
 procedure Delphi_ActiveXUI_SetInternVisible(Handle: CActiveXUI; bVisible: Boolean); cdecl;
 procedure Delphi_ActiveXUI_SetPos(Handle: CActiveXUI; rc: TRect; bNeedInvalidate: Boolean); cdecl;
 procedure Delphi_ActiveXUI_Move(Handle: CActiveXUI; szOffset: TSize; bNeedInvalidate: Boolean); cdecl;
-procedure Delphi_ActiveXUI_DoPaint(Handle: CActiveXUI; hDC: HDC; var rcPaint: TRect); cdecl;
+procedure Delphi_ActiveXUI_DoPaint(Handle: CActiveXUI; hDC: HDC; var rcPaint: TRect; pStopControl: CControlUI); cdecl;
 procedure Delphi_ActiveXUI_SetAttribute(Handle: CActiveXUI; pstrName: LPCTSTR; pstrValue: LPCTSTR); cdecl;
 
 implementation
@@ -190,9 +190,9 @@ begin
   Delphi_ActiveXUI_Move(Self, szOffset, bNeedInvalidate);
 end;
 
-procedure CActiveXUI.DoPaint(hDC: HDC; var rcPaint: TRect);
+procedure CActiveXUI.DoPaint(hDC: HDC; var rcPaint: TRect; pStopControl: CControlUI);
 begin
-  Delphi_ActiveXUI_DoPaint(Self, hDC, rcPaint);
+  Delphi_ActiveXUI_DoPaint(Self, hDC, rcPaint, pStopControl);
 end;
 
 procedure CActiveXUI.SetAttribute(pstrName: string; pstrValue: string);

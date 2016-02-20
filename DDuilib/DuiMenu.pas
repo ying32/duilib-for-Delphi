@@ -86,7 +86,7 @@ type
     procedure Free;
     function GetClass: string;
     function GetInterface(pstrName: string): Pointer;
-    procedure DoPaint(hDC: HDC; var rcPaint: TRect);
+    procedure DoPaint(hDC: HDC; var rcPaint: TRect; pStopControl: CControlUI);
     procedure DrawItemText(hDC: HDC; var rcItem: TRect);
     function EstimateSize(szAvailable: TSize): TSize;
     function Activate: Boolean;
@@ -130,7 +130,7 @@ function Delphi_MenuElementUI_CppCreate: CMenuElementUI; cdecl;
 procedure Delphi_MenuElementUI_CppDestroy(Handle: CMenuElementUI); cdecl;
 function Delphi_MenuElementUI_GetClass(Handle: CMenuElementUI): LPCTSTR; cdecl;
 function Delphi_MenuElementUI_GetInterface(Handle: CMenuElementUI; pstrName: LPCTSTR): Pointer; cdecl;
-procedure Delphi_MenuElementUI_DoPaint(Handle: CMenuElementUI; hDC: HDC; var rcPaint: TRect); cdecl;
+procedure Delphi_MenuElementUI_DoPaint(Handle: CMenuElementUI; hDC: HDC; var rcPaint: TRect; pStopControl: CControlUI); cdecl;
 procedure Delphi_MenuElementUI_DrawItemText(Handle: CMenuElementUI; hDC: HDC; var rcItem: TRect); cdecl;
 procedure Delphi_MenuElementUI_EstimateSize(Handle: CMenuElementUI; szAvailable: TSize; var Result: TSize); cdecl;
 function Delphi_MenuElementUI_Activate(Handle: CMenuElementUI): Boolean; cdecl;
@@ -293,9 +293,9 @@ begin
   Result := Delphi_MenuElementUI_GetInterface(Self, LPCTSTR(pstrName));
 end;
 
-procedure CMenuElementUI.DoPaint(hDC: HDC; var rcPaint: TRect);
+procedure CMenuElementUI.DoPaint(hDC: HDC; var rcPaint: TRect; pStopControl: CControlUI);
 begin
-  Delphi_MenuElementUI_DoPaint(Self, hDC, rcPaint);
+  Delphi_MenuElementUI_DoPaint(Self, hDC, rcPaint, pStopControl);
 end;
 
 procedure CMenuElementUI.DrawItemText(hDC: HDC; var rcItem: TRect);

@@ -107,7 +107,7 @@ public:
     LPCTSTR GetClass() const;
     LPVOID GetInterface(LPCTSTR pstrName);
 
-    void DoPaint(HDC hDC, const RECT& rcPaint);
+	void DoPaint(HDC hDC, const RECT& rcPaint, CControlUI* pStopControl);
 
 	void DrawItemText(HDC hDC, const RECT& rcItem);
 
@@ -117,6 +117,7 @@ public:
 
 	void DoEvent(TEventUI& event);
 	void SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue);
+	void SetVisible(bool bVisible = true);
 
 	CMenuWnd* GetMenuWnd();
 

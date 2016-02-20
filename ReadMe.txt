@@ -28,21 +28,26 @@ UIControl.cpp
 	((void(*)(LPVOID, CControlUI*, TEventUI&))m_DoEventCallback.Code)(m_DoEventCallback.Data, this, event);
 
   在void CControlUI::Paint(HDC hDC, const RECT& rcPaint)后面添加
-  if (m_DelphiSelf != NULL && m_DoPaintCallback != NULL)
-    ((void(*)(LPVOID, CControlUI*, HDC, const RECT&))m_DoPaintCallback)(m_DelphiSelf, this, hDC, rcPaint);
+	if (m_DoPaintCallback.Data != NULL && m_DoPaintCallback.Code != NULL)
+		((void(*)(LPVOID, CControlUI*, HDC, const RECT&))m_DoPaintCallback.Code)(m_DoPaintCallback.Data, this, hDC, rcPaint);
+
+4、在UIlib.h中加入#include "DuilibExport/UIMenu.h"
 	
-4、根据需求选择是Unicode还是多字节集工程。
+5、根据需求选择是Unicode还是多字节集工程。
 
 
 --------------------duilib更新信息,以此来表示当前Duilib for Delphi是使用的哪个版本----------------------
-
-版本: 3407f2391225c4798f473c4fb2ac89d4453ecd18
+版本: 04377abca3858e65def0d094d3476879cfef2123
 作者: wangchyz <wangchyz@gmail.com>
-日期: 2015/12/21 15:43:35
+日期: 2016/2/19 10:07:45
 信息:
-修正qqdemo的资源
+Merge pull request #65 from wgy0323/master
+
+Update UIGifAnim.cpp 修改控件支持显示普通图片
 ----
-已修改: QQDemo/res/QQRes.zip
+已修改: DuiLib/Control/UIGifAnim.cpp
+
+
 
 
 
