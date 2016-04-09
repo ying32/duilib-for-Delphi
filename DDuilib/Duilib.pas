@@ -4544,7 +4544,11 @@ end;
 
 function CControlUI.GetAttributeList: string;
 begin
+{$IFNDEF UseLowVer}
   Result := Delphi_ControlUI_GetAttributeList(Self);
+{$ELSE}
+  Result := Delphi_ControlUI_GetAttributeList(Self).m_pstr;
+{$ENDIF}
 end;
 
 function CControlUI.EstimateSize(szAvailable: TSize): TSize;
