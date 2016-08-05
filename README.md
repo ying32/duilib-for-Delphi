@@ -103,8 +103,7 @@ end.
 
 #### **自行编译** 
 正常情况下本人已经提供了编译好后的各个版本duilib二进制，存放在**Duilib\bin**目录下。
-自行编译时准备好所需的外，另需查看根目录中**ReadMe.txt**来确定哪些需要修改和include到duilib工程中的。  
-
+现已提供本人修改过后的duilib源码，工程是用vs2013编译的
 
 #### **目录详情** 
 > 
@@ -121,6 +120,8 @@ end.
    * 存放原[duilib](https://github.com/duilib/duilib)工程目录，这里不提供原[duilib](https://github.com/duilib/duilib)的源码，请自行下载。
    * 4.1、 bin
       * 存放编译后的二进制及图片和xml资源，里面有的包含原duilib的资源文件  
+   * 4.2、 Duilib
+      * 存放duilib c++工程源码
 >	  
 * 5、ThirdParty
    * 存放一些第三方的库或者二进制文件
