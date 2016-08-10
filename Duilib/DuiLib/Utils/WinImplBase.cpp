@@ -53,7 +53,7 @@ CDuiString WindowImplBase::GetZIPFileName() const
 
 LPCTSTR WindowImplBase::GetResourceID() const
 {
-	return _T("");
+	return _T("DefaultSkin");
 }
 
 CControlUI* WindowImplBase::CreateControl(LPCTSTR pstrClass)
