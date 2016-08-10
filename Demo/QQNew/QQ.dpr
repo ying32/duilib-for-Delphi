@@ -4,6 +4,8 @@ program QQ;
 
 {$R *.res}
 
+{$R *.dres}
+
 uses
   Windows,
   Messages,
@@ -12,7 +14,6 @@ uses
   Duilib,
   DuiConst,
   DuiWindowImplBase;
-
 
 type
 
@@ -32,7 +33,9 @@ type
 
 constructor TLoginUI.Create;
 begin
-  inherited Create('login.xml', '');
+  // 从资源zip中加载，由于以前忘了一个东西，结果现在就修改了duilib直接默认
+  // 资源名 DefaultSkin ，按要求类型为 ZIPRes
+  inherited Create('login.xml', '', UILIB_ZIPRESOURCE);
   CreateWindow(0, '标题', UI_WNDSTYLE_EX_DIALOG, WS_EX_WINDOWEDGE);
 end;
 
@@ -63,8 +66,8 @@ var
 begin
   try
     TDuiApplication.Initialize;
-    TDuiApplication.SetResourcePath(ExtractFilePath(ParamStr(0)) + 'skin\QQNewRes\');
-    // zip超慢，暂不知道为什么
+    //TDuiApplication.SetResourcePath(ExtractFilePath(ParamStr(0)) + 'skin\QQNewRes\');
+    // 磁盘zip超慢，暂不知道为什么
     //TDuiApplication.SetResourceZip('QQNewRes.zip');
     LoginUI := TLoginUI.Create;
     LoginUI.CenterWindow;
