@@ -90,7 +90,6 @@
         </DelphiCompile>
         <DCCReference Include="ufrmVclTest.pas">
             <Form>Form1</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\..\DDuilib\DDuilibComponent.pas"/>
         <BuildConfiguration Include="Release">

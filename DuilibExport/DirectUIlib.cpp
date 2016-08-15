@@ -100,6 +100,7 @@ protected:
 	LPCTSTR m_SkinFile;
 	LPCTSTR m_SkinFolder;
 	LPCTSTR m_ZipFileName;
+	LPCTSTR m_ResSkin;
 	UINT m_GetClassStyle;
 	UILIB_RESOURCETYPE m_RType;
 	InitWindowCallBack m_InitWindow;
@@ -130,6 +131,7 @@ public:
 		m_MessageHandler(NULL),
 		m_HandleCustomMessage(NULL),
 		m_GetItemText(NULL),
+		m_ResSkin(L"DefaultSkin"),
 		m_ResponseDefaultKeyEvent(NULL){
 		m_GetClassStyle = WindowImplBase::GetClassStyle();
 	}
@@ -187,6 +189,11 @@ public:
 			return CPaintManagerUI::GetResourceZip();
 		return m_ZipFileName; 
 	};
+	LPCTSTR GetResourceID() const { 
+		if (_tcsicmp(m_ZipFileName, _T("")) == 0)
+			return WindowImplBase::GetResourceID();
+		return m_ResSkin;
+	}
 	UILIB_RESOURCETYPE GetResourceType() const { return m_RType; };
 	UINT GetClassStyle() const { return m_GetClassStyle; };
 	LRESULT MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -239,6 +246,7 @@ public:
 	void SetSkinFile(LPCTSTR SkinFile) { m_SkinFile = SkinFile; }
 	void SetSkinFolder(LPCTSTR SkinFolder) { m_SkinFolder = SkinFolder; }
 	void SetZipFileName(LPCTSTR ZipFileName) { m_ZipFileName = ZipFileName; }
+	void SetResSkin(LPCTSTR ResSkin) { m_ResSkin = ResSkin; };
 	void SetResourceType(UILIB_RESOURCETYPE RType) { m_RType = RType; }
 	void SetInitWindow(InitWindowCallBack Callback) { m_InitWindow = Callback; }
 	void SetFinalMessage(FinalMessageCallBack Callback) { m_FinalMessage = Callback; }
@@ -265,13 +273,49 @@ public:
 		m_hWnd = DelphiHandle; //::CreateWindowEx(dwExStyle, GetWindowClassName(), pstrName, dwStyle, x, y, cx, cy, hwndParent, hMenu, CPaintManagerUI::GetInstance(), this);
 		ASSERT(m_hWnd!=NULL);
 		// 模拟
-		BOOL b = FALSE;
-		OnCreate(WM_CREATE, 0, 0, b);//UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		//BOOL b = TRUE;
+		WindowImplBase::HandleMessage(WM_CREATE, 0, 0);
+		//OnCreate(WM_CREATE, 0, 0, b);//UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		return m_hWnd;
 	}
 	// 独立一个
 	LRESULT DelphiMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) {
-		 return WindowImplBase::HandleMessage(uMsg, wParam, lParam);
+		LRESULT lRes = 0;
+		BOOL bHandled = TRUE;
+		switch (uMsg)
+		{
+		case WM_CREATE:			lRes = OnCreate(uMsg, wParam, lParam, bHandled); break;
+		case WM_CLOSE:			lRes = OnClose(uMsg, wParam, lParam, bHandled); break;
+		case WM_DESTROY:		lRes = OnDestroy(uMsg, wParam, lParam, bHandled); break;
+		case WM_NCACTIVATE:		lRes = OnNcActivate(uMsg, wParam, lParam, bHandled); break;
+		case WM_NCCALCSIZE:		lRes = OnNcCalcSize(uMsg, wParam, lParam, bHandled); break;
+		case WM_NCPAINT:		lRes = OnNcPaint(uMsg, wParam, lParam, bHandled); break;
+		case WM_NCHITTEST:		lRes = OnNcHitTest(uMsg, wParam, lParam, bHandled); break;
+		case WM_GETMINMAXINFO:	lRes = OnGetMinMaxInfo(uMsg, wParam, lParam, bHandled); break;
+		case WM_MOUSEWHEEL:		lRes = OnMouseWheel(uMsg, wParam, lParam, bHandled); break;
+		case WM_SIZE:			lRes = OnSize(uMsg, wParam, lParam, bHandled); break;
+		case WM_CHAR:		lRes = OnChar(uMsg, wParam, lParam, bHandled); break;
+		case WM_SYSCOMMAND:		lRes = OnSysCommand(uMsg, wParam, lParam, bHandled); break;
+		case WM_KEYDOWN:		lRes = OnKeyDown(uMsg, wParam, lParam, bHandled); break;
+		case WM_KILLFOCUS:		lRes = OnKillFocus(uMsg, wParam, lParam, bHandled); break;
+		case WM_SETFOCUS:		lRes = OnSetFocus(uMsg, wParam, lParam, bHandled); break;
+		case WM_LBUTTONUP:		lRes = OnLButtonUp(uMsg, wParam, lParam, bHandled); break;
+		case WM_LBUTTONDOWN:	lRes = OnLButtonDown(uMsg, wParam, lParam, bHandled); break;
+		case WM_MOUSEMOVE:		lRes = OnMouseMove(uMsg, wParam, lParam, bHandled); break;
+		case WM_MOUSEHOVER:	lRes = OnMouseHover(uMsg, wParam, lParam, bHandled); break;
+		default:				bHandled = FALSE; break;
+		}
+
+		if (bHandled) return lRes;
+	
+		lRes = HandleCustomMessage(uMsg, wParam, lParam, bHandled);
+		if (bHandled) return lRes;
+
+		//if (m_PaintManager.MessageHandler(uMsg, wParam, lParam, lRes))
+		//  return lRes;
+
+		return 0;
+		 //return WindowImplBase::HandleMessage(uMsg, wParam, lParam);
 	}
 
 };
@@ -1265,6 +1309,10 @@ DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetSkinFolder(CDelphi_WindowIm
 
 DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetZipFileName(CDelphi_WindowImplBase* handle, LPCTSTR ZipFileName) {
 	handle->SetZipFileName(ZipFileName);
+}
+
+DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetResSkin(CDelphi_WindowImplBase* handle, LPCTSTR ResSkin) {
+	handle->SetResSkin(ResSkin);
 }
 
 DIRECTUILIB_API void Delphi_Delphi_WindowImplBase_SetResourceType(CDelphi_WindowImplBase* handle, UILIB_RESOURCETYPE RType) {

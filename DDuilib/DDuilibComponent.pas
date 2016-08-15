@@ -98,6 +98,7 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure InitDuiComponent; // 先这样，暂时没有其它想法，在OnCreate事件中已经创建了，消息已经过去了，则没有处理到
+//    procedure NewWndProc(var Msg: TMessage);
   published
     property SkinFolder: string read FSkinFolder write FSkinFolder;
     property SkinXml: string read FSkinXml write FSkinXml;
@@ -106,7 +107,7 @@ type
     property SkinResName: string read FSkinResName;// write FSkinResName;
     property SkinKind: TSkinKind read FSkinKind write FSkinKind;
     // 导出
-    property DuiComponent: TDuiComponent read FDuiComponent;
+    property DUI: TDuiComponent read FDuiComponent;
   end;
   // OutputDebugString(PChar(Format('skin=%s', [FSkinXMl])));
 
@@ -154,13 +155,13 @@ end;
 
 procedure TDDuiApp.NewMessage(var Msg: TMsg; var Handled: Boolean);
 begin
-//  Handled := True;
 //  CPaintManagerUI.MessageLoop;
-  if not CPaintManagerUI.TranslateMessage(@Msg) then
+  if CPaintManagerUI.TranslateMessage(@Msg) then
   begin
-    if Assigned(FOld) then
-      FOld(Msg, Handled);
+    Handled := True;
   end;
+  if Assigned(FOld) then
+    FOld(Msg, Handled);
 end;
 
 { TDDuiForm }
@@ -194,9 +195,11 @@ procedure TDDuiForm.InitDuiComponent;
 begin
   if FDuiComponent = nil then
   begin
-    FDuiComponent := TDuiComponent.Create(FSkinXml, FSkinFolder, FSkinZip, TResourceType(FSkinKind));
+    FDuiComponent := TDuiComponent.Create(FSkinXml, FSkinFolder, FSkinZip, FSkinResName, TResourceType(FSkinKind));
     FDuiComponent.CreateDelphiWindow(FForm.Handle,
       FForm.Caption,
+      //UI_WNDSTYLE_FRAME,
+      //WS_EX_STATICEDGE or WS_EX_APPWINDOW,
       GetWindowLong(FForm.Handle, GWL_STYLE),
       GetWindowLong(FForm.Handle, GWL_EXSTYLE),
       FForm.Left, FForm.Top, TForm(FForm).Width, TForm(FForm).Height,
@@ -215,9 +218,17 @@ end;
 
 procedure TDDuiForm.NewWndProc(var Msg: TMessage);
 var
-  LProcess: Boolean;
+  LRes: LRESULT;
 begin
   case Msg.Msg of
+//    WM_NCCREATE :
+//      begin
+//        MessageBox(0, 'WM_NCCREATE', nil, 0);
+//      end;
+//    WM_CREATE :
+//      begin
+//        MessageBox(0, 'WM_CREATE', nil, 0);
+//      end;
     WM_NCDESTROY :
       begin
         if FDuiComponent <> nil then
@@ -229,11 +240,90 @@ begin
           FreeAndNil(FDuiComponent);
       end;
   end;
-  LProcess := False;
   if FDuiComponent <> nil then
-    LProcess := {$IFDEF SupportGeneric}FDuiComponent.This{$ELSE}CDelphi_WindowImplBase(FDuiComponent.This){$ENDIF}.DelphiMessage(Msg.Msg, Msg.WParam, Msg.LParam) <> 0;
-  if Assigned(FOldWndProc) then
-    FOldWndProc(Msg);
+  begin
+
+    LRes := {$IFDEF SupportGeneric}FDuiComponent.This{$ELSE}CDelphi_WindowImplBase(FDuiComponent.This){$ENDIF}.DelphiMessage(Msg.Msg, Msg.WParam, Msg.LParam);
+    if LRes <> 0 then
+    begin
+      Msg.Result := LRes;
+//      if Msg.Msg = WM_NCHITTEST then
+//      begin
+//        if Assigned(FOldWndProc) then
+//          FOldWndProc(Msg);
+//      end;
+      Exit;
+    end;
+    if Msg.Msg = WM_NCLBUTTONDOWN then
+    begin
+//      ReleaseCapture;
+//      SendMessage(FForm.Handle, WM_SYSCOMMAND, SC_MOVE + 1, 0);
+//      Exit;
+    end;
+
+    if FDuiComponent.PaintManagerUI.MessageHandler(Msg.Msg, Msg.WParam, Msg.LParam, LRes) then
+    begin
+      Msg.Result := LRes;
+      Exit;
+    end;
+  end;
+{
+  WM_NCCREATE         = $0081;
+  WM_NCDESTROY        = $0082;
+  WM_NCCALCSIZE       = $0083;
+  WM_NCHITTEST        = $0084;
+  WM_NCPAINT          = $0085;
+  WM_NCACTIVATE       = $0086;
+  WM_GETDLGCODE       = $0087;
+  WM_NCMOUSEMOVE      = $00A0;
+  WM_NCLBUTTONDOWN    = $00A1;
+  WM_NCLBUTTONUP      = $00A2;
+  WM_NCLBUTTONDBLCLK  = $00A3;
+  WM_NCRBUTTONDOWN    = $00A4;
+  WM_NCRBUTTONUP      = $00A5;
+  WM_NCRBUTTONDBLCLK  = $00A6;
+  WM_NCMBUTTONDOWN    = $00A7;
+  WM_NCMBUTTONUP      = $00A8;
+  WM_NCMBUTTONDBLCLK  = $00A9;
+  WM_NCXBUTTONDOWN    = $00AB;
+  WM_NCXBUTTONUP      = $00AC;
+  WM_NCXBUTTONDBLCLK  = $00AD;
+}
+  // 非m_bLayered时要自行拦截NC相关的消息
+  case Msg.Msg of
+//    WM_NCCREATE,
+//    WM_NCDESTROY,
+    WM_NCCALCSIZE,
+    WM_NCHITTEST,
+    WM_NCPAINT,
+    WM_NCACTIVATE:
+//    WM_GETDLGCODE,
+//    WM_NCMOUSEMOVE,
+//    WM_NCLBUTTONDOWN,
+//    WM_NCLBUTTONUP,
+//    WM_NCLBUTTONDBLCLK,
+//    WM_NCRBUTTONDOWN,
+//    WM_NCRBUTTONUP,
+//    WM_NCRBUTTONDBLCLK,
+//    WM_NCMBUTTONDOWN,
+//    WM_NCMBUTTONUP,
+//    WM_NCMBUTTONDBLCLK,
+//    WM_NCXBUTTONDOWN,
+//    WM_NCXBUTTONUP,
+//    WM_NCXBUTTONDBLCLK:
+     ;
+//    WM_EXITSIZEMOVE:
+//     begin
+//       Msg.Msg := WM_NCLBUTTONUP;
+//       Msg.Result := 0;
+//       FOldWndProc(Msg);
+//       ReleaseCapture;
+//       Exit;
+//     end
+  else
+    if Assigned(FOldWndProc) then
+      FOldWndProc(Msg);
+  end;
 end;
 
 { TDuiComponent }

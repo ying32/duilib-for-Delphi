@@ -994,6 +994,7 @@ type
     procedure SetSkinFile(SkinFile: string);
     procedure SetSkinFolder(SkinFolder: string);
     procedure SetZipFileName(ZipFileName: string);
+    procedure SetResSkin(ResSkin: string);
     procedure SetResourceType(RType: TResourceType);
     procedure SetInitWindow(Callback: Pointer);
     procedure SetFinalMessage(Callback: Pointer);
@@ -2365,6 +2366,7 @@ procedure Delphi_Delphi_WindowImplBase_SetClassName(Handle: CDelphi_WindowImplBa
 procedure Delphi_Delphi_WindowImplBase_SetSkinFile(Handle: CDelphi_WindowImplBase; SkinFile: LPCTSTR); cdecl;
 procedure Delphi_Delphi_WindowImplBase_SetSkinFolder(Handle: CDelphi_WindowImplBase; SkinFolder: LPCTSTR); cdecl;
 procedure Delphi_Delphi_WindowImplBase_SetZipFileName(Handle: CDelphi_WindowImplBase; ZipFileName: LPCTSTR); cdecl;
+procedure Delphi_Delphi_WindowImplBase_SetResSkin(Handle: CDelphi_WindowImplBase; ResSkin: LPCTSTR); cdecl;
 procedure Delphi_Delphi_WindowImplBase_SetResourceType(Handle: CDelphi_WindowImplBase; RType: UILIB_RESOURCETYPE); cdecl;
 procedure Delphi_Delphi_WindowImplBase_SetInitWindow(Handle: CDelphi_WindowImplBase; Callback: Pointer); cdecl;
 procedure Delphi_Delphi_WindowImplBase_SetFinalMessage(Handle: CDelphi_WindowImplBase; Callback: Pointer); cdecl;
@@ -4784,6 +4786,11 @@ end;
 procedure CDelphi_WindowImplBase.SetZipFileName(ZipFileName: string);
 begin
   Delphi_Delphi_WindowImplBase_SetZipFileName(Self, PChar(ZipFileName));
+end;
+
+procedure CDelphi_WindowImplBase.SetResSkin(ResSkin: string);
+begin
+  Delphi_Delphi_WindowImplBase_SetZipFileName(Self, PChar(ResSkin));
 end;
 
 procedure CDelphi_WindowImplBase.SetResourceType(RType: TResourceType);
@@ -9980,6 +9987,7 @@ procedure Delphi_Delphi_WindowImplBase_SetClassName; external DuiLibdll name 'De
 procedure Delphi_Delphi_WindowImplBase_SetSkinFile; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_SetSkinFile';
 procedure Delphi_Delphi_WindowImplBase_SetSkinFolder; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_SetSkinFolder';
 procedure Delphi_Delphi_WindowImplBase_SetZipFileName; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_SetZipFileName';
+procedure Delphi_Delphi_WindowImplBase_SetResSkin; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_SetResSkin';
 procedure Delphi_Delphi_WindowImplBase_SetResourceType; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_SetResourceType';
 procedure Delphi_Delphi_WindowImplBase_SetInitWindow; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_SetInitWindow';
 procedure Delphi_Delphi_WindowImplBase_SetFinalMessage; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_SetFinalMessage';

@@ -141,7 +141,7 @@ type
     procedure RemoveThisInPaintManager;
   public
     constructor Create; overload;
-    constructor Create(ASkinFile, ASkinFolder, AZipFileName: string; ARType: TResourceType); overload;
+    constructor Create(ASkinFile, ASkinFolder, AZipFileName: string; AResSkin: string; ARType: TResourceType); overload;
     constructor Create(ASkinFile, ASkinFolder: string; ARType: TResourceType); overload;
     constructor Create(ASkinFile, ASkinFolder: string);  overload;
     constructor Create(ASkinFile, ASkinFolder, AZipFileName: string); overload;
@@ -248,7 +248,7 @@ end;
 
 { TWindowImplBase }
 
-constructor TDuiWindowImplBase.Create(ASkinFile, ASkinFolder, AZipFileName: string; ARType: TResourceType);
+constructor TDuiWindowImplBase.Create(ASkinFile, ASkinFolder, AZipFileName: string; AResSkin: string; ARType: TResourceType);
 begin
   Create;
   {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetClassName(ClassName);
@@ -256,11 +256,12 @@ begin
   {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetSkinFolder(ASkinFolder);
   {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetZipFileName(AZipFileName);
   {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetResourceType(ARType);
+  {$IFNDEF UseLowVer}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetResSkin(AResSkin);
 end;
 
 constructor TDuiWindowImplBase.Create(ASkinFile, ASkinFolder: string; ARType: TResourceType);
 begin
-  Create(ASkinFile, ASkinFolder, '', ARType);
+  Create(ASkinFile, ASkinFolder, '', '', ARType);
 end;
 
 constructor TDuiWindowImplBase.Create(ASkinFile, ASkinFolder: string);
@@ -271,7 +272,7 @@ end;
 constructor TDuiWindowImplBase.Create(ASkinFile, ASkinFolder,
   AZipFileName: string);
 begin
-  Create(ASkinFile, ASkinFolder, AZipFileName, UILIB_ZIP);
+  Create(ASkinFile, ASkinFolder, AZipFileName, '', UILIB_ZIP);
 end;
 
 constructor TDuiWindowImplBase.Create;
@@ -912,7 +913,7 @@ begin
   FMsg := AMsg;
   FParentPaintManager := AParentPaintManager;
   FLostFocusFree := ALostFocusFree;
-  inherited Create(ASkinFile, ASkinFolder, AZipFileName, ARType);
+  inherited Create(ASkinFile, ASkinFolder, AZipFileName, '', ARType);
   CreateWindow(0, ClassName, WS_POPUP, WS_EX_TOOLWINDOW or WS_EX_TOPMOST);
 end;
 

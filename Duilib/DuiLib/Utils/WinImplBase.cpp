@@ -381,6 +381,8 @@ LRESULT WindowImplBase::OnMouseMove(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*l
 
 LRESULT WindowImplBase::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	//if (uMsg = WM_CREATE)
+	//	printf("uMsg Create\n");
 	LRESULT lRes = 0;
 	BOOL bHandled = TRUE;
 	switch (uMsg)
