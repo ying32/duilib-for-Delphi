@@ -126,7 +126,18 @@ type
   ITranslateAccelerator = Pointer;
   IDialogBuilderCallback = Pointer;
   IListOwnerUI = Pointer;
-  IListCallbackUI = Pointer;
+
+  //IListCallbackUI = Pointer;
+  TListGetItemTextEvent = procedure(pList: CControlUI; iItem, iSubItem: Integer; var Result: string) of object;
+  IListCallbackUI = class
+  private
+    FEvent: TListGetItemTextEvent;
+  protected
+    function GetItemText(pList: CControlUI; iItem, iSubItem: Integer): LPCTSTR; virtual; cdecl;
+  public
+    property OnItemText: TListGetItemTextEvent read FEvent write FEvent;
+  end;
+
   STRINGorID = type PChar;
   IDropTarget = Pointer;
   PLRESULT = ^LRESULT;
@@ -973,7 +984,7 @@ type
     function Create(hwndParent: HWND; pstrName: string; dwStyle: DWORD; dwExStyle: DWORD; const rc: TRect; hMenu: HMENU = 0): HWND; overload;
     function Create(hwndParent: HWND; pstrName: string; dwStyle: DWORD; dwExStyle: DWORD; x: Integer = Integer(CW_USEDEFAULT); y: Integer = Integer(CW_USEDEFAULT); cx: Integer = Integer(CW_USEDEFAULT); cy: Integer = Integer(CW_USEDEFAULT); hMenu: HMENU = 0): HWND; overload;
     function CreateDuiWindow(hwndParent: HWND; pstrWindowName: string; dwStyle: DWORD = 0; dwExStyle: DWORD = 0): HWND;
-    function CreateDelphiWindow(DelphiHandle: HWND; pstrName: string; dwStyle: DWORD; dwExStyle: DWORD; x: Integer = Integer(CW_USEDEFAULT); y: Integer = Integer(CW_USEDEFAULT); cx: Integer = Integer(CW_USEDEFAULT); cy: Integer = Integer(CW_USEDEFAULT); hMenu: HMENU = 0): HWND;
+    function CreateDelphiWindow(DelphiHandle: HWND): HWND;
     function Subclass(hWnd: HWND): HWND;
     procedure Unsubclass;
     procedure ShowWindow(bShow: Boolean = True; bTakeFocus: Boolean = True);
@@ -2119,6 +2130,9 @@ type
   end;
 
 
+
+
+
 //================================CStdStringPtrMap============================
 
 function Delphi_StdStringPtrMap_CppCreate: CStdStringPtrMap; cdecl;
@@ -2345,7 +2359,7 @@ function Delphi_Delphi_WindowImplBase_RegisterSuperclass(Handle: CDelphi_WindowI
 function Delphi_Delphi_WindowImplBase_Create_01(Handle: CDelphi_WindowImplBase; hwndParent: HWND; pstrName: LPCTSTR; dwStyle: DWORD; dwExStyle: DWORD; rc: TRect; hMenu: HMENU): HWND; cdecl;
 function Delphi_Delphi_WindowImplBase_Create_02(Handle: CDelphi_WindowImplBase; hwndParent: HWND; pstrName: LPCTSTR; dwStyle: DWORD; dwExStyle: DWORD; x: Integer; y: Integer; cx: Integer; cy: Integer; hMenu: HMENU): HWND; cdecl;
 function Delphi_Delphi_WindowImplBase_CreateDuiWindow(Handle: CDelphi_WindowImplBase; hwndParent: HWND; pstrWindowName: LPCTSTR; dwStyle: DWORD; dwExStyle: DWORD): HWND; cdecl;
-function Delphi_Delphi_WindowImplBase_CreateDelphiWindow(Handle: CDelphi_WindowImplBase; DelphiHandle: HWND; pstrName: LPCTSTR; dwStyle: DWORD; dwExStyle: DWORD; x: Integer; y: Integer; cx: Integer; cy: Integer; hMenu: HMENU): HWND; cdecl;
+function Delphi_Delphi_WindowImplBase_CreateDelphiWindow(Handle: CDelphi_WindowImplBase; DelphiHandle: HWND): HWND; cdecl;
 function Delphi_Delphi_WindowImplBase_Subclass(Handle: CDelphi_WindowImplBase; hWnd: HWND): HWND; cdecl;
 procedure Delphi_Delphi_WindowImplBase_Unsubclass(Handle: CDelphi_WindowImplBase); cdecl;
 procedure Delphi_Delphi_WindowImplBase_ShowWindow(Handle: CDelphi_WindowImplBase; bShow: Boolean; bTakeFocus: Boolean); cdecl;
@@ -4659,9 +4673,9 @@ begin
   Result := Delphi_Delphi_WindowImplBase_CreateDuiWindow(Self, hwndParent, PChar(pstrWindowName), dwStyle, dwExStyle);
 end;
 
-function CDelphi_WindowImplBase.CreateDelphiWindow(DelphiHandle: HWND; pstrName: string; dwStyle: DWORD; dwExStyle: DWORD; x: Integer = Integer(CW_USEDEFAULT); y: Integer = Integer(CW_USEDEFAULT); cx: Integer = Integer(CW_USEDEFAULT); cy: Integer = Integer(CW_USEDEFAULT); hMenu: HMENU = 0): HWND;
+function CDelphi_WindowImplBase.CreateDelphiWindow(DelphiHandle: HWND): HWND;
 begin
-  Result := Delphi_Delphi_WindowImplBase_CreateDelphiWindow(Self, DelphiHandle, PChar(pstrName), dwStyle, dwExStyle, x, y, cx, cy, hMenu);
+  Result := Delphi_Delphi_WindowImplBase_CreateDelphiWindow(Self, DelphiHandle);
 end;
 
 function CDelphi_WindowImplBase.Subclass(hWnd: HWND): HWND;
@@ -9740,6 +9754,17 @@ begin
   Delphi_NativeControlUI_SetNativeHandle(Self, hWd);
 end;
 
+
+function IListCallbackUI.GetItemText(pList: CControlUI; iItem, iSubItem: Integer): LPCTSTR;
+var
+  S: string;
+begin
+  S := '';
+  if Assigned(FEvent) then
+    FEvent(pList, iItem, iSubItem, S);
+  Result := PChar(S);
+end;
+
 //================================CStdStringPtrMap============================
 
 function Delphi_StdStringPtrMap_CppCreate; external DuiLibdll name 'Delphi_StdStringPtrMap_CppCreate';
@@ -9953,7 +9978,7 @@ procedure Delphi_ControlUI_PaintText; external DuiLibdll name 'Delphi_ControlUI_
 procedure Delphi_ControlUI_PaintBorder; external DuiLibdll name 'Delphi_ControlUI_PaintBorder';
 procedure Delphi_ControlUI_DoPostPaint; external DuiLibdll name 'Delphi_ControlUI_DoPostPaint';
 procedure Delphi_ControlUI_SetVirtualWnd; external DuiLibdll name 'Delphi_ControlUI_SetVirtualWnd';
-function Delphi_ControlUI_GetVirtualWnd; external DuiLibdll name 'Delphi_ControlUI_GetVirtualWnd';
+function Delphi_ControlUI_GetVirtualWnd; external DuiLibdll name 'Delphi_ControlUI_GetVirtualWnd';// {$IFDEF SupportDynLoad}delayed{$ENDIF};
 
 
 //================================CDelphi_WindowImplBase============================

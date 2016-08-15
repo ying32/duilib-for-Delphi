@@ -130,7 +130,7 @@ public:
 		m_MessageHandler(NULL),
 		m_HandleCustomMessage(NULL),
 		m_GetItemText(NULL),
-		m_ResSkin(L"DefaultSkin"),
+		m_ResSkin(_T("DefaultSkin")),
 		m_ResponseDefaultKeyEvent(NULL){
 		m_GetClassStyle = WindowImplBase::GetClassStyle();
 	}

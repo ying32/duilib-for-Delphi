@@ -36,8 +36,8 @@ type
   private
     FSearch: CButtonUI;
     FList: TList{$IFNDEF UseLowVer}<TListItem>{$ENDIF};
+    FListCallBack: IListCallbackUI;
     procedure OnSearch;
-    function DoGetItemText(pControl: CControlUI; iIndex, iSubItem: Integer): string; override;
   protected
     procedure DoInitWindow; override;
     procedure DoNotify(var Msg: TNotifyUI); override;
@@ -45,6 +45,7 @@ type
   public
     constructor Create;
     destructor Destroy; override;
+    procedure DoGetItemText(pControl: CControlUI; iIndex, iSubItem: Integer; var Result: string);
   end;
 
     // 一个简单的菜单，可看duilib的listDemo里面有一个菜单
@@ -69,6 +70,8 @@ begin
   inherited Create('skin.xml', '', '');
   CreateWindow(0, 'ListDemo', UI_WNDSTYLE_FRAME, WS_EX_STATICEDGE or WS_EX_APPWINDOW , 0, 0, 600, 320);
   FList := TList{$IFNDEF UseLowVer}<TListItem>{$ENDIF}.Create;
+  FListCallBack := IListCallbackUI.Create;
+  FListCallBack.OnItemText := DoGetItemText;
 end;
 
 destructor TListMainForm.Destroy;
@@ -81,12 +84,13 @@ begin
   for I := 0 to FList.Count - 1 do
     Dispose(FList[I]);
 {$ENDIF}
+  FListCallBack.Free;
   FList.Free;
   inherited;
 end;
 
-function TListMainForm.DoGetItemText(pControl: CControlUI; iIndex,
-  iSubItem: Integer): string;
+procedure TListMainForm.DoGetItemText(pControl: CControlUI; iIndex,
+  iSubItem: Integer; var Result: string);
 var
   Litem: TListItem;
 begin
@@ -194,7 +198,7 @@ begin
   if pList <> nil then
   begin
     pList.RemoveAll;
-    pList.SetTextCallback(Pointer(this));
+    pList.SetTextCallback(FListCallBack);//Pointer(this));
     for I := 0 to 10 do
     begin
       {$IFDEF UseLowVer}
@@ -275,6 +279,7 @@ begin
       FListUI.GetManager.SendNotify(FListUI, 'menu_Delete', 0, 0, True);
   end;
 end;
+
 
 
 var

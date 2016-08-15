@@ -30,10 +30,23 @@ type
   TDDuiApp = class(TComponent)
   private
     FOld: TMessageEvent;
+    FOnMessage: TMessageEvent;
+    FZipFileName: string;
+    FResourcePath: string;
+    FResourceDll: string;
+    ResourceDllHinst: HINST;
     procedure NewMessage(var Msg: TMsg; var Handled: Boolean);
+    procedure SetZipFileName(const Value: string);
+    procedure SetResourcePath(const Value: string);
+    procedure SetResourceDll(const Value: string);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+  published
+    property ZipFileName: string read FZipFileName write SetZipFileName;
+    property ResourcePath: string read FResourcePath write SetResourcePath;
+    property ResourceDll: string read FResourceDll write SetResourceDll;
+    property OnMessage: TMessageEvent read FOnMessage write FOnMessage;
   end;
 
   TSkinKind = (skFile = 1, skZip, skResource, skZipResource);
@@ -49,7 +62,6 @@ type
   private
     FOnInitWindow: TNotifyEvent;
     FOnHandleCustomMessage: TDuiMessageEvent;
-    FOnGetItemText: TDuiGetItemTextEvent;
     FOnNotify: TDuiNotifyEvent;
     FOnFinalMessage: TDuiFinalMessageEvent;
     FOnMessageHandler: TDuiMessageEvent;
@@ -66,7 +78,6 @@ type
     procedure DoFinalMessage(hWd: HWND); override;
     procedure DoHandleCustomMessage(var Msg: TMessage; var bHandled: BOOL); override;
     function DoCreateControl(pstrStr: string): CControlUI; override;
-    function DoGetItemText(pControl: CControlUI; iIndex, iSubItem: Integer): string; override;
     procedure DoResponseDefaultKeyEvent(wParam: WPARAM; var AResult: LRESULT); override;
   public
     property OnInitWindow: TNotifyEvent read FOnInitWindow write FOnInitWindow;
@@ -77,7 +88,6 @@ type
     property OnFinalMessage: TDuiFinalMessageEvent read FOnFinalMessage write FOnFinalMessage;
     property OnHandleCustomMessage: TDuiMessageEvent read FOnHandleCustomMessage write FOnHandleCustomMessage;
     property OnCreateControl: TDuiCreateControlEvent read FOnCreateControl write FOnCreateControl;
-    property OnGetItemText: TDuiGetItemTextEvent read FOnGetItemText write FOnGetItemText;
     property OnResponseDefaultKey: TDuiResponseDefaultKeyEvent read FOnResponseDefaultKey write FOnResponseDefaultKey;
   end;
 
@@ -91,6 +101,17 @@ type
     FDuiComponent: TDuiComponent;
     FSkinZip: string;
     FOldWndProc: TWndMethod;
+    FIsNcDown: Boolean;
+    FOnHandleCustomMessage: TDuiMessageEvent;
+    FOnGetItemText: TDuiGetItemTextEvent;
+    FOnNotify: TDuiNotifyEvent;
+    FOnFinalMessage: TDuiFinalMessageEvent;
+    FOnMessageHandler: TDuiMessageEvent;
+    FOnCreateControl: TDuiCreateControlEvent;
+    FOnInitWindow: TNotifyEvent;
+    FOnResponseDefaultKey: TDuiResponseDefaultKeyEvent;
+    FOnHandleMessage: TDuiMessageEvent;
+    FOnClick: TDuiNotifyEvent;
     procedure NewWndProc(var Msg: TMessage);
   protected
     procedure Loaded; override;
@@ -98,18 +119,27 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure InitDuiComponent; // 先这样，暂时没有其它想法，在OnCreate事件中已经创建了，消息已经过去了，则没有处理到
-//    procedure NewWndProc(var Msg: TMessage);
+     // 导出
+    property DUI: TDuiComponent read FDuiComponent write FDuiComponent;
   published
     property SkinFolder: string read FSkinFolder write FSkinFolder;
     property SkinXml: string read FSkinXml write FSkinXml;
     property SkinZip: string read FSkinZip write FSkinZip;
     // 暂不可写，只能使用默认的 DefaultSkin;
-    property SkinResName: string read FSkinResName;// write FSkinResName;
+    property SkinResName: string read FSkinResName write FSkinResName;
     property SkinKind: TSkinKind read FSkinKind write FSkinKind;
-    // 导出
-    property DUI: TDuiComponent read FDuiComponent;
+
+    property OnInitWindow: TNotifyEvent read FOnInitWindow write FOnInitWindow;
+    property OnClick: TDuiNotifyEvent read FOnClick write FOnClick;
+    property OnNotify: TDuiNotifyEvent read FOnNotify write FOnNotify;
+    property OnHandleMessage: TDuiMessageEvent read FOnHandleMessage write FOnHandleMessage;
+    property OnMessageHandler: TDuiMessageEvent read FOnMessageHandler write FOnMessageHandler;
+    property OnFinalMessage: TDuiFinalMessageEvent read FOnFinalMessage write FOnFinalMessage;
+    property OnHandleCustomMessage: TDuiMessageEvent read FOnHandleCustomMessage write FOnHandleCustomMessage;
+    property OnCreateControl: TDuiCreateControlEvent read FOnCreateControl write FOnCreateControl;
+    property OnGetItemText: TDuiGetItemTextEvent read FOnGetItemText write FOnGetItemText;
+    property OnResponseDefaultKey: TDuiResponseDefaultKeyEvent read FOnResponseDefaultKey write FOnResponseDefaultKey;
   end;
-  // OutputDebugString(PChar(Format('skin=%s', [FSkinXMl])));
 
   procedure Register;
 implementation
@@ -149,19 +179,63 @@ begin
     if Assigned(FOld) then
       Application.OnMessage := FOld;
     CPaintManagerUI.Term;
+    if ResourceDllHinst <> 0 then
+      FreeLibrary(ResourceDllHinst);
   end;
   inherited;
 end;
 
 procedure TDDuiApp.NewMessage(var Msg: TMsg; var Handled: Boolean);
 begin
-//  CPaintManagerUI.MessageLoop;
   if CPaintManagerUI.TranslateMessage(@Msg) then
   begin
-    Handled := True;
+    Handled := True;  // 未测
   end;
+  if Assigned(FOnMessage) then
+    FOnMessage(Msg, Handled);
   if Assigned(FOld) then
     FOld(Msg, Handled);
+end;
+
+procedure TDDuiApp.SetResourceDll(const Value: string);
+begin
+  if FResourceDll <> Value then
+  begin
+    FResourceDll := Value;
+    if not(csDesigning in ComponentState) then
+    begin
+      if GetModuleHandle(PChar(Value)) <> ResourceDllHinst then
+      begin
+        if ResourceDllHinst <> 0 then
+          FreeLibrary(ResourceDllHinst)
+      end;
+      ResourceDllHinst := SafeLoadLibrary(FResourceDll);
+      CPaintManagerUI.SetResourceDll(ResourceDllHinst);
+    end;
+  end;
+end;
+
+procedure TDDuiApp.SetResourcePath(const Value: string);
+begin
+  if FResourcePath <> Value then
+  begin
+    FResourcePath := Value;
+    if not (csDesigning in ComponentState) then
+      CPaintManagerUI.SetResourcePath(FResourcePath);
+  end;
+end;
+
+procedure TDDuiApp.SetZipFileName(const Value: string);
+begin
+  if FZipFileName <> Value then
+  begin
+    FZipFileName := Value;
+    if not (csDesigning in ComponentState) then
+    begin
+      CPaintManagerUI.Term; // 不知道需要否？
+      CPaintManagerUI.SetResourceZip(FZipFileName);
+    end;
+  end;
 end;
 
 { TDDuiForm }
@@ -196,14 +270,16 @@ begin
   if FDuiComponent = nil then
   begin
     FDuiComponent := TDuiComponent.Create(FSkinXml, FSkinFolder, FSkinZip, FSkinResName, TResourceType(FSkinKind));
-    FDuiComponent.CreateDelphiWindow(FForm.Handle,
-      FForm.Caption,
-      //UI_WNDSTYLE_FRAME,
-      //WS_EX_STATICEDGE or WS_EX_APPWINDOW,
-      GetWindowLong(FForm.Handle, GWL_STYLE),
-      GetWindowLong(FForm.Handle, GWL_EXSTYLE),
-      FForm.Left, FForm.Top, TForm(FForm).Width, TForm(FForm).Height,
-      GetMenu(FForm.Handle));
+    FDuiComponent.OnHandleCustomMessage := FOnHandleCustomMessage;
+    FDuiComponent.OnNotify := FOnNotify;
+    FDuiComponent.OnFinalMessage := FOnFinalMessage;
+    FDuiComponent.OnMessageHandler := FOnMessageHandler;
+    FDuiComponent.OnCreateControl := FOnCreateControl;
+    FDuiComponent.OnInitWindow := FOnInitWindow;
+    FDuiComponent.OnResponseDefaultKey := FOnResponseDefaultKey;
+    FDuiComponent.OnHandleMessage := FOnHandleMessage;
+    FDuiComponent.OnClick := FOnClick;
+    {$IFDEF SupportGeneric}FDuiComponent.this{$ELSE}CDelphi_WindowImplBase(FDuiComponent.this){$ENDIF}.CreateDelphiWindow(FForm.Handle);
   end;
 end;
 
@@ -242,29 +318,35 @@ begin
   end;
   if FDuiComponent <> nil then
   begin
-
     LRes := {$IFDEF SupportGeneric}FDuiComponent.This{$ELSE}CDelphi_WindowImplBase(FDuiComponent.This){$ENDIF}.DelphiMessage(Msg.Msg, Msg.WParam, Msg.LParam);
     if LRes <> 0 then
     begin
       Msg.Result := LRes;
-//      if Msg.Msg = WM_NCHITTEST then
-//      begin
-//        if Assigned(FOldWndProc) then
-//          FOldWndProc(Msg);
-//      end;
-      Exit;
+      Exit; // 这里不知道要不要也作处理
     end;
-    if Msg.Msg = WM_NCLBUTTONDOWN then
-    begin
-//      ReleaseCapture;
-//      SendMessage(FForm.Handle, WM_SYSCOMMAND, SC_MOVE + 1, 0);
-//      Exit;
-    end;
-
     if FDuiComponent.PaintManagerUI.MessageHandler(Msg.Msg, Msg.WParam, Msg.LParam, LRes) then
     begin
       Msg.Result := LRes;
-      Exit;
+      // 前面处理了不能作退出处理，不然Delphi收不到相关消息
+      if Msg.Msg = WM_SETCURSOR then
+        Exit;
+    end;
+  end;
+  // 解决调整边框时无法收WM_NCLBUTTONUP消息
+  if Msg.Msg = WM_NCLBUTTONDOWN then
+    FIsNcDown := True
+  else if Msg.Msg = WM_NCLBUTTONUP then
+  begin
+    FIsNcDown := False;
+    ReleaseCapture;
+  end;
+
+  if Msg.Msg = WM_EXITSIZEMOVE then
+  begin
+    if FIsNcDown then
+    begin
+      PostMessage(FForm.Handle, WM_NCLBUTTONUP, HTCAPTION, 0);
+      //Exit;
     end;
   end;
 {
@@ -289,7 +371,7 @@ begin
   WM_NCXBUTTONUP      = $00AC;
   WM_NCXBUTTONDBLCLK  = $00AD;
 }
-  // 非m_bLayered时要自行拦截NC相关的消息
+  // 非m_bLayered时要自行拦截NC相关的消息，不能让Delphi处理
   case Msg.Msg of
 //    WM_NCCREATE,
 //    WM_NCDESTROY,
@@ -312,14 +394,6 @@ begin
 //    WM_NCXBUTTONUP,
 //    WM_NCXBUTTONDBLCLK:
      ;
-//    WM_EXITSIZEMOVE:
-//     begin
-//       Msg.Msg := WM_NCLBUTTONUP;
-//       Msg.Result := 0;
-//       FOldWndProc(Msg);
-//       ReleaseCapture;
-//       Exit;
-//     end
   else
     if Assigned(FOldWndProc) then
       FOldWndProc(Msg);
@@ -345,14 +419,6 @@ procedure TDuiComponent.DoFinalMessage(hWd: HWND);
 begin
   if Assigned(FOnFinalMessage) then
     FOnFinalMessage(Self, hWd);
-end;
-
-function TDuiComponent.DoGetItemText(pControl: CControlUI; iIndex,
-  iSubItem: Integer): string;
-begin
-  Result := '';
-  if Assigned(FOnGetItemText) then
-    FOnGetItemText(Self, pControl, iIndex, iSubItem, Result);
 end;
 
 procedure TDuiComponent.DoHandleCustomMessage(var Msg: TMessage;

@@ -69,7 +69,6 @@ type
     procedure DUI_FinalMessage(hWd: HWND); cdecl;
     function  DUI_HandleCustomMessage(uMsg: UINT; wParam: WPARAM; lParam: LPARAM; var bHandled: BOOL): LRESULT; cdecl;
     function  DUI_CreateControl(pstrStr: LPCTSTR): CControlUI; cdecl;
-    function DUI_GetItemText(pControl: CControlUI; iIndex, iSubItem: Integer): LPCTSTR; cdecl;
     function DUI_ResponseDefaultKeyEvent(wParam: WPARAM): LRESULT; cdecl;
   protected
     // Delphi虚函数
@@ -81,7 +80,6 @@ type
     procedure DoFinalMessage(hWd: HWND); virtual;
     procedure DoHandleCustomMessage(var Msg: TMessage; var bHandled: BOOL); virtual;
     function DoCreateControl(pstrStr: string): CControlUI; virtual;
-    function DoGetItemText(pControl: CControlUI; iIndex, iSubItem: Integer): string; virtual;
     procedure DoResponseDefaultKeyEvent(wParam: WPARAM; var AResult: LRESULT); virtual;
 
     // 准备函数，重写下CDelphi_WindowImplBase之用，尽可能的使用pascal
@@ -122,10 +120,6 @@ type
     procedure CreateWindow(hwndParent: HWND; ATitle: string; dwStyle: DWORD; dwExStyle: DWORD;
        x: Integer = Integer(CW_USEDEFAULT); y: Integer = Integer(CW_USEDEFAULT);
        cx: Integer = Integer(CW_USEDEFAULT); cy: Integer = Integer(CW_USEDEFAULT); hMenu: HMENU = 0); overload;
-
-    procedure CreateDelphiWindow(DelphiHandle: HWND; ATitle: string; dwStyle: DWORD; dwExStyle: DWORD;
-       x: Integer = Integer(CW_USEDEFAULT); y: Integer = Integer(CW_USEDEFAULT);
-       cx: Integer = Integer(CW_USEDEFAULT); cy: Integer = Integer(CW_USEDEFAULT); hMenu: HMENU = 0);
     procedure SetClassStyle(nStyle: UINT);
     procedure SetIcon(nRes: UINT);
     function FindControl(const AName: string): CControlUI; overload;
@@ -289,7 +283,6 @@ begin
   {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetHandleMessage(GetMethodAddr('DUI_HandleMessage'));
   {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetHandleCustomMessage(GetMethodAddr('DUI_HandleCustomMessage'));
   {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetCreateControl(GetMethodAddr('DUI_CreateControl'));
-  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetGetItemText(GetMethodAddr('DUI_GetItemText'));
   {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetResponseDefaultKeyEvent(GetMethodAddr('DUI_ResponseDefaultKeyEvent'));
 end;
 
@@ -298,13 +291,6 @@ begin
   if FThis <> nil then
     {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.CppDestroy;
   inherited;
-end;
-
-procedure TDuiWindowImplBase.CreateDelphiWindow(DelphiHandle: HWND;
-  ATitle: string; dwStyle, dwExStyle: DWORD; x, y, cx, cy: Integer;
-  hMenu: HMENU);
-begin
-  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.CreateDelphiWindow(DelphiHandle, ATitle, dwStyle, dwExStyle, x, y, cx, cy, hMenu);
 end;
 
 procedure TDuiWindowImplBase.CreateDuiWindow(AParent: HWND; ATitle: string);
@@ -342,12 +328,6 @@ procedure TDuiWindowImplBase.DoFinalMessage(hWd: HWND);
 begin
   // virtual method
   RemoveThisInPaintManager;
-end;
-
-function TDuiWindowImplBase.DoGetItemText(pControl: CControlUI; iIndex,
-  iSubItem: Integer): string;
-begin
-  Result := '';
 end;
 
 procedure TDuiWindowImplBase.DoHandleCustomMessage(var Msg: TMessage; var bHandled: BOOL);
@@ -396,12 +376,6 @@ end;
 procedure TDuiWindowImplBase.DUI_FinalMessage(hWd: HWND);
 begin
   DoFinalMessage(hWd);
-end;
-
-function TDuiWindowImplBase.DUI_GetItemText(pControl: CControlUI; iIndex,
-  iSubItem: Integer): LPCTSTR;
-begin
-  Result := PChar(DoGetItemText(pControl, iIndex, iSubItem));
 end;
 
 function TDuiWindowImplBase.DUI_HandleCustomMessage(uMsg: UINT; wParam: WPARAM;
