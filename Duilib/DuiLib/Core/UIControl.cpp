@@ -33,9 +33,12 @@ m_nTooltipWidth(300)
     m_cxyMax.cx = m_cxyMax.cy = 9999;
     m_cxyBorderRound.cx = m_cxyBorderRound.cy = 0;
 
-	m_DoEventCallback = { NULL, NULL };
-	m_DoPaintCallback = { NULL, NULL };
+	m_DoEventCallback.Code = NULL;
+	m_DoEventCallback.Data = NULL;
 
+	m_DoPaintCallback.Code = NULL;
+	m_DoPaintCallback.Data = NULL;
+	 
     ::ZeroMemory(&m_rcPadding, sizeof(RECT));
     ::ZeroMemory(&m_rcItem, sizeof(RECT));
     ::ZeroMemory(&m_rcPaint, sizeof(RECT));

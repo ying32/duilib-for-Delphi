@@ -260,6 +260,20 @@ public:
 	void SetResponseDefaultKeyEvent(ResponseDefaultKeyEventCallBack ACallBack) {
 		m_ResponseDefaultKeyEvent = ACallBack;
 	}
+	HWND CreateDelphiWindow(HWND DelphiHandle, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle, int x, int y, int cx, int cy, HMENU hMenu)
+	{
+		m_hWnd = DelphiHandle; //::CreateWindowEx(dwExStyle, GetWindowClassName(), pstrName, dwStyle, x, y, cx, cy, hwndParent, hMenu, CPaintManagerUI::GetInstance(), this);
+		ASSERT(m_hWnd!=NULL);
+		// 模拟
+		BOOL b = FALSE;
+		OnCreate(WM_CREATE, 0, 0, b);//UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		return m_hWnd;
+	}
+	// 独立一个
+	LRESULT DelphiMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) {
+		 return WindowImplBase::HandleMessage(uMsg, wParam, lParam);
+	}
+
 };
 
 
@@ -1163,6 +1177,14 @@ DIRECTUILIB_API HWND Delphi_Delphi_WindowImplBase_Create_02(CDelphi_WindowImplBa
 
 DIRECTUILIB_API HWND Delphi_Delphi_WindowImplBase_CreateDuiWindow(CDelphi_WindowImplBase* handle, HWND hwndParent, LPCTSTR pstrWindowName, DWORD dwStyle, DWORD dwExStyle) {
 	return handle->CreateDuiWindow(hwndParent, pstrWindowName, dwStyle, dwExStyle);
+}
+
+DIRECTUILIB_API HWND Delphi_Delphi_WindowImplBase_CreateDelphiWindow(CDelphi_WindowImplBase* handle, HWND DelphiHandle, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle, int x, int y, int cx, int cy, HMENU hMenu) {
+	return handle->CreateDelphiWindow(DelphiHandle, pstrName, dwStyle, dwExStyle, x, y, cx, cy, hMenu);
+}
+ 
+DIRECTUILIB_API LRESULT Delphi_Delphi_WindowImplBase_DelphiMessage(CDelphi_WindowImplBase* handle, UINT uMsg, WPARAM wParam, LPARAM lParam) { 
+	return handle->DelphiMessage(uMsg, wParam, lParam);
 }
 
 DIRECTUILIB_API HWND Delphi_Delphi_WindowImplBase_Subclass(CDelphi_WindowImplBase* handle, HWND hWnd) {

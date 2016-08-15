@@ -5,7 +5,7 @@
 //       QQ  ：1444386932
 //       E-mail：1444386932@qq.com
 //       本单元由CppConvert工具自动生成于2015-11-28 17:01:00
-//       版权所有 (C) 2015 ying32 All Rights Reserved
+//       版权所有 (C) 2015-2016 ying32 All Rights Reserved
 //
 //       1、以C开头的都是用来桥接C++类的，理论上是不给继承，除非是c++的类
 //          其中的虚函数也是不能乱写的
@@ -973,6 +973,7 @@ type
     function Create(hwndParent: HWND; pstrName: string; dwStyle: DWORD; dwExStyle: DWORD; const rc: TRect; hMenu: HMENU = 0): HWND; overload;
     function Create(hwndParent: HWND; pstrName: string; dwStyle: DWORD; dwExStyle: DWORD; x: Integer = Integer(CW_USEDEFAULT); y: Integer = Integer(CW_USEDEFAULT); cx: Integer = Integer(CW_USEDEFAULT); cy: Integer = Integer(CW_USEDEFAULT); hMenu: HMENU = 0): HWND; overload;
     function CreateDuiWindow(hwndParent: HWND; pstrWindowName: string; dwStyle: DWORD = 0; dwExStyle: DWORD = 0): HWND;
+    function CreateDelphiWindow(DelphiHandle: HWND; pstrName: string; dwStyle: DWORD; dwExStyle: DWORD; x: Integer = Integer(CW_USEDEFAULT); y: Integer = Integer(CW_USEDEFAULT); cx: Integer = Integer(CW_USEDEFAULT); cy: Integer = Integer(CW_USEDEFAULT); hMenu: HMENU = 0): HWND;
     function Subclass(hWnd: HWND): HWND;
     procedure Unsubclass;
     procedure ShowWindow(bShow: Boolean = True; bTakeFocus: Boolean = True);
@@ -1006,6 +1007,7 @@ type
     procedure SetGetClassStyle(uStyle: UINT);
     procedure RemoveThisInPaintManager;
     procedure SetResponseDefaultKeyEvent(ACallBack: LPVOID);
+    function DelphiMessage(uMsg: UINT; wParam: WPARAM; lParam: LPARAM): LRESULT;
   end;
 
   CContainerUI = class(CControlUI)
@@ -2342,6 +2344,7 @@ function Delphi_Delphi_WindowImplBase_RegisterSuperclass(Handle: CDelphi_WindowI
 function Delphi_Delphi_WindowImplBase_Create_01(Handle: CDelphi_WindowImplBase; hwndParent: HWND; pstrName: LPCTSTR; dwStyle: DWORD; dwExStyle: DWORD; rc: TRect; hMenu: HMENU): HWND; cdecl;
 function Delphi_Delphi_WindowImplBase_Create_02(Handle: CDelphi_WindowImplBase; hwndParent: HWND; pstrName: LPCTSTR; dwStyle: DWORD; dwExStyle: DWORD; x: Integer; y: Integer; cx: Integer; cy: Integer; hMenu: HMENU): HWND; cdecl;
 function Delphi_Delphi_WindowImplBase_CreateDuiWindow(Handle: CDelphi_WindowImplBase; hwndParent: HWND; pstrWindowName: LPCTSTR; dwStyle: DWORD; dwExStyle: DWORD): HWND; cdecl;
+function Delphi_Delphi_WindowImplBase_CreateDelphiWindow(Handle: CDelphi_WindowImplBase; DelphiHandle: HWND; pstrName: LPCTSTR; dwStyle: DWORD; dwExStyle: DWORD; x: Integer; y: Integer; cx: Integer; cy: Integer; hMenu: HMENU): HWND; cdecl;
 function Delphi_Delphi_WindowImplBase_Subclass(Handle: CDelphi_WindowImplBase; hWnd: HWND): HWND; cdecl;
 procedure Delphi_Delphi_WindowImplBase_Unsubclass(Handle: CDelphi_WindowImplBase); cdecl;
 procedure Delphi_Delphi_WindowImplBase_ShowWindow(Handle: CDelphi_WindowImplBase; bShow: Boolean; bTakeFocus: Boolean); cdecl;
@@ -2375,6 +2378,8 @@ procedure Delphi_Delphi_WindowImplBase_SetGetItemText(Handle: CDelphi_WindowImpl
 procedure Delphi_Delphi_WindowImplBase_SetGetClassStyle(Handle: CDelphi_WindowImplBase; uStyle: UINT); cdecl;
 procedure Delphi_Delphi_WindowImplBase_RemoveThisInPaintManager(Handle: CDelphi_WindowImplBase); cdecl;
 procedure Delphi_Delphi_WindowImplBase_SetResponseDefaultKeyEvent(Handle: CDelphi_WindowImplBase; ACallBack: LPVOID); cdecl;
+function Delphi_Delphi_WindowImplBase_DelphiMessage(Handle: CDelphi_WindowImplBase; uMsg: UINT; wParam: WPARAM; lParam: LPARAM): LRESULT; cdecl;
+
 
 //================================CPaintManagerUI============================
 
@@ -4652,6 +4657,11 @@ begin
   Result := Delphi_Delphi_WindowImplBase_CreateDuiWindow(Self, hwndParent, PChar(pstrWindowName), dwStyle, dwExStyle);
 end;
 
+function CDelphi_WindowImplBase.CreateDelphiWindow(DelphiHandle: HWND; pstrName: string; dwStyle: DWORD; dwExStyle: DWORD; x: Integer = Integer(CW_USEDEFAULT); y: Integer = Integer(CW_USEDEFAULT); cx: Integer = Integer(CW_USEDEFAULT); cy: Integer = Integer(CW_USEDEFAULT); hMenu: HMENU = 0): HWND;
+begin
+  Result := Delphi_Delphi_WindowImplBase_CreateDelphiWindow(Self, DelphiHandle, PChar(pstrName), dwStyle, dwExStyle, x, y, cx, cy, hMenu);
+end;
+
 function CDelphi_WindowImplBase.Subclass(hWnd: HWND): HWND;
 begin
   Result := Delphi_Delphi_WindowImplBase_Subclass(Self, hWnd);
@@ -4719,6 +4729,12 @@ end;
 procedure CDelphi_WindowImplBase.SetResponseDefaultKeyEvent(ACallBack: LPVOID);
 begin
   Delphi_Delphi_WindowImplBase_SetResponseDefaultKeyEvent(Self, ACallBack);
+end;
+
+function CDelphi_WindowImplBase.DelphiMessage(uMsg: UINT; wParam: WPARAM;
+  lParam: LPARAM): LRESULT;
+begin
+  Result := Delphi_Delphi_WindowImplBase_DelphiMessage(Self, uMsg, wParam, lParam);
 end;
 
 function CDelphi_WindowImplBase.RemoveVirtualWnd(strName: string): Boolean;
@@ -9943,6 +9959,7 @@ function Delphi_Delphi_WindowImplBase_RegisterSuperclass; external DuiLibdll nam
 function Delphi_Delphi_WindowImplBase_Create_01; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_Create_01';
 function Delphi_Delphi_WindowImplBase_Create_02; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_Create_02';
 function Delphi_Delphi_WindowImplBase_CreateDuiWindow; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_CreateDuiWindow';
+function Delphi_Delphi_WindowImplBase_CreateDelphiWindow; external Duilibdll name 'Delphi_Delphi_WindowImplBase_CreateDelphiWindow';
 function Delphi_Delphi_WindowImplBase_Subclass; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_Subclass';
 procedure Delphi_Delphi_WindowImplBase_Unsubclass; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_Unsubclass';
 procedure Delphi_Delphi_WindowImplBase_ShowWindow; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_ShowWindow';
@@ -9976,7 +9993,7 @@ procedure Delphi_Delphi_WindowImplBase_SetGetItemText; external DuiLibdll name '
 procedure Delphi_Delphi_WindowImplBase_SetGetClassStyle; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_SetGetClassStyle';
 procedure Delphi_Delphi_WindowImplBase_RemoveThisInPaintManager; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_RemoveThisInPaintManager';
 procedure Delphi_Delphi_WindowImplBase_SetResponseDefaultKeyEvent; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_SetResponseDefaultKeyEvent';
-
+function Delphi_Delphi_WindowImplBase_DelphiMessage; external DuiLibdll name 'Delphi_Delphi_WindowImplBase_DelphiMessage';
 //================================CPaintManagerUI============================
 
 function Delphi_PaintManagerUI_CppCreate; external DuiLibdll name 'Delphi_PaintManagerUI_CppCreate';

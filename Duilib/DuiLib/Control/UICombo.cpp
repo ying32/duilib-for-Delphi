@@ -130,7 +130,13 @@ LRESULT CComboWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
         ::GetCursorPos(&pt);
         ::ScreenToClient(m_pm.GetPaintWindow(), &pt);
         CControlUI* pControl = m_pm.FindControl(pt);
-        if( pControl && _tcscmp(pControl->GetClass(), _T("ScrollBarUI")) != 0 ) PostMessage(WM_KILLFOCUS);
+		 
+        if( pControl && _tcscmp(pControl->GetClass(), _T("ScrollBarUI")) != 0 ) {
+			//m_pOwner->SelectItem(m_iOldSel, true);
+			//if(_tcscmp(pControl->GetClass(), _T("Button") == 0)) {
+			//}
+			PostMessage(WM_KILLFOCUS);
+		}
     }
     else if( uMsg == WM_KEYDOWN ) {
         switch( wParam ) {
@@ -164,7 +170,6 @@ LRESULT CComboWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
     else if( uMsg == WM_KILLFOCUS ) {
         if( m_hWnd != (HWND) wParam ) PostMessage(WM_CLOSE);
     }
-
     LRESULT lRes = 0;
     if( m_pm.MessageHandler(uMsg, wParam, lParam, lRes) ) return lRes;
     return CWindowWnd::HandleMessage(uMsg, wParam, lParam);

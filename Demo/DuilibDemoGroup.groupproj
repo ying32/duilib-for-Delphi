@@ -30,6 +30,9 @@
         <Projects Include="QQNew\QQ.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="VclTest\VclTest.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -119,14 +122,23 @@
     <Target Name="QQ:Make">
         <MSBuild Projects="QQNew\QQ.dproj" Targets="Make"/>
     </Target>
+    <Target Name="VclTest">
+        <MSBuild Projects="VclTest\VclTest.dproj"/>
+    </Target>
+    <Target Name="VclTest:Clean">
+        <MSBuild Projects="VclTest\VclTest.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="VclTest:Make">
+        <MSBuild Projects="VclTest\VclTest.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="Apps;ListDemo;QQDemo;TestApp1;NativeControl;webbrowser;WkeBrowser;MenuDemo;QQ"/>
+        <CallTarget Targets="Apps;ListDemo;QQDemo;TestApp1;NativeControl;webbrowser;WkeBrowser;MenuDemo;QQ;VclTest"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="Apps:Clean;ListDemo:Clean;QQDemo:Clean;TestApp1:Clean;NativeControl:Clean;webbrowser:Clean;WkeBrowser:Clean;MenuDemo:Clean;QQ:Clean"/>
+        <CallTarget Targets="Apps:Clean;ListDemo:Clean;QQDemo:Clean;TestApp1:Clean;NativeControl:Clean;webbrowser:Clean;WkeBrowser:Clean;MenuDemo:Clean;QQ:Clean;VclTest:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="Apps:Make;ListDemo:Make;QQDemo:Make;TestApp1:Make;NativeControl:Make;webbrowser:Make;WkeBrowser:Make;MenuDemo:Make;QQ:Make"/>
+        <CallTarget Targets="Apps:Make;ListDemo:Make;QQDemo:Make;TestApp1:Make;NativeControl:Make;webbrowser:Make;WkeBrowser:Make;MenuDemo:Make;QQ:Make;VclTest:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

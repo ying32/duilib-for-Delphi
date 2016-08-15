@@ -204,7 +204,6 @@ CPaintManagerUI::~CPaintManagerUI()
 void CPaintManagerUI::Init(HWND hWnd, LPCTSTR pstrName)
 {
 	ASSERT(::IsWindow(hWnd));
-
 	m_mNameHash.Resize();
 	RemoveAllFonts();
 	RemoveAllImages();

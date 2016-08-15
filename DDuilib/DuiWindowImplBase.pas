@@ -122,6 +122,10 @@ type
     procedure CreateWindow(hwndParent: HWND; ATitle: string; dwStyle: DWORD; dwExStyle: DWORD;
        x: Integer = Integer(CW_USEDEFAULT); y: Integer = Integer(CW_USEDEFAULT);
        cx: Integer = Integer(CW_USEDEFAULT); cy: Integer = Integer(CW_USEDEFAULT); hMenu: HMENU = 0); overload;
+
+    procedure CreateDelphiWindow(DelphiHandle: HWND; ATitle: string; dwStyle: DWORD; dwExStyle: DWORD;
+       x: Integer = Integer(CW_USEDEFAULT); y: Integer = Integer(CW_USEDEFAULT);
+       cx: Integer = Integer(CW_USEDEFAULT); cy: Integer = Integer(CW_USEDEFAULT); hMenu: HMENU = 0);
     procedure SetClassStyle(nStyle: UINT);
     procedure SetIcon(nRes: UINT);
     function FindControl(const AName: string): CControlUI; overload;
@@ -293,6 +297,13 @@ begin
   if FThis <> nil then
     {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.CppDestroy;
   inherited;
+end;
+
+procedure TDuiWindowImplBase.CreateDelphiWindow(DelphiHandle: HWND;
+  ATitle: string; dwStyle, dwExStyle: DWORD; x, y, cx, cy: Integer;
+  hMenu: HMENU);
+begin
+  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.CreateDelphiWindow(DelphiHandle, ATitle, dwStyle, dwExStyle, x, y, cx, cy, hMenu);
 end;
 
 procedure TDuiWindowImplBase.CreateDuiWindow(AParent: HWND; ATitle: string);
