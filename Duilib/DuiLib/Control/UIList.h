@@ -47,7 +47,7 @@ typedef struct tagTListInfoUI
 class IListCallbackUI
 {
 public:
-    virtual LPCTSTR GetItemText(CControlUI* pList, int iItem, int iSubItem) = 0;
+    virtual LPCTSTR __cdecl GetItemText(CControlUI* pList, int iItem, int iSubItem) = 0;
 };
 
 class IListOwnerUI

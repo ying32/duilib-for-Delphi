@@ -85,9 +85,8 @@ typedef LPCTSTR(*GetItemTextCallBack)(LPVOID, CControlUI*, int, int);
 typedef LRESULT(*ResponseDefaultKeyEventCallBack)(LPVOID, WPARAM);
 
  
-class CDelphi_WindowImplBase : // 好吧，你赢了,我认输
-	                           public IListCallbackUI //这个貌似只能放第一个，他取的时候就是取第一个的，要不就另行建立一个类
-							   ,public WindowImplBase
+class CDelphi_WindowImplBase : 
+							   public WindowImplBase
 							   /*, public CWindowWnd
 							   , public CNotifyPump
 							   , public INotifyUI
@@ -175,11 +174,11 @@ public:
 			return	m_CreateControl(m_Self, pstrClass);
 		return NULL;
 	}
-    LPCTSTR GetItemText(CControlUI* pControl, int iIndex, int iSubItem) {
+    /*LPCTSTR __cdecl GetItemText(CControlUI* pControl, int iIndex, int iSubItem) {
 		if (m_GetItemText)
 			return m_GetItemText(m_Self, pControl, iIndex, iSubItem);
 		return NULL;
-	}
+	}*/
 public:
 	LPCTSTR GetWindowClassName() const { return m_ClassName; }
 	CDuiString GetSkinFile() { return m_SkinFile; };
@@ -191,7 +190,7 @@ public:
 	};
 	LPCTSTR GetResourceID() const { 
 		if (_tcsicmp(m_ZipFileName, _T("")) == 0)
-			return WindowImplBase::GetResourceID();
+			return _T("DefaultSkin");
 		return m_ResSkin;
 	}
 	UILIB_RESOURCETYPE GetResourceType() const { return m_RType; };
@@ -268,9 +267,9 @@ public:
 	void SetResponseDefaultKeyEvent(ResponseDefaultKeyEventCallBack ACallBack) {
 		m_ResponseDefaultKeyEvent = ACallBack;
 	}
-	HWND CreateDelphiWindow(HWND DelphiHandle, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle, int x, int y, int cx, int cy, HMENU hMenu)
+	HWND CreateDelphiWindow(HWND DelphiHandle)
 	{
-		m_hWnd = DelphiHandle; //::CreateWindowEx(dwExStyle, GetWindowClassName(), pstrName, dwStyle, x, y, cx, cy, hwndParent, hMenu, CPaintManagerUI::GetInstance(), this);
+		m_hWnd = DelphiHandle; 
 		ASSERT(m_hWnd!=NULL);
 		// 模拟
 		//BOOL b = TRUE;
@@ -1223,8 +1222,8 @@ DIRECTUILIB_API HWND Delphi_Delphi_WindowImplBase_CreateDuiWindow(CDelphi_Window
 	return handle->CreateDuiWindow(hwndParent, pstrWindowName, dwStyle, dwExStyle);
 }
 
-DIRECTUILIB_API HWND Delphi_Delphi_WindowImplBase_CreateDelphiWindow(CDelphi_WindowImplBase* handle, HWND DelphiHandle, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle, int x, int y, int cx, int cy, HMENU hMenu) {
-	return handle->CreateDelphiWindow(DelphiHandle, pstrName, dwStyle, dwExStyle, x, y, cx, cy, hMenu);
+DIRECTUILIB_API HWND Delphi_Delphi_WindowImplBase_CreateDelphiWindow(CDelphi_WindowImplBase* handle, HWND DelphiHandle) {
+	return handle->CreateDelphiWindow(DelphiHandle);
 }
  
 DIRECTUILIB_API LRESULT Delphi_Delphi_WindowImplBase_DelphiMessage(CDelphi_WindowImplBase* handle, UINT uMsg, WPARAM wParam, LPARAM lParam) { 

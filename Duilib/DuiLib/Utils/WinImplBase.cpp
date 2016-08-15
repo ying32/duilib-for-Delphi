@@ -53,7 +53,7 @@ CDuiString WindowImplBase::GetZIPFileName() const
 
 LPCTSTR WindowImplBase::GetResourceID() const
 {
-	return _T("DefaultSkin");
+	return _T("");
 }
 
 CControlUI* WindowImplBase::CreateControl(LPCTSTR pstrClass)
@@ -270,7 +270,9 @@ LRESULT WindowImplBase::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& 
 	styleValue &= ~WS_CAPTION;
 	::SetWindowLong(*this, GWL_STYLE, styleValue | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
 	RECT rcClient;
-	::GetClientRect(*this, &rcClient);
+	// 这个肯定错误，不然初始的x, y有何意义
+	//::GetClientRect(*this, &rcClient);
+	::GetWindowRect(*this, &rcClient);
 	::SetWindowPos(*this, NULL, rcClient.left, rcClient.top, rcClient.right - rcClient.left, \
 		rcClient.bottom - rcClient.top, SWP_FRAMECHANGED);
 
