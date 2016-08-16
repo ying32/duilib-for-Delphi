@@ -21,8 +21,11 @@ uses
   Messages,
   SysUtils,
   Classes,
-  Forms,
-  Duilib,
+  Forms
+{$IFDEF SupportGeneric}
+  ,Generics.Collections
+{$ENDIF}
+  ,Duilib,
   DuiConst,
   DuiWindowImplBase;
 
@@ -91,8 +94,27 @@ type
     property OnResponseDefaultKey: TDuiResponseDefaultKeyEvent read FOnResponseDefaultKey write FOnResponseDefaultKey;
   end;
 
+  TDuiObjectEvent = procedure(Sender: TNotifyUI; var Handled: Boolean) of object;
+
+  TDuiObjecItem = record
+    EventType: string;
+    ObjName: string;
+    Event: TDuiObjectEvent;
+  end;
+{$IFNDEF SupportGeneric}
+  PDuiObjecItem = ^TDuiObjecItem;
+{$ENDIF}
+
+{$IFDEF SupportGeneric}
+  TDuiObjectEvents = TDictionary<string, TDuiObjecItem>;
+{$ELSE}
+  TDuiObjectEvents = TList;
+{$ENDIF}
+
+
   TDDuiForm = class(TComponent)
   private
+    FObjectEvents: TDuiObjectEvents;
     FForm: TCustomForm;
     FSkinFolder: string;
     FSkinXml: string;
@@ -112,13 +134,19 @@ type
     FOnHandleMessage: TDuiMessageEvent;
     FOnClick: TDuiNotifyEvent;
     procedure NewWndProc(var Msg: TMessage);
+    procedure DuiNotifyEvent(Sender: TObject; var Msg: TNotifyUI);
   protected
     procedure Loaded; override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure InitDuiComponent;  
+    procedure InitDuiComponent;
     property DUI: TDuiComponent read FDuiComponent;
+    procedure AddObjectEvent(AType, AObjName: string; AEvent: TDuiObjectEvent);
+    procedure ClearEvents;
+  {$IFNDEF SupportGeneric}
+    function IndexOfObjEvent(AObjName: string): Integer;
+  {$ENDIF}
   published
     property SkinFolder: string read FSkinFolder write FSkinFolder;
     property SkinXml: string read FSkinXml write FSkinXml;
@@ -153,10 +181,10 @@ var
 
 constructor TDDuiApp.Create(AOwner: TComponent);
 begin
-  if AppObjectExists then
-    raise Exception.Create('DDuilib App Object已经存在！');
+  //if AppObjectExists then
+  //  raise Exception.Create('DDuilib App Object已经存在！');
   inherited Create(AOwner);
-  if not (csDesigning in ComponentState) then
+  if not (csDesigning in ComponentState) and not AppObjectExists then
   begin
     if Assigned(Application) then
     begin
@@ -236,6 +264,66 @@ end;
 
 { TDDuiForm }
 
+procedure TDDuiForm.AddObjectEvent(AType, AObjName: string;
+  AEvent: TDuiObjectEvent);
+{$IFDEF SupportGeneric}
+var
+  LItem: TDuiObjecItem;
+begin
+  LItem.EventType := AType;
+  LItem.ObjName := AObjName;
+  LItem.Event := AEvent;
+  if not FObjectEvents.ContainsKey(AObjName) then
+    FObjectEvents.Add(AObjName, LItem);
+end;
+{$ELSE}
+var
+  LItem: PDuiObjecItem;
+begin
+  if IndexOfObjEvent(AObjName) = -1 then
+  begin
+    New(LItem);
+    LItem^.EventType := AType;
+    LItem^.ObjName := AObjName;
+    LItem^.Event := AEvent;
+    FObjectEvents.Add(LItem);
+  end;
+end;
+{$ENDIF}
+
+procedure TDDuiForm.ClearEvents;
+{$IFDEF SupportGeneric}
+begin
+  FObjectEvents.Clear;
+end;
+{$ELSE}
+var
+  I: Integer;
+begin
+  for I := 0 to FObjectEvents.Count - 1 do
+    Dispose(FObjectEvents[I]);
+  FObjectEvents.Free;
+end;
+{$ENDIF}
+
+{$IFNDEF SupportGeneric}
+function TDDuiForm.IndexOfObjEvent(AObjName: string): Integer;
+var
+  I: Integer;
+  P: PPointer;
+begin
+  P := Pointer(FObjectEvents);
+  for Result := 0 to FObjectEvents.Count - 1 do
+  begin
+    if PDuiObjecItem(P)^.ObjName = AObjName then
+      Exit;
+    Inc(P);
+  end;
+  Result := -1;
+end;
+{$ENDIF}
+
+
 constructor TDDuiForm.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
@@ -244,6 +332,7 @@ begin
   FForm := AOwner as TCustomForm;
   FSkinResName := 'DefaultSkin';
   FSkinKind := skFile;
+  FObjectEvents := TDuiObjectEvents.Create;
   if not(csDesigning in ComponentState) then
   begin
     FOldWndProc := FForm.WindowProc;
@@ -258,7 +347,38 @@ begin
     if Assigned(FOldWndProc) then
       FForm.WindowProc := FOldWndProc;
   end;
+  ClearEvents;
+  FObjectEvents.Free;
   inherited;
+end;
+
+procedure TDDuiForm.DuiNotifyEvent(Sender: TObject; var Msg: TNotifyUI);
+var
+  LItem: TDuiObjecItem;
+{$IFNDEF SupportGeneric}
+  I: Integer;
+{$ENDIF}
+  LHandled: Boolean;
+begin
+  LHandled := False;
+{$IFDEF SupportGeneric}
+  if FObjectEvents.TryGetValue(Msg.pSender.Name, LItem) then
+  begin
+    if LItem.EventType = Msg.sType then
+      LItem.Event(Msg, LHandled);
+  end;
+{$ELSE}
+  I := IndexOfObjEvent(Msg.pSender.Name);
+  if I <> -1 then
+  begin
+    LItem := PDuiObjecItem(FObjectEvents[I])^;
+    if LItem.EventType = Msg.sType then
+      LItem.Event(Msg, LHandled);
+  end;
+{$ENDIF}
+  if LHandled then Exit;
+  if Assigned(FOnNotify) then
+    FOnNotify(Sender, Msg);
 end;
 
 procedure TDDuiForm.InitDuiComponent;
@@ -267,7 +387,7 @@ begin
   begin
     FDuiComponent := TDuiComponent.Create(FSkinXml, FSkinFolder, FSkinZip, FSkinResName, TResourceType(FSkinKind));
     FDuiComponent.OnHandleCustomMessage := FOnHandleCustomMessage;
-    FDuiComponent.OnNotify := FOnNotify;
+    FDuiComponent.OnNotify := DuiNotifyEvent;
     FDuiComponent.OnFinalMessage := FOnFinalMessage;
     FDuiComponent.OnMessageHandler := FOnMessageHandler;
     FDuiComponent.OnCreateControl := FOnCreateControl;
@@ -457,5 +577,7 @@ begin
   if Assigned(FOnResponseDefaultKey) then
     FOnResponseDefaultKey(Self, wParam, AResult);
 end;
+
+
 
 end.
