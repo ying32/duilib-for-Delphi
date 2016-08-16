@@ -117,14 +117,12 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure InitDuiComponent; // 先这样，暂时没有其它想法，在OnCreate事件中已经创建了，消息已经过去了，则没有处理到
-     // 导出
-    property DUI: TDuiComponent read FDuiComponent write FDuiComponent;
+    procedure InitDuiComponent;  
+    property DUI: TDuiComponent read FDuiComponent;
   published
     property SkinFolder: string read FSkinFolder write FSkinFolder;
     property SkinXml: string read FSkinXml write FSkinXml;
     property SkinZip: string read FSkinZip write FSkinZip;
-    // 暂不可写，只能使用默认的 DefaultSkin;
     property SkinResName: string read FSkinResName write FSkinResName;
     property SkinKind: TSkinKind read FSkinKind write FSkinKind;
 

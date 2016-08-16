@@ -122,8 +122,13 @@ type
        cx: Integer = Integer(CW_USEDEFAULT); cy: Integer = Integer(CW_USEDEFAULT); hMenu: HMENU = 0); overload;
     procedure SetClassStyle(nStyle: UINT);
     procedure SetIcon(nRes: UINT);
-    function FindControl(const AName: string): CControlUI; overload;
-    function FindControl(const pt: TPoint): CControlUI; overload;
+    {$IFDEF SupportGeneric}
+      function FindControl<T>(const AName: string): T; overload;
+      function FindControl<T>(const APoint: TPoint): T; overload;
+    {$ELSE}
+      function FindControl(const AName: string):CControlUI; overload;
+      function FindControl(const pt: TPoint): CControlUI; overload;
+    {$ENDIF}
     function FindSubControl(const AParent: CControlUI; const AName: string): CControlUI; overload;
     function FindSubControl(const AParent: CControlUI; const P: TPoint): CControlUI; overload;
     function FindSubControls(const AParent: CControlUI; const AClassName: string): CStdPtrArray;
@@ -433,11 +438,6 @@ begin
   DoResponseDefaultKeyEvent(wParam, Result);
 end;
 
-function TDuiWindowImplBase.FindControl(const pt: TPoint): CControlUI;
-begin
-  Result := FPaintManagerUI.FindControl(pt);
-end;
-
 function TDuiWindowImplBase.FindSubControl(const AParent: CControlUI;
   const P: TPoint): CControlUI;
 begin
@@ -515,10 +515,37 @@ begin
   SystemParametersInfo(SPI_GETWORKAREA, 0, {$IFDEF UseLowVer}@{$ENDIF}Result, 0);
 end;
 
+{$IFDEF SupportGeneric}
+function TDuiWindowImplBase.FindControl<T>(const AName: string): T;
+type
+  PT = ^T;
+var
+  L: CControlUI;
+begin
+  L := FPaintManagerUI.FindControl(AName);
+  Result := PT(@L)^;
+end;
+
+function TDuiWindowImplBase.FindControl<T>(const APoint: TPoint): T;
+type
+  PT = ^T;
+var
+  L: CControlUI;
+begin
+  L := FPaintManagerUI.FindControl(APoint);
+  Result := PT(@L)^;
+end;
+{$ELSE}
 function TDuiWindowImplBase.FindControl(const AName: string): CControlUI;
 begin
   Result := FPaintManagerUI.FindControl(AName);
 end;
+
+function TDuiWindowImplBase.FindControl(const pt: TPoint): CControlUI;
+begin
+  Result := FPaintManagerUI.FindControl(pt);
+end;
+{$ENDIF}
 
 procedure TDuiWindowImplBase.Hide;
 begin
