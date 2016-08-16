@@ -3,9 +3,9 @@ unit ufrmVclTest;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DDuilibComponent, Vcl.StdCtrls, Duilib,
-  Vcl.ExtCtrls;
+  Windows, Messages, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, DDuilibComponent, StdCtrls, Duilib,
+  ExtCtrls;
 
 type
   TForm1 = class(TForm)

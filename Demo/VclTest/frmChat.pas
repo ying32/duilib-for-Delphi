@@ -3,9 +3,8 @@ unit frmChat;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DDuilibComponent;
-
+  Windows, Classes, DDuilibComponent, Messages, SysUtils, Variants, Graphics,
+  Controls, Forms, Dialogs;
 type
   TForm2 = class(TForm)
     DDuiForm1: TDDuiForm;

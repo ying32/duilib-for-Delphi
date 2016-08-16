@@ -3,9 +3,9 @@ unit ufrmTest3;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DDuilibComponent, Duilib, Vcl.StdCtrls,
-  Vcl.ExtCtrls;
+  Windows, Messages, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, DDuilibComponent, Duilib, StdCtrls,
+  ExtCtrls;
 
 type
   TForm3 = class(TForm)

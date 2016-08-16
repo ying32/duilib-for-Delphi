@@ -3,8 +3,8 @@ unit ufrmWebbrowser;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DDuilibComponent, Duilib, DuiWebBrowser, DuiActiveX, SHDocVw;
+  Windows, Messages, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, DDuilibComponent, Duilib, DuiWebBrowser, DuiActiveX, SHDocVw;
 
 type
   TForm4 = class(TForm)
