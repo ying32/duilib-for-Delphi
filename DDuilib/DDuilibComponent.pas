@@ -6,8 +6,9 @@
 //       E-mail：1444386932@qq.com
 //       做成一个组件用来与VCL相结合
 //       版权所有 (C) 2015-2016 ying32 All Rights Reserved
+//       半夜又被蚊子咬醒了，又被外面的车子吵着，干脆起来写代码了
+//       代码完成时间差不多快早上6点了，唉。
 //
-//       1、先想想
 //***************************************************************************
 unit DDuilibComponent;
 
@@ -331,6 +332,9 @@ begin
       if Msg.Msg = WM_SETCURSOR then
         Exit;
     end;
+    // 是否需要?
+    if (Msg.Msg = WM_PAINT) and (LRes <> 0) then
+      Exit;
   end;
   // 解决调整边框时无法收WM_NCLBUTTONUP消息
   if Msg.Msg = WM_NCLBUTTONDOWN then

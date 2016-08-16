@@ -10,20 +10,14 @@ uses
 type
   TForm1 = class(TForm)
     btn1: TButton;
-    DDuiForm1: TDDuiForm;
     DDuiApp1: TDDuiApp;
-    tmr1: TTimer;
+    btn2: TButton;
+    btn3: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btn1Click(Sender: TObject);
-    procedure DDuiForm1Click(Sender: TObject; var Msg: TNotifyUI);
-    procedure DDuiForm1InitWindow(Sender: TObject);
-    procedure tmr1Timer(Sender: TObject);
-    procedure btn1MouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
-    procedure btn1MouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
-    procedure btn1MouseUp(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
+    procedure btn2Click(Sender: TObject);
+    procedure btn3Click(Sender: TObject);
   private
 //    FDuiApp: TDDuiApp;
 //    FDuiForm: TDDuiForm;
@@ -40,51 +34,21 @@ implementation
 {$R *.dfm}
 
 uses
-  frmChat;
+  frmChat, ufrmTest3, ufrmWebbrowser;
 
 procedure TForm1.btn1Click(Sender: TObject);
 begin
-  Close;
+  Form2.Show;
 end;
 
-procedure TForm1.btn1MouseDown(Sender: TObject; Button: TMouseButton;
-  Shift: TShiftState; X, Y: Integer);
+procedure TForm1.btn2Click(Sender: TObject);
 begin
-//  Writeln('btn1 mouse down');
+  Form3.Show;
 end;
 
-procedure TForm1.btn1MouseMove(Sender: TObject; Shift: TShiftState; X,
-  Y: Integer);
+procedure TForm1.btn3Click(Sender: TObject);
 begin
-//  Writeln('btn1 mouse move');
-end;
-
-procedure TForm1.btn1MouseUp(Sender: TObject; Button: TMouseButton;
-  Shift: TShiftState; X, Y: Integer);
-begin
-//  Writeln('btn1 mouse up');
-end;
-
-procedure TForm1.DDuiForm1Click(Sender: TObject; var Msg: TNotifyUI);
-begin
-  Writeln(Msg.pSender.Name);
-  if Msg.pSender.Name = 'friendbtn' then
-    Form2.Show;
-end;
-
-procedure TForm1.DDuiForm1InitWindow(Sender: TObject);
-var
-  LCtl: CNativeControlUI;
-begin
-  Writeln('DDuiForm1InitWindow');
-
-  LCtl := CNativeControlUI.CppCreate(0);
-  // 先这样
-  LCtl.SetManager(DDuiForm1.DUI.PaintManagerUI, DDuiForm1.DUI.PaintManagerUI.GetRoot, False);
-  LCtl.Name := btn1.Name;
-  LCtl.SetNativeHandle(btn1.Handle);
-  LCtl.Visible := True;
-  LCtl.SetPos(Rect(1, 1, btn1.Width, btn1.Height), False);
+  form4.Show;
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
@@ -110,11 +74,6 @@ procedure TForm1.FormDestroy(Sender: TObject);
 begin
 //  FDuiApp.Free;
   FreeLibrary(hInstRich);
-end;
-
-procedure TForm1.tmr1Timer(Sender: TObject);
-begin
-//  Writeln('我是定时器');
 end;
 
 procedure TForm1.WndProc(var Msg: TMessage);

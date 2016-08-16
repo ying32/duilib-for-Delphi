@@ -17,34 +17,34 @@ object Form1: TForm1
   PixelsPerInch = 96
   TextHeight = 13
   object btn1: TButton
-    Left = 136
-    Top = 40
+    Left = 128
+    Top = 152
     Width = 75
     Height = 25
-    Caption = 'btn1'
+    Caption = 'QQ'#32842#22825#30028#38754
     TabOrder = 0
-    Visible = False
     OnClick = btn1Click
-    OnMouseDown = btn1MouseDown
-    OnMouseMove = btn1MouseMove
-    OnMouseUp = btn1MouseUp
   end
-  object DDuiForm1: TDDuiForm
-    SkinFolder = '\skin\QQRes\'
-    SkinXml = 'main_frame.xml'
-    SkinResName = 'DefaultSkin'
-    OnInitWindow = DDuiForm1InitWindow
-    OnClick = DDuiForm1Click
-    Left = 32
-    Top = 80
+  object btn2: TButton
+    Left = 128
+    Top = 192
+    Width = 75
+    Height = 25
+    Caption = 'QQ'#20027#30028#38754
+    TabOrder = 1
+    OnClick = btn2Click
+  end
+  object btn3: TButton
+    Left = 128
+    Top = 232
+    Width = 75
+    Height = 25
+    Caption = #27983#35272#22120
+    TabOrder = 2
+    OnClick = btn3Click
   end
   object DDuiApp1: TDDuiApp
     Left = 32
     Top = 136
-  end
-  object tmr1: TTimer
-    OnTimer = tmr1Timer
-    Left = 144
-    Top = 152
   end
 end

@@ -31,8 +31,10 @@
 #### **初次使用**  
 使用DDuilib需要具备一定的Delphi基础，其次，最好了解下[duilib](https://github.com/duilib/duilib)以及如何建立UI的xml布局文件，这样学习起来会少走很多弯路。
 
-> 简单示例：完整示例可查看[Duilib for Delphi入门](http://blog.csdn.net/zyjying520/article/details/50184759)
+> 简单示例：完整示例可查看[Duilib for Delphi入门](http://blog.csdn.net/zyjying520/article/details/50184759)   
 
+> 另外做了个VCL版本的，在DDulib目录下DDuilibVcl组件工程，注册后只需要在首个窗口添加一个TDDuiApp组件，每个窗口分别添加TDDuiForm组件，并指定相应的布局资源及文件资源。使用此组件可以简化创建窗口部分并可以和VCL相结合。
+  
 ```delphi
 
 // dpr文件
@@ -107,21 +109,18 @@ end.
 > 
 * 1、 DDuilib
    * duilib for Delphi源目录。
-> 
-* 2、 DuilibExport
-   * 需要加入到原[duilib](https://github.com/duilib/duilib)工程中编译的c++源文件。
 >
-* 3、Demo
+* 2、Demo
    * 新的Demo工程目录
  >  
-* 4、Duilib
+* 3、Duilib
    * 存放原[duilib](https://github.com/duilib/duilib)工程目录，这里不提供原[duilib](https://github.com/duilib/duilib)的源码，请自行下载。
-   * 4.1、 bin
+   * 3.1、 bin
       * 存放编译后的二进制及图片和xml资源，里面有的包含原duilib的资源文件  
-   * 4.2、 Duilib
+   * 3.2、 Duilib
       * 存放duilib c++工程源码
 >	  
-* 5、ThirdParty
+* 4、ThirdParty
    * 存放一些第三方的库或者二进制文件
 
 
@@ -133,5 +132,8 @@ end.
 
 
 #### **作者信息** 
+##### 多少无所谓，反正想捐助的就随心吧，不捐助也毫无影响。  
+
+![欢迎捐助](https://github.com/ying32/duilib-for-Delphi/tree/TestDelphi/20160816094242.jpg)  
 [ying32](mailto:1444386932@qq.com) 
 

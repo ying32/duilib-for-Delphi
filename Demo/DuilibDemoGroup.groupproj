@@ -33,6 +33,9 @@
         <Projects Include="VclTest\VclTest.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="..\DDuilib\DDuilibVcl.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -131,14 +134,23 @@
     <Target Name="VclTest:Make">
         <MSBuild Projects="VclTest\VclTest.dproj" Targets="Make"/>
     </Target>
+    <Target Name="DDuilibVcl">
+        <MSBuild Projects="..\DDuilib\DDuilibVcl.dproj"/>
+    </Target>
+    <Target Name="DDuilibVcl:Clean">
+        <MSBuild Projects="..\DDuilib\DDuilibVcl.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="DDuilibVcl:Make">
+        <MSBuild Projects="..\DDuilib\DDuilibVcl.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="Apps;ListDemo;QQDemo;TestApp1;NativeControl;webbrowser;WkeBrowser;MenuDemo;QQ;VclTest"/>
+        <CallTarget Targets="Apps;ListDemo;QQDemo;TestApp1;NativeControl;webbrowser;WkeBrowser;MenuDemo;QQ;VclTest;DDuilibVcl"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="Apps:Clean;ListDemo:Clean;QQDemo:Clean;TestApp1:Clean;NativeControl:Clean;webbrowser:Clean;WkeBrowser:Clean;MenuDemo:Clean;QQ:Clean;VclTest:Clean"/>
+        <CallTarget Targets="Apps:Clean;ListDemo:Clean;QQDemo:Clean;TestApp1:Clean;NativeControl:Clean;webbrowser:Clean;WkeBrowser:Clean;MenuDemo:Clean;QQ:Clean;VclTest:Clean;DDuilibVcl:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="Apps:Make;ListDemo:Make;QQDemo:Make;TestApp1:Make;NativeControl:Make;webbrowser:Make;WkeBrowser:Make;MenuDemo:Make;QQ:Make;VclTest:Make"/>
+        <CallTarget Targets="Apps:Make;ListDemo:Make;QQDemo:Make;TestApp1:Make;NativeControl:Make;webbrowser:Make;WkeBrowser:Make;MenuDemo:Make;QQ:Make;VclTest:Make;DDuilibVcl:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
