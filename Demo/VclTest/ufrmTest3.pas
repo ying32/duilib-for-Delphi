@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, Dialogs, DDuilibComponent, Duilib, StdCtrls,
-  ExtCtrls;
+  ExtCtrls, DuiConst;
 
 type
   TForm3 = class(TForm)
@@ -13,11 +13,12 @@ type
     btn1: TButton;
     tmr1: TTimer;
     procedure DDuiForm1InitWindow(Sender: TObject);
-    procedure DDuiForm1Click(Sender: TObject; var Msg: TNotifyUI);
     procedure tmr1Timer(Sender: TObject);
     procedure btn1Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
+    procedure OnTest(Sender: TNotifyUI; var Handled: Boolean);
   public
     { Public declarations }
   end;
@@ -36,13 +37,6 @@ begin
   ShowMessage('Œ“ «∞¥≈•');
 end;
 
-procedure TForm3.DDuiForm1Click(Sender: TObject; var Msg: TNotifyUI);
-begin
-  Writeln(Msg.pSender.Name);
-  if Msg.pSender.Name = 'friendbtn' then
-    Form2.Show;
-end;
-
 procedure TForm3.DDuiForm1InitWindow(Sender: TObject);
 var
   LCtl: CNativeControlUI;
@@ -56,6 +50,16 @@ begin
   LCtl.SetNativeHandle(btn1.Handle);
   LCtl.Visible := True;
   LCtl.SetPos(Rect(1, 1, btn1.Width, btn1.Height), False);
+end;
+
+procedure TForm3.FormCreate(Sender: TObject);
+begin
+  DDuiForm1.AddObjectEvent(DUI_MSGTYPE_CLICK, 'friendbtn', OnTest);
+end;
+
+procedure TForm3.OnTest(Sender: TNotifyUI; var Handled: Boolean);
+begin
+  Form2.Show;
 end;
 
 procedure TForm3.tmr1Timer(Sender: TObject);

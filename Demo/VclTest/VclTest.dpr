@@ -3,7 +3,7 @@ program VclTest;
 {$APPTYPE CONSOLE}
 
 uses
-  Forms,
+  Vcl.Forms,
   Duilib,
   ufrmVclTest in 'ufrmVclTest.pas' {Form1},
   DDuilibComponent in '..\..\DDuilib\DDuilibComponent.pas',
@@ -16,7 +16,7 @@ uses
 
 begin
   Application.Initialize;
-  //Application.MainFormOnTaskbar := True;
+  Application.MainFormOnTaskbar := True;
   Application.CreateForm(TForm1, Form1);
   Application.CreateForm(TForm2, Form2);
   Application.CreateForm(TForm3, Form3);

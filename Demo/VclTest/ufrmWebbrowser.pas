@@ -2,6 +2,8 @@ unit ufrmWebbrowser;
 
 interface
 
+{$I 'DDuilib.inc'}
+
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, Dialogs, DDuilibComponent, Duilib, DuiWebBrowser, DuiActiveX, SHDocVw;
@@ -30,7 +32,11 @@ var
   Flags, TargetFrameName, PostData, Headers: OleVariant;
 begin
   inherited;
+{$IFNDEF SupportGeneric}
   pActiveXUI := CActiveXUI(DDuiForm1.DUI.FindControl('ie'));
+{$ELSE}
+  pActiveXUI := DDuiForm1.DUI.FindControl<CActiveXUI>('ie');
+{$ENDIF}
   if pActiveXUI <> nil then
   begin
     pActiveXUI.GetControl(IID_IWebBrowser2, pWebBrowser);

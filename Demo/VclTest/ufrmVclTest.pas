@@ -10,9 +10,9 @@ uses
 type
   TForm1 = class(TForm)
     btn1: TButton;
-    DDuiApp1: TDDuiApp;
     btn2: TButton;
     btn3: TButton;
+    DDuiApp1: TDDuiApp;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btn1Click(Sender: TObject);
