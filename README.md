@@ -134,6 +134,6 @@ end.
 #### **作者信息** 
 ##### 多少无所谓，反正想捐助的就随心吧，不捐助也毫无影响。  
 
-![欢迎捐助](https://github.com/ying32/duilib-for-Delphi/tree/TestDelphi/20160816094242.jpg)  
+![欢迎捐助](https://github.com/ying32/duilib-for-Delphi/raw/TestDelphi/20160816094242.jpg)  
 [ying32](mailto:1444386932@qq.com) 
 
