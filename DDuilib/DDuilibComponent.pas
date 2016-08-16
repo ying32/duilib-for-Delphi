@@ -56,7 +56,6 @@ type
   TDuiMessageEvent = procedure(Sender: TObject; var Msg: TMessage; var bHandled: BOOL) of object;
   TDuiFinalMessageEvent = procedure(Sender: TObject; hWd: HWND) of object;
   TDuiCreateControlEvent = procedure(Sender: TObject; pstrStr: string; var Result: CControlUI) of object;
-  TDuiGetItemTextEvent = procedure(Sender: TObject; pControl: CControlUI; iIndex, iSubItem: Integer; var Result: string) of object;
   TDuiResponseDefaultKeyEvent = procedure(Sender: TObject; wParam: WPARAM; var AResult: LRESULT) of object;
 
   TDuiComponent = class(TDuiWindowImplBase)
@@ -104,7 +103,6 @@ type
     FOldWndProc: TWndMethod;
     FIsNcDown: Boolean;
     FOnHandleCustomMessage: TDuiMessageEvent;
-    FOnGetItemText: TDuiGetItemTextEvent;
     FOnNotify: TDuiNotifyEvent;
     FOnFinalMessage: TDuiFinalMessageEvent;
     FOnMessageHandler: TDuiMessageEvent;
@@ -138,7 +136,6 @@ type
     property OnFinalMessage: TDuiFinalMessageEvent read FOnFinalMessage write FOnFinalMessage;
     property OnHandleCustomMessage: TDuiMessageEvent read FOnHandleCustomMessage write FOnHandleCustomMessage;
     property OnCreateControl: TDuiCreateControlEvent read FOnCreateControl write FOnCreateControl;
-    property OnGetItemText: TDuiGetItemTextEvent read FOnGetItemText write FOnGetItemText;
     property OnResponseDefaultKey: TDuiResponseDefaultKeyEvent read FOnResponseDefaultKey write FOnResponseDefaultKey;
   end;
 

@@ -44,7 +44,7 @@ object Form1: TForm1
     OnClick = btn3Click
   end
   object DDuiApp1: TDDuiApp
-    Left = 32
-    Top = 136
+    Left = 72
+    Top = 216
   end
 end
