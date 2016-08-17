@@ -8,7 +8,7 @@ namespace DuiLib {
 class IDialogBuilderCallback
 {
 public:
-    virtual CControlUI* CreateControl(LPCTSTR pstrClass) = 0;
+    virtual CControlUI* __cdecl CreateControl(LPCTSTR pstrClass) = 0;
 };
 
 

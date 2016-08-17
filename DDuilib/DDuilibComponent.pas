@@ -165,6 +165,8 @@ type
     property OnResponseDefaultKey: TDuiResponseDefaultKeyEvent read FOnResponseDefaultKey write FOnResponseDefaultKey;
   end;
 
+
+
   procedure Register;
 implementation
 
@@ -173,18 +175,12 @@ begin
   RegisterComponents('DDuilib', [TDDuiApp, TDDuiForm]);
 end;
 
-var
-  AppObjectExists: Boolean;
-
-
 { TDDuiApp }
 
 constructor TDDuiApp.Create(AOwner: TComponent);
 begin
-  //if AppObjectExists then
-  //  raise Exception.Create('DDuilib App Object已经存在！');
   inherited Create(AOwner);
-  if not (csDesigning in ComponentState) and not AppObjectExists then
+  if not (csDesigning in ComponentState) then
   begin
     if Assigned(Application) then
     begin
@@ -193,7 +189,6 @@ begin
     end;
     CPaintManagerUI.SetInstance(HInstance);
   end;
-  AppObjectExists := True;
 end;
 
 destructor TDDuiApp.Destroy;
@@ -432,6 +427,7 @@ begin
           FreeAndNil(FDuiComponent);
       end;
   end;
+
   if FDuiComponent <> nil then
   begin
     LRes := {$IFDEF SupportGeneric}FDuiComponent.This{$ELSE}CDelphi_WindowImplBase(FDuiComponent.This){$ENDIF}.DelphiMessage(Msg.Msg, Msg.WParam, Msg.LParam);
@@ -440,6 +436,7 @@ begin
       Msg.Result := LRes;
       Exit; // 这里不知道要不要也作处理
     end;
+
     if FDuiComponent.PaintManagerUI.MessageHandler(Msg.Msg, Msg.WParam, Msg.LParam, LRes) then
     begin
       Msg.Result := LRes;
@@ -468,6 +465,10 @@ begin
       //Exit;
     end;
   end;
+
+
+
+
 {
   WM_NCCREATE         = $0081;
   WM_NCDESTROY        = $0082;
@@ -577,6 +578,7 @@ begin
   if Assigned(FOnResponseDefaultKey) then
     FOnResponseDefaultKey(Self, wParam, AResult);
 end;
+
 
 
 

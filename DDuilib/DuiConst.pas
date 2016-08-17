@@ -59,7 +59,7 @@ const
 
   DUI_CTR_COMBO                 = 'Combo';
   DUI_CTR_LABEL                 = 'Label';
-  DUI_CTR_FLASH					= 'Flash';
+  DUI_CTR_FLASH				         	= 'Flash';
 
   DUI_CTR_BUTTON                = 'Button';
   DUI_CTR_OPTION                = 'Option';

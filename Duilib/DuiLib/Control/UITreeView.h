@@ -117,7 +117,7 @@ namespace DuiLib
 		virtual bool OnDBClickItem(void* param);
 		virtual bool SetItemCheckBox(bool _Selected,CTreeNodeUI* _TreeNode = NULL);
 		virtual void SetItemExpand(bool _Expanded,CTreeNodeUI* _TreeNode = NULL);
-		virtual void Notify(TNotifyUI& msg);
+		virtual void __cdecl Notify(TNotifyUI& msg);
 		virtual void SetVisibleFolderBtn(bool _IsVisibled);
 		virtual bool GetVisibleFolderBtn();
 		virtual void SetVisibleCheckBtn(bool _IsVisibled);

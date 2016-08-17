@@ -145,7 +145,7 @@ public:
 		if (m_FinalMessage)
 			m_FinalMessage(m_Self, hWnd);
 	}
-	void Notify(TNotifyUI& msg)
+	void __cdecl Notify(TNotifyUI& msg)
 	{
 		if (m_Notify)
 			m_Notify(m_Self, msg);	
@@ -165,7 +165,7 @@ public:
 		return WindowImplBase::ResponseDefaultKeyEvent(wParam);
 	}
 
-	CControlUI* CreateControl(LPCTSTR pstrClass) {
+	CControlUI* __cdecl CreateControl(LPCTSTR pstrClass) {
 		// 直接创建
 		if (_tcsicmp(pstrClass, _T("NativeControl")) == 0)
 			return new CNativeControlUI(NULL);

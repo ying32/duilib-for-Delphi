@@ -165,14 +165,14 @@ typedef struct UILIB_API tagTEventUI
 class UILIB_API INotifyUI
 {
 public:
-    virtual void Notify(TNotifyUI& msg) = 0;
+    virtual void __cdecl Notify(TNotifyUI& msg) = 0;
 };
 
 // MessageFilter interface
 class UILIB_API IMessageFilterUI
 {
 public:
-    virtual LRESULT MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled) = 0;
+    virtual LRESULT __cdecl MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled) = 0;
 };
 
 class UILIB_API ITranslateAccelerator

@@ -24,7 +24,7 @@ namespace DuiLib
 		virtual ~WindowImplBase(){};
 		virtual void InitWindow(){};
 		virtual void OnFinalMessage( HWND hWnd );
-		virtual void Notify(TNotifyUI& msg);
+		virtual void __cdecl Notify(TNotifyUI& msg);
 
 		DUI_DECLARE_MESSAGE_MAP()
 		virtual void OnClick(TNotifyUI& msg);
@@ -43,8 +43,8 @@ namespace DuiLib
 		virtual UILIB_RESOURCETYPE GetResourceType() const;
 		virtual CDuiString GetZIPFileName() const;
 		virtual LPCTSTR GetResourceID() const;
-		virtual CControlUI* CreateControl(LPCTSTR pstrClass);
-		virtual LRESULT MessageHandler(UINT uMsg, WPARAM wParam, LPARAM /*lParam*/, bool& /*bHandled*/);
+		virtual CControlUI* __cdecl CreateControl(LPCTSTR pstrClass);
+		virtual LRESULT __cdecl MessageHandler(UINT uMsg, WPARAM wParam, LPARAM /*lParam*/, bool& /*bHandled*/);
 		virtual LRESULT OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
 		virtual LRESULT OnDestroy(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
 

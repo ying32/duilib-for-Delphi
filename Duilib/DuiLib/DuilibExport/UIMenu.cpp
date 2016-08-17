@@ -131,7 +131,7 @@ void CMenuUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)
 //
 class CMenuBuilderCallback: public IDialogBuilderCallback
 {
-	CControlUI* CreateControl(LPCTSTR pstrClass)
+	CControlUI* __cdecl CreateControl(LPCTSTR pstrClass)
 	{
 		if (_tcsicmp(pstrClass, kMenuUIInterfaceName) == 0)
 		{

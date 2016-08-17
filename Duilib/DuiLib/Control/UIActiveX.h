@@ -55,7 +55,7 @@ public:
 
     void SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue);
 
-    LRESULT MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+    LRESULT __cdecl MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
 
 protected:
     virtual void ReleaseControl();

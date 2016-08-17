@@ -119,12 +119,39 @@ type
  
   FINDCONTROLPROC = function(AControl: CControlUI; P: LPVOID): CControlUI; cdecl;
   TFindControlProc = FINDCONTROLPROC;
-  INotifyUI = Pointer;
-  IMessageFilterUI = Pointer;
+
+
+
+
+  //  IMessageFilterUI = Pointer;
+  TMessageHandlerEvent = procedure(uMsg: UINT; wParam: WPARAM; lParam: LPARAM; var bHandled: Boolean; var Result: LRESULT) of object;
+  IMessageFilterUI = class
+  private
+    FEvent: TMessageHandlerEvent;
+  protected
+    function MessageHandler(uMsg: UINT; wParam: WPARAM; lParam: LPARAM; var bHandled: Boolean): LRESULT; virtual; cdecl;
+  public
+    constructor Create(AEvent: TMessageHandlerEvent);
+  public
+    property OnMessageHandler: TMessageHandlerEvent read FEvent write FEvent;
+  end;
+
+  //  IDialogBuilderCallback = Pointer;
+  TDialogBuilderCallbackEvent = procedure(pstrClass: string) of object;
+  IDialogBuilderCallback = class
+  private
+    FEvent: TDialogBuilderCallbackEvent;
+  protected
+    function CreateControl(pstrClass: PChar): CControlUI; virtual; cdecl;
+  public
+    constructor Create(AEvent: TDialogBuilderCallbackEvent);
+  public
+    property OnDialogBuilderCallback: TDialogBuilderCallbackEvent read FEvent write FEvent;
+  end;
 
   CWebBrowserEventHandler = class(TObject) end;
   ITranslateAccelerator = Pointer;
-  IDialogBuilderCallback = Pointer;
+
   IListOwnerUI = Pointer;
 
   //IListCallbackUI = Pointer;
@@ -134,6 +161,8 @@ type
     FEvent: TListGetItemTextEvent;
   protected
     function GetItemText(pList: CControlUI; iItem, iSubItem: Integer): LPCTSTR; virtual; cdecl;
+  public
+    constructor Create(AEvent: TListGetItemTextEvent);
   public
     property OnItemText: TListGetItemTextEvent read FEvent write FEvent;
   end;
@@ -330,6 +359,18 @@ type
     wParam: WPARAM;
     lParam: LPARAM;
   end;
+
+  //  INotifyUI = Pointer;
+  TNotifyUIEvent = procedure(var Msg: TNotifyUI) of object;
+  INotifyUI = class
+  private
+    FEvent: TNotifyUIEvent;
+  protected
+    procedure Notify(var Msg: TNotifyUI); virtual; cdecl;
+  public
+    constructor Create(AEvent: TNotifyUIEvent);
+  end;
+
 
   CStdStringPtrMap = class
   private
@@ -9755,6 +9796,11 @@ begin
 end;
 
 
+constructor IListCallbackUI.Create(AEvent: TListGetItemTextEvent);
+begin
+  FEvent := AEvent;
+end;
+
 function IListCallbackUI.GetItemText(pList: CControlUI; iItem, iSubItem: Integer): LPCTSTR;
 var
   S: string;
@@ -9764,6 +9810,44 @@ begin
     FEvent(pList, iItem, iSubItem, S);
   Result := PChar(S);
 end;
+
+constructor INotifyUI.Create(AEvent: TNotifyUIEvent);
+begin
+  FEvent := AEvent;
+end;
+
+procedure INotifyUI.Notify(var Msg: TNotifyUI);
+begin
+  if Assigned(FEvent) then
+    FEvent(Msg);
+end;
+
+constructor IMessageFilterUI.Create(AEvent: TMessageHandlerEvent);
+begin
+  FEvent := AEvent;
+end;
+
+function IMessageFilterUI.MessageHandler(uMsg: UINT; wParam: WPARAM; lParam: LPARAM;
+  var bHandled: Boolean): LRESULT;
+begin
+  Result := 0;
+  if Assigned(FEvent) then
+    FEvent(uMsg, wParam, lParam, bHandled, Result);
+end;
+
+
+constructor IDialogBuilderCallback.Create(AEvent: TDialogBuilderCallbackEvent);
+begin
+  FEvent := AEvent;
+end;
+
+function IDialogBuilderCallback.CreateControl(pstrClass: PChar): CControlUI;
+begin
+  Result := nil;
+  if Assigned(FEvent) then
+    FEvent(pstrClass);
+end;
+
 
 //================================CStdStringPtrMap============================
 

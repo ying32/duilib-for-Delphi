@@ -82,7 +82,7 @@ public:
     LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
 	BOOL Receive(ContextMenuParam param);
 
-	void Notify(TNotifyUI& msg);
+	void __cdecl Notify(TNotifyUI& msg);
 public:
 	HWND m_hParent;
 	POINT m_BasedPoint;
