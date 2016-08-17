@@ -9,17 +9,12 @@ uses
   DuiVCLComponent in 'DuiVCLComponent.pas';
 
 {$R *.res}
-var
-  FDuiForm: TDDuiForm;
+
+
+
 begin
-  CPaintManagerUI.SetInstance(HInstance);
-  FDuiForm := TDDuiForm.Create(nil);
-  FDuiForm.SkinXmlFile := 'login.xml';
-  FDuiForm.SkinFolder := '\skin\QQNewRes\';
-  FDuiForm.InitUI;
-  FDuiForm.Form.Show;
-//  Application.Initialize;
-//  Application.MainFormOnTaskbar := True;
-//  Application.CreateForm(TForm1, Form1);
-  CPaintManagerUI.MessageLoop;
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
 end.

@@ -13,6 +13,7 @@ uses
   Classes,
   Forms,
   SysUtils,
+  DuiConst,
   Duilib;
 
 const
@@ -485,9 +486,11 @@ end;
 
 procedure TDDuiForm.Notify(var Msg: TNotifyUI);
 begin
+  Writeln('type:' + Msg.sType.ToString + ', name:' + Msg.pSender.Name);
   if Assigned(FOnNotify) then
     FOnNotify(Self, Msg);
-  Click(Msg);
+  if Msg.sType = DUI_MSGTYPE_CLICK then
+    Click(Msg);
   FNotifyPump.NotifyPump(Msg);
 end;
 

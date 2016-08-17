@@ -1,3 +1,16 @@
+//***************************************************************************
+//
+//       名称：DuiVCLComponent.pas
+//       作者：ying32
+//       QQ  ：1444386932
+//       E-mail：1444386932@qq.com
+//       做成一个组件用来与VCL相结合
+//       版权所有 (C) 2015-2016 ying32 All Rights Reserved
+//
+//       继之前的DDuilibComponent.pas重新做的一个，此为抛弃
+//       调用TDuiWindowImplBase的类，大部分改为使用Delphi编写
+//
+//***************************************************************************
 unit DuiVCLComponent;
 
 {$I DDuilib.inc}
@@ -14,6 +27,7 @@ uses
 {$IFDEF SupportGeneric}
   ,Generics.Collections
 {$ENDIF}
+  ,DuiConst
   ,Duilib;
 
 type
@@ -40,11 +54,35 @@ type
     property OnMessage: TMessageEvent read FOnMessage write FOnMessage;
   end;
 
+  /// <summary>
+  ///   skFile        磁盘文件
+  ///   skZip         磁盘zip文件
+  ///   skResource    资源文件，当SkinXml属性不为空时使用SkinXml的内容
+  ///   skZipResource 使用资源中的zip文件，资源类型为 ZIPRES
+  ///   skDynCreate   不使用任何xml直接由动态创建
+  /// </summary>
+  TSkinKind = (skFile, skZip, skResource, skZipResource, skDynCreate);
+
   TDuiNotifyEvent = procedure(Sender: TObject; var Msg: TNotifyUI) of object;
+
+  TDuiObjecItem = record
+    EventFlags: string; // EventType + CtlName
+    Event: TDuiNotifyEvent;
+  end;
+{$IFNDEF SupportGeneric}
+  PDuiObjecItem = ^TDuiObjecItem;
+{$ENDIF}
+
+{$IFDEF SupportGeneric}
+  TDuiObjectEvents = TDictionary<string, TDuiObjecItem>;
+{$ELSE}
+  TDuiObjectEvents = TList;
+{$ENDIF}
+
+
   TDuiMessageEvent = procedure(Sender: TObject; var Msg: TMessage; var bHandled: Boolean) of object;
   TDuiCreateControlEvent = procedure(Sender: TObject; const AName: string) of object;
-
-  TSkinKind = (skFile, skZip, skResource, skZipResource);
+  TDuiDynCreateEvent = procedure(Sender: TObject; AMgr: CPaintManagerUI; var ARoot: CControlUI) of object;
 
   TDDuiForm = class(TComponent)
   private
@@ -52,29 +90,27 @@ type
 	  FMessageFilterUI: IMessageFilterUI;
     FDialogBuilderCallback: IDialogBuilderCallback;
     FNotifyPump: CNotifyPump;
-
-    FOldWndPro: TWndMethod;
-    FPaintMgr: CPaintManagerUI;
-    FForm: TForm;
-    FSkinFolder: string;
-    FIsNcDown: Boolean;
-    FHandle: HWND;
+    FObjectEvents: TDuiObjectEvents;
     FOnNotify: TDuiNotifyEvent;
     FOnMessage: TDuiMessageEvent;
     FOnCreateControl: TDuiCreateControlEvent;
     FOnClick: TDuiNotifyEvent;
     FOnInitWindow: TNotifyEvent;
+    FOnDynCreate: TDuiDynCreateEvent;
+    FOldWndProc: TWndMethod;
+    FPaintMgr: CPaintManagerUI;
+    FForm: TForm;
+    FSkinFolder: string;
+    FIsNcDown: Boolean;
+    FHandle: HWND;
     FSkinZipFile: string;
     FSkinKind: TSkinKind;
     FSkinXml: TStrings;
     FSkinXmlFile: string;
     FSkinResName: string;
-
     FIsUIInitd: Boolean;
     FCanProcessDuiMsg: Boolean;
-
-    procedure NewWndPro(var Msg: TMessage);
-
+    procedure NewWndProc(var Msg: TMessage);
     procedure DoNcHitTest(var Msg: TMessage); //message WM_NCHITTEST;
     procedure DoNcActivate(var Msg: TMessage);// message WM_NCACTIVATE;
     procedure DoNcCalcSize(var Msg: TMessage);// message WM_NCCALCSIZE;
@@ -83,7 +119,6 @@ type
     procedure DoGetMinMaxInfo(var Msg: TMessage); //message WM_GETMINMAXINFO;
     procedure DoNcDestroy(var Msg: TMessage); // message WM_NCDESTROY;
     procedure DuiMessageHandler(uMsg: UINT; wParam: WPARAM; lParam: LPARAM; var bHandled: Boolean; var Result: LRESULT);
-
     function IsDesigning: Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
     procedure SetSkinXml(const Value: TStrings);
   protected
@@ -112,7 +147,11 @@ type
     function FindSubControl(const AParent: CControlUI; const AName: string): CControlUI; overload;
     function FindSubControl(const AParent: CControlUI; const P: TPoint): CControlUI; overload;
     function FindSubControlByClass(const AParent: CControlUI; const AClassName: string; AIndex: Integer = 0): CControlUI;
+    function IndexOfObjEvent(AObjName: string): Integer;
   {$ENDIF}
+    procedure ClearEvents;
+    procedure AddObjectEvent(AType, AObjName: string; AEvent: TDuiNotifyEvent);
+    procedure AddObjectClick(AObjName: string; AEvent: TDuiNotifyEvent);
   public
     property PaintMgr: CPaintManagerUI read FPaintMgr;
     property Handle: HWND read FHandle;
@@ -130,6 +169,7 @@ type
     property OnMessage: TDuiMessageEvent read FOnMessage write FOnMessage;
     property OnClick: TDuiNotifyEvent read FOnClick write FOnClick;
     property OnCreateControl: TDuiCreateControlEvent read FOnCreateControl write FOnCreateControl;
+    property OnDynCreate: TDuiDynCreateEvent read FOnDynCreate write FOnDynCreate;
   end;
 
 var
@@ -262,43 +302,42 @@ end;
 
 constructor TDDuiForm.Create(AOwner: TComponent);
 begin
-//  if not(AOwner is TCustomForm) then
-//    raise Exception.Create('DDuiForm必须创建在TForm之上。');
+  if not(AOwner is TCustomForm) then
+    raise Exception.Create('DDuiForm必须创建在TForm之上。');
   inherited Create(AOwner);
   FSkinResName := 'DefaultSkin';
   FSkinKind := skFile;
-  //FForm := AOwner as TForm;
-
+  FForm := AOwner as TForm;
 
   FSkinXml := TStringList.Create;
   FNotifyUI := INotifyUI.Create(Notify);
   FMessageFilterUI := IMessageFilterUI.Create(DuiMessageHandler);
   FDialogBuilderCallback := IDialogBuilderCallback.Create(CreateControl);
-  //FObjectEvents := TDuiObjectEvents.Create;
-
+  FObjectEvents := TDuiObjectEvents.Create;
   if not IsDesigning then
   begin
     FPaintMgr := CPaintManagerUI.CppCreate;
     FNotifyPump := CNotifyPump.CppCreate;
-  end;
 
-  FForm := TForm.Create(Application);
-  FHandle := FForm.Handle;
-    FOldWndPro := FForm.WindowProc;
-    FForm.WindowProc := NewWndPro;
+    FHandle := FForm.Handle;
+    FOldWndProc := FForm.WindowProc;
+    FForm.WindowProc := NewWndProc;
+  end;
 end;
 
 
 destructor TDDuiForm.Destroy;
 begin
-  FSkinXml.Free;
   if not IsDesigning then
   begin
-    if Assigned(FOldWndPro) then
-      FForm.WindowProc := FOldWndPro;
+    if Assigned(FOldWndProc) then
+      FForm.WindowProc := FOldWndProc;
     FNotifyPump.CppDestroy;
     FPaintMgr.CppDestroy;
   end;
+  FSkinXml.Free;
+  ClearEvents;
+  FObjectEvents.Free;
   FDialogBuilderCallback.Free;
   FMessageFilterUI.Free;
   FNotifyUI.Free;
@@ -488,9 +527,9 @@ begin
   end;
   bZoomed := IsZoomed(Handle);
   lRes := 0;
-  if Assigned(FOldWndPro) then
+  if Assigned(FOldWndProc) then
   begin
-    FOldWndPro(Msg);
+    FOldWndProc(Msg);
     lRes := Msg.Result;
   end;
   if IsZoomed(Handle) <> bZoomed then
@@ -512,52 +551,68 @@ var
   LResourcePath: string;
   pRoot: CControlUI;
   LResStream: TResourceStream;
+  LMemStream: TMemoryStream;
 begin
   if FIsUIInitd then Exit;
   FCanProcessDuiMsg := True;
   FPaintMgr.Init(Handle);
   FPaintMgr.AddMessageFilter(FMessageFilterUI);
-  builder := CDialogBuilder.CppCreate;
-  try
-    LResourcePath := FPaintMgr.GetResourcePath;
-    if LResourcePath = '' then
-      LResourcePath := ExtractFilePath(ParamStr(0)) + FSkinFolder;
-    FPaintMgr.SetResourcePath(LResourcePath);
-    case FSkinKind of
-      skZip:
-        FPaintMgr.SetResourceZip(SkinZipFile, True);
-      skZipResource:
-        begin
-          LResStream := TResourceStream.Create(FPaintMgr.GetResourceDll, FSkinResName, 'ZIPRES');
-          try
-            if LResStream.Size <> 0 then
-              FPaintMgr.SetResourceZip(LResStream.Memory, LResStream.Size)
-            else Exit;
-          finally
-            LResStream.Free;
+
+  LResourcePath := FPaintMgr.GetResourcePath;
+  if LResourcePath = '' then
+    LResourcePath := ExtractFilePath(ParamStr(0)) + FSkinFolder;
+  FPaintMgr.SetResourcePath(LResourcePath);
+  pRoot := nil;
+  if FSkinKind = skDynCreate then
+  begin
+    if Assigned(FOnDynCreate) then
+      FOnDynCreate(Self, FPaintMgr, pRoot);
+  end else
+  begin
+    builder := CDialogBuilder.CppCreate;
+    try
+      case FSkinKind of
+        skZip:
+          begin
+             // 不使用他的，他的直接这样就超级慢
+             //FPaintMgr.SetResourceZip(SkinZipFile, True);
+             LMemStream := TMemoryStream.Create;
+             try
+               LMemStream.LoadFromFile(FPaintMgr.GetResourceZip);
+               FPaintMgr.SetResourceZip(LMemStream.Memory, LMemStream.Size)
+             finally
+               LMemStream.Free;
+             end;
           end;
-        end;
-    end;
-    if (FSkinXml.Text <> '') and (FSkinKind = skResource) then
-      pRoot := builder.Create(FSkinXml.Text, 'xml', FDialogBuilderCallback, FPaintMgr)
-    else
-    begin
+        skZipResource:
+          begin
+            LResStream := TResourceStream.Create(FPaintMgr.GetResourceDll, FSkinResName, 'ZIPRES');
+            try
+              if LResStream.Size <> 0 then
+                FPaintMgr.SetResourceZip(LResStream.Memory, LResStream.Size)
+              else Exit;
+            finally
+              LResStream.Free;
+            end;
+          end;
+      end;
       if FSkinKind = skResource then
-        pRoot := builder.Create(FSkinXmlFile, 'xml', FDialogBuilderCallback, FPaintMgr)
+        pRoot := builder.Create(FSkinXml.Text, 'xml', FDialogBuilderCallback, FPaintMgr)
       else
-        pRoot := builder.Create(FSkinXmlFile, '', FDialogBuilderCallback, FPaintMgr);
+        pRoot := builder.CreateFormFile(FSkinXmlFile, FDialogBuilderCallback, FPaintMgr);
+    finally
+      builder.CppDestroy;
     end;
-    if pRoot = nil then
-    begin
-      raise Exception.Create('加载资源文件失败');
-      Exit;
-    end;
-    FPaintMgr.AttachDialog(pRoot);
-    FPaintMgr.AddNotifier(FNotifyUI);
-    FIsUIInitd := True;
-  finally
-    builder.CppDestroy;
   end;
+  if pRoot = nil then
+  begin
+    FPaintMgr.RemoveMessageFilter(FMessageFilterUI);
+    raise Exception.Create('加载资源文件失败');
+    Exit;
+  end;
+  FPaintMgr.AttachDialog(pRoot);
+  FPaintMgr.AddNotifier(FNotifyUI);
+  FIsUIInitd := True;
   if Assigned(FOnInitWindow) then
     FOnInitWindow(Self);
 end;
@@ -580,7 +635,7 @@ begin
     FOnMessage(Self, Msg, bHandled);
 end;
 
-procedure TDDuiForm.NewWndPro(var Msg: TMessage);
+procedure TDDuiForm.NewWndProc(var Msg: TMessage);
 begin
   case Msg.Msg of
     WM_NCACTIVATE:
@@ -598,11 +653,12 @@ begin
     WM_NCDESTROY:
       DoNcDestroy(Msg);
   end;
-  if FPaintMgr.MessageHandler(Msg.Msg, Msg.WParam, Msg.LParam, Msg.Result) then
-	begin
-    if Msg.Msg = WM_SETCURSOR then
-      Exit;
-  end;
+  if FCanProcessDuiMsg then
+    if FPaintMgr.MessageHandler(Msg.Msg, Msg.WParam, Msg.LParam, Msg.Result) then
+    begin
+      //if Msg.Msg = WM_SETCURSOR then
+        Exit;
+    end;
   // 解决调整边框时无法收WM_NCLBUTTONUP消息
   if Msg.Msg = WM_NCLBUTTONDOWN then
     FIsNcDown := True
@@ -621,53 +677,9 @@ begin
     WM_NCACTIVATE,
     WM_GETMINMAXINFO:
   else
-    if Assigned(FOldWndPro) then
-      FOldWndPro(Msg);
+    if Assigned(FOldWndProc) then
+      FOldWndProc(Msg);
   end;
-
-//  case Msg.Msg of
-//    WM_NCACTIVATE:
-//        DoNcActivate(Msg);
-//    WM_NCCALCSIZE:
-//      DoNcCalcSize(Msg);
-//    WM_SIZE:
-//      DoSize(Msg);
-//    WM_SYSCOMMAND:
-//      DoSysCommand(Msg);
-//    WM_NCHITTEST:
-//       DoNcHitTest(Msg);
-//    WM_GETMINMAXINFO:
-//      DoGetMinMaxInfo(Msg);
-//    WM_NCDESTROY:
-//      DoNcDestroy(Msg);
-//  end;
-//  if FCanProcessDuiMsg then
-//    if FPaintMgr.MessageHandler(Msg.Msg, Msg.WParam, Msg.LParam, Msg.Result) then
-//    begin
-//      if Msg.Msg = WM_SETCURSOR then
-//        Exit;
-//    end;
-//  // 解决调整边框时无法收WM_NCLBUTTONUP消息
-//  if Msg.Msg = WM_NCLBUTTONDOWN then
-//    FIsNcDown := True
-//  else if Msg.Msg = WM_NCLBUTTONUP then
-//  begin
-//    FIsNcDown := False;
-//    ReleaseCapture;
-//  end;
-//  if (Msg.Msg = WM_EXITSIZEMOVE) and FIsNcDown then
-//    Perform(WM_NCLBUTTONUP, HTCAPTION);
-//  case Msg.Msg of
-//    WM_NCCALCSIZE,
-//    WM_NCHITTEST,
-//    WM_NCPAINT,
-//    WM_NCACTIVATE,
-//    WM_GETMINMAXINFO
-//    :
-//  else
-//    if Assigned(FOldWndProc) then
-//      FOldWndProc(Msg);
-//  end;
 end;
 
 function TDDuiForm.FindSubControlsByClass(const AParent: CControlUI; const AClassName: string): CStdPtrArray;
@@ -756,13 +768,91 @@ function TDDuiForm.FindSubControlByClass(const AParent: CControlUI; const AClass
 begin
   Result := FPaintMgr.FindSubControlByClass(AParent, AClassName, AIndex);
 end;
+
+function TDDuiForm.IndexOfObjEvent(AObjName: string): Integer;
+var
+  I: Integer;
+  P: PPointer;
+begin
+  P := Pointer(FObjectEvents);
+  for Result := 0 to FObjectEvents.Count - 1 do
+  begin
+    if PDuiObjecItem(P)^.ObjName = AObjName then
+      Exit;
+    Inc(P);
+  end;
+  Result := -1;
+end;
+end;
 {$ENDIF}
 
-procedure TDDuiForm.Notify(var Msg: TNotifyUI);
+procedure TDDuiForm.ClearEvents;
+{$IFDEF SupportGeneric}
 begin
+  FObjectEvents.Clear;
+end;
+{$ELSE}
+var
+  I: Integer;
+begin
+  for I := 0 to FObjectEvents.Count - 1 do
+    Dispose(FObjectEvents[I]);
+  FObjectEvents.Free;
+end;
+{$ENDIF}
+
+procedure TDDuiForm.AddObjectEvent(AType, AObjName: string; AEvent: TDuiNotifyEvent);
+{$IFDEF SupportGeneric}
+var
+  LItem: TDuiObjecItem;
+begin
+  LItem.EventFlags := AType + AObjName;
+  LItem.Event := AEvent;
+  if not FObjectEvents.ContainsKey(LItem.EventFlags) then
+    FObjectEvents.Add(LItem.EventFlags, LItem);
+end;
+{$ELSE}
+var
+  LItem: PDuiObjecItem;
+begin
+  if IndexOfObjEvent(AType + AObjName) = -1 then
+  begin
+    New(LItem);
+    LItem^.EventType := AType;
+    LItem^.ObjName := AObjName;
+    LItem^.Event := AEvent;
+    FObjectEvents.Add(LItem);
+  end;
+end;
+{$ENDIF}
+
+procedure TDDuiForm.AddObjectClick(AObjName: string; AEvent: TDuiNotifyEvent);
+begin
+  AddObjectEvent(DUI_MSGTYPE_CLICK, AObjName, AEvent);
+end;
+
+procedure TDDuiForm.Notify(var Msg: TNotifyUI);
+var
+  LItem: TDuiObjecItem;
+{$IFNDEF SupportGeneric}
+  I: Integer;
+{$ENDIF}
+begin
+{$IFDEF SupportGeneric}
+  if FObjectEvents.TryGetValue(Msg.sType + Msg.pSender.Name, LItem) then
+    LItem.Event(Self, Msg);
+{$ELSE}
+  I := IndexOfObjEvent(DuiStringToString(Msg.sType) + Msg.pSender.Name);
+  if I <> -1 then
+  begin
+    LItem := PDuiObjecItem(FObjectEvents[I])^;
+    LItem.Event(Self, Msg);
+  end;
+{$ENDIF}
   if Assigned(FOnNotify) then
     FOnNotify(Self, Msg);
-  Click(Msg);
+  if Msg.sType = DUI_MSGTYPE_CLICK then
+    Click(Msg);
   FNotifyPump.NotifyPump(Msg);
 end;
 
@@ -807,9 +897,9 @@ begin
 end;
 
 initialization
-//  DDuiApp := TDDuiApp.Create(nil);
+  DDuiApp := TDDuiApp.Create(nil);
 
 finalization
-//  DDuiApp.Free;
+  DDuiApp.Free;
 
 end.
