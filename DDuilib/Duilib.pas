@@ -2539,7 +2539,7 @@ begin
   Result := Delphi_DialogBuilder_Create_01(Self, STRINGorID(xml), PChar(AType), pCallback, pManager, pParent);
 end;
 
-function CDialogBuilder.CreateFormFile(XmlName: string; pCallback: IDialogBuilderCallback = nil; pManager: CPaintManagerUI = nil; pParent: CControlUI = nil): CControlUI;
+function CDialogBuilder.CreateFromFile(XmlName: string; pCallback: IDialogBuilderCallback = nil; pManager: CPaintManagerUI = nil; pParent: CControlUI = nil): CControlUI;
 begin
   Result := Delphi_DialogBuilder_Create_01(Self, STRINGorID(XmlName), nil, pCallback, pManager, pParent);
 end;
