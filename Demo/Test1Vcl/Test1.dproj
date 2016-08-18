@@ -90,7 +90,6 @@
         <DCCReference Include="uMain.pas">
             <Form>Form1</Form>
         </DCCReference>
-        <DCCReference Include="DuiVCLComponent.pas"/>
         <DCCReference Include="ufrmTest2.pas">
             <Form>Form2</Form>
             <FormType>dfm</FormType>
