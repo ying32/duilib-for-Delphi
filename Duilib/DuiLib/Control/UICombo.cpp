@@ -6,7 +6,8 @@ namespace DuiLib {
 //
 //
 
-class CComboWnd : public CWindowWnd
+class CComboWnd : public CWindowWnd,
+	              public INotifyUI 
 {
 public:
     void Init(CComboUI* pOwner);
@@ -17,7 +18,7 @@ public:
 
     void EnsureVisible(int iIndex);
     void Scroll(int dx, int dy);
-
+	void __cdecl Notify(TNotifyUI& msg);
 #if(_WIN32_WINNT >= 0x0501)
 	virtual UINT GetClassStyle() const;
 #endif
@@ -88,6 +89,7 @@ void CComboWnd::OnFinalMessage(HWND hWnd)
     m_pOwner->m_pWindow = NULL;
     m_pOwner->m_uButtonState &= ~ UISTATE_PUSHED;
     m_pOwner->Invalidate();
+	m_pm.RemoveNotifier(this);
     delete this;
 }
 
@@ -116,6 +118,7 @@ LRESULT CComboWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
             m_pLayout->Add(static_cast<CControlUI*>(m_pOwner->GetItemAt(i)));
         }
         m_pm.AttachDialog(m_pLayout);
+		m_pm.AddNotifier(this);
         
         return 0;
     }
@@ -132,9 +135,6 @@ LRESULT CComboWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
         CControlUI* pControl = m_pm.FindControl(pt);
 		 
         if( pControl && _tcscmp(pControl->GetClass(), _T("ScrollBarUI")) != 0 ) {
-			//m_pOwner->SelectItem(m_iOldSel, true);
-			//if(_tcscmp(pControl->GetClass(), _T("Button") == 0)) {
-			//}
 			PostMessage(WM_KILLFOCUS);
 		}
     }
@@ -196,6 +196,27 @@ void CComboWnd::Scroll(int dx, int dy)
     if( dx == 0 && dy == 0 ) return;
     SIZE sz = m_pLayout->GetScrollPos();
     m_pLayout->SetScrollPos(CDuiSize(sz.cx + dx, sz.cy + dy));
+}
+
+void __cdecl CComboWnd::Notify(TNotifyUI& msg) {
+	// 只投递单击事件
+	// ying32 将消息转发到comb上，
+	if(m_pOwner && msg.sType == DUI_MSGTYPE_CLICK) {
+		CControlUI *pControl = msg.pSender->GetParent();
+		while (pControl != NULL) {
+			if (_tcscmp(pControl->GetClass(), _T("ListContainerElementUI")) == 0) 
+				break;                 
+			if (pControl == m_pLayout) 
+				break;  
+			pControl = pControl->GetParent();
+		}
+		if (pControl && _tcscmp(pControl->GetClass(), _T("ListContainerElementUI")) == 0) {
+			int nIndex = m_pLayout->GetItemIndex(pControl);
+			m_pOwner->SelectItem(nIndex);
+			msg.lParam = (LPARAM)nIndex;
+		    m_pOwner->GetManager()->SendNotify(msg, false);
+		}
+	}
 }
 
 #if(_WIN32_WINNT >= 0x0501)

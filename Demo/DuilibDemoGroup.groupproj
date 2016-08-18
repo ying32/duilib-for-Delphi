@@ -30,9 +30,6 @@
         <Projects Include="QQNew\QQ.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="VclTest\VclTest.dproj">
-            <Dependencies/>
-        </Projects>
         <Projects Include="..\DDuilib\DDuilibVcl.dproj">
             <Dependencies/>
         </Projects>
@@ -125,15 +122,6 @@
     <Target Name="QQ:Make">
         <MSBuild Projects="QQNew\QQ.dproj" Targets="Make"/>
     </Target>
-    <Target Name="VclTest">
-        <MSBuild Projects="VclTest\VclTest.dproj"/>
-    </Target>
-    <Target Name="VclTest:Clean">
-        <MSBuild Projects="VclTest\VclTest.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="VclTest:Make">
-        <MSBuild Projects="VclTest\VclTest.dproj" Targets="Make"/>
-    </Target>
     <Target Name="DDuilibVcl">
         <MSBuild Projects="..\DDuilib\DDuilibVcl.dproj"/>
     </Target>
@@ -144,13 +132,13 @@
         <MSBuild Projects="..\DDuilib\DDuilibVcl.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="Apps;ListDemo;QQDemo;TestApp1;NativeControl;webbrowser;WkeBrowser;MenuDemo;QQ;VclTest;DDuilibVcl"/>
+        <CallTarget Targets="Apps;ListDemo;QQDemo;TestApp1;NativeControl;webbrowser;WkeBrowser;MenuDemo;QQ;DDuilibVcl"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="Apps:Clean;ListDemo:Clean;QQDemo:Clean;TestApp1:Clean;NativeControl:Clean;webbrowser:Clean;WkeBrowser:Clean;MenuDemo:Clean;QQ:Clean;VclTest:Clean;DDuilibVcl:Clean"/>
+        <CallTarget Targets="Apps:Clean;ListDemo:Clean;QQDemo:Clean;TestApp1:Clean;NativeControl:Clean;webbrowser:Clean;WkeBrowser:Clean;MenuDemo:Clean;QQ:Clean;DDuilibVcl:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="Apps:Make;ListDemo:Make;QQDemo:Make;TestApp1:Make;NativeControl:Make;webbrowser:Make;WkeBrowser:Make;MenuDemo:Make;QQ:Make;VclTest:Make;DDuilibVcl:Make"/>
+        <CallTarget Targets="Apps:Make;ListDemo:Make;QQDemo:Make;TestApp1:Make;NativeControl:Make;webbrowser:Make;WkeBrowser:Make;MenuDemo:Make;QQ:Make;DDuilibVcl:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

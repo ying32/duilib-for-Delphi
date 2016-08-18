@@ -163,7 +163,7 @@ type
     property SkinResName: string read FSkinResName write FSkinResName;
     property SkinKind: TSkinKind read FSkinKind write FSkinKind;
     property SkinXml: TStrings read FSkinXml write SetSkinXml;
-
+   
     property OnInitWindow: TNotifyEvent read FOnInitWindow write FOnInitWindow;
     property OnNotify: TDuiNotifyEvent read FOnNotify write FOnNotify;
     property OnMessage: TDuiMessageEvent read FOnMessage write FOnMessage;
@@ -202,7 +202,7 @@ begin
       Application.OnMessage := NewMessage;
     end else
     begin
-      raise Exception.Create('Application未初始，无化拦截');
+      raise Exception.Create('Application未初始，无法拦截');
     end;
     CPaintManagerUI.SetInstance(HInstance);
   end;
@@ -757,11 +757,6 @@ end;
 function TDDuiForm.FindSubControl(const AParent: CControlUI; const P: TPoint): CControlUI;
 begin
   Result := FPaintMgr.FindSubControl(AParent, P);
-end;
-
-function TDDuiForm.FindSubControls(const AParent: CControlUI; const AClassName: string): CStdPtrArray;
-begin
-  Result := FPaintMgr.FindSubControls(AParent, AClassName);
 end;
 
 function TDDuiForm.FindSubControlByClass(const AParent: CControlUI; const AClassName: string; AIndex: Integer = 0): CControlUI;

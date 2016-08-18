@@ -37,7 +37,7 @@
                             </VerticalLayout>
                         </VerticalLayout>
                         <VerticalLayout width="200">
-                            <Combo float="true" pos="0,0,0,0" width="194" height="30" itemtextcolor="#FF000000" itembkcolor="#FFFFFFFF" itemselectedtextcolor="#FF000000" itemselectedbkcolor="#FFC1E3FF" itemhottextcolor="#FF000000" itemhotbkcolor="#FF09A3DC" itemdisabledtextcolor="#FFCCCCCC" itemdisabledbkcolor="#FFFFFFFF" normalimage="combo_frame_normal_reversed.png" hotimage="combo_frame_hover_reversed.png" pushedimage="combo_frame_down_reversed.png" dropboxsize="0,150">
+                            <Combo name="users" float="true" pos="0,0,0,0" width="194" height="30" itemtextcolor="#FF000000" itembkcolor="#FFFFFFFF" itemselectedtextcolor="#FF000000" itemselectedbkcolor="#FFC1E3FF" itemhottextcolor="#FF000000" itemhotbkcolor="#FF09A3DC" itemdisabledtextcolor="#FFCCCCCC" itemdisabledbkcolor="#FFFFFFFF" normalimage="combo_frame_normal_reversed.png" hotimage="combo_frame_hover_reversed.png" pushedimage="combo_frame_down_reversed.png" dropboxsize="0,150">
                                 <ListContainerElement height="44">
 									<HorizontalLayout inset="0,2,0,2">
 										<HorizontalLayout width="44" bkimage="file=&apos;Data\Head\187_100.gif&apos;"/>
@@ -46,7 +46,7 @@
 											  <Label text="1444386932" height="22" textcolor="#FFFFFFFF" />
 											</VerticalLayout>
 											<VerticalLayout width="22">
-											  <Button float="true" pos="3,14,0,0" width="15" height="15" normalimage="file=&apos;Default\AppFramework\ComboBox\comboboxEraseButton_Normal.png&apos; mask=&apos;0xffff00ff&apos;" hotimage="Default\AppFramework\ComboBox\comboboxEraseButton_Hover.png" pushedimage="Default\AppFramework\ComboBox\comboboxEraseButton_Push.png" />
+											  <Button name="delete" float="true" pos="3,14,0,0" width="15" height="15" normalimage="file=&apos;Default\AppFramework\ComboBox\comboboxEraseButton_Normal.png&apos; mask=&apos;0xffff00ff&apos;" hotimage="Default\AppFramework\ComboBox\comboboxEraseButton_Hover.png" pushedimage="Default\AppFramework\ComboBox\comboboxEraseButton_Push.png" />
 											</VerticalLayout>
 									</HorizontalLayout>   
 								</ListContainerElement>
@@ -58,7 +58,7 @@
 											  <Label text="1444386932" height="22" textcolor="#FFFFFFFF" />
 											</VerticalLayout>
 											<VerticalLayout width="22">
-											  <Button float="true" pos="3,14,0,0" width="15" height="15" normalimage="file=&apos;Default\AppFramework\ComboBox\comboboxEraseButton_Normal.png&apos; mask=&apos;0xffff00ff&apos;" hotimage="Default\AppFramework\ComboBox\comboboxEraseButton_Hover.png" pushedimage="Default\AppFramework\ComboBox\comboboxEraseButton_Push.png" />
+											  <Button name="delete" float="true" pos="3,14,0,0" width="15" height="15" normalimage="file=&apos;Default\AppFramework\ComboBox\comboboxEraseButton_Normal.png&apos; mask=&apos;0xffff00ff&apos;" hotimage="Default\AppFramework\ComboBox\comboboxEraseButton_Hover.png" pushedimage="Default\AppFramework\ComboBox\comboboxEraseButton_Push.png" />
 											</VerticalLayout>
 									</HorizontalLayout>   
 								</ListContainerElement>

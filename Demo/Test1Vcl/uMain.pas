@@ -13,9 +13,13 @@ type
       Shift: TShiftState; X, Y: Integer);
   private
     FDuiForm: TDDuiForm;
+    FComb: CComboUI;
+
     procedure OnNotify(Sender: TObject; var Msg: TNotifyUI);
     procedure OnSetBtnClick(Sender: TObject; var Msg: TNotifyUI);
     procedure OnDuiDynCreate(Sender: TObject; AMgr: CPaintManagerUI; var ARoot: CControlUI);
+    procedure OnListDeleteClick(Sender: TObject; var Msg: TNotifyUI);
+    procedure OnInitWindow(Sender: TObject);
   public
     { Public declarations }
   end;
@@ -27,12 +31,16 @@ implementation
 
 {$R *.dfm}
 
+uses ufrmTest2;
+
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   FDuiForm := TDDuiForm.Create(Self);
   FDuiForm.OnNotify := OnNotify;
+  FDuiForm.OnInitWindow := OnInitWindow;
   FDuiForm.AddObjectClick('setbtn', OnSetBtnClick);
+  FDuiForm.AddObjectClick('delete', OnListDeleteClick);
 //  FDuiForm.SkinKind := skDynCreate;
   FDuiForm.OnDynCreate := OnDuiDynCreate;
   FDuiForm.SkinXmlFile := 'login.xml';
@@ -67,14 +75,32 @@ begin
   //ARoot.SetManager(nil, nil, True);
 end;
 
+procedure TForm1.OnInitWindow(Sender: TObject);
+begin
+  FComb := FDuiForm.FindControl<CComboUI>('users');
+
+end;
+
+procedure TForm1.OnListDeleteClick(Sender: TObject; var Msg: TNotifyUI);
+begin
+  Writeln('…æ≥˝∞¥≈•.Parent=', Msg.wParam, '   ', Msg.lParam);
+  Writeln('FComb.Index=', FComb.CurSel);
+  if FComb.CurSel <> -1 then
+  begin
+    FComb.RemoveAt(FComb.CurSel);
+    FComb.CurSel := -1;
+  end;
+end;
+
 procedure TForm1.OnNotify(Sender: TObject; var Msg: TNotifyUI);
 begin
-  Writeln('type:' + Msg.sType.ToString + ', name:' + Msg.pSender.Name);
+//  Writeln('type:' + Msg.sType.ToString + ', name:' + Msg.pSender.Name);
 end;
 
 procedure TForm1.OnSetBtnClick(Sender: TObject; var Msg: TNotifyUI);
 begin
-  ShowMessage('…Ë÷√');
+  //ShowMessage('…Ë÷√');
+  Form2.Show;
 end;
 
 end.

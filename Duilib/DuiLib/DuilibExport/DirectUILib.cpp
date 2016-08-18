@@ -84,7 +84,8 @@ typedef CControlUI*(*CreateControlCallBack)(LPVOID, LPCTSTR);
 typedef LPCTSTR(*GetItemTextCallBack)(LPVOID, CControlUI*, int, int);
 typedef LRESULT(*ResponseDefaultKeyEventCallBack)(LPVOID, WPARAM);
 
- 
+
+// 后期此类就废除，不再使用，已经使用pascal实现
 class CDelphi_WindowImplBase : 
 							   public WindowImplBase
 							   /*, public CWindowWnd

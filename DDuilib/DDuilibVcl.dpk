@@ -32,9 +32,7 @@ requires
   vcl;
 
 contains
-  DDuilibComponent in 'DDuilibComponent.pas',
-  DuiBase in 'DuiBase.pas',
   Duilib in 'Duilib.pas',
-  DuiWindowImplBase in 'DuiWindowImplBase.pas';
+  DuiVCLComponent in 'DuiVCLComponent.pas';
 
 end.

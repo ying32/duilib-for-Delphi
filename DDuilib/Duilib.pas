@@ -1522,6 +1522,7 @@ type
     function GetDropBoxSize: TSize;
     procedure SetDropBoxSize(szDropBox: TSize);
     function GetCurSel: Integer;
+    procedure SetCurSel(nIndex: Integer);
     function GetSelectCloseFlag: Boolean;
     procedure SetSelectCloseFlag(flag: Boolean);
     function SelectItem(iIndex: Integer; bTakeFocus: Boolean = False; bTriggerEvent: Boolean = True): Boolean;
@@ -1592,7 +1593,7 @@ type
   public
     property DropBoxAttributeList: string read GetDropBoxAttributeList write SetDropBoxAttributeList;
 	  property DropBoxSize: TSize read GetDropBoxSize write SetDropBoxSize;
-    property CurSel: Integer read GetCurSel;
+    property CurSel: Integer read GetCurSel write SetCurSel;
     property SelectCloseFlag: Boolean read GetSelectCloseFlag write SetSelectCloseFlag;
     property ShowText: Boolean read GetShowText write SetShowText;
     property TextPadding: TRect read GetTextPadding write SetTextPadding;
@@ -6101,6 +6102,11 @@ end;
 function CComboUI.GetCurSel: Integer;
 begin
   Result := Delphi_ComboUI_GetCurSel(Self);
+end;
+
+procedure CComboUI.SetCurSel(nIndex: Integer);
+begin
+  Delphi_ComboUI_SelectItem(Self, nIndex, False, True);
 end;
 
 function CComboUI.GetSelectCloseFlag: Boolean;
