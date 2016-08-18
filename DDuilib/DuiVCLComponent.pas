@@ -599,7 +599,7 @@ begin
       if FSkinKind = skResource then
         pRoot := builder.Create(FSkinXml.Text, 'xml', FDialogBuilderCallback, FPaintMgr)
       else
-        pRoot := builder.CreateFormFile(FSkinXmlFile, FDialogBuilderCallback, FPaintMgr);
+        pRoot := builder.CreateFromFile(FSkinXmlFile, FDialogBuilderCallback, FPaintMgr);
     finally
       builder.CppDestroy;
     end;

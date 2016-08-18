@@ -791,7 +791,7 @@ type
     class function CppCreate: CDialogBuilder; //deprecated 'use Create';
     procedure CppDestroy; //deprecated 'use Free';
     function Create(xml: string; AType: string = ''; pCallback: IDialogBuilderCallback = nil; pManager: CPaintManagerUI = nil; pParent: CControlUI = nil): CControlUI; overload;
-    function CreateFormFile(XmlName: string; pCallback: IDialogBuilderCallback = nil; pManager: CPaintManagerUI = nil; pParent: CControlUI = nil): CControlUI;
+    function CreateFromFile(XmlName: string; pCallback: IDialogBuilderCallback = nil; pManager: CPaintManagerUI = nil; pParent: CControlUI = nil): CControlUI;
     function Create(pCallback: IDialogBuilderCallback = nil; pManager: CPaintManagerUI = nil; pParent: CControlUI = nil): CControlUI; overload;
     function GetMarkup: CMarkup;
     procedure GetLastErrorMessage(pstrMessage: string; cchMax: SIZE_T);
