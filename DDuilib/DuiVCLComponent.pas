@@ -383,6 +383,7 @@ var
   oMonitor: TMonitorInfo;
   rcWork, rcMonitor: TRect;
 begin
+  Msg.Result := 0;
 	if Msg.WParam <> 0 then
 	begin
 	  LPParam := PNCCalcSizeParams(Msg.LParam);
@@ -398,14 +399,13 @@ begin
     rcWork := oMonitor.rcWork;
     rcMonitor := oMonitor.rcMonitor;
 
-    RectOffset(rcWork, -oMonitor.rcMonitor.Left, -oMonitor.rcMonitor.Top);
+    //RectOffset(rcWork, -oMonitor.rcMonitor.Left, -oMonitor.rcMonitor.Top);
+    rcWork.Offset(-oMonitor.rcMonitor.Left, -oMonitor.rcMonitor.Top);
 
-    LPRect^.Right := LPRect^.Left + (rcWork.Right - rcWork.Left);
-    LPRect^.Bottom := LPRect^.Top + (rcWork.Bottom - rcWork.Top);
+    LPRect^.Right := LPRect^.Left + rcWork.Width; //(rcWork.Right - rcWork.Left);
+    LPRect^.Bottom := LPRect^.Top + rcWork.Height; //(rcWork.Bottom - rcWork.Top);
     Msg.Result := WVR_REDRAW;
-    Exit;
   end;
-	Msg.Result := 0;
 end;
 
 procedure TDDuiForm.DoNcDestroy(var Msg: TMessage);
@@ -500,7 +500,7 @@ var
   LhRgn: HRGN;
 begin
   szRoundCorner := FPaintMgr.GetRoundCorner;
-	if IsIconic(Handle) and ((szRoundCorner.cx <> 0) or (szRoundCorner.cy <> 0)) then
+	if (not IsIconic(Handle)) and ((szRoundCorner.cx <> 0) or (szRoundCorner.cy <> 0)) then
   begin
 		GetWindowRect(Handle, rcWnd);
     RectOffset(rcWnd, -rcWnd.Left, -rcWnd.Top);
@@ -637,6 +637,8 @@ end;
 
 procedure TDDuiForm.NewWndProc(var Msg: TMessage);
 begin
+
+
   case Msg.Msg of
     WM_NCACTIVATE:
       DoNcActivate(Msg);
@@ -653,12 +655,6 @@ begin
     WM_NCDESTROY:
       DoNcDestroy(Msg);
   end;
-  if FCanProcessDuiMsg then
-    if FPaintMgr.MessageHandler(Msg.Msg, Msg.WParam, Msg.LParam, Msg.Result) then
-    begin
-      //if Msg.Msg = WM_SETCURSOR then
-        Exit;
-    end;
   // 解决调整边框时无法收WM_NCLBUTTONUP消息
   if Msg.Msg = WM_NCLBUTTONDOWN then
     FIsNcDown := True
@@ -670,12 +666,20 @@ begin
   if (Msg.Msg = WM_EXITSIZEMOVE) and FIsNcDown then
     Perform(WM_NCLBUTTONUP, HTCAPTION);
 
+
+
+
+  if FCanProcessDuiMsg then
+    if FPaintMgr.MessageHandler(Msg.Msg, Msg.WParam, Msg.LParam, Msg.Result) then
+    begin
+//      if Msg.Msg = WM_SETCURSOR then
+        Exit;
+    end;
   case Msg.Msg of
     WM_NCCALCSIZE,
     WM_NCHITTEST,
-    WM_NCPAINT,
     WM_NCACTIVATE,
-    WM_GETMINMAXINFO:
+    WM_NCPAINT:;
   else
     if Assigned(FOldWndProc) then
       FOldWndProc(Msg);

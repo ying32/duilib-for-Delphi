@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window size="669,474" sizebox="5,5,5,5" caption="0,0,0,36" roundcorner="4,4" >
+    <Font name="微软雅黑" size="12" bold="false" italic="false" default="true" />
+    <Font name="微软雅黑" size="19" bold="false" italic="false" />
+    <Default name="Button" value="fadedelta=&quot;25&quot;" />
+    <Default name="Option" value="float=&quot;true&quot; textpadding=&quot;1,0,0,0&quot; align=&quot;center&quot; normalimage=&quot;file=&apos;Default\AppFramework\CheckButton\checkbox_normal.png&apos; dest=&apos;0,0,17,17&apos; source=&apos;0,0,17,17&apos;&quot; hotimage=&quot;file=&apos;Default\AppFramework\CheckButton\checkbox_hightlight.png&apos; dest=&apos;0,0,17,17&apos; source=&apos;0,0,17,17&apos;&quot; pushedimage=&quot;file=&apos;Default\AppFramework\CheckButton\checkbox_pushed.png&apos; dest=&apos;0,0,17,17&apos; source=&apos;0,0,17,17&apos;&quot; selectedimage=&quot;file=&apos;Res\LoginUI\checkbox_tick_pushed1.png&apos; dest=&apos;0,0,17,17&apos;&quot; fadedelta=&quot;25&quot;" />
+    <VerticalLayout>
+        <HorizontalLayout height="36" bkimage="file=&apos;main_mask.png&apos; source=&apos;0,0,134,108&apos; corner=&apos;10,108,10,0&apos;">
+            <VerticalLayout height="30">
+                <HorizontalLayout width="220">
+                    <VerticalLayout width="16" height="16" padding="8,9,0,0" bkimage="image\main_icon.png" />
+                    <Label float="true" pos="29,11,0,0" width="181" height="16" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" />
+                </HorizontalLayout>
+            </VerticalLayout>
+            <VerticalLayout />
+            <VerticalLayout width="186" height="36">
+                <Button name="btnskin" float="true" pos="4,4,0,0" width="31" height="23" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\btn_skin.png&apos; source=&apos;0,0,27,20&apos;" hotimage="file=&apos;image\btn_skin.png&apos; source=&apos;27,0,54,20&apos;" pushedimage="file=&apos;image\btn_skin.png&apos; source=&apos;54,0,81,20&apos;" />
+                <Button name="btnmenu" float="true" pos="35,4,0,0" width="31" height="23" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\btn_menu.png&apos; source=&apos;0,0,31,23&apos;" hotimage="file=&apos;image\btn_menu.png&apos; source=&apos;31,0,62,23&apos;" pushedimage="file=&apos;image\btn_menu.png&apos; source=&apos;62,0,93,23&apos;" />
+                <Button name="minbtn" float="true" pos="69,4,0,0" width="31" height="23" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\btn_min.png&apos; source=&apos;0,0,31,23&apos;" hotimage="file=&apos;image\btn_min.png&apos; source=&apos;31,0,62,23&apos;" pushedimage="file=&apos;image\btn_min.png&apos; source=&apos;62,0,93,23&apos;" />
+                <Button name="maxbtn" float="true" pos="101,3,0,0" width="31" height="23" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\btn_max.png&apos; source=&apos;0,0,31,23&apos;" hotimage="file=&apos;image\btn_max.png&apos; source=&apos;31,0,62,23&apos;" pushedimage="file=&apos;image\btn_max.png&apos; source=&apos;62,0,93,23&apos;" />
+                <Button name="closebtn" float="true" pos="134,4,0,0" width="45" height="23" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\btn_close.png&apos; source=&apos;0,0,45,23&apos;" hotimage="file=&apos;image\btn_close.png&apos; source=&apos;45,0,90,23&apos;" pushedimage="file=&apos;image\btn_close.png&apos; source=&apos;90,0,135,23&apos;" />
+                <Button name="restorebtn" visible="false" float="true" pos="102,4,0,0" width="31" height="23" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\btn_restore.png&apos; source=&apos;0,0,31,23&apos;" hotimage="file=&apos;image\btn_restore.png&apos; source=&apos;31,0,62,23&apos;" pushedimage="file=&apos;image\btn_restore.png&apos; source=&apos;62,0,93,23&apos;" />
+            </VerticalLayout>
+        </HorizontalLayout>
+        <HorizontalLayout height="70" bkimage="file=&apos;main_mask.png&apos; source=&apos;0,22,134,60&apos; corner=&apos;10,0,10,0&apos;">
+            <Button float="true" pos="16,4,0,0" width="76" height="60" bkimage="file=&apos;image\tab_icon.png&apos; source=&apos;0,0,76,51&apos;" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\tab_main.png&apos; source=&apos;0,0,76,71&apos;" hotimage="file=&apos;image\tab_main.png&apos; source=&apos;76,0,152,71&apos;" pushedimage="file=&apos;image\tab_main.png&apos; source=&apos;152,0,228,71&apos;" />
+            <Button float="true" pos="100,4,0,0" width="76" height="60" bkimage="file=&apos;image\tab_icon.png&apos; source=&apos;76,0,152,51&apos;" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\tab_main.png&apos; source=&apos;0,0,76,71&apos;" hotimage="file=&apos;image\tab_main.png&apos; source=&apos;76,0,152,71&apos;" pushedimage="file=&apos;image\tab_main.png&apos; source=&apos;152,0,228,71&apos;" />
+            <Button float="true" pos="186,4,0,0" width="76" height="60" bkimage="file=&apos;image\tab_icon.png&apos; source=&apos;152,0,228,51&apos;" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\tab_main.png&apos; source=&apos;0,0,76,71&apos;" hotimage="file=&apos;image\tab_main.png&apos; source=&apos;76,0,152,71&apos;" pushedimage="file=&apos;image\tab_main.png&apos; source=&apos;152,0,228,71&apos;" />
+            <Button float="true" pos="273,5,0,0" width="76" height="60" bkimage="file=&apos;image\tab_icon.png&apos; source=&apos;228,0,304,51&apos;" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\tab_main.png&apos; source=&apos;0,0,76,71&apos;" hotimage="file=&apos;image\tab_main.png&apos; source=&apos;76,0,152,71&apos;" pushedimage="file=&apos;image\tab_main.png&apos; source=&apos;152,0,228,71&apos;" />
+            <Button float="true" pos="360,4,0,0" width="76" height="60" bkimage="image\tab_icon.png" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\tab_main.png&apos; source=&apos;0,0,76,71&apos;" hotimage="file=&apos;image\tab_main.png&apos; source=&apos;76,0,152,71&apos;" pushedimage="file=&apos;image\tab_main.png&apos; source=&apos;152,0,228,71&apos;" />
+            <Button float="true" pos="447,4,0,0" width="76" height="60" bkimage="file=&apos;image\tab_icon.png&apos; source=&apos;0,0,76,51&apos;" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\tab_main.png&apos; source=&apos;0,0,76,71&apos;" hotimage="file=&apos;image\tab_main.png&apos; source=&apos;76,0,152,71&apos;" pushedimage="file=&apos;image\tab_main.png&apos; source=&apos;152,0,228,71&apos;" />
+            <Button float="true" pos="542,4,0,0" width="76" height="60" bkimage="file=&apos;image\tab_icon.png&apos; source=&apos;0,0,76,51&apos;" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\tab_main.png&apos; source=&apos;0,0,76,71&apos;" hotimage="file=&apos;image\tab_main.png&apos; source=&apos;76,0,152,71&apos;" pushedimage="file=&apos;image\tab_main.png&apos; source=&apos;152,0,228,71&apos;" />
+        </HorizontalLayout>
+        <HorizontalLayout bkimage="file=&apos;main_mask.png&apos; source=&apos;0,108,134,219&apos; corner=&apos;10,0,10,10&apos;">
+            <TabLayout selectedid="-1" />
+        </HorizontalLayout>
+        <HorizontalLayout height="43" bkimage="file=&apos;main_mask.png&apos; source=&apos;0,327,134,360&apos; corner=&apos;10,0,10,10&apos;" />
+    </VerticalLayout>
+</Window>
