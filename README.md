@@ -126,11 +126,10 @@ end.
 
 #### **截图**
 
-![截图2](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot3.png) 
+![截图1](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot3.png) 
 ![截图1](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot1.png)  
-![截图2](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot2.png)  
-
-
+![截图3](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot2.png)  
+![截图4](https://github.com/ying32/duilib-for-Delphi/raw/TestDelphi/screenshot4.jpg)  
 #### **作者信息** 
 ##### 多少无所谓，反正想捐助的就随心吧，不捐助也毫无影响。  
 

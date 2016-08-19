@@ -33,6 +33,7 @@ requires
 
 contains
   Duilib in 'Duilib.pas',
-  DuiVCLComponent in 'DuiVCLComponent.pas';
+  DuiVCLComponent in 'DuiVCLComponent.pas',
+  DuiConst in 'DuiConst.pas';
 
 end.

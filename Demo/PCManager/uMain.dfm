@@ -1,7 +1,7 @@
 object DDuiPCManager: TDDuiPCManager
   Left = 0
   Top = 0
-  Caption = #30005#33041#31649#23478'V60.[DDuilib]'
+  Caption = #36719#20214#31649#23478' V6.0 [DDuilib ying32]'
   ClientHeight = 511
   ClientWidth = 838
   Color = clBtnFace

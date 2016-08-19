@@ -13,6 +13,8 @@ type
     procedure DDuiFormNotify(Sender: TObject; var Msg: TNotifyUI);
   private
     FTabs: CTabLayoutUI;
+    FTabTool: CTabLayoutUI;
+    FWCaption: CLabelUI;
     procedure OnOptionSelectchanged(Sender: TObject; Msg: TNotifyUI);
   public
     { Public declarations }
@@ -28,6 +30,9 @@ implementation
 procedure TDDuiPCManager.DDuiFormInitWindow(Sender: TObject);
 begin
   FTabs := DDuiForm.FindControl<CTabLayoutUI>('tabs');
+  FTabTool := DDuiForm.FindControl<CTabLayoutUI>('tabtool');
+  FWCaption := DDuiForm.FindControl<CLabelUI>('lblCaption');
+  FWCaption.Text := Caption;
 end;
 
 procedure TDDuiPCManager.DDuiFormNotify(Sender: TObject; var Msg: TNotifyUI);
@@ -47,6 +52,11 @@ begin
     LIndex := StrToIntDef(Copy(LName, 7, 1), -1) - 1;
     if LIndex >= 0 then
       FTabs.SelectIndex := LIndex;
+  end else if Copy(LName, 1, 7) = 'toolsel' then
+  begin
+    LIndex := StrToIntDef(Copy(LName, 8, 1), -1) - 1;
+    if LIndex >= 0 then
+      FTabTool.SelectIndex := LIndex;
   end;
 end;
 
