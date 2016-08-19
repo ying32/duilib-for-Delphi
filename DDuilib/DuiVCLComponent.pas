@@ -110,6 +110,7 @@ type
     FSkinResName: string;
     FIsUIInitd: Boolean;
     FCanProcessDuiMsg: Boolean;
+    FActive: Boolean;
     procedure NewWndProc(var Msg: TMessage);
     procedure DoNcHitTest(var Msg: TMessage); //message WM_NCHITTEST;
     procedure DoNcActivate(var Msg: TMessage);// message WM_NCACTIVATE;
@@ -319,7 +320,6 @@ begin
   begin
     FPaintMgr := CPaintManagerUI.CppCreate;
     FNotifyPump := CNotifyPump.CppCreate;
-
     FHandle := FForm.Handle;
     FOldWndProc := FForm.WindowProc;
     FForm.WindowProc := NewWndProc;

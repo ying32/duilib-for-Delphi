@@ -2,8 +2,8 @@ object DDuiPCManager: TDDuiPCManager
   Left = 0
   Top = 0
   Caption = #30005#33041#31649#23478'V60.[DDuilib]'
-  ClientHeight = 286
-  ClientWidth = 515
+  ClientHeight = 511
+  ClientWidth = 838
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,7 +19,9 @@ object DDuiPCManager: TDDuiPCManager
     SkinXmlFile = 'dlg_main.xml'
     SkinResName = 'DefaultSkin'
     SkinKind = skFile
-    Left = 40
+    OnInitWindow = DDuiFormInitWindow
+    OnNotify = DDuiFormNotify
+    Left = 48
     Top = 24
   end
 end

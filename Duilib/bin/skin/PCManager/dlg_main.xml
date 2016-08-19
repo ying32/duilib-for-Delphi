@@ -1,39 +1,86 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<Window size="850,610" sizebox="5,5,5,5" caption="0,0,0,36" roundcorner="4,4" layeredimage="file='main_mask.png' corner='10,108,10,10'">
-    <Font name="微软雅黑" size="12" bold="false" italic="false" default="true" />
-    <Font name="微软雅黑" size="19" bold="false" italic="false" />
+<Window size="850,610" sizebox="5,5,5,5" caption="0,0,0,36" roundcorner="4,4"  layeredimage="file='main_mask.png' corner='10,108,10,10'">
+    <Font id="0" name="微软雅黑" size="12" bold="false" italic="false" default="true" />
+    <Font id="1" name="微软雅黑" size="16" bold="false" italic="false" />
+    <Font id="2" name="微软雅黑" size="21" bold="false" italic="false" />
     <Default name="Button" value="fadedelta=&quot;25&quot;" />
-    <Default name="Option" value="float=&quot;true&quot; textpadding=&quot;1,0,0,0&quot; align=&quot;center&quot; normalimage=&quot;file=&apos;Default\AppFramework\CheckButton\checkbox_normal.png&apos; dest=&apos;0,0,17,17&apos; source=&apos;0,0,17,17&apos;&quot; hotimage=&quot;file=&apos;Default\AppFramework\CheckButton\checkbox_hightlight.png&apos; dest=&apos;0,0,17,17&apos; source=&apos;0,0,17,17&apos;&quot; pushedimage=&quot;file=&apos;Default\AppFramework\CheckButton\checkbox_pushed.png&apos; dest=&apos;0,0,17,17&apos; source=&apos;0,0,17,17&apos;&quot; selectedimage=&quot;file=&apos;Res\LoginUI\checkbox_tick_pushed1.png&apos; dest=&apos;0,0,17,17&apos;&quot; fadedelta=&quot;25&quot;" />
+    <Default name="Option" value="fadedelta=&quot;25&quot;" />
     <VerticalLayout>
         <HorizontalLayout height="36" bkimage="file=&apos;main_mask.png&apos; source=&apos;0,0,134,108&apos; corner=&apos;10,108,10,0&apos;">
             <VerticalLayout height="30">
                 <HorizontalLayout width="220">
                     <VerticalLayout width="16" height="16" padding="8,9,0,0" bkimage="image\main_icon.png" />
-                    <Label float="true" pos="29,11,0,0" width="181" height="16" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" />
+                    <Label name="lblCaption" text="软件管家[DDuilib ying32]" float="true" pos="29,7,0,0" width="181" height="16" textcolor="#00FFFFFF" disabledtextcolor="#FFA7A6AA" />
                 </HorizontalLayout>
             </VerticalLayout>
-            <VerticalLayout />
-            <VerticalLayout width="186" height="36">
-                <Button name="btnskin" float="true" pos="4,4,0,0" width="31" height="23" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\btn_skin.png&apos; source=&apos;0,0,27,20&apos;" hotimage="file=&apos;image\btn_skin.png&apos; source=&apos;27,0,54,20&apos;" pushedimage="file=&apos;image\btn_skin.png&apos; source=&apos;54,0,81,20&apos;" />
-                <Button name="btnmenu" float="true" pos="35,4,0,0" width="31" height="23" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\btn_menu.png&apos; source=&apos;0,0,31,23&apos;" hotimage="file=&apos;image\btn_menu.png&apos; source=&apos;31,0,62,23&apos;" pushedimage="file=&apos;image\btn_menu.png&apos; source=&apos;62,0,93,23&apos;" />
-                <Button name="minbtn" float="true" pos="69,4,0,0" width="31" height="23" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\btn_min.png&apos; source=&apos;0,0,31,23&apos;" hotimage="file=&apos;image\btn_min.png&apos; source=&apos;31,0,62,23&apos;" pushedimage="file=&apos;image\btn_min.png&apos; source=&apos;62,0,93,23&apos;" />
-                <Button name="maxbtn" float="true" pos="101,3,0,0" width="31" height="23" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\btn_max.png&apos; source=&apos;0,0,31,23&apos;" hotimage="file=&apos;image\btn_max.png&apos; source=&apos;31,0,62,23&apos;" pushedimage="file=&apos;image\btn_max.png&apos; source=&apos;62,0,93,23&apos;" />
-                <Button name="closebtn" float="true" pos="134,4,0,0" width="45" height="23" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\btn_close.png&apos; source=&apos;0,0,45,23&apos;" hotimage="file=&apos;image\btn_close.png&apos; source=&apos;45,0,90,23&apos;" pushedimage="file=&apos;image\btn_close.png&apos; source=&apos;90,0,135,23&apos;" />
+            <VerticalLayout height="36" />
+            <VerticalLayout width="178" height="36">
+                <Button name="btnskin" float="true" pos="7,6,0,0" width="27" height="20" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\btn_skin.png&apos; source=&apos;0,0,27,20&apos;" hotimage="file=&apos;image\btn_skin.png&apos; source=&apos;27,0,54,20&apos;" pushedimage="file=&apos;image\btn_skin.png&apos; source=&apos;54,0,81,20&apos;" />
+                <Button name="btnmenu" float="true" pos="34,6,0,0" width="31" height="23" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\btn_menu.png&apos; source=&apos;0,0,31,23&apos;" hotimage="file=&apos;image\btn_menu.png&apos; source=&apos;31,0,62,23&apos;" pushedimage="file=&apos;image\btn_menu.png&apos; source=&apos;62,0,93,23&apos;" />
+                <Button name="minbtn" float="true" pos="65,6,0,0" width="31" height="23" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\btn_min.png&apos; source=&apos;0,0,31,23&apos;" hotimage="file=&apos;image\btn_min.png&apos; source=&apos;31,0,62,23&apos;" pushedimage="file=&apos;image\btn_min.png&apos; source=&apos;62,0,93,23&apos;" />
+                <Button name="maxbtn" float="true" pos="96,6,0,0" width="31" height="23" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\btn_max.png&apos; source=&apos;0,0,31,23&apos;" hotimage="file=&apos;image\btn_max.png&apos; source=&apos;31,0,62,23&apos;" pushedimage="file=&apos;image\btn_max.png&apos; source=&apos;62,0,93,23&apos;" />
+                <Button name="closebtn" float="true" pos="127,6,0,0" width="45" height="23" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\btn_close.png&apos; source=&apos;0,0,45,23&apos;" hotimage="file=&apos;image\btn_close.png&apos; source=&apos;45,0,90,23&apos;" pushedimage="file=&apos;image\btn_close.png&apos; source=&apos;90,0,135,23&apos;" />
                 <Button name="restorebtn" visible="false" float="true" pos="102,4,0,0" width="31" height="23" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\btn_restore.png&apos; source=&apos;0,0,31,23&apos;" hotimage="file=&apos;image\btn_restore.png&apos; source=&apos;31,0,62,23&apos;" pushedimage="file=&apos;image\btn_restore.png&apos; source=&apos;62,0,93,23&apos;" />
             </VerticalLayout>
         </HorizontalLayout>
-        <HorizontalLayout height="70" bkimage="file=&apos;main_mask.png&apos; source=&apos;0,22,134,60&apos; corner=&apos;10,0,10,0&apos;">
-            <Button float="true" pos="16,4,0,0" width="76" height="60" bkimage="file=&apos;image\tab_icon.png&apos; source=&apos;0,0,76,51&apos;" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\tab_main.png&apos; source=&apos;0,0,76,71&apos;" hotimage="file=&apos;image\tab_main.png&apos; source=&apos;76,0,152,71&apos;" pushedimage="file=&apos;image\tab_main.png&apos; source=&apos;152,0,228,71&apos;" />
-            <Button float="true" pos="100,4,0,0" width="76" height="60" bkimage="file=&apos;image\tab_icon.png&apos; source=&apos;76,0,152,51&apos;" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\tab_main.png&apos; source=&apos;0,0,76,71&apos;" hotimage="file=&apos;image\tab_main.png&apos; source=&apos;76,0,152,71&apos;" pushedimage="file=&apos;image\tab_main.png&apos; source=&apos;152,0,228,71&apos;" />
-            <Button float="true" pos="186,4,0,0" width="76" height="60" bkimage="file=&apos;image\tab_icon.png&apos; source=&apos;152,0,228,51&apos;" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\tab_main.png&apos; source=&apos;0,0,76,71&apos;" hotimage="file=&apos;image\tab_main.png&apos; source=&apos;76,0,152,71&apos;" pushedimage="file=&apos;image\tab_main.png&apos; source=&apos;152,0,228,71&apos;" />
-            <Button float="true" pos="273,5,0,0" width="76" height="60" bkimage="file=&apos;image\tab_icon.png&apos; source=&apos;228,0,304,51&apos;" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\tab_main.png&apos; source=&apos;0,0,76,71&apos;" hotimage="file=&apos;image\tab_main.png&apos; source=&apos;76,0,152,71&apos;" pushedimage="file=&apos;image\tab_main.png&apos; source=&apos;152,0,228,71&apos;" />
-            <Button float="true" pos="360,4,0,0" width="76" height="60" bkimage="image\tab_icon.png" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\tab_main.png&apos; source=&apos;0,0,76,71&apos;" hotimage="file=&apos;image\tab_main.png&apos; source=&apos;76,0,152,71&apos;" pushedimage="file=&apos;image\tab_main.png&apos; source=&apos;152,0,228,71&apos;" />
-            <Button float="true" pos="447,4,0,0" width="76" height="60" bkimage="file=&apos;image\tab_icon.png&apos; source=&apos;0,0,76,51&apos;" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\tab_main.png&apos; source=&apos;0,0,76,71&apos;" hotimage="file=&apos;image\tab_main.png&apos; source=&apos;76,0,152,71&apos;" pushedimage="file=&apos;image\tab_main.png&apos; source=&apos;152,0,228,71&apos;" />
-            <Button float="true" pos="542,4,0,0" width="76" height="60" bkimage="file=&apos;image\tab_icon.png&apos; source=&apos;0,0,76,51&apos;" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\tab_main.png&apos; source=&apos;0,0,76,71&apos;" hotimage="file=&apos;image\tab_main.png&apos; source=&apos;76,0,152,71&apos;" pushedimage="file=&apos;image\tab_main.png&apos; source=&apos;152,0,228,71&apos;" />
+        <HorizontalLayout height="72" bkimage="file=&apos;main_mask.png&apos; source=&apos;0,22,134,60&apos; corner=&apos;10,0,10,0&apos;">
+            <Option name="tabsel1" text="电脑体检" float="true" pos="12,1,0,0" width="76" height="71" bkimage="file=&apos;tab_icon.png&apos; dest=&apos;0,0,76,51&apos; source=&apos;0,0,76,51&apos;" textpadding="0,51,0,0" textcolor="#00FFFFFF" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;tab_main.png&apos; source=&apos;0,0,76,71&apos;" hotimage="file=&apos;tab_main.png&apos; source=&apos;76,0,152,71&apos;" pushedimage="file=&apos;tab_main.png&apos; source=&apos;152,0,228,71&apos;" focusedimage="file=&apos;tab_main.png&apos; source=&apos;228,0,304,71&apos;" group="tabs" />
+            <Option name="tabsel2" text="木马查杀" float="true" pos="96,1,0,0" width="76" height="71" bkimage="file=&apos;tab_icon.png&apos; dest=&apos;0,0,76,51&apos; source=&apos;76,0,152,51&apos;" textpadding="0,51,0,0" textcolor="#00FFFFFF" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;tab_main.png&apos; source=&apos;0,0,76,71&apos;" hotimage="file=&apos;tab_main.png&apos; source=&apos;76,0,152,71&apos;" pushedimage="file=&apos;tab_main.png&apos; source=&apos;152,0,228,71&apos;" focusedimage="file=&apos;tab_main.png&apos; source=&apos;228,0,304,71&apos;" group="tabs" />
+            <Option name="tabsel3" text="工具箱" float="true" pos="180,1,0,0" width="76" height="71" bkimage="file=&apos;tab_icon.png&apos; dest=&apos;0,0,76,51&apos; source=&apos;152,0,228,51&apos;" textpadding="0,51,0,0" textcolor="#00FFFFFF" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;tab_main.png&apos; source=&apos;0,0,76,71&apos;" hotimage="file=&apos;tab_main.png&apos; source=&apos;76,0,152,71&apos;" pushedimage="file=&apos;tab_main.png&apos; source=&apos;152,0,228,71&apos;" focusedimage="file=&apos;tab_main.png&apos; source=&apos;228,0,304,71&apos;" group="tabs" />
+            <Option name="tabsel4" text="系统优化" float="true" pos="265,1,0,0" width="76" height="71" bkimage="file=&apos;tab_icon.png&apos; dest=&apos;0,0,76,51&apos; source=&apos;228,0,304,51&apos;" textpadding="0,51,0,0" textcolor="#00FFFFFF" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;tab_main.png&apos; source=&apos;0,0,76,71&apos;" hotimage="file=&apos;tab_main.png&apos; source=&apos;76,0,152,71&apos;" pushedimage="file=&apos;tab_main.png&apos; source=&apos;152,0,228,71&apos;" focusedimage="file=&apos;tab_main.png&apos; source=&apos;228,0,304,71&apos;" group="tabs" />
+            <Option name="tabsel5" text="修复漏洞" float="true" pos="350,1,0,0" width="76" height="71" bkimage="file=&apos;tab_icon.png&apos; dest=&apos;0,0,76,51&apos; source=&apos;304,0,380,51&apos;" textpadding="0,51,0,0" textcolor="#00FFFFFF" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;tab_main.png&apos; source=&apos;0,0,76,71&apos;" hotimage="file=&apos;tab_main.png&apos; source=&apos;76,0,152,71&apos;" pushedimage="file=&apos;tab_main.png&apos; source=&apos;152,0,228,71&apos;" focusedimage="file=&apos;tab_main.png&apos; source=&apos;228,0,304,71&apos;" group="tabs" />
+            <Option name="tabsel6" text="软件管理" float="true" pos="435,1,0,0" width="76" height="71" bkimage="file=&apos;tab_icon.png&apos; dest=&apos;0,0,76,51&apos; source=&apos;380,0,456,51&apos;" textpadding="0,51,0,0" textcolor="#00FFFFFF" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;tab_main.png&apos; source=&apos;0,0,76,71&apos;" hotimage="file=&apos;tab_main.png&apos; source=&apos;76,0,152,71&apos;" pushedimage="file=&apos;tab_main.png&apos; source=&apos;152,0,228,71&apos;" focusedimage="file=&apos;tab_main.png&apos; source=&apos;228,0,304,71&apos;" group="tabs" />
+            <Option name="tabsel7" text="手机管理" float="true" pos="521,1,0,0" width="76" height="71" bkimage="file=&apos;tab_icon.png&apos; dest=&apos;0,0,76,51&apos; source=&apos;456,0,532,51&apos;" textpadding="0,51,0,0" textcolor="#00FFFFFF" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;tab_main.png&apos; source=&apos;0,0,76,71&apos;" hotimage="file=&apos;tab_main.png&apos; source=&apos;76,0,152,71&apos;" pushedimage="file=&apos;tab_main.png&apos; source=&apos;152,0,228,71&apos;" focusedimage="file=&apos;tab_main.png&apos; source=&apos;228,0,304,71&apos;" group="tabs" selected="true" />
         </HorizontalLayout>
         <HorizontalLayout bkimage="file=&apos;main_mask.png&apos; source=&apos;0,108,134,219&apos; corner=&apos;10,0,10,10&apos;">
-            <TabLayout selectedid="-1" />
+            <TabLayout name="tabs">
+                <HorizontalLayout>
+                    <VerticalLayout>
+                        <Label text="部分实时防护未开启，电脑有被入侵的风险" float="true" pos="177,72,0,0" width="306" height="30" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" font="1" />
+                        <Label text="您的电脑已经有N天没有体检了，点击体检" float="true" pos="177,116,0,0" width="232" height="30" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" font="0" />
+                        <Control float="true" pos="90,75,0,0" width="83" height="83" bkimage="image\home_icon.png" />
+                        <Option float="true" pos="418,119,0,0" width="60" height="19" bkimage="image\switch_back.png" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" />
+                        <Button float="true" pos="207,217,0,0" width="196" height="70" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;image\home_tiyan.png&apos; source=&apos;0,0,196,70&apos;" hotimage="file=&apos;image\home_tiyan.png&apos; source=&apos;196,0,392,70&apos;" pushedimage="file=&apos;image\home_tiyan.png&apos; source=&apos;392,0,588,70&apos;" />
+                    </VerticalLayout>
+                    <VerticalLayout bordersize="1" width="264" bordercolor="#00C0C0C0">
+                        <VerticalLayout bordersize="1" height="109" bordercolor="#00C0C0C0" />
+                        <VerticalLayout>
+                            <VerticalLayout>
+                                <TabLayout>
+                                    <TileLayout>
+                                        <Button width="36" height="36" bkimage="image\home_icon_0.png" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" />
+                                        <Button width="36" height="36" bkimage="image\home_icon_1.png" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" />
+                                        <Button width="36" height="36" bkimage="image\home_icon_2.png" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" />
+                                        <Button width="36" height="36" bkimage="image\home_icon_3.png" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" />
+                                        <Button width="36" height="36" bkimage="image\home_icon_4.png" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" />
+                                        <Button width="36" height="36" bkimage="image\home_icon_5.png" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" />
+                                        <Button width="36" height="36" bkimage="image\home_icon_6.png" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" />
+                                        <Button width="36" height="36" bkimage="image\home_icon_7.png" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" />
+                                        <Button width="36" height="36" bkimage="image\home_icon_8.png" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" />
+                                    </TileLayout>
+                                    <TileLayout />
+                                    <TileLayout />
+                                </TabLayout>
+                            </VerticalLayout>
+                            <VerticalLayout height="43">
+                                <Option float="true" pos="86,16,0,0" width="16" height="16" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" group="tools" selected="true" foreimage="image\home_radio0.png" selectedimage="image\home_radio1.png" />
+                                <Option float="true" pos="117,16,0,0" width="16" height="16" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" group="tools" foreimage="image\home_radio0.png" selectedimage="image\home_radio1.png" />
+                                <Option float="true" pos="147,16,0,0" width="16" height="16" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" group="tools" foreimage="image\home_radio0.png" selectedimage="image\home_radio1.png" />
+                            </VerticalLayout>
+                        </VerticalLayout>
+                    </VerticalLayout>
+                </HorizontalLayout>
+                <HorizontalLayout />
+                <HorizontalLayout />
+                <HorizontalLayout />
+                <HorizontalLayout />
+                <HorizontalLayout />
+                <HorizontalLayout />
+            </TabLayout>
         </HorizontalLayout>
-        <HorizontalLayout height="43" bkimage="file=&apos;main_mask.png&apos; source=&apos;0,327,134,360&apos; corner=&apos;10,0,10,10&apos;" />
+        <HorizontalLayout height="43" bkimage="file=&apos;main_mask.png&apos; source=&apos;0,327,134,360&apos; corner=&apos;10,0,10,10&apos;">
+            <Label text="主程序版本：4.4.4.4444" float="true" pos="18,12,0,0" width="132" height="17" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" font="0" showhtml="true" />
+            <Button text="{a}检查更新{/a}" float="true" pos="154,12,0,0" width="67" height="15" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" showhtml="true" align="center" />
+        </HorizontalLayout>
     </VerticalLayout>
 </Window>
