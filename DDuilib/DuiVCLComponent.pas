@@ -140,13 +140,14 @@ type
     function FindControl<T>(const APoint: TPoint): T; overload;
     function FindSubControl<T>(const AParent: CControlUI; const AName: string): T; overload;
     function FindSubControl<T>(const AParent: CControlUI; const P: TPoint): T; overload;
-    function FindSubControlByClass<T>(const AParent: CControlUI; const AClassName: string; AIndex: Integer = 0): T;
-  {$ELSE}
+    function FindSubControlByClass<T>(const AParent: CControlUI; const AClassName: string; AIndex: Integer = 0): T; overload;
+  {$ENDIF}
     function FindControl(const AName: string):CControlUI; overload;
     function FindControl(const pt: TPoint): CControlUI; overload;
     function FindSubControl(const AParent: CControlUI; const AName: string): CControlUI; overload;
     function FindSubControl(const AParent: CControlUI; const P: TPoint): CControlUI; overload;
-    function FindSubControlByClass(const AParent: CControlUI; const AClassName: string; AIndex: Integer = 0): CControlUI;
+    function FindSubControlByClass(const AParent: CControlUI; const AClassName: string; AIndex: Integer = 0): CControlUI; overload;
+  {$IFNDEF SupportGeneric}
     function IndexOfObjEvent(AObjName: string): Integer;
   {$ENDIF}
     procedure ClearEvents;
@@ -368,7 +369,7 @@ begin
 	lpMMI^.ptMinTrackSize.X := FPaintMgr.GetMinInfo.cx;
 	lpMMI^.ptMinTrackSize.Y := FPaintMgr.GetMinInfo.cy;
 
-  Msg.Result := 0
+  Msg.Result := 1
 end;
 
 procedure TDDuiForm.DoNcActivate(var Msg: TMessage);
@@ -378,34 +379,42 @@ end;
 
 procedure TDDuiForm.DoNcCalcSize(var Msg: TMessage);
 var
-  LPRect: PRect;
-  LPParam: PNCCalcSizeParams;
-  oMonitor: TMonitorInfo;
-  rcWork, rcMonitor: TRect;
+//  LPRect: PRect;
+//  LPParam: PNCCalcSizeParams;
+//  oMonitor: TMonitorInfo;
+//  rcWork, rcMonitor: TRect;
+
+  LNcMsg: TWMNCCalcSize;
 begin
-  Msg.Result := 0;
-	if Msg.WParam <> 0 then
-	begin
-	  LPParam := PNCCalcSizeParams(Msg.LParam);
-		LPRect := @LPParam^.rgrc[0];
-	end	else
-		LPRect := PRect(Msg.LParam);
-
-  if IsZoomed(Handle) then
+  LNcMsg := TWMNCCalcSize(Msg);
+  if LNcMsg.CalcValidRects then
   begin
-    FillChar(oMonitor, SizeOf(oMonitor), #0);
-    oMonitor.cbSize := sizeof(oMonitor);
-    GetMonitorInfo(MonitorFromWindow(Handle, MONITOR_DEFAULTTONEAREST), @oMonitor);
-    rcWork := oMonitor.rcWork;
-    rcMonitor := oMonitor.rcMonitor;
-
-    //RectOffset(rcWork, -oMonitor.rcMonitor.Left, -oMonitor.rcMonitor.Top);
-    rcWork.Offset(-oMonitor.rcMonitor.Left, -oMonitor.rcMonitor.Top);
-
-    LPRect^.Right := LPRect^.Left + rcWork.Width; //(rcWork.Right - rcWork.Left);
-    LPRect^.Bottom := LPRect^.Top + rcWork.Height; //(rcWork.Bottom - rcWork.Top);
-    Msg.Result := WVR_REDRAW;
+    LNcMsg.CalcSize_Params^.rgrc[2] := LNcMsg.CalcSize_Params^.rgrc[1];
+    LNcMsg.CalcSize_Params^.rgrc[1] := LNcMsg.CalcSize_Params^.rgrc[0];
   end;
+  LNcMsg.Result := 1;
+
+
+//	if Msg.WParam <> 0 then
+//	begin
+//	  LPParam := PNCCalcSizeParams(Msg.LParam);
+//		LPRect := @LPParam^.rgrc[0];
+//	end	else
+//		LPRect := PRect(Msg.LParam);
+//  if IsZoomed(Handle) then
+//  begin
+//    FillChar(oMonitor, SizeOf(oMonitor), #0);
+//    oMonitor.cbSize := sizeof(oMonitor);
+//    GetMonitorInfo(MonitorFromWindow(Handle, MONITOR_DEFAULTTONEAREST), @oMonitor);
+//    rcWork := oMonitor.rcWork;
+//    rcMonitor := oMonitor.rcMonitor;
+//
+//    RectOffset(rcWork, -oMonitor.rcMonitor.Left, -oMonitor.rcMonitor.Top);
+//
+//    LPRect^.Right := LPRect^.Left + (rcWork.Right - rcWork.Left);
+//    LPRect^.Bottom := LPRect^.Top + (rcWork.Bottom - rcWork.Top);
+//    Msg.Result := WVR_REDRAW;
+//  end;
 end;
 
 procedure TDDuiForm.DoNcDestroy(var Msg: TMessage);
@@ -637,15 +646,14 @@ end;
 
 procedure TDDuiForm.NewWndProc(var Msg: TMessage);
 begin
-
-
   case Msg.Msg of
-    WM_NCACTIVATE:
-      DoNcActivate(Msg);
-    WM_NCCALCSIZE:
-      DoNcCalcSize(Msg);
-    WM_SIZE:
-      DoSize(Msg);
+// 不处理反到没事。。。
+//    WM_NCACTIVATE:
+//      DoNcActivate(Msg);
+//    WM_NCCALCSIZE:
+//      DoNcCalcSize(Msg);
+//    WM_SIZE:
+//      DoSize(Msg);
     WM_SYSCOMMAND:
       DoSysCommand(Msg);
     WM_NCHITTEST:
@@ -656,30 +664,35 @@ begin
       DoNcDestroy(Msg);
   end;
   // 解决调整边框时无法收WM_NCLBUTTONUP消息
-  if Msg.Msg = WM_NCLBUTTONDOWN then
-    FIsNcDown := True
-  else if Msg.Msg = WM_NCLBUTTONUP then
-  begin
-    FIsNcDown := False;
-    ReleaseCapture;
-  end;
-  if (Msg.Msg = WM_EXITSIZEMOVE) and FIsNcDown then
-    Perform(WM_NCLBUTTONUP, HTCAPTION);
-
-
-
-
+//  if Msg.Msg = WM_NCLBUTTONDOWN then
+//    FIsNcDown := True
+//  else if Msg.Msg = WM_NCLBUTTONUP then
+//  begin
+//    FIsNcDown := False;
+//    ReleaseCapture;
+//  end;
+//  if (Msg.Msg = WM_EXITSIZEMOVE) and FIsNcDown then
+//    Perform(WM_NCLBUTTONUP, HTCAPTION);
+//
   if FCanProcessDuiMsg then
+  begin
     if FPaintMgr.MessageHandler(Msg.Msg, Msg.WParam, Msg.LParam, Msg.Result) then
     begin
-//      if Msg.Msg = WM_SETCURSOR then
-        Exit;
+      Exit;
     end;
+  end;
+
   case Msg.Msg of
     WM_NCCALCSIZE,
     WM_NCHITTEST,
     WM_NCACTIVATE,
     WM_NCPAINT:;
+    WM_GETMINMAXINFO:;
+    WM_SYSCOMMAND:
+      begin
+        if Msg.Result <> 0 then
+          Exit;
+      end;
   else
     if Assigned(FOldWndProc) then
       FOldWndProc(Msg);
@@ -741,8 +754,8 @@ begin
   L := FPaintMgr.FindSubControlByClass(AParent, AClassName, AIndex);
   Result := PT(@L)^;
 end;
+{$ENDIF}
 
-{$ELSE}
 function TDDuiForm.FindControl(const AName: string): CControlUI;
 begin
   Result := FPaintMgr.FindControl(AName);
@@ -755,12 +768,12 @@ end;
 
 function TDDuiForm.FindSubControl(const AParent: CControlUI; const AName: string): CControlUI;
 begin
-  Result := FPaintMgr.FindSubControl(AParent, AName);
+  Result := FPaintMgr.FindSubControlByName(AParent, AName);
 end;
 
 function TDDuiForm.FindSubControl(const AParent: CControlUI; const P: TPoint): CControlUI;
 begin
-  Result := FPaintMgr.FindSubControl(AParent, P);
+  Result := FPaintMgr.FindSubControlByPoint(AParent, P);
 end;
 
 function TDDuiForm.FindSubControlByClass(const AParent: CControlUI; const AClassName: string; AIndex: Integer = 0): CControlUI;
@@ -768,6 +781,7 @@ begin
   Result := FPaintMgr.FindSubControlByClass(AParent, AClassName, AIndex);
 end;
 
+{$IFNDEF SupportGeneric}
 function TDDuiForm.IndexOfObjEvent(AObjName: string): Integer;
 var
   I: Integer;
@@ -782,8 +796,8 @@ begin
   end;
   Result := -1;
 end;
-end;
 {$ENDIF}
+
 
 procedure TDDuiForm.ClearEvents;
 {$IFDEF SupportGeneric}

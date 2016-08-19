@@ -125,10 +125,9 @@ type
     {$IFDEF SupportGeneric}
       function FindControl<T>(const AName: string): T; overload;
       function FindControl<T>(const APoint: TPoint): T; overload;
-    {$ELSE}
+    {$ENDIF}
       function FindControl(const AName: string):CControlUI; overload;
       function FindControl(const pt: TPoint): CControlUI; overload;
-    {$ENDIF}
     function FindSubControl(const AParent: CControlUI; const AName: string): CControlUI; overload;
     function FindSubControl(const AParent: CControlUI; const P: TPoint): CControlUI; overload;
     function FindSubControls(const AParent: CControlUI; const AClassName: string): CStdPtrArray;
@@ -535,7 +534,7 @@ begin
   L := FPaintManagerUI.FindControl(APoint);
   Result := PT(@L)^;
 end;
-{$ELSE}
+{$ENDIF}
 function TDuiWindowImplBase.FindControl(const AName: string): CControlUI;
 begin
   Result := FPaintManagerUI.FindControl(AName);
@@ -545,7 +544,7 @@ function TDuiWindowImplBase.FindControl(const pt: TPoint): CControlUI;
 begin
   Result := FPaintManagerUI.FindControl(pt);
 end;
-{$ENDIF}
+
 
 procedure TDuiWindowImplBase.Hide;
 begin
