@@ -24,8 +24,11 @@ uses
   Classes,
   SysUtils,
   Forms
-{$IFDEF SupportGeneric}
+{$IFDEF DelphiGeneric}
   ,Generics.Collections
+{$ENDIF}
+{$IFDEF FPCGeneric}
+  ,fgl
 {$ENDIF}
   ,DuiConst
   ,Duilib;
@@ -34,8 +37,10 @@ type
 
   TDDuiApp = class(TComponent)
   private
+  {$IFNDEF FPC}
     FOld: TMessageEvent;
     FOnMessage: TMessageEvent;
+  {$ENDIF}
     FZipFileName: string;
     FResourcePath: string;
     FResourceDll: string;
@@ -51,7 +56,9 @@ type
     property ZipFileName: string read FZipFileName write SetZipFileName;
     property ResourcePath: string read FResourcePath write SetResourcePath;
     property ResourceDll: string read FResourceDll write SetResourceDll;
+  {$IFNDEF FPC}
     property OnMessage: TMessageEvent read FOnMessage write FOnMessage;
+  {$ENDIF}
   end;
 
   /// <summary>
@@ -74,7 +81,11 @@ type
 {$ENDIF}
 
 {$IFDEF SupportGeneric}
-  TDuiObjectEvents = TDictionary<string, TDuiObjecItem>;
+   {$IFDEF DelphiGeneric}
+   TDuiObjectEvents = TDictionary<string, TDuiObjecItem>;
+   {$ELSE}
+   TDuiObjectEvents = TFPGMap<string, TDuiObjecItem>;
+   {$ENDIF}
 {$ELSE}
   TDuiObjectEvents = TList;
 {$ENDIF}
@@ -87,7 +98,7 @@ type
   TDDuiForm = class(TComponent)
   private
     FNotifyUI: INotifyUI;
-	  FMessageFilterUI: IMessageFilterUI;
+    FMessageFilterUI: IMessageFilterUI;
     FDialogBuilderCallback: IDialogBuilderCallback;
     FNotifyPump: CNotifyPump;
     FObjectEvents: TDuiObjectEvents;
@@ -135,7 +146,7 @@ type
     function Perform(uMsg: UINT; wParam: WPARAM = 0; lParam: LPARAM = 0): LRESULT;
     procedure RectOffset(var ARect: TRect; const DX, DY: Integer);
     function FindSubControlsByClass(const AParent: CControlUI; const AClassName: string): CStdPtrArray;
-  {$IFDEF SupportGeneric}
+  {$IFDEF DelphiGeneric}
     function FindControl<T>(const AName: string): T; overload;
     function FindControl<T>(const APoint: TPoint): T; overload;
     function FindSubControl<T>(const AParent: CControlUI; const AName: string): T; overload;
@@ -197,6 +208,7 @@ begin
   inherited Create(AOwner);
   if not (csDesigning in ComponentState) and not AppObjectExists then
   begin
+  {$IFNDEF FPC}
     if Assigned(Application) then
     begin
       FOld := Application.OnMessage;
@@ -205,6 +217,7 @@ begin
     begin
       raise Exception.Create('ApplicationŒ¥≥ı º£¨Œﬁ∑®¿πΩÿ');
     end;
+  {$ENDIF}
     CPaintManagerUI.SetInstance(HInstance);
   end;
   AppObjectExists := True;
@@ -214,8 +227,10 @@ destructor TDDuiApp.Destroy;
 begin
   if not (csDesigning in ComponentState) then
   begin
+  {$IFNDEF FPC}
     if Assigned(FOld) then
       Application.OnMessage := FOld;
+  {$ENDIF}
     CPaintManagerUI.Term;
     if ResourceDllHinst <> 0 then
       FreeLibrary(ResourceDllHinst);
@@ -229,12 +244,15 @@ begin
   begin
     Handled := True;  // Œ¥≤‚
   end;
-
+{$IFNDEF FPC}
   if Assigned(FOnMessage) then
     FOnMessage(Msg, Handled);
   if Assigned(FOld) then
     FOld(Msg, Handled);
+{$ENDIF}
 end;
+
+
 
 procedure TDDuiApp.SetResourceDll(const Value: string);
 begin
@@ -703,7 +721,7 @@ begin
   Result := FPaintMgr.FindSubControlsByClass(AParent, AClassName);
 end;
 
-{$IFDEF SupportGeneric}
+{$IFDEF DelphiGeneric}
 function TDDuiForm.FindControl<T>(const AName: string): T;
 type
   PT = ^T;
@@ -820,7 +838,11 @@ var
 begin
   LItem.EventFlags := AType + AObjName;
   LItem.Event := AEvent;
+{$IFNDEF FPC}
   if not FObjectEvents.ContainsKey(LItem.EventFlags) then
+{$ELSE}
+  if FObjectEvents.IndexOf(LItem.EventFlags) = -1 then
+{$ENDIF}
     FObjectEvents.Add(LItem.EventFlags, LItem);
 end;
 {$ELSE}
@@ -851,8 +873,16 @@ var
 {$ENDIF}
 begin
 {$IFDEF SupportGeneric}
+  {$IFNDEF FPC}
   if FObjectEvents.TryGetValue(Msg.sType + Msg.pSender.Name, LItem) then
+  begin
+  {$ELSE}
+  if FObjectEvents.IndexOf(Msg.sType.m_pstr + Msg.pSender.Name) <> -1 then
+  begin
+    LItem := FObjectEvents.KeyData[Msg.sType.m_pstr + Msg.pSender.Name];
+  {$ENDIF}
     LItem.Event(Self, Msg);
+  end;
 {$ELSE}
   I := IndexOfObjEvent(DuiStringToString(Msg.sType) + Msg.pSender.Name);
   if I <> -1 then
@@ -863,7 +893,11 @@ begin
 {$ENDIF}
   if Assigned(FOnNotify) then
     FOnNotify(Self, Msg);
+{$IFNDEF UseLowVer}
   if Msg.sType = DUI_MSGTYPE_CLICK then
+{$ELSE}
+  if Msg.sType.m_pstr = DUI_MSGTYPE_CLICK then
+{$ENDIF}
     Click(Msg);
   FNotifyPump.NotifyPump(Msg);
 end;
