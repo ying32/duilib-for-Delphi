@@ -25,7 +25,8 @@ m_dwBorderColor(0),
 m_dwFocusBorderColor(0),
 m_bColorHSL(false),
 m_nBorderStyle(PS_SOLID),
-m_nTooltipWidth(300)
+m_nTooltipWidth(300),
+m_DelphiClass(NULL)
 {
     m_cXY.cx = m_cXY.cy = 0;
     m_cxyFixed.cx = m_cxyFixed.cy = 0;
@@ -1123,6 +1124,10 @@ void CControlUI::SetBorderStyle( int nStyle )
 {
 	m_nBorderStyle = nStyle;
 	Invalidate();
+}
+
+void CControlUI::SetDelphiClass(void *DelphiClass) {
+	m_DelphiClass = DelphiClass;
 }
 
 } // namespace DuiLib

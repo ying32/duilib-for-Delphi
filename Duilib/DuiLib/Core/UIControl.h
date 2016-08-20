@@ -169,6 +169,9 @@ public:
 	void SetVirtualWnd(LPCTSTR pstrValue);
 	CDuiString GetVirtualWnd() const;
 
+	// delphi
+	void SetDelphiClass(void *DelphiClass);
+
 public:
     CEventSource OnInit;
     CEventSource OnDestroy;
@@ -180,6 +183,7 @@ public:
 private:
 	TDelphiMethod m_DoEventCallback;
 	TDelphiMethod m_DoPaintCallback;
+	void * m_DelphiClass;
 protected:
     CPaintManagerUI* m_pManager;
     CControlUI* m_pParent;
@@ -223,6 +227,7 @@ protected:
     SIZE m_cxyBorderRound;
     RECT m_rcPaint;
 	RECT m_rcBorderSize;
+
 	CStdStringPtrMap m_mCustomAttrHash;
 };
 
