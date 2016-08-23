@@ -1,9 +1,9 @@
 object DDuiPCManager: TDDuiPCManager
-  Left = 0
-  Top = 0
+  Left = 203
+  Top = 73
+  Width = 846
+  Height = 542
   Caption = #36719#20214#31649#23478' V6.0 [DDuilib ying32]'
-  ClientHeight = 511
-  ClientWidth = 838
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

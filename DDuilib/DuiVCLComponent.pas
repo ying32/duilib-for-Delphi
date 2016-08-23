@@ -112,7 +112,6 @@ type
     FPaintMgr: CPaintManagerUI;
     FForm: TForm;
     FSkinFolder: string;
-    FIsNcDown: Boolean;
     FHandle: HWND;
     FSkinZipFile: string;
     FSkinKind: TSkinKind;
@@ -159,7 +158,7 @@ type
     function FindSubControl(const AParent: CControlUI; const P: TPoint): CControlUI; overload;
     function FindSubControlByClass(const AParent: CControlUI; const AClassName: string; AIndex: Integer = 0): CControlUI; overload;
   {$IFNDEF SupportGeneric}
-    function IndexOfObjEvent(AObjName: string): Integer;
+    function IndexOfObjEvent(AEventFlags: string): Integer;
   {$ENDIF}
     procedure ClearEvents;
     procedure AddObjectEvent(AType, AObjName: string; AEvent: TDuiNotifyEvent);
@@ -799,15 +798,14 @@ begin
 end;
 
 {$IFNDEF SupportGeneric}
-function TDDuiForm.IndexOfObjEvent(AObjName: string): Integer;
+function TDDuiForm.IndexOfObjEvent(AEventFlags: string): Integer;
 var
-  I: Integer;
   P: PPointer;
 begin
   P := Pointer(FObjectEvents);
   for Result := 0 to FObjectEvents.Count - 1 do
   begin
-    if PDuiObjecItem(P)^.ObjName = AObjName then
+    if PDuiObjecItem(P)^.EventFlags = AEventFlags then
       Exit;
     Inc(P);
   end;
@@ -827,7 +825,7 @@ var
 begin
   for I := 0 to FObjectEvents.Count - 1 do
     Dispose(FObjectEvents[I]);
-  FObjectEvents.Free;
+  FObjectEvents.Clear;
 end;
 {$ENDIF}
 
@@ -852,8 +850,7 @@ begin
   if IndexOfObjEvent(AType + AObjName) = -1 then
   begin
     New(LItem);
-    LItem^.EventType := AType;
-    LItem^.ObjName := AObjName;
+    LItem^.EventFlags := AType + AObjName;
     LItem^.Event := AEvent;
     FObjectEvents.Add(LItem);
   end;
