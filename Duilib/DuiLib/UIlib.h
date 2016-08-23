@@ -109,4 +109,5 @@
 #include "Control/UIGifAnim.h"
 //#include "Control/UIFlash.h"
 
+#include "DuilibExport/DirectUIlib.h"
 #include "DuilibExport/UIMenu.h"

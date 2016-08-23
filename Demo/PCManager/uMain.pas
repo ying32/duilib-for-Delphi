@@ -1,10 +1,12 @@
 unit uMain;
 
+{I DDuilib.inc}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DuiVCLComponent, Duilib, DuiConst;
+  Windows, Messages, SysUtils, Classes, Variants, Graphics,
+  Controls, Forms, Dialogs, DuiVCLComponent, Duilib, DuiConst;
 
 type
   TDDuiPCManager = class(TForm)
@@ -29,15 +31,21 @@ implementation
 
 procedure TDDuiPCManager.DDuiFormInitWindow(Sender: TObject);
 begin
+{$IFDEF SupportGeneric}
   FTabs := DDuiForm.FindControl<CTabLayoutUI>('tabs');
   FTabTool := DDuiForm.FindControl<CTabLayoutUI>('tabtool');
   FWCaption := DDuiForm.FindControl<CLabelUI>('lblCaption');
+{$ELSE}
+  FTabs := CTabLayoutUI(DDuiForm.FindControl('tabs'));
+  FTabTool := CTabLayoutUI(DDuiForm.FindControl('tabtool'));
+  FWCaption := CLabelUI(DDuiForm.FindControl('lblCaption'));
+{$ENDIF}
   FWCaption.Text := Caption;
 end;
 
 procedure TDDuiPCManager.DDuiFormNotify(Sender: TObject; var Msg: TNotifyUI);
 begin
-  if Msg.sType = DUI_MSGTYPE_SELECTCHANGED then
+  if Msg.sType.m_pStr = DUI_MSGTYPE_SELECTCHANGED then
     OnOptionSelectchanged(Sender, Msg);
 end;
 

@@ -1,5 +1,5 @@
 // FPC的定义
-{$IFDEF FPC}
+{$IFDEF FPC}   // fpc需要最低2.4.4支持
   {$mode delphi}
   {$DEFINE UseLowVer}
   // fcp中使用兼容delphi语法
@@ -27,7 +27,7 @@
 // 是Delphi还是FPC的泛型，当mode使用delphi时好像能兼容Delphi的泛型
 {$IFDEF SupportGeneric}
   {$IFDEF FPC}
-     {$DEFINE FPCGeneric}
+     {$DEFINE FPCGeneric}  // fpc 2.4.4后支持
   {$ELSE}
      {$DEFINE DelphiGeneric}
   {$ENDIF}

@@ -18,10 +18,9 @@ unit Duilib;
 {$HINTS OFF}
 {$WARN SYMBOL_DEPRECATED OFF}
 {$Z4+}
+{$I DDuilib.inc}
 
 interface
-
-{$I DDuilib.inc}
 
 uses
 {$IFDEF MSWINDOWS}
@@ -249,9 +248,10 @@ type
   PEventUI = ^TEventUI;
   TEventUI = tagTEventUI;
 
+{$IFNDEF FPC}
   TDuiEvent = procedure(Sender: CControlUI; var AEvent: TEventUI) cdecl of object;
   TDuiPaintEvent = procedure(Sender: CControlUI; DC: HDC; const rcPaint: TRect) cdecl of object;
-
+{$ENDIF}
 
   tagTFontInfo = packed record
     hFont: HFONT;
@@ -814,12 +814,15 @@ type
     ____OnPaint: CEventSource;
     ____OnPostPaint: CEventSource;
   private
-	  m_DoEventCallback: TMethod;
+    m_DoEventCallback: TMethod;
     m_DoPaintCallback: TMethod;
+    m_DelphiClass: Pointer;
+  {$IFNDEF FPC}
     function GetDuiEvent: TDuiEvent;
     procedure SetDuiEvent(const Value: TDuiEvent);
     function GetDuiPaint: TDuiPaintEvent;
     procedure SetDuiPaint(const Value: TDuiPaintEvent);
+  {$ENDIF}
   protected
     m_pManager: CPaintManagerUI;
     m_pParent: CControlUI;
@@ -1011,9 +1014,10 @@ type
     property Visible: Boolean read IsVisible write SetVisible;
     property Tag: UIntPtr read GetTag write SetTag;
     property FixedHeight: Integer read GetFixedHeight write SetFixedHeight;
-
+ {$IFNDEF FPC}
     property OnDuiEvent: TDuiEvent read GetDuiEvent write SetDuiEvent;
     property OnDuiPaint: TDuiPaintEvent read GetDuiPaint write SetDuiPaint;
+ {$ENDIF}
   end;
 
   CDelphi_WindowImplBase = class
@@ -3097,6 +3101,7 @@ begin
   Delphi_ControlUI_SetContextMenuUsed(Self, bMenuUsed);
 end;
 
+{$IFNDEF FPC}
 procedure CControlUI.SetDuiEvent(const Value: TDuiEvent);
 begin
   if Assigned(Value) then
@@ -3116,6 +3121,7 @@ begin
   end else
     FillChar(m_DoPaintCallback, SizeOf(m_DoPaintCallback), #0);
 end;
+{$ENDIF}
 
 function CControlUI.GetUserData: string;
 begin
@@ -3221,6 +3227,7 @@ begin
   Result := Delphi_ControlUI_GetCustomAttribute(Self, LPCTSTR(pstrName));
 end;
 
+{$IFNDEF FPC}
 function CControlUI.GetDuiEvent: TDuiEvent;
 begin
  Result := TDuiEvent(m_DoEventCallback);
@@ -3230,6 +3237,8 @@ function CControlUI.GetDuiPaint: TDuiPaintEvent;
 begin
   Result := TDuiPaintEvent(m_DoPaintCallback);
 end;
+{$ENDIF}
+
 
 function CControlUI.RemoveCustomAttribute(pstrName: string): Boolean;
 begin

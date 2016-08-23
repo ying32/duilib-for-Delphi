@@ -10,47 +10,51 @@
 //*******************************************************************
 
 #include "stdafx.h"
-#include "DirectUIlib.h"
 
 using namespace DuiLib;
 
 #pragma warning(disable:4190)
 
 
-class CNativeControlUI : public CControlUI
+namespace DuiLib
 {
-private:
-	void UpdateWindowParent(HWND hWd) {
+
+	void CNativeControlUI::UpdateWindowParent(HWND hWd) {
 		if (hWd != NULL && ::IsWindow(hWd)) {
 			HWND hParent = this->GetManager()->GetPaintWindow();
 			if (::GetParent(hWd) != hParent){}
-				::SetParent(hWd, hParent);
+			::SetParent(hWd, hParent);
 		}
 	}
-public:
-	CNativeControlUI(HWND hWnd) :
+
+	CNativeControlUI::CNativeControlUI(HWND hWnd) :
 		m_hWnd(hWnd){
 		UpdateWindowParent(hWnd);
 	}
-	void SetInternVisible(bool bVisible = true) {
+
+	void CNativeControlUI::SetInternVisible(bool bVisible) {
 		CControlUI::SetInternVisible(bVisible);
 		if (m_hWnd)
 			::ShowWindow(m_hWnd, bVisible ? SW_SHOWNOACTIVATE : SW_HIDE);
 	}
-	void SetVisible(bool bVisible = true) {
+
+	void CNativeControlUI::SetVisible(bool bVisible) {
 		CControlUI::SetVisible(bVisible);
 		if (m_hWnd)
 			::ShowWindow(m_hWnd, bVisible ? SW_SHOWNOACTIVATE : SW_HIDE);
 	}
-	void SetPos(RECT rc, bool bNeedInvalidate) {
+
+	void CNativeControlUI::SetPos(RECT rc, bool bNeedInvalidate) {
 		CControlUI::SetPos(rc, bNeedInvalidate);
 		if (m_hWnd)
 			::SetWindowPos(m_hWnd, HWND_TOP, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, SWP_NOZORDER | SWP_NOACTIVATE);
 	}
-	LPCTSTR GetClass() const {
-		return _T("NativeControlUI");
+
+	LPCTSTR CNativeControlUI::GetClass() const {
+		return DUI_CTR_NativeControlUI;
 	}
-	CDuiString GetText() const {
+
+	CDuiString CNativeControlUI::GetText() const {
 		if (m_hWnd) {
 			CHAR text[MAX_PATH] = { 0 };
 #ifdef UNICODE
@@ -62,17 +66,19 @@ public:
 		}
 		return _T("");
 	}
-	void SetText(LPCTSTR pstrText){
+
+	void CNativeControlUI::SetText(LPCTSTR pstrText){
 		if (m_hWnd)
 			::SetWindowText(m_hWnd, pstrText);
 	}
-	void SetNativeHandle(HWND hWd) {
+
+	void CNativeControlUI::SetNativeHandle(HWND hWd) {
 		UpdateWindowParent(hWd);
 		m_hWnd = hWd;
 	};
-protected:
-	HWND m_hWnd;
-};
+
+}
+
 
 
 typedef LRESULT(*HandleMessageCallBack)(LPVOID, UINT, WPARAM, LPARAM, BOOL&);

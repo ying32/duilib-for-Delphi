@@ -1,4 +1,5 @@
 #include "StdAfx.h"
+ 
 
 namespace DuiLib {
 
@@ -420,6 +421,7 @@ CControlUI* CDialogBuilder::_Parse(CMarkupNode* pRoot, CControlUI* pParent, CPai
                 break;
             case 15:
                 if( _tcsicmp(pstrClass, DUI_CTR_LISTTEXTELEMENT) == 0 )        pControl = new CListTextElementUI;
+				else if (_tcsicmp(pstrClass, DUI_CTR_NativeControlUI) == 0)    pControl = new CNativeControlUI(NULL);
                 break;
             case 16:
                 if( _tcsicmp(pstrClass, DUI_CTR_HORIZONTALLAYOUT) == 0 )       pControl = new CHorizontalLayoutUI;

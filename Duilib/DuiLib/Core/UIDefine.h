@@ -262,6 +262,8 @@ protected:                                                                \
 #define  DUI_CTR_VERTICALLAYOUT                  (_T("VerticalLayout"))
 #define  DUI_CTR_LISTHEADERITEM                  (_T("ListHeaderItem"))
 
+#define  DUI_CTR_NativeControlUI                 (_T("NativeControlUI"))
+
 #define  DUI_CTR_LISTTEXTELEMENT                 (_T("ListTextElement"))
 
 #define  DUI_CTR_HORIZONTALLAYOUT                (_T("HorizontalLayout"))
