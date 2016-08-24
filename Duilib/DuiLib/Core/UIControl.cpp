@@ -26,7 +26,8 @@ m_dwFocusBorderColor(0),
 m_bColorHSL(false),
 m_nBorderStyle(PS_SOLID),
 m_nTooltipWidth(300),
-m_DelphiClass(NULL)
+m_DelphiClass(NULL),
+m_DelphiFreeProc(NULL)
 {
     m_cXY.cx = m_cXY.cy = 0;
     m_cxyFixed.cx = m_cxyFixed.cy = 0;
@@ -52,6 +53,10 @@ CControlUI::~CControlUI()
 	RemoveAllCustomAttribute();
     if( OnDestroy ) OnDestroy(this);
     if( m_pManager != NULL ) m_pManager->ReapObjects(this);
+	// 调用delphi的释放
+	if (m_DelphiClass != NULL && m_DelphiFreeProc != NULL) {
+		((void(*)(LPVOID&))m_DelphiFreeProc)(m_DelphiClass);
+	}
 }
 
 CDuiString CControlUI::GetName() const
@@ -758,8 +763,21 @@ void CControlUI::DoInit()
 void CControlUI::Event(TEventUI& event)
 {
     if( OnEvent(&event) ) DoEvent(event);
-	if (m_DoEventCallback.Code != NULL && m_DoEventCallback.Data != NULL)
-		((void(*)(LPVOID, CControlUI*, TEventUI&))m_DoEventCallback.Code)(m_DoEventCallback.Data, this, event);
+	if (m_DoEventCallback.Code != NULL && m_DoEventCallback.Data != NULL) {
+		DWORD DelphiSelf = (DWORD)m_DoEventCallback.Data;
+		LPVOID Addr = m_DoEventCallback.Code;
+		// 模拟delphi register call
+		__asm {
+			PUSHAD
+			MOV ECX, event
+			LEA ECX, [ECX]
+			MOV EDX, this
+			MOV EAX, DelphiSelf
+			CALL Addr
+			POPAD
+		}
+		//((void(*)(LPVOID, CControlUI*, TEventUI&))m_DoEventCallback.Code)(m_DoEventCallback.Data, this, event);
+	}
 }
 
 void CControlUI::DoEvent(TEventUI& event)
@@ -994,13 +1012,28 @@ void CControlUI::Paint(HDC hDC, const RECT& rcPaint, CControlUI* pStopControl)
 		if( !OnPaint(this) ) return;
 	}
 	DoPaint(hDC, rcPaint, pStopControl);
-	if (m_DoPaintCallback.Data != NULL && m_DoPaintCallback.Code != NULL)
-		((void(*)(LPVOID, CControlUI*, HDC, const RECT&))m_DoPaintCallback.Code)(m_DoPaintCallback.Data, this, hDC, rcPaint);
+
+	if (m_DoPaintCallback.Data != NULL && m_DoPaintCallback.Code != NULL) {
+		DWORD DelphiSelf = (DWORD)m_DoPaintCallback.Data;
+		LPVOID Addr = m_DoPaintCallback.Code;
+		// 模拟delphi register call 
+		__asm {
+			PUSHAD
+				MOV EBX, rcPaint
+				LEA EBX, [EBX]
+				PUSH EBX
+				MOV ECX, hDC
+				MOV EDX, this
+				MOV EAX, DelphiSelf
+				CALL Addr
+				POPAD
+		}
+		//((void(*)(LPVOID, CControlUI*, HDC, const RECT&))m_DoPaintCallback.Code)(m_DoPaintCallback.Data, this, hDC, rcPaint);
+	}
 }
 
 void CControlUI::DoPaint(HDC hDC, const RECT& rcPaint, CControlUI* pStopControl)
 {
-    // ����ѭ�򣺱�����ɫ->����ͼ->״̬ͼ->�ı�->�߿�
     if( m_cxyBorderRound.cx > 0 || m_cxyBorderRound.cy > 0 ) {
         CRenderClip roundClip;
         CRenderClip::GenerateRoundClip(hDC, m_rcPaint,  m_rcItem, m_cxyBorderRound.cx, m_cxyBorderRound.cy, roundClip);
@@ -1126,8 +1159,5 @@ void CControlUI::SetBorderStyle( int nStyle )
 	Invalidate();
 }
 
-void CControlUI::SetDelphiClass(void *DelphiClass) {
-	m_DelphiClass = DelphiClass;
-}
 
 } // namespace DuiLib
