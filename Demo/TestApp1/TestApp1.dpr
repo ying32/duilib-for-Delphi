@@ -29,8 +29,8 @@ type
   TFrameWindowWnd = class(TDuiWindowImplBase)
   private
     Fchangeskinbtn: CControlUI;
-    procedure OnDoEvent(Sender: CControlUI; var AEvent: TEventUI); cdecl;
-    procedure OnDoPaint(Sender: CControlUI; DC: HDC; const rcPaint: TRect); cdecl;
+    procedure OnDoEvent(Sender: CControlUI; var AEvent: TEventUI);
+    procedure OnDoPaint(Sender: CControlUI; DC: HDC; const rcPaint: TRect);
   protected
     procedure DoInitWindow; override;
     procedure DoNotify(var Msg: TNotifyUI); override;

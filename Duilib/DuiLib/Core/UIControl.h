@@ -169,9 +169,6 @@ public:
 	void SetVirtualWnd(LPCTSTR pstrValue);
 	CDuiString GetVirtualWnd() const;
 
-	// delphi
-	void SetDelphiClass(void *DelphiClass);
-
 public:
     CEventSource OnInit;
     CEventSource OnDestroy;
@@ -183,7 +180,8 @@ public:
 private:
 	TDelphiMethod m_DoEventCallback;
 	TDelphiMethod m_DoPaintCallback;
-	void * m_DelphiClass;
+	void *m_DelphiClass;
+	void *m_DelphiFreeProc;
 protected:
     CPaintManagerUI* m_pManager;
     CControlUI* m_pParent;
