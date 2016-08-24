@@ -70,8 +70,7 @@ begin
   inherited Create('skin.xml', '', '');
   CreateWindow(0, 'ListDemo', UI_WNDSTYLE_FRAME, WS_EX_STATICEDGE or WS_EX_APPWINDOW , 0, 0, 600, 320);
   FList := TList{$IFNDEF UseLowVer}<TListItem>{$ENDIF}.Create;
-  FListCallBack := IListCallbackUI.Create;
-  FListCallBack.OnItemText := DoGetItemText;
+  FListCallBack := IListCallbackUI.Create(DoGetItemText);
 end;
 
 destructor TListMainForm.Destroy;
