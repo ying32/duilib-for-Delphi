@@ -1,3 +1,13 @@
+//***************************************************************************
+//
+//       名称：ufrmMain.pas
+//       作者：ying32
+//       QQ  ：1444386932
+//       E-mail：1444386932@qq.com
+//       DDuilib设计器主窗口
+//       版权所有 (C) 2015-2016 ying32 All Rights Reserved
+//
+//***************************************************************************
 unit ufrmMain;
 
 interface
@@ -5,27 +15,14 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.AppEvnts, Vcl.ExtCtrls, Vcl.ComCtrls, Duilib,
-  Vcl.ToolWin, Vcl.ButtonGroup, Vcl.Buttons, Vcl.ImgList, Vcl.StdCtrls, Vcl.Menus,
+  Vcl.ToolWin, Vcl.Buttons, Vcl.ImgList, Vcl.Menus,
   ufrmDesignerTemplate, System.Generics.Collections, System.Actions,
-  Vcl.ActnList, cxGraphics, cxControls, cxLookAndFeels, cxLookAndFeelPainters,
-  cxStyles, cxEdit, dxSkinsCore, dxSkinBlack, dxSkinBlue, dxSkinBlueprint,
-  dxSkinCaramel, dxSkinCoffee, dxSkinDarkRoom, dxSkinDarkSide,
-  dxSkinDevExpressDarkStyle, dxSkinDevExpressStyle, dxSkinFoggy,
-  dxSkinGlassOceans, dxSkinHighContrast, dxSkiniMaginary, dxSkinLilian,
-  dxSkinLiquidSky, dxSkinLondonLiquidSky, dxSkinMcSkin, dxSkinMetropolis,
-  dxSkinMetropolisDark, dxSkinMoneyTwins, dxSkinOffice2007Black,
-  dxSkinOffice2007Blue, dxSkinOffice2007Green, dxSkinOffice2007Pink,
-  dxSkinOffice2007Silver, dxSkinOffice2010Black, dxSkinOffice2010Blue,
-  dxSkinOffice2010Silver, dxSkinOffice2013DarkGray, dxSkinOffice2013LightGray,
-  dxSkinOffice2013White, dxSkinOffice2016Colorful, dxSkinOffice2016Dark,
-  dxSkinPumpkin, dxSkinSeven, dxSkinSevenClassic, dxSkinSharp, dxSkinSharpPlus,
-  dxSkinSilver, dxSkinSpringTime, dxSkinStardust, dxSkinSummer2008,
-  dxSkinTheAsphaltWorld, dxSkinsDefaultPainters, dxSkinValentine,
-  dxSkinVisualStudio2013Blue, dxSkinVisualStudio2013Dark,
-  dxSkinVisualStudio2013Light, dxSkinVS2010, dxSkinWhiteprint,
-  dxSkinXmas2008Blue, cxInplaceContainer, cxVGrid, cxOI, cxButtonEdit, uPropertyClass,
-  dxSkinscxPCPainter, dxBarBuiltInMenu, cxPC, cxScrollBox, cxContainer,
-  cxTextEdit, cxMaskEdit, cxDropDownEdit, cxTreeView;
+  Vcl.ActnList, cxGraphics, cxControls,
+  cxEdit,
+  cxInplaceContainer, cxVGrid, cxOI, cxButtonEdit, uPropertyClass,
+  cxPC, cxScrollBox, cxContainer,
+  cxTextEdit, cxMaskEdit, cxDropDownEdit, cxTreeView, cxLookAndFeels,
+  cxLookAndFeelPainters, cxStyles, dxBarBuiltInMenu;
 
 type
 
