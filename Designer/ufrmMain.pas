@@ -5,16 +5,40 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.AppEvnts, Vcl.ExtCtrls, Vcl.ComCtrls, Duilib,
-  Vcl.ToolWin, Vcl.ButtonGroup, Vcl.Buttons, Vcl.ImgList, Vcl.StdCtrls, ufrmDesignerTemplate,
-  Vcl.Menus;
+  Vcl.ToolWin, Vcl.ButtonGroup, Vcl.Buttons, Vcl.ImgList, Vcl.StdCtrls, Vcl.Menus,
+  ufrmDesignerTemplate, System.Generics.Collections, System.Actions,
+  Vcl.ActnList, cxGraphics, cxControls, cxLookAndFeels, cxLookAndFeelPainters,
+  cxStyles, cxEdit, dxSkinsCore, dxSkinBlack, dxSkinBlue, dxSkinBlueprint,
+  dxSkinCaramel, dxSkinCoffee, dxSkinDarkRoom, dxSkinDarkSide,
+  dxSkinDevExpressDarkStyle, dxSkinDevExpressStyle, dxSkinFoggy,
+  dxSkinGlassOceans, dxSkinHighContrast, dxSkiniMaginary, dxSkinLilian,
+  dxSkinLiquidSky, dxSkinLondonLiquidSky, dxSkinMcSkin, dxSkinMetropolis,
+  dxSkinMetropolisDark, dxSkinMoneyTwins, dxSkinOffice2007Black,
+  dxSkinOffice2007Blue, dxSkinOffice2007Green, dxSkinOffice2007Pink,
+  dxSkinOffice2007Silver, dxSkinOffice2010Black, dxSkinOffice2010Blue,
+  dxSkinOffice2010Silver, dxSkinOffice2013DarkGray, dxSkinOffice2013LightGray,
+  dxSkinOffice2013White, dxSkinOffice2016Colorful, dxSkinOffice2016Dark,
+  dxSkinPumpkin, dxSkinSeven, dxSkinSevenClassic, dxSkinSharp, dxSkinSharpPlus,
+  dxSkinSilver, dxSkinSpringTime, dxSkinStardust, dxSkinSummer2008,
+  dxSkinTheAsphaltWorld, dxSkinsDefaultPainters, dxSkinValentine,
+  dxSkinVisualStudio2013Blue, dxSkinVisualStudio2013Dark,
+  dxSkinVisualStudio2013Light, dxSkinVS2010, dxSkinWhiteprint,
+  dxSkinXmas2008Blue, cxInplaceContainer, cxVGrid, cxOI, cxButtonEdit, uPropertyClass,
+  dxSkinscxPCPainter, dxBarBuiltInMenu, cxPC, cxScrollBox, cxContainer,
+  cxTextEdit, cxMaskEdit, cxDropDownEdit, cxTreeView;
 
 type
+
+  TPageItemRec = record
+    Designer: TfrmDesignerTemplate;
+  end;
+
   TfrmMain = class(TForm)
-    pnl1: TPanel;
-    pnl2: TPanel;
+    pnl_Top: TPanel;
+    pnl_Left: TPanel;
     stat1: TStatusBar;
-    pnl3: TPanel;
-    pnl_des: TPanel;
+    pnl_Right: TPanel;
+    pnl_Client: TPanel;
     spl1: TSplitter;
     spl2: TSplitter;
     aplctnvnts1: TApplicationEvents;
@@ -41,7 +65,6 @@ type
     btn_ctl_CHorizontalLayoutUI: TToolButton;
     btn_ctl_CTileLayoutUI: TToolButton;
     btn_ctl_CTabLayoutUI: TToolButton;
-    scrlbx_des: TScrollBox;
     mm1: TMainMenu;
     F1: TMenuItem;
     il_opertools: TImageList;
@@ -49,7 +72,7 @@ type
     ctrlbr1: TControlBar;
     tlb3: TToolBar;
     btn19: TToolButton;
-    btn20: TToolButton;
+    btnfile_new: TToolButton;
     btn21: TToolButton;
     btn22: TToolButton;
     btn23: TToolButton;
@@ -85,25 +108,48 @@ type
     btn42: TToolButton;
     btn43: TToolButton;
     btn44: TToolButton;
-    btn13: TBitBtn;
     pnl4: TPanel;
-    cbb1: TComboBox;
-    tv1: TTreeView;
     spl3: TSplitter;
     pnl5: TPanel;
+    actlst1: TActionList;
+    act_file_new: TAction;
+    cxRTTIInspector: TcxRTTIInspector;
+    cxpgcntrl_Des: TcxPageControl;
+    cxTreeView1: TcxTreeView;
+    cxComboBox1: TcxComboBox;
     procedure aplctnvnts1Message(var Msg: tagMSG; var Handled: Boolean);
-    procedure btn13Click(Sender: TObject);
     procedure btn_ctl_pointerClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure act_file_newExecute(Sender: TObject);
   private
-    FTestDesigner: TfrmDesignerTemplate;
+    FCurDesigner: TfrmDesignerTemplate;
     FCurCtl: TToolButton;
+    FDesingers: TObjectList<TfrmDesignerTemplate>;
+    FDuiControlRTTIs: TDictionary<string, TPersistent>;
+
+    procedure InitDuiControlRTTI;
+    procedure FreeDuiControlRTTI;
+
     function GetSelect: Boolean;
+    procedure CreateNewPage;
+    procedure OnScrollBoxClick(Sender: TObject);
+    procedure OnSelectControl(Sender: TObject; AControl: CControlUI);
+    procedure OnControlChanged(Sender: TObject);
+
+    function GetControlRTTI(AClass: string): TPersistent;
   public
     procedure ClearSel;
     property CurCtl: TToolButton read FCurCtl write FCurCtl;
     property IsSelect: Boolean read GetSelect;
   end;
+
+  TcxImageStringeProperty = class(TcxStringProperty)
+  public
+    procedure Edit; override;
+    function GetAttributes: TcxPropertyAttributes; override;
+  end;
+
 
 var
   frmMain: TfrmMain;
@@ -112,14 +158,19 @@ implementation
 
 {$R *.dfm}
 
+uses ufrmImageEditor;
+
+procedure TfrmMain.act_file_newExecute(Sender: TObject);
+begin
+  // 这里还要新建一个Page页
+//  FCurDesigner := NewDesignerTemplate(scrlbx_des);
+//  FDesingers.Add(FCurDesigner);
+  CreateNewPage;
+end;
+
 procedure TfrmMain.aplctnvnts1Message(var Msg: tagMSG; var Handled: Boolean);
 begin
   CPaintManagerUI.TranslateMessage(@Msg);
-end;
-
-procedure TfrmMain.btn13Click(Sender: TObject);
-begin
-  FTestDesigner := NewDesignerTemplate(scrlbx_des);
 end;
 
 procedure TfrmMain.btn_ctl_pointerClick(Sender: TObject);
@@ -145,14 +196,112 @@ begin
   FCurCtl := nil;
 end;
 
+procedure TfrmMain.CreateNewPage;
+var
+  LTab: TcxTabSheet;
+  LScrollBox: TcxScrollBox;
+begin
+  LTab := TcxTabSheet.Create(Self);
+  LScrollBox := TcxScrollBox.Create(Self);
+  LScrollBox.Parent := LTab;
+  LScrollBox.Align := alClient;
+  LScrollBox.OnClick := OnScrollBoxClick;
+  LTab.Caption := 'New 1';
+  LTab.PageControl := cxpgcntrl_Des;
+  FCurDesigner := NewDesignerTemplate(LScrollBox);
+  FCurDesigner.OnSelectControl := OnSelectControl;
+  FCurDesigner.OnControlChanged := OnControlChanged;
+  FDesingers.Add(FCurDesigner);
+end;
+
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
+  // 注册新的类
+  cxRegisterPropertyEditor(TypeInfo(TImageString), nil, '', TcxImageStringeProperty);
+  cxRegisterEditPropertiesClass(TcxImageStringeProperty, TcxButtonEditProperties);
+
   FCurCtl := btn_ctl_pointer;
+  FDesingers := TObjectList<TfrmDesignerTemplate>.Create;
+  FDuiControlRTTIs := TDictionary<string, TPersistent>.Create;
+  InitDuiControlRTTI;
+end;
+
+procedure TfrmMain.FormDestroy(Sender: TObject);
+begin
+  FreeDuiControlRTTI;
+  FDuiControlRTTIs.Free;
+  FDesingers.Free;
+end;
+
+function TfrmMain.GetControlRTTI(AClass: string): TPersistent;
+var
+  LControl: TPersistent;
+begin
+  Result := nil;
+  if FDuiControlRTTIs.TryGetValue(AClass, LControl) then
+    Result := LControl;
 end;
 
 function TfrmMain.GetSelect: Boolean;
 begin
   Result := (FCurCtl <> btn_ctl_pointer) and (FCurCtl <> nil);
+end;
+
+procedure TfrmMain.InitDuiControlRTTI;
+begin
+  FDuiControlRTTIs.Add('ControlUI', TDControl.Create);
+end;
+
+procedure TfrmMain.FreeDuiControlRTTI;
+var
+  LR: TPersistent;
+begin
+  for LR in FDuiControlRTTIs.Values.ToArray do
+    LR.Free;
+  FDuiControlRTTIs.Clear;
+end;
+
+procedure TfrmMain.OnControlChanged(Sender: TObject);
+begin
+  if cxRTTIInspector.InspectedObject <> nil then
+    cxRTTIInspector.RefreshInspectedProperties;
+end;
+
+procedure TfrmMain.OnScrollBoxClick(Sender: TObject);
+begin
+  if Assigned(FCurDesigner) then
+    cxRTTIInspector.InspectedObject := FCurDesigner.DuiWindow;
+end;
+
+procedure TfrmMain.OnSelectControl(Sender: TObject; AControl: CControlUI);
+var
+  LPer: TPersistent;
+begin
+  // 测试用
+  if FDuiControlRTTIs.TryGetValue('ControlUI', LPer) then
+  begin
+    TDControl(LPer).SetControl(AControl);
+    cxRTTIInspector.InspectedObject := LPer;
+    cxRTTIInspector.RefreshInspectedProperties;
+  end
+  else
+    cxRTTIInspector.InspectedObject := nil;
+end;
+
+{ TcxImageStringeProperty }
+
+procedure TcxImageStringeProperty.Edit;
+begin
+  inherited;
+  if frm_ImageEditor.ShowModal = mrOk then
+  begin
+    PostChangedNotification;
+  end;
+end;
+
+function TcxImageStringeProperty.GetAttributes: TcxPropertyAttributes;
+begin
+  Result := [ipaDialog];
 end;
 
 end.

@@ -1,13 +1,18 @@
 unit ufrmDesignerTemplate;
+// 本设计器参考了 directx-gui 的设计器源码，发现他有些比我写的简便更好用，所
+// 以就使用了他的方法，当然有些得改动，以便适应duilib的
 
 interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Duilib, Vcl.AppEvnts, Vcl.ExtCtrls,
-  Vcl.StdCtrls, Vcl.ComCtrls, DuiActiveX;
+  Vcl.StdCtrls, Vcl.ComCtrls, DuiActiveX, System.Generics.Collections,
+  uPropertyClass;
 
 type
+
+  TSelectControlEvent = procedure(Sender: TObject; AControl: CControlUI) of object;
 
   TfrmDesignerTemplate = class(TForm)
     procedure FormCreate(Sender: TObject);
@@ -19,34 +24,45 @@ type
     FNotifyPump: CNotifyPump;
     FNotifyUI: INotifyUI;
     FMessageFilterUI: IMessageFilterUI;
-    FRectList: array[0..7] of TRect;
-    FPosList: array[0..7] of TCursor;
 
-    FIsDown: Boolean;
-    FDownPoint: TPoint;
-    FDownSize: TSize;
-    FDragDown: Boolean;
-    FDragIndex: Integer;
+    FDragPoints: array[1..3, 1..3] of TPoint;
+    FDragPoint: TPoint;
+    FDragRect: TRect;
+    FDragStart: TPoint;
+    FDragActive: Boolean;
+
+    FDuiWindow: TDWindow;
+ 
+
+    FSelList: TList<CControlUI>;
+    FOnSelectControl: TSelectControlEvent;
+    FOnControlChanged: TNotifyEvent;
 
     procedure OnDuiPaintEvent(Sender: CControlUI; DC: HDC; const rcPaint: TRect);
     procedure OnDuiEvent(Sender: CControlUI; var AEvent: TEventUI);
 
     procedure Notify(var Msg: TNotifyUI);
     procedure MessageHandler(uMsg: UINT; wParam: WPARAM; lParam: LPARAM; var bHandled: Boolean; var Result: LRESULT);
-    procedure UpdateRect(R: TRect);
-    procedure UpdateCurosr(AIndex: Integer);
-    function SizeIndex(Pt: TPoint): Integer;
+
     function NewControlByName(AClass: string; APt: TPoint): CControlUI;
     function LParamToPoint(lParam: LPARAM): TPoint;
-    procedure MouseDown(APoint: TPoint);
-    procedure MouseUp(APoint: TPoint);
-    procedure MouseMove(APoint: TPoint);
-    procedure WMSize;
-    procedure UpdateUI;
+    procedure DuiMouseDown(APoint: TPoint);
+    procedure DuiMouseUp(APoint: TPoint);
+    procedure DuiMouseMove(APoint: TPoint);
+    procedure DuiReSize;
+
+    function CalculateDragPoints: Boolean;
+    function GetDragPointIndex(X, Y: Integer): TPoint;
+    procedure PaintDragPoints(DC: HDC);
+    procedure UpdateCurosr(APoint: TPoint);
   public
     procedure CreateParams(var Params: TCreateParams); override;
     procedure WndProc(var Msg: TMessage); override;
     function AddControl(AControl: CControlUI): Boolean;
+  public
+    property DuiWindow: TDWindow read FDuiWindow;
+    property OnSelectControl: TSelectControlEvent read FOnSelectControl write FOnSelectControl;
+    property OnControlChanged: TNotifyEvent read FOnControlChanged write FOnControlChanged;
   end;
 
   function NewDesignerTemplate(AParent: TWinControl): TfrmDesignerTemplate;
@@ -112,20 +128,7 @@ end;
 { TForm1 }
 
 const
-  SizeR = 8;
-
-function MakeColor(a, r, g, b: Byte): Cardinal;
-begin
-  Result := ((DWORD(a) shl 24) or
-             (DWORD(r) shl 16) or
-             (DWORD(g) shl 8) or
-             (DWORD(b) shl 0));
-end;
-
-function ColorToARGB(AColor: TColor): Cardinal;
-begin
-  Result := MakeColor($FF, GetRValue(AColor), GetGValue(AColor), GetBValue(AColor));
-end;
+  SizeR = 4;
 
 function TfrmDesignerTemplate.AddControl(AControl: CControlUI): Boolean;
 var
@@ -153,6 +156,34 @@ begin
   end;
 end;
 
+function TfrmDesignerTemplate.CalculateDragPoints: Boolean;
+var
+  R: TRect;
+  X, Y: Integer;
+begin
+  Result := False;
+  if FSelectCtl = nil then Exit;
+  R := FSelectCtl.GetPos;
+  R.Inflate(-SizeR, SizeR);
+  for Y := 1 to 3 do
+  begin
+    for X := 1 to 3 do
+    begin
+      case X of
+        1: FDragPoints[Y, X].X := R.Left;
+        2: FDragPoints[Y, X].X := Round((R.Left + R.Right) / 2);
+        3: FDragPoints[Y, X].X := R.Right;
+      end;
+      case Y of
+        1: FDragPoints[Y, X].Y := R.Top;
+        2: FDragPoints[Y, X].Y := Round((R.Top + R.Bottom) / 2);
+        3: FDragPoints[Y, X].Y := R.Bottom;
+      end;
+    end;
+  end;
+  Result := True;
+end;
+
 procedure TfrmDesignerTemplate.CreateParams(var Params: TCreateParams);
 begin
   inherited CreateParams(Params);
@@ -165,16 +196,10 @@ var
   LResourcePath, pDefaultAttributes: string;
   LLable: CLabelUI;
 begin
+  FSelList := TList<CControlUI>.Create;
   FSelectCtl := nil;
-  FPosList[0] := crSizeNWSE; //htTopLeft;
-  FPosList[1] := crSizeNS;// htTop;
-  FPosList[2] := crSizeNESW; //htTopRight;
-  FPosList[3] := crSizeWE; //htRight;
-  FPosList[4] := crSizeNWSE; //htBottomRight;
-  FPosList[5] := crSizeNS;// htBottom;
-  FPosList[6] := crSizeNESW; //htBottomLeft;
-  FPosList[7] := crSizeWE; //htLeft;
-
+  FDuiWindow := TDWindow.Create;
+  
   FNotifyUI := INotifyUI.Create(Notify);
   FMessageFilterUI := IMessageFilterUI.Create(MessageHandler);
   FNotifyPump := CNotifyPump.CppCreate;
@@ -229,6 +254,31 @@ begin
   FNotifyPump.CppDestroy;
   FMessageFilterUI.Free;
   FNotifyUI.Free;
+  FSelList.Free;
+  FDuiWindow.Free;
+end;
+
+function TfrmDesignerTemplate.GetDragPointIndex(X, Y: Integer): TPoint;
+var
+  I, J: Integer;
+begin
+  Result.X := 0;
+  Result.Y := 0;
+  for I := 1 to 3 do
+  begin
+    for J := 1 to 3 do
+    begin
+      if (X >= FDragPoints[J, I].X - SizeR) and
+         (X <= FDragPoints[J, I].X + SizeR) and
+         (Y >= FDragPoints[J, I].Y - SizeR) and
+         (Y <= FDragPoints[J, I].Y + SizeR) then
+      begin
+        Result.X := I;
+        Result.Y := J;
+        Break;
+      end;
+    end;
+  end;
 end;
 
 function TfrmDesignerTemplate.LParamToPoint(lParam: LPARAM): TPoint;
@@ -243,9 +293,7 @@ end;
 procedure TfrmDesignerTemplate.MessageHandler(uMsg: UINT; wParam: WPARAM; lParam: LPARAM;
   var bHandled: Boolean; var Result: LRESULT);
 var
-  R: TRect;
-  P, MP: TPoint;
-  I: Integer;
+  MP: TPoint;
 begin
   case uMsg of
     WM_LBUTTONDOWN,
@@ -255,21 +303,21 @@ begin
         MP := LParamToPoint(lParam);
         case uMsg of
           WM_LBUTTONDOWN:
-            MouseDown(MP);
+            DuiMouseDown(MP);
           WM_LBUTTONUP:
-            MouseUp(MP);
+            DuiMouseUp(MP);
           WM_MOUSEMOVE:
-            MouseMove(MP);
+            DuiMouseMove(MP);
         end;
       end;
     WM_SIZE:
-      WMSize;
+      DuiReSize;
   end;
 end;
 
-procedure TfrmDesignerTemplate.MouseDown(APoint: TPoint);
+procedure TfrmDesignerTemplate.DuiMouseDown(APoint: TPoint);
 var
-  R: TRect;
+  DPI: TPoint;
 begin
   // 添加控件
   if frmMain.IsSelect then
@@ -284,65 +332,95 @@ begin
       end;
     end;
   end;
-  // 确定调整
-  FDragIndex := SizeIndex(APoint);
-  FDragDown := FDragIndex <> -1;
-  FDownPoint := APoint;
-  FSelectCtl := FPaintMgr.FindControl(APoint);
-  if FSelectCtl <> nil then
+
+  DPI := GetDragPointIndex(APoint.X, APoint.Y);
+  if (FSelectCtl <> nil) and (DPI.X > 0) and (DPI.Y > 0) then
   begin
-    FIsDown := True;
-    R := FSelectCtl.GetPos;
-    UpdateRect(R);
-    FDownSize := TSize.Create(FDownPoint.X - R.Left, FDownPoint.Y - R.Top);
-    FPaintMgr.Invalidate;
+    FDragPoint := DPI;
+    FDragRect := FSelectCtl.GetPos;
+    FDragStart := APoint;
+    FDragActive := True;
+  end else
+  begin
+    FSelectCtl := FPaintMgr.FindControl(APoint);
+    if FSelectCtl <> nil then
+      FPaintMgr.Invalidate;
+    if Assigned(FOnSelectControl) then
+      FOnSelectControl(Self, FSelectCtl);
   end;
 end;
 
-procedure TfrmDesignerTemplate.MouseMove(APoint: TPoint);
+procedure TfrmDesignerTemplate.DuiMouseMove(APoint: TPoint);
 var
-  I: Integer;
+  C: CControlUI;
+
+ procedure SetBoundsOf(X, Y, W, H: Integer);
+ begin
+   C.SetFixedWidth(W);
+   C.SetFixedHeight(H);
+   C.SetFixedXY(TSize.Create(X, Y));
+ end;
+
+var
+  X, Y: Integer;
 begin
-  Writeln('FDragDown=', FDragDown);
   if FSelectCtl <> nil then
+    UpdateCurosr(GetDragPointIndex(APoint.X, APoint.Y));
+  if (FSelectCtl <> nil) and FDragActive then
   begin
-    I := SizeIndex(APoint);
-    if I <> -1 then
-    begin
-      Writeln('在索引=', I);
-      UpdateRect(FSelectCtl.GetPos);
-      Exit;
+    C := FSelectCtl;
+    X := APoint.X;
+    Y := APoint.Y;
+    case FDragPoint.Y of
+      1:
+        begin
+          case FDragPoint.X of
+            1: SetBoundsOf(FDragRect.Left + X - FDragStart.X,
+              FDragRect.Top + Y - FDragStart.Y, FDragRect.Width + FDragStart.X - X + 1,
+              FDragRect.Height + FDragStart.Y - Y + 1);
+            2: SetBoundsOf(C.X, FDragRect.Top + Y - FDragStart.Y, C.Width,
+              FDragRect.Height + FDragStart.Y - Y + 1);
+            3: SetBoundsOf(C.X, FDragRect.Top + Y - FDragStart.Y,
+              FDragRect.Width + X - FDragStart.X + 1, FDragRect.Height + FDragStart.Y - Y + 1);
+          end;
+        end;
+      2:
+        begin
+          case FDragPoint.X of
+            1: SetBoundsOf(FDragRect.Left + X - FDragStart.X, FDragRect.Top,
+              FDragRect.Width + FDragStart.X - X + 1, C.Height);
+            2: SetBoundsOf(FDragRect.Left + X - FDragStart.X,
+              FDragRect.Top + Y - FDragStart.Y, C.Width, C.Height);
+            3: SetBoundsOf(C.X, C.Y, FDragRect.Width + X - FDragStart.X + 1, C.Height);
+          end;
+        end;
+      3:
+        begin
+          case FDragPoint.X of
+            1: SetBoundsOf(FDragRect.Left + X - FDragStart.X, C.Y,
+              FDragRect.Width + FDragStart.X - X + 1, FDragRect.Height + Y - FDragStart.Y + 1);
+            2: SetBoundsOf(C.X, C.Y, C.Width, FDragRect.Height + Y - FDragStart.Y + 1);
+            3: SetBoundsOf(C.X, C.Y, FDragRect.Width + X - FDragStart.X + 1,
+              FDragRect.Height + Y - FDragStart.Y + 1);
+          end;
+        end;
     end;
-  end;
-  if not FDragDown then
-  begin
-    if (FSelectCtl <> nil) and (FSelectCtl <> FRoot) then
-      Cursor := crSizeAll
-    else
-      Cursor := crDefault;
-    if FIsDown and (FSelectCtl <> nil) then
-    begin
-      if FSelectCtl <> nil then
-      begin
-        FSelectCtl.SetFixedXY(TSize.Create(APoint.X - FDownSize.cx, APoint.Y - FDownSize.cy));
-        UpdateRect(FSelectCtl.GetPos);
-      end;
-    end;
-//
   end;
 end;
 
-procedure TfrmDesignerTemplate.MouseUp(APoint: TPoint);
+procedure TfrmDesignerTemplate.DuiMouseUp(APoint: TPoint);
 begin
-  FIsDown := False;
-  FDragDown := False;
-  FDragIndex := -1;
+  if FDragActive then
+  begin
+    if Assigned(FOnControlChanged) then
+     FOnControlChanged(Self);
+  end;
+  FDragActive := False;
   FPaintMgr.Invalidate;
 end;
 
 function TfrmDesignerTemplate.NewControlByName(AClass: string; APt: TPoint): CControlUI;
 var
-  R: TRect;
   pDefaultAttributes: string;
   LClass: string;
 begin
@@ -432,16 +510,17 @@ begin
       Result.ApplyAttributeList(pDefaultAttributes);
     Result.SetFixedWidth(100);
     Result.SetFixedHeight(60);
+    Result.SetFloat;
+    Result.SetFixedHeight(30);
+    Result.SetFixedXY(TSize.Create(TSize.Create(APt.X, APt.Y)));
     // 是容器类
-    if (Result.GetInterface('IContainer') = nil) or
-        LClass.Equals('ActiveXUI') or
-       (LClass.Equals('ListUI')) or
-       (LClass.Equals('ComboUI')) then
-    begin
-      Result.SetFloat;
-      Result.SetFixedHeight(30);
-      Result.SetFixedXY(TSize.Create(TSize.Create(APt.X, APt.Y)));
-    end;
+//    if (Result.GetInterface('IContainer') = nil) or
+//        LClass.Equals('ActiveXUI') or
+//       (LClass.Equals('ListUI')) or
+//       (LClass.Equals('ComboUI')) then
+//    begin
+//
+//    end;
     Result.SetManager(nil, nil, False);
   end;
 end;
@@ -460,82 +539,72 @@ procedure TfrmDesignerTemplate.OnDuiPaintEvent(Sender: CControlUI; DC: HDC;
   const rcPaint: TRect);
 var
   R2: TRect;
-  I: Integer;
 begin
   R2 := Sender.GetPos;
   if FSelectCtl = Sender then
   begin
     CRenderEngine.DrawRect(DC, R2, 1, ColorToARGB(clRed), PS_SOLID);
-    for I := 0 to 7 do
-    begin
-      CRenderEngine.DrawColor(DC, FRectList[I], ColorToARGB(clWhite));
-      CRenderEngine.DrawRect(DC, FRectList[I], 1, ColorToARGB(clGray), PS_SOLID);
-    end;
+    if Sender.IsFloat and CalculateDragPoints then
+      PaintDragPoints(DC);
   end
   else
     CRenderEngine.DrawRect(DC, R2, 1, ColorToARGB(clBlue), PS_SOLID);
 end;
 
-function TfrmDesignerTemplate.SizeIndex(Pt: TPoint): Integer;
+procedure TfrmDesignerTemplate.PaintDragPoints(DC: HDC);
 var
-  I: Integer;
+  X, Y: Integer;
+  R: TRect;
 begin
-  Result := -1;
-  for I := 0 to 7 do
+  for Y := 1 to 3 do
   begin
-    if PtInRect(FRectList[I], Pt) then
+    for X := 1 to 3 do
     begin
-      UpdateCurosr(I);
-      Exit(I);
+      R.Left := FDragPoints[Y, X].X - SizeR;
+      R.Top := FDragPoints[Y, X].Y - SizeR;
+      R.Right :=FDragPoints[Y, X].X + SizeR;
+      R.Bottom := FDragPoints[Y, X].Y + SizeR;
+      CRenderEngine.DrawColor(DC, R, ColorToARGB(clWhite));
+      CRenderEngine.DrawRect(DC, R, 1, ColorToARGB(clGray), PS_SOLID);
     end;
   end;
 end;
 
-
-
-procedure TfrmDesignerTemplate.UpdateCurosr(AIndex: Integer);
+procedure TfrmDesignerTemplate.UpdateCurosr(APoint: TPoint);
 begin
-  if AIndex = -1 then Exit;
-  Cursor := FPosList[AIndex];
+  case APoint.Y of
+    1:
+      begin
+        case APoint.X of
+          1: Cursor := crSizeNWSE;
+          2: Cursor := crSizeNS;
+          3: Cursor := crSizeNESW;
+        end;
+      end;
+    2:
+      begin
+        case APoint.X of
+          1, 3: Cursor := crSizeWE;
+          2: Cursor := crSizeAll;
+        end;
+      end;
+    3:
+      begin
+        case APoint.X of
+          1: Cursor := crSizeNESW;
+          2: Cursor := crSizeNS;
+          3: Cursor := crSizeNWSE;
+        end;
+      end;
+  else
+    Cursor := crDefault;
+  end;
 end;
 
-procedure TfrmDesignerTemplate.UpdateRect(R: TRect);
-begin
-  FRectList[0] := Rect(R.Left - SizeR, R.Top - SizeR, R.Left, R.Top);
-  FRectList[1] := Rect(R.Left + (R.Width - SizeR) div 2, R.Top - SizeR, R.Left + (R.Width - SizeR) div 2 + SizeR,  R.Top);
-  FRectList[2] := Rect(R.Right, R.Top - SizeR, R.Right + SizeR, R.Top);
-
-  FRectList[3] := Rect(R.Right, R.Top + (R.Height - SizeR ) div 2, R.Right + SizeR, R.Top + (R.Height - SizeR) div 2 + SizeR);
-  FRectList[4] := Rect(R.Left + R.Width - SizeR, R.Top + R.Height - SizeR, R.Left +  R.Width, R.Top + R.Height);
-
-  FRectList[5] := Rect(R.Left + (R.Width - SizeR) div 2, R.Top + R.Height - SizeR, R.Left + (R.Width - SizeR) div 2 + SizeR, R.Top + R.Height);
-  FRectList[6] := Rect(R.Left, R.Top + R.Height - SizeR, R.Left + SizeR, R.Top + R.Height);
-  FRectList[7] := Rect(R.Left, R.Top + (R.Height - SizeR) div 2, R.Left + SizeR, R.Top + (R.Height - SizeR) div 2 + SizeR);
-end;
-
-//procedure TfrmDesignerTemplate.UpdateRect(R: TRect);
-//begin
-//  FRectList[0] := Rect(R.Left, R.Top, R.Left + SizeR, R.Top + SizeR);
-//  FRectList[1] := Rect(R.Left + (R.Width - SizeR) div 2, R.Top, R.Left + (R.Width - SizeR) div 2 + SizeR,  R.Top + SizeR);
-//  FRectList[2] := Rect(R.Left + R.Width - SizeR, R.Top, R.Left + R.Width, R.Top + SizeR);
-//
-//  FRectList[3] := Rect(R.Left + R.Width - SizeR, R.Top +  (R.Height - SizeR ) div 2, R.Left + R.Width, R.Top + (R.Height - SizeR) div 2 + SizeR);
-//  FRectList[4] := Rect(R.Left + R.Width - SizeR, R.Top + R.Height - SizeR, R.Left +  R.Width, R.Top + R.Height);
-//  FRectList[5] := Rect(R.Left + (R.Width - SizeR) div 2, R.Top + R.Height - SizeR, R.Left + (R.Width - SizeR) div 2 + SizeR, R.Top + R.Height);
-//
-//  FRectList[6] := Rect(R.Left, R.Top + R.Height - SizeR, R.Left + SizeR, R.Top + R.Height);
-//  FRectList[7] := Rect(R.Left, R.Top + (R.Height - SizeR) div 2, R.Left + SizeR, R.Top + (R.Height - SizeR) div 2 + SizeR);
-//end;
-
-procedure TfrmDesignerTemplate.UpdateUI;
-begin
-  PostMessage(Handle, WM_PAINT, 0, 0);
-end;
-
-procedure TfrmDesignerTemplate.WMSize;
+procedure TfrmDesignerTemplate.DuiReSize;
 begin
   if FSelectCtl <> nil then
-    UpdateRect(FSelectCtl.GetPos);
+    FPaintMgr.Invalidate;
 end;
 
 procedure TfrmDesignerTemplate.WndProc(var Msg: TMessage);

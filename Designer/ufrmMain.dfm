@@ -14,14 +14,16 @@ object frmMain: TfrmMain
   OldCreateOrder = False
   WindowState = wsMaximized
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
-  object pnl1: TPanel
+  object pnl_Top: TPanel
     Left = 0
     Top = 0
     Width = 842
     Height = 57
     Align = alTop
+    BevelOuter = bvNone
     TabOrder = 0
     object ctrlbr1: TControlBar
       Left = 10
@@ -29,6 +31,8 @@ object frmMain: TfrmMain
       Width = 832
       Height = 56
       AutoSize = True
+      ParentShowHint = False
+      ShowHint = True
       TabOrder = 0
       object tlb3: TToolBar
         Left = 11
@@ -45,11 +49,10 @@ object frmMain: TfrmMain
           Caption = 'btn19'
           ImageIndex = 0
         end
-        object btn20: TToolButton
+        object btnfile_new: TToolButton
           Left = 23
           Top = 0
-          Caption = 'btn20'
-          ImageIndex = 1
+          Action = act_file_new
         end
         object btn21: TToolButton
           Left = 46
@@ -124,7 +127,7 @@ object frmMain: TfrmMain
         AutoSize = True
         Caption = 'tlb4'
         Images = il_formedits
-        TabOrder = 1
+        TabOrder = 2
         object btn68: TToolButton
           Left = 0
           Top = 0
@@ -194,7 +197,7 @@ object frmMain: TfrmMain
         AutoSize = True
         Caption = 'tlb4'
         Images = il_formedits
-        TabOrder = 2
+        TabOrder = 1
         object btn32: TToolButton
           Left = 0
           Top = 0
@@ -283,68 +286,85 @@ object frmMain: TfrmMain
           Style = tbsSeparator
         end
       end
-      object btn13: TBitBtn
-        Left = 774
-        Top = 2
-        Width = 52
-        Height = 48
-        Caption = 'btn13'
-        TabOrder = 3
-        OnClick = btn13Click
-      end
     end
   end
-  object pnl2: TPanel
+  object pnl_Left: TPanel
     Left = 0
     Top = 57
-    Width = 185
+    Width = 223
     Height = 471
     Align = alLeft
+    BevelOuter = bvNone
     TabOrder = 1
     object spl3: TSplitter
-      Left = 1
-      Top = 209
-      Width = 183
+      Left = 0
+      Top = 208
+      Width = 223
       Height = 3
       Cursor = crVSplit
       Align = alTop
+      ExplicitLeft = 1
+      ExplicitTop = 209
       ExplicitWidth = 261
     end
     object pnl4: TPanel
-      Left = 1
-      Top = 1
-      Width = 183
+      Left = 0
+      Top = 0
+      Width = 223
       Height = 208
       Align = alTop
-      Caption = 'pnl4'
       TabOrder = 0
-      object cbb1: TComboBox
-        Left = 1
-        Top = 186
-        Width = 181
-        Height = 21
-        Align = alBottom
-        Style = csDropDownList
-        TabOrder = 0
-      end
-      object tv1: TTreeView
+      ExplicitLeft = 1
+      ExplicitTop = 1
+      ExplicitWidth = 183
+      object cxTreeView1: TcxTreeView
         Left = 1
         Top = 1
-        Width = 181
+        Width = 221
         Height = 185
         Align = alClient
-        Indent = 19
+        TabOrder = 0
+        ExplicitLeft = 56
+        ExplicitTop = 24
+        ExplicitWidth = 120
+        ExplicitHeight = 100
+      end
+      object cxComboBox1: TcxComboBox
+        Left = 1
+        Top = 186
+        Align = alBottom
+        Properties.DropDownListStyle = lsFixedList
         TabOrder = 1
+        ExplicitLeft = 16
+        ExplicitTop = 160
+        ExplicitWidth = 121
+        Width = 221
       end
     end
     object pnl5: TPanel
-      Left = 1
-      Top = 212
-      Width = 183
-      Height = 258
+      Left = 0
+      Top = 211
+      Width = 223
+      Height = 260
       Align = alClient
-      Caption = 'pnl5'
       TabOrder = 1
+      ExplicitLeft = 1
+      ExplicitTop = 212
+      ExplicitWidth = 183
+      ExplicitHeight = 258
+      object cxRTTIInspector: TcxRTTIInspector
+        Left = 1
+        Top = 1
+        Width = 221
+        Height = 258
+        Align = alClient
+        TabOrder = 0
+        ExplicitLeft = 64
+        ExplicitTop = 56
+        ExplicitWidth = 150
+        ExplicitHeight = 200
+        Version = 1
+      end
     end
   end
   object stat1: TStatusBar
@@ -354,17 +374,18 @@ object frmMain: TfrmMain
     Height = 19
     Panels = <>
   end
-  object pnl3: TPanel
+  object pnl_Right: TPanel
     Left = 657
     Top = 57
     Width = 185
     Height = 471
     Align = alRight
+    BevelOuter = bvNone
     TabOrder = 3
     object CategoryPanelGroup1: TCategoryPanelGroup
-      Left = 1
-      Top = 1
-      Height = 469
+      Left = 0
+      Top = 0
+      Height = 471
       VertScrollBar.Tracking = True
       HeaderFont.Charset = DEFAULT_CHARSET
       HeaderFont.Color = clWindowText
@@ -372,10 +393,13 @@ object frmMain: TfrmMain
       HeaderFont.Name = 'Tahoma'
       HeaderFont.Style = []
       TabOrder = 0
+      ExplicitLeft = 1
+      ExplicitTop = 1
+      ExplicitHeight = 469
       object CategoryPanel2: TCategoryPanel
         Top = 289
         Caption = #24067#23616#25511#20214
-        TabOrder = 0
+        TabOrder = 1
         object tlb2: TToolBar
           AlignWithMargins = True
           Left = 3
@@ -446,7 +470,7 @@ object frmMain: TfrmMain
         Top = 0
         Height = 289
         Caption = #26631#20934#25511#20214
-        TabOrder = 1
+        TabOrder = 0
         object tlb1: TToolBar
           AlignWithMargins = True
           Left = 3
@@ -581,38 +605,49 @@ object frmMain: TfrmMain
       end
     end
   end
-  object pnl_des: TPanel
-    Left = 185
+  object pnl_Client: TPanel
+    Left = 223
     Top = 57
-    Width = 472
+    Width = 434
     Height = 471
     Align = alClient
-    TabOrder = 4
+    BevelOuter = bvNone
+    TabOrder = 2
+    ExplicitLeft = 185
+    ExplicitWidth = 472
     object spl1: TSplitter
-      Left = 1
-      Top = 1
-      Height = 469
+      Left = 0
+      Top = 0
+      Height = 471
       ExplicitLeft = 512
       ExplicitTop = 112
       ExplicitHeight = 100
     end
     object spl2: TSplitter
-      Left = 468
-      Top = 1
-      Height = 469
+      Left = 431
+      Top = 0
+      Height = 471
       Align = alRight
       ExplicitLeft = 392
       ExplicitTop = 112
       ExplicitHeight = 100
     end
-    object scrlbx_des: TScrollBox
-      Left = 4
-      Top = 1
-      Width = 464
-      Height = 469
+    object cxpgcntrl_Des: TcxPageControl
+      Left = 3
+      Top = 0
+      Width = 428
+      Height = 471
       Align = alClient
       TabOrder = 0
-      StyleElements = []
+      Properties.CustomButtons.Buttons = <>
+      ExplicitLeft = 152
+      ExplicitTop = 40
+      ExplicitWidth = 289
+      ExplicitHeight = 193
+      ClientRectBottom = 467
+      ClientRectLeft = 4
+      ClientRectRight = 424
+      ClientRectTop = 4
     end
   end
   object aplctnvnts1: TApplicationEvents
@@ -621,10 +656,10 @@ object frmMain: TfrmMain
     Top = 152
   end
   object il_controlicons: TImageList
-    Left = 416
-    Top = 280
+    Left = 784
+    Top = 232
     Bitmap = {
-      494C010111001800240010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101110018002C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000005000000001002000000000000050
       000000000000000000000000000000000000000000000000000000000000D7C7
       B500B99D8000B99D8000B99D8000B99D8000B99D8000B99D8000B99D8000DACB
@@ -1299,10 +1334,10 @@ object frmMain: TfrmMain
     end
   end
   object il_opertools: TImageList
-    Left = 376
-    Top = 168
+    Left = 736
+    Top = 232
     Bitmap = {
-      494C01010A001800140010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01010A0018001C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -1706,10 +1741,10 @@ object frmMain: TfrmMain
       000000000000}
   end
   object il_formedits: TImageList
-    Left = 456
-    Top = 208
+    Left = 688
+    Top = 232
     Bitmap = {
-      494C0101130028001C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010113002800240010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000005000000001002000000000000050
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -2375,5 +2410,18 @@ object frmMain: TfrmMain
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000}
+  end
+  object actlst1: TActionList
+    Images = il_opertools
+    Left = 686
+    Top = 294
+    object act_file_new: TAction
+      Category = 'File'
+      Caption = #26032#24314
+      Hint = #26032#24314#24067#23616
+      ImageIndex = 1
+      ShortCut = 16462
+      OnExecute = act_file_newExecute
+    end
   end
 end
