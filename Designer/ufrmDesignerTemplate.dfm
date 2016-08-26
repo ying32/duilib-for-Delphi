@@ -15,4 +15,9 @@ object frmDesignerTemplate: TfrmDesignerTemplate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
+  object xmldcmnt1: TXMLDocument
+    Left = 376
+    Top = 320
+    DOMVendorDesc = 'MSXML'
+  end
 end

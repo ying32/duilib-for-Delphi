@@ -8,13 +8,14 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Duilib, Vcl.AppEvnts, Vcl.ExtCtrls,
   Vcl.StdCtrls, Vcl.ComCtrls, DuiActiveX, System.Generics.Collections,
-  uPropertyClass;
+  uPropertyClass, Xml.xmldom, Xml.XMLIntf, Xml.Win.msxmldom, Xml.XMLDoc;
 
 type
 
   TSelectControlEvent = procedure(Sender: TObject; AControl: CControlUI) of object;
 
   TfrmDesignerTemplate = class(TForm)
+    xmldcmnt1: TXMLDocument;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
@@ -55,10 +56,13 @@ type
     function GetDragPointIndex(X, Y: Integer): TPoint;
     procedure PaintDragPoints(DC: HDC);
     procedure UpdateCurosr(APoint: TPoint);
+
+    procedure SaveWindowNode(ANode: IXMLNode);
   public
     procedure CreateParams(var Params: TCreateParams); override;
     procedure WndProc(var Msg: TMessage); override;
     function AddControl(AControl: CControlUI): Boolean;
+    procedure SaveXML(AFileName: string);
   public
     property DuiWindow: TDWindow read FDuiWindow;
     property OnSelectControl: TSelectControlEvent read FOnSelectControl write FOnSelectControl;
@@ -198,12 +202,14 @@ var
 begin
   FSelList := TList<CControlUI>.Create;
   FSelectCtl := nil;
-  FDuiWindow := TDWindow.Create;
+  FDuiWindow := TDWindow.Create(Self);
   
   FNotifyUI := INotifyUI.Create(Notify);
   FMessageFilterUI := IMessageFilterUI.Create(MessageHandler);
   FNotifyPump := CNotifyPump.CppCreate;
   FPaintMgr := CPaintManagerUI.CppCreate;
+  FDuiWindow.PaintMgr := FPaintMgr;
+
   LResourcePath := FPaintMgr.GetResourcePath;
   if LResourcePath = '' then
     LResourcePath := ExtractFilePath(ParamStr(0));// + FSkinFolder;
@@ -568,6 +574,66 @@ begin
       CRenderEngine.DrawRect(DC, R, 1, ColorToARGB(clGray), PS_SOLID);
     end;
   end;
+end;
+
+procedure TfrmDesignerTemplate.SaveWindowNode(ANode: IXMLNode);
+begin
+  if not FDuiWindow.Size.IsEmpty then
+    ANode.Attributes['size'] := Format('%d,%d', [FDuiWindow.Size.CX, FDuiWindow.Size.Cy]);
+
+  if not FDuiWindow.SizeBox.IsEmpty then
+    ANode.Attributes['sizebox'] := Format('%d,%d,%d,%d', [FDuiWindow.SizeBox.Left, FDuiWindow.SizeBox.Top, FDuiWindow.SizeBox.Right, FDuiWindow.SizeBox.Bottom]);
+
+  if not FDuiWindow.Caption.IsEmpty then
+    ANode.Attributes['caption'] := Format('%d,%d,%d,%d', [FDuiWindow.Caption.Left,
+       FDuiWindow.Caption.Top, FDuiWindow.Caption.Right, FDuiWindow.Caption.Bottom]);
+
+  if not FDuiWindow.RoundCorner.IsEmpty then
+    ANode.Attributes['roundcorner'] := Format('%d,%d', [FDuiWindow.RoundCorner.CX, FDuiWindow.RoundCorner.Cy]);
+
+  if not FDuiWindow.MinInfo.IsEmpty then
+    ANode.Attributes['mininfo'] := Format('%d,%d', [FDuiWindow.MinInfo.CX, FDuiWindow.MinInfo.Cy]);
+
+  if not FDuiWindow.MaxInfo.IsEmpty then
+    ANode.Attributes['maxinfo'] := Format('%d,%d', [FDuiWindow.MaxInfo.CX, FDuiWindow.MaxInfo.Cy]);
+
+  if FDuiWindow.Opacity <> 255 then
+    ANode.Attributes['opacity'] := FDuiWindow.Opacity;
+
+  if FDuiWindow.Opacity <> 255 then
+    ANode.Attributes['LayeredOpacity'] := FDuiWindow.LayeredOpacity;
+
+  if FDuiWindow.LayeredImage <> '' then
+    ANode.Attributes['layeredImage'] := FDuiWindow.LayeredImage;
+
+  if FDuiWindow.DisabledFontColor <> $00AAA6A7 then
+    ANode.Attributes['disabledfontcolor'] := FDuiWindow.DisabledFontColor;
+  if FDuiWindow.DefaultFontColor <> clBlack then
+    ANode.Attributes['defaultfontcolor'] := FDuiWindow.DefaultFontColor;
+  if FDuiWindow.LinkFontColor <> clBlue then
+    ANode.Attributes['linkfontcolor'] := FDuiWindow.LinkFontColor;
+  if FDuiWindow.LinkHoverFontColor <> $005F21D3 then
+    ANode.Attributes['linkhoverfontcolor'] := FDuiWindow.LinkHoverFontColor;
+  if FDuiWindow.SelectedColor <> $00FFE4BA then
+    ANode.Attributes['selectedcolor'] := FDuiWindow.SelectedColor;
+end;
+
+procedure TfrmDesignerTemplate.SaveXML(AFileName: string);
+var
+  LRoot: IXMLNode;
+begin
+  xmldcmnt1.XML.Clear;
+  xmldcmnt1.Active := True;
+  xmldcmnt1.StandAlone := 'yes';
+  xmldcmnt1.Version := '1.0';
+  xmldcmnt1.Encoding := 'utf-8';
+  LRoot := xmldcmnt1.AddChild('window');
+  if LRoot <> nil then
+  begin
+    SaveWindowNode(LRoot);
+  end;
+  xmldcmnt1.SaveToFile(AFileName);
+  xmldcmnt1.Active := False;
 end;
 
 procedure TfrmDesignerTemplate.UpdateCurosr(APoint: TPoint);

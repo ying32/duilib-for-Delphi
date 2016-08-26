@@ -74,7 +74,7 @@ type
     btn19: TToolButton;
     btnfile_new: TToolButton;
     btn21: TToolButton;
-    btn22: TToolButton;
+    btnfile_save: TToolButton;
     btn23: TToolButton;
     btn29: TToolButton;
     btn24: TToolButton;
@@ -117,11 +117,15 @@ type
     cxpgcntrl_Des: TcxPageControl;
     cxTreeView1: TcxTreeView;
     cxComboBox1: TcxComboBox;
+    act_file_save: TAction;
+    N1: TMenuItem;
+    N2: TMenuItem;
     procedure aplctnvnts1Message(var Msg: tagMSG; var Handled: Boolean);
     procedure btn_ctl_pointerClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure act_file_newExecute(Sender: TObject);
+    procedure act_file_saveExecute(Sender: TObject);
   private
     FCurDesigner: TfrmDesignerTemplate;
     FCurCtl: TToolButton;
@@ -166,6 +170,12 @@ begin
 //  FCurDesigner := NewDesignerTemplate(scrlbx_des);
 //  FDesingers.Add(FCurDesigner);
   CreateNewPage;
+end;
+
+procedure TfrmMain.act_file_saveExecute(Sender: TObject);
+begin
+  if Assigned(FCurDesigner) then
+    FCurDesigner.SaveXML('test.xml');
 end;
 
 procedure TfrmMain.aplctnvnts1Message(var Msg: tagMSG; var Handled: Boolean);

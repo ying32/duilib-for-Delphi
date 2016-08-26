@@ -60,11 +60,10 @@ object frmMain: TfrmMain
           Caption = 'btn21'
           ImageIndex = 2
         end
-        object btn22: TToolButton
+        object btnfile_save: TToolButton
           Left = 69
           Top = 0
-          Caption = 'btn22'
-          ImageIndex = 3
+          Action = act_file_save
         end
         object btn23: TToolButton
           Left = 92
@@ -314,9 +313,6 @@ object frmMain: TfrmMain
       Height = 208
       Align = alTop
       TabOrder = 0
-      ExplicitLeft = 1
-      ExplicitTop = 1
-      ExplicitWidth = 183
       object cxTreeView1: TcxTreeView
         Left = 1
         Top = 1
@@ -324,10 +320,6 @@ object frmMain: TfrmMain
         Height = 185
         Align = alClient
         TabOrder = 0
-        ExplicitLeft = 56
-        ExplicitTop = 24
-        ExplicitWidth = 120
-        ExplicitHeight = 100
       end
       object cxComboBox1: TcxComboBox
         Left = 1
@@ -335,9 +327,6 @@ object frmMain: TfrmMain
         Align = alBottom
         Properties.DropDownListStyle = lsFixedList
         TabOrder = 1
-        ExplicitLeft = 16
-        ExplicitTop = 160
-        ExplicitWidth = 121
         Width = 221
       end
     end
@@ -348,10 +337,6 @@ object frmMain: TfrmMain
       Height = 260
       Align = alClient
       TabOrder = 1
-      ExplicitLeft = 1
-      ExplicitTop = 212
-      ExplicitWidth = 183
-      ExplicitHeight = 258
       object cxRTTIInspector: TcxRTTIInspector
         Left = 1
         Top = 1
@@ -359,10 +344,6 @@ object frmMain: TfrmMain
         Height = 258
         Align = alClient
         TabOrder = 0
-        ExplicitLeft = 64
-        ExplicitTop = 56
-        ExplicitWidth = 150
-        ExplicitHeight = 200
         Version = 1
       end
     end
@@ -393,9 +374,6 @@ object frmMain: TfrmMain
       HeaderFont.Name = 'Tahoma'
       HeaderFont.Style = []
       TabOrder = 0
-      ExplicitLeft = 1
-      ExplicitTop = 1
-      ExplicitHeight = 469
       object CategoryPanel2: TCategoryPanel
         Top = 289
         Caption = #24067#23616#25511#20214
@@ -613,8 +591,6 @@ object frmMain: TfrmMain
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitLeft = 185
-    ExplicitWidth = 472
     object spl1: TSplitter
       Left = 0
       Top = 0
@@ -640,10 +616,6 @@ object frmMain: TfrmMain
       Align = alClient
       TabOrder = 0
       Properties.CustomButtons.Buttons = <>
-      ExplicitLeft = 152
-      ExplicitTop = 40
-      ExplicitWidth = 289
-      ExplicitHeight = 193
       ClientRectBottom = 467
       ClientRectLeft = 4
       ClientRectRight = 424
@@ -652,14 +624,14 @@ object frmMain: TfrmMain
   end
   object aplctnvnts1: TApplicationEvents
     OnMessage = aplctnvnts1Message
-    Left = 168
-    Top = 152
+    Left = 784
+    Top = 296
   end
   object il_controlicons: TImageList
     Left = 784
     Top = 232
     Bitmap = {
-      494C0101110018002C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010111001800300010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000005000000001002000000000000050
       000000000000000000000000000000000000000000000000000000000000D7C7
       B500B99D8000B99D8000B99D8000B99D8000B99D8000B99D8000B99D8000DACB
@@ -1327,17 +1299,23 @@ object frmMain: TfrmMain
       000000000000}
   end
   object mm1: TMainMenu
-    Left = 592
-    Top = 24
+    Left = 728
+    Top = 296
     object F1: TMenuItem
       Caption = #25991#20214'(&F)'
+      object N1: TMenuItem
+        Action = act_file_new
+      end
+      object N2: TMenuItem
+        Action = act_file_save
+      end
     end
   end
   object il_opertools: TImageList
     Left = 736
     Top = 232
     Bitmap = {
-      494C01010A0018001C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01010A001800200010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -1744,7 +1722,7 @@ object frmMain: TfrmMain
     Left = 688
     Top = 232
     Bitmap = {
-      494C010113002800240010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010113002800280010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000005000000001002000000000000050
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -2422,6 +2400,14 @@ object frmMain: TfrmMain
       ImageIndex = 1
       ShortCut = 16462
       OnExecute = act_file_newExecute
+    end
+    object act_file_save: TAction
+      Category = 'File'
+      Caption = #20445#23384
+      Hint = #20445#23384
+      ImageIndex = 3
+      ShortCut = 16467
+      OnExecute = act_file_saveExecute
     end
   end
 end

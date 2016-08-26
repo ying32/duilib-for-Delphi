@@ -11,6 +11,7 @@ uses
   Vcl.Controls,
   System.Rtti,
   Winapi.GDIPAPI,
+  Vcl.Forms,
   Duilib;
 
 type
@@ -24,11 +25,13 @@ type
     FCY: Integer;
     function GetS: TSize;
     procedure SetS(const Value: TSize);
+    function GetIsEmpty: Boolean;
   public
     property S: TSize read GetS write SetS;
+    property IsEmpty: Boolean read GetIsEmpty;
   published
     property CX: Integer read FCX write FCX;
-    property Cy: Integer read FCY write FCY;
+    property CY: Integer read FCY write FCY;
   end;
 
 
@@ -40,8 +43,10 @@ type
     FLeft: Integer;
     function GetR: TRect;
     procedure SetR(const Value: TRect);
+    function GetIsEmpty: Boolean;
   public
     property R: TRect read GetR write SetR;
+    property IsEmpty: Boolean read GetIsEmpty;
   published
     property Left: Integer read FLeft write FLeft;
     property Top: Integer read FTop write FTop;
@@ -57,8 +62,10 @@ type
     FLeft: Single;
     function GetR: TRectF;
     procedure SetR(const Value: TRectF);
+    function GetIsEmpty: Boolean;
   public
     property R: TRectF read GetR write SetR;
+    property IsEmpty: Boolean read GetIsEmpty;
   published
     property Left: Single read FLeft write FLeft;
     property Top: Single read FTop write FTop;
@@ -69,40 +76,63 @@ type
 
   TDWindow = class(TPersistent)
   private
+    FForm: TForm;
+    FPaintMgr: CPaintManagerUI;
+
     FSize: TSizeClass;
-    FSizeBox: TSizeClass;
+    FSizeBox: TRectClass;
     FCaption: TRectClass;
     FRoundCorner: TSizeClass;
     FMinInfo: TSizeClass;
     FMaxInfo: TSizeClass;
-    FShowDirty: Boolean;
-    FOpacity: Byte;
-    FLayeredOpacity: Byte;
-    FLayeredImage: TImageString;
-    FDefaultFontColor: TColor;
-    FDisabledFontColor: TColor;
-    FLinkFontColor: TColor;
-    FLinkHoverFontColor: TColor;
-    FSelectedColor: TColor;
+
+    function GetDefaultFontColor: TColor;
+    function GetDisabledFontColor: TColor;
+    function GetLinkFontColor: TColor;
+    function GetLinkHoverFontColor: TColor;
+    function GetSelectedColor: TColor;
+    procedure SetDefaultFontColor(const Value: TColor);
+    procedure SetDisabledFontColor(const Value: TColor);
+    procedure SetLinkFontColor(const Value: TColor);
+    procedure SetLinkHoverFontColor(const Value: TColor);
+    procedure SetSelectedColor(const Value: TColor);
+    function GetCaption: TRectClass;
+    function GetLayeredImage: TImageString;
+    function GetLayeredOpacity: Byte;
+    function GetMaxInfo: TSizeClass;
+    function GetMinInfo: TSizeClass;
+    function GetOpacity: Byte;
+    function GetRoundCorner: TSizeClass;
+    function GetSize: TSizeClass;
+    function GetSizeBox: TRectClass;
+    procedure SetCaption(const Value: TRectClass);
+    procedure SetLayeredImage(const Value: TImageString);
+    procedure SetLayeredOpacity(const Value: Byte);
+    procedure SetMaxInfo(const Value: TSizeClass);
+    procedure SetMinInfo(const Value: TSizeClass);
+    procedure SetOpacity(const Value: Byte);
+    procedure SetRoundCorner(const Value: TSizeClass);
+    procedure SetSize(const Value: TSizeClass);
+    procedure SetSizeBox(const Value: TRectClass);
   public
-    constructor Create;
+    constructor Create(AForm: TForm);
     destructor Destroy; override;
+    property PaintMgr: CPaintManagerUI read FPaintMgr write FPaintMgr;
   published
-    property Size: TSizeClass read FSize write FSize;
-    property SizeBox: TSizeClass read FSizeBox write FSizeBox;
-    property Caption: TRectClass read FCaption write FCaption;
-    property RoundCorner: TSizeClass read FRoundCorner write FRoundCorner;
-    property MinInfo: TSizeClass read FMinInfo write FMinInfo;
-    property MaxInfo: TSizeClass read FMaxInfo write FMaxInfo;
-    property ShowDirty: Boolean read FShowDirty write FShowDirty;
-    property Opacity: Byte read FOpacity write FOpacity;
-    property LayeredOpacity: Byte read FLayeredOpacity write FLayeredOpacity;
-    property LayeredImage: TImageString read FLayeredImage write FLayeredImage;
-    property DisabledFontColor: TColor read FDisabledFontColor write FDisabledFontColor;
-    property DefaultFontColor: TColor read FDefaultFontColor write FDefaultFontColor;
-    property LinkFontColor: TColor read FLinkFontColor write FLinkFontColor;
-    property LinkHoverFontColor: TColor read FLinkHoverFontColor write FLinkHoverFontColor;
-    property SelectedColor: TColor read FSelectedColor write FSelectedColor;
+    property Size: TSizeClass read GetSize write SetSize;
+    property SizeBox: TRectClass read GetSizeBox write SetSizeBox;
+    property Caption: TRectClass read GetCaption write SetCaption;
+    property RoundCorner: TSizeClass read GetRoundCorner write SetRoundCorner;
+    property MinInfo: TSizeClass read GetMinInfo write SetMinInfo;
+    property MaxInfo: TSizeClass read GetMaxInfo write SetMaxInfo;
+    property Opacity: Byte read GetOpacity write SetOpacity;
+    property LayeredOpacity: Byte read GetLayeredOpacity write SetLayeredOpacity;
+    property LayeredImage: TImageString read GetLayeredImage write SetLayeredImage;
+    property DisabledFontColor: TColor read GetDisabledFontColor write SetDisabledFontColor;
+    property DefaultFontColor: TColor read GetDefaultFontColor write SetDefaultFontColor;
+    property LinkFontColor: TColor read GetLinkFontColor write SetLinkFontColor;
+    property LinkHoverFontColor: TColor read GetLinkHoverFontColor write SetLinkHoverFontColor;
+    property SelectedColor: TColor read GetSelectedColor write SetSelectedColor;
   end;
 
   TDControl = class(TPersistent)
@@ -235,11 +265,13 @@ type
     function GetMouseChildEnabled: Boolean;
     function GetScrollPos: TSizeClass;
     procedure SetAutoDestroy(const Value: Boolean);
-    function SetDelayedDestroy: Boolean;
+
     procedure SetMouseChildEnabled(const Value: Boolean);
     procedure SetScrollPos(const Value: TSizeClass);
     function GetInset: TRectClass;
     procedure SetInset(const Value: TRectClass);
+    function GetDelayedDestroy: Boolean;
+    procedure SetDelayedDestroy(const Value: Boolean);
   public
     constructor Create;
     destructor Destroy; override;
@@ -247,7 +279,7 @@ type
     property ChildPadding: Integer read GetChildPadding write SetChildPadding;
     property Inset: TRectClass read GetInset write SetInset;
     property AutoDestroy: Boolean read GetAutoDestroy write SetAutoDestroy;
-    property DelayedDestroy: Boolean read SetDelayedDestroy write SetDelayedDestroy;
+    property DelayedDestroy: Boolean read GetDelayedDestroy write SetDelayedDestroy;
     property MouseChildEnabled: Boolean read GetMouseChildEnabled write SetMouseChildEnabled;
     property ScrollPos: TSizeClass read GetScrollPos write SetScrollPos;
   end;
@@ -324,11 +356,12 @@ end;
 
 { TDWindow }
 
-constructor TDWindow.Create;
+constructor TDWindow.Create(AForm: TForm);
 begin
-  inherited;
+  inherited Create;
+  FForm := AForm;
   FSize       := TSizeClass.Create;
-  FSizeBox    := TSizeClass.Create;
+  FSizeBox    := TRectClass.Create;
   FCaption    := TRectClass.Create;
   FRoundCorner:= TSizeClass.Create;
   FMinInfo    := TSizeClass.Create;
@@ -344,6 +377,160 @@ begin
   FSizeBox.Free;
   FSize.Free;
   inherited;
+end;
+
+function TDWindow.GetCaption: TRectClass;
+begin
+  FCaption.R := FPaintMgr.GetCaptionRect;
+  Result := FCaption;
+end;
+
+function TDWindow.GetDefaultFontColor: TColor;
+begin
+  Result := ARGBToColor(FPaintMgr.GetDefaultFontColor);
+end;
+
+function TDWindow.GetDisabledFontColor: TColor;
+begin
+  Result := ARGBToColor(FPaintMgr.GetDefaultDisabledColor);
+end;
+
+function TDWindow.GetLayeredImage: TImageString;
+begin
+  Result := FPaintMgr.LayeredImage;
+end;
+
+function TDWindow.GetLayeredOpacity: Byte;
+begin
+  Result := FPaintMgr.GetLayeredOpacity;
+end;
+
+function TDWindow.GetLinkFontColor: TColor;
+begin
+  Result := ARGBToColor(FPaintMgr.GetDefaultLinkFontColor);
+end;
+
+function TDWindow.GetLinkHoverFontColor: TColor;
+begin
+  Result := ARGBToColor(FPaintMgr.GetDefaultLinkHoverFontColor);
+end;
+
+function TDWindow.GetMaxInfo: TSizeClass;
+begin
+  FMaxInfo.S := FPaintMgr.GetMaxInfo;
+  Result := FMaxInfo;
+end;
+
+function TDWindow.GetMinInfo: TSizeClass;
+begin
+  FMinInfo.S := FPaintMgr.GetMinInfo;
+  Result := FMinInfo;
+end;
+
+function TDWindow.GetOpacity: Byte;
+begin
+  Result := FPaintMgr.GetOpacity;
+end;
+
+function TDWindow.GetRoundCorner: TSizeClass;
+begin
+  FRoundCorner.S := FPaintMgr.GetRoundCorner;
+  Result := FRoundCorner;
+end;
+
+function TDWindow.GetSelectedColor: TColor;
+begin
+  Result := ARGBToColor(FPaintMgr.GetDefaultSelectedBkColor);
+end;
+
+function TDWindow.GetSize: TSizeClass;
+begin
+  FSize.S := FPaintMgr.GetInitSize;
+  Result := FSize;
+end;
+
+function TDWindow.GetSizeBox: TRectClass;
+begin
+  FSizeBox.R := FPaintMgr.GetSizeBox;
+  Result := FSizeBox;
+end;
+
+procedure TDWindow.SetCaption(const Value: TRectClass);
+begin
+  FCaption.R := Value.R;
+  FPaintMgr.SetCaptionRect(Value.R);
+end;
+
+procedure TDWindow.SetDefaultFontColor(const Value: TColor);
+begin
+  FPaintMgr.SetDefaultFontColor(ColorToARGB(Value));
+end;
+
+procedure TDWindow.SetDisabledFontColor(const Value: TColor);
+begin
+  FPaintMgr.SetDefaultDisabledColor(ColorToARGB(Value));
+end;
+
+procedure TDWindow.SetLayeredImage(const Value: TImageString);
+begin
+  FPaintMgr.SetLayeredImage(Value);
+end;
+
+procedure TDWindow.SetLayeredOpacity(const Value: Byte);
+begin
+  FPaintMgr.SetLayeredOpacity(Value);
+end;
+
+procedure TDWindow.SetLinkFontColor(const Value: TColor);
+begin
+  FPaintMgr.SetDefaultLinkFontColor(ColorToARGB(Value));
+end;
+
+procedure TDWindow.SetLinkHoverFontColor(const Value: TColor);
+begin
+  FPaintMgr.SetDefaultLinkHoverFontColor(ColorToARGB(Value));
+end;
+
+procedure TDWindow.SetMaxInfo(const Value: TSizeClass);
+begin
+  FMaxInfo.S := Value.S;
+  FPaintMgr.SetMaxInfo(Value.CX, Value.CY);
+end;
+
+procedure TDWindow.SetMinInfo(const Value: TSizeClass);
+begin
+  FMinInfo.S := Value.S;
+  FPaintMgr.SetMinInfo(Value.CX, Value.CY);
+end;
+
+procedure TDWindow.SetOpacity(const Value: Byte);
+begin
+  FPaintMgr.SetOpacity(Value);
+end;
+
+procedure TDWindow.SetRoundCorner(const Value: TSizeClass);
+begin
+  FRoundCorner.S := Value.S;
+  FPaintMgr.SetRoundCorner(Value.CX, Value.CY);
+end;
+
+procedure TDWindow.SetSelectedColor(const Value: TColor);
+begin
+  FPaintMgr.SetDefaultSelectedBkColor(ColorToARGB(Value));
+end;
+
+procedure TDWindow.SetSize(const Value: TSizeClass);
+begin
+  FSize.S := Value.S;
+  FPaintMgr.SetInitSize(Value.CX, Value.CY);
+  FForm.Width := Value.CX;
+  FForm.Height := Value.CY;
+end;
+
+procedure TDWindow.SetSizeBox(const Value: TRectClass);
+begin
+  FSizeBox.R := Value.R;
+  FPaintMgr.SetSizeBox(Value.R);
 end;
 
 { TDControlUI }
@@ -768,6 +955,11 @@ begin
   Result := CContainerUI(FControl).GetChildPadding;
 end;
 
+function TDCContainer.GetDelayedDestroy: Boolean;
+begin
+
+end;
+
 function TDCContainer.GetInset: TRectClass;
 begin
 
@@ -793,11 +985,10 @@ begin
 
 end;
 
-function TDCContainer.SetDelayedDestroy: Boolean;
+procedure TDCContainer.SetDelayedDestroy(const Value: Boolean);
 begin
 
 end;
-
 
 procedure TDCContainer.SetInset(const Value: TRectClass);
 begin
@@ -816,6 +1007,11 @@ end;
 
 { TRectClass }
 
+function TRectClass.GetIsEmpty: Boolean;
+begin
+  Result := (FLeft = 0) and (FTop = 0) and (FRight = 0) and (FBottom = 0);
+end;
+
 function TRectClass.GetR: TRect;
 begin
   Result := Rect(Self.Left, Self.Top, Self.Right, Self.Bottom);
@@ -831,6 +1027,11 @@ end;
 
 { TSizeClass }
 
+function TSizeClass.GetIsEmpty: Boolean;
+begin
+  Result := (FCX = 0) and (FCY = 0);
+end;
+
 function TSizeClass.GetS: TSize;
 begin
   Result.cx := Self.CX;
@@ -844,6 +1045,11 @@ begin
 end;
 
 { TRectFClass }
+
+function TRectFClass.GetIsEmpty: Boolean;
+begin
+  Result := (FLeft = 0.0) and (FTop = 0.0) and (FRight = 0.0) and (FBottom = 0);
+end;
 
 function TRectFClass.GetR: TRectF;
 begin
