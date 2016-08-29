@@ -114,9 +114,9 @@ end.
    * 新的Demo工程目录
  >  
 * 3、Duilib
-   * 存放原[duilib](https://github.com/duilib/duilib)工程目录，这里不提供原[duilib](https://github.com/duilib/duilib)的源码，请自行下载。
+   * 存放原[duilib](https://github.com/duilib/duilib)工程目录。  
    * 3.1、 bin
-      * 存放编译后的二进制及图片和xml资源，里面有的包含原duilib的资源文件  
+      * 存放编译后的二进制及图片和xml资源，里面有的包含原duilib的资源文件      
    * 3.2、 Duilib
       * 存放duilib c++工程源码
 >	  
@@ -126,10 +126,10 @@ end.
 
 #### **截图**
 
-![截图1](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot3.png) 
-![截图1](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot1.png)  
-![截图3](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot2.png)  
-![截图4](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/TestDelphi/screenshot4.png)  
+[QQDemo截图1](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot3.png)   
+[QQDemo截图2](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot1.png)   
+[应用程序管理截图](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot2.png)  
+[PC管家截较长](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/TestDelphi/screenshot4.png)  
 #### **作者信息** 
 ##### 多少无所谓，反正想捐助的就随心吧，不捐助也毫无影响。  
 
