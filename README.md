@@ -129,7 +129,7 @@ end.
 [QQDemo截图1](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot3.png)   
 [QQDemo截图2](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot1.png)   
 [应用程序管理截图](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot2.png)  
-[PC管家截较长](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/TestDelphi/screenshot4.png)  
+[PC管家截图](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/TestDelphi/screenshot4.png)  
 #### **作者信息** 
 ##### 多少无所谓，反正想捐助的就随心吧，不捐助也毫无影响。  
 
