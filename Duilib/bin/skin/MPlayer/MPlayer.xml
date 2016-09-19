@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window size="396,588" caption="0,0,0,36" roundcorner="3,3">
+    <VerticalLayout name="background" width="400" height="400" bkimage="BK4.jpg">
+        <HorizontalLayout height="36">
+            <HorizontalLayout>
+                <HorizontalLayout height="36">
+                    <Label name="lblCaption" text="音乐播放器［ＤＤｕｉｌｉｂ］" float="true" pos="4,0,0,0" width="244" height="30" textcolor="#00FFFBF0" disabledtextcolor="#FFA7A6AA" />
+                </HorizontalLayout>
+                <HorizontalLayout width="124" height="36">
+                    <Button name="minbtn" float="true" pos="59,0,0,0" width="28" height="18" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;minsize.png&apos; source=&apos;0,0,28,18&apos;" hotimage="file=&apos;minsize.png&apos; source=&apos;28,0,56,18&apos;" pushedimage="file=&apos;minsize.png&apos; source=&apos;56,0,84,18&apos;" />
+                    <Button name="btnMiniMode" float="true" pos="33,0,0,0" width="28" height="18" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;minimode.png&apos; source=&apos;0,0,28,18&apos;" hotimage="file=&apos;minimode.png&apos; source=&apos;28,0,56,18&apos;" pushedimage="file=&apos;minimode.png&apos; source=&apos;56,0,84,18&apos;" />
+                    <Button name="btnMainMenu" float="true" pos="5,0,0,0" width="28" height="18" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;mainmenu.png&apos; source=&apos;0,0,28,18&apos;" hotimage="file=&apos;mainmenu.png&apos; source=&apos;28,0,56,18&apos;" pushedimage="file=&apos;mainmenu.png&apos; source=&apos;56,0,84,18&apos;" />
+                    <Button name="closebtn" float="true" pos="89,0,0,0" width="37" height="18" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;close.png&apos; source=&apos;0,0,37,18&apos;" hotimage="file=&apos;close.png&apos; source=&apos;37,0,74,18&apos;" pushedimage="file=&apos;close.png&apos; source=&apos;74,0,111,18&apos;" />
+                </HorizontalLayout>
+            </HorizontalLayout>
+        </HorizontalLayout>
+        <HorizontalLayout />
+    </VerticalLayout>
+</Window>
