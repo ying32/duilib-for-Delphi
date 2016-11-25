@@ -100,6 +100,11 @@ type
     FNotifyUI: INotifyUI;
     FMessageFilterUI: IMessageFilterUI;
     FDialogBuilderCallback: IDialogBuilderCallback;
+  {$IFDEF FPC}
+    FNotifyVMT: PDWORD;
+    FMessageFilterUIVMT: PDWORD;
+    FDialogBuilderCallBackVMT: PDWORD;
+  {$ENDIF}
     FNotifyPump: CNotifyPump;
     FObjectEvents: TDuiObjectEvents;
     FOnNotify: TDuiNotifyEvent;
@@ -300,14 +305,14 @@ procedure TDDuiForm.Click(var Msg: TNotifyUI);
 var
   sCtrlName: string;
 begin
-	sCtrlName := Msg.pSender.Name;
-	if sCtrlName = 'closebtn' then
+  sCtrlName := Msg.pSender.Name;
+  if sCtrlName = 'closebtn' then
     Close
-	else if sCtrlName = 'minbtn' then
+  else if sCtrlName = 'minbtn' then
     Perform(WM_SYSCOMMAND, SC_MINIMIZE)
-	else if sCtrlName = 'maxbtn' then
-	  Perform(WM_SYSCOMMAND, SC_MAXIMIZE)
-	else if sCtrlName = 'restorebtn' then
+  else if sCtrlName = 'maxbtn' then
+    Perform(WM_SYSCOMMAND, SC_MAXIMIZE)
+  else if sCtrlName = 'restorebtn' then
     Perform(WM_SYSCOMMAND, SC_RESTORE);
   if Assigned(FOnClick) then
     FOnClick(Self, Msg);
@@ -334,6 +339,14 @@ begin
   FObjectEvents := TDuiObjectEvents.Create;
   if not IsDesigning then
   begin
+  {$IFDEF FPC}
+    New(FNotifyVMT);
+    New(FMessageFilterUIVMT);
+    New(FDialogBuilderCallBackVMT);
+    FNotifyVMT^ := PDWORD(FNotifyUI)^ + $64;
+    FMessageFilterUIVMT^ := PDWORD(FMessageFilterUI)^ + $64;
+    FDialogBuilderCallBackVMT^ := PDWORD(FDialogBuilderCallback)^ + $64;
+  {$ENDIF}
     FPaintMgr := CPaintManagerUI.CppCreate;
     FNotifyPump := CNotifyPump.CppCreate;
     FHandle := FForm.Handle;
@@ -351,6 +364,14 @@ begin
       FForm.WindowProc := FOldWndProc;
     FNotifyPump.CppDestroy;
     FPaintMgr.CppDestroy;
+    {$IFDEF FPC}
+      if FNotifyVMT <> nil then
+        Dispose(FNotifyVMT);
+      if FMessageFilterUIVMT <> nil then
+        Dispose(FMessageFilterUIVMT);
+      if FDialogBuilderCallBackVMT <> nil then
+        Dispose(FDialogBuilderCallBackVMT);
+    {$ENDIF}
   end;
   FSkinXml.Free;
   ClearEvents;
@@ -367,23 +388,22 @@ var
   oMonitor: TMonitorInfo;
   rcWork, rcMonitor: TRect;
 begin
-	lpMMI := PMinMaxInfo(Msg.LParam);
+  lpMMI := PMinMaxInfo(Msg.LParam);
   FillChar(oMonitor, SizeOf(oMonitor), #0);
   oMonitor.cbSize := SizeOf(oMonitor);
-
   GetMonitorInfo(MonitorFromWindow(Handle, MONITOR_DEFAULTTONEAREST), @oMonitor);
-	rcWork := oMonitor.rcWork;
-	rcMonitor := oMonitor.rcMonitor;
+  rcWork := oMonitor.rcWork;
+  rcMonitor := oMonitor.rcMonitor;
   RectOffset(rcWork, -oMonitor.rcMonitor.Left, -oMonitor.rcMonitor.Top);
-	// 计算最大化时，正确的原点坐标
-	lpMMI^.ptMaxPosition.X	:= rcWork.Left;
-	lpMMI^.ptMaxPosition.Y	:= rcWork.Top;
+  // 计算最大化时，正确的原点坐标
+  lpMMI^.ptMaxPosition.X	:= rcWork.Left;
+  lpMMI^.ptMaxPosition.Y	:= rcWork.Top;
 
-	lpMMI^.ptMaxTrackSize.X := rcWork.Right - rcWork.Left;
-	lpMMI^.ptMaxTrackSize.Y := rcWork.Bottom - rcWork.Top;
+  lpMMI^.ptMaxTrackSize.X := rcWork.Right - rcWork.Left;
+  lpMMI^.ptMaxTrackSize.Y := rcWork.Bottom - rcWork.Top;
 
-	lpMMI^.ptMinTrackSize.X := FPaintMgr.GetMinInfo.cx;
-	lpMMI^.ptMinTrackSize.Y := FPaintMgr.GetMinInfo.cy;
+  lpMMI^.ptMinTrackSize.X := FPaintMgr.GetMinInfo.cx;
+  lpMMI^.ptMinTrackSize.Y := FPaintMgr.GetMinInfo.cy;
 
   Msg.Result := 1
 end;
@@ -437,8 +457,8 @@ procedure TDDuiForm.DoNcDestroy(var Msg: TMessage);
 begin
   if Assigned(FPaintMgr) then
   begin
-    FPaintMgr.RemovePreMessageFilter(FMessageFilterUI);
-    FPaintMgr.RemoveNotifier(FNotifyUI);
+    FPaintMgr.RemovePreMessageFilter({$IFDEF FPC}IMessageFilterUI(FMessageFilterUIVMT){$ELSE}FMessageFilterUI{$ENDIF});
+    FPaintMgr.RemoveNotifier({$IFDEF FPC}INotifyUI(FNotifyUI){$ELSE}FNotifyUI{$ENDIF});
     FPaintMgr.ReapObjects(FPaintMgr.GetRoot);
     FCanProcessDuiMsg := False;
   end;
@@ -452,69 +472,69 @@ var
   LClassName: string;
 begin
   Msg.Result := HTCLIENT;
-	pt.x := TWMMouse(Msg).XPos;
+  pt.x := TWMMouse(Msg).XPos;
   pt.y := TWMMouse(Msg).YPos;
-	ScreenToClient(Handle, pt);
-	GetClientRect(Handle, rcClient);
-	if not IsZoomed(Handle) then
-	begin
-		rcSizeBox := FPaintMgr.GetSizeBox;
-		if pt.Y < rcClient.Top + rcSizeBox.Top then
-		begin
-			if pt.X < rcClient.Left + rcSizeBox.Left then
+  ScreenToClient(Handle, pt);
+  GetClientRect(Handle, rcClient);
+  if not IsZoomed(Handle) then
+  begin
+    rcSizeBox := FPaintMgr.GetSizeBox;
+    if pt.Y < rcClient.Top + rcSizeBox.Top then
+    begin
+      if pt.X < rcClient.Left + rcSizeBox.Left then
       begin
         Msg.Result := HTTOPLEFT;
         Exit;
       end;
-			if pt.X > rcClient.Right - rcSizeBox.Right then
+      if pt.X > rcClient.Right - rcSizeBox.Right then
       begin
         Msg.Result := HTTOPRIGHT;
         Exit;
       end;
-			Msg.Result := HTTOP;
+      Msg.Result := HTTOP;
       Exit;
-		end
-		else if pt.Y > rcClient.Bottom - rcSizeBox.Bottom then
-		begin
-			if pt.X < rcClient.Left + rcSizeBox.Left then
+    end
+    else if pt.Y > rcClient.Bottom - rcSizeBox.Bottom then
+    begin
+      if pt.X < rcClient.Left + rcSizeBox.Left then
       begin
         Msg.Result := HTBOTTOMLEFT;
         Exit;
       end;
-			if pt.X > rcClient.Right - rcSizeBox.Right then
+      if pt.X > rcClient.Right - rcSizeBox.Right then
       begin
         Msg.Result := HTBOTTOMRIGHT;
         Exit;
       end;
-			Msg.Result := HTBOTTOM;
+      Msg.Result := HTBOTTOM;
       Exit;
-		end;
-		if pt.X < rcClient.Left + rcSizeBox.Left then
+    end;
+    if pt.X < rcClient.Left + rcSizeBox.Left then
     begin
       Msg.Result := HTLEFT;
       Exit;
     end;
-		if pt.X > rcClient.Right - rcSizeBox.Right then
+    if pt.X > rcClient.Right - rcSizeBox.Right then
     begin
       Msg.Result := HTRIGHT;
       Exit;
     end;
-	end;
+  end;
   rcCaption := FPaintMgr.GetCaptionRect;
-	if (pt.X >= rcClient.Left + rcCaption.Left) and (pt.X < rcClient.Right - rcCaption.Right) and
-		 (pt.Y >= rcCaption.Top) and (pt.Y < rcCaption.Bottom) then
+  if (pt.X >= rcClient.Left + rcCaption.Left) and (pt.X < rcClient.Right - rcCaption.Right) and
+     (pt.Y >= rcCaption.Top) and (pt.Y < rcCaption.Bottom) then
   begin
     pControl := FPaintMgr.FindControl(pt);
     LClassName := '';
     if pControl <> nil then
-      LClassName := pControl.GetClass;
+       LClassName := pControl.GetClass;
     if (LClassName <> 'ButtonUI') and
        (LClassName <> 'OptionUI') and
        (LClassName <> 'TextUI') then
-    begin
-      Msg.Result := HTCAPTION;
-      Exit;
-    end;
+       begin
+         Msg.Result := HTCAPTION;
+         Exit;
+      end;
   end;
 end;
 
@@ -525,17 +545,17 @@ var
   LhRgn: HRGN;
 begin
   szRoundCorner := FPaintMgr.GetRoundCorner;
-	if (not IsIconic(Handle)) and ((szRoundCorner.cx <> 0) or (szRoundCorner.cy <> 0)) then
+  if (not IsIconic(Handle)) and ((szRoundCorner.cx <> 0) or (szRoundCorner.cy <> 0)) then
   begin
-		GetWindowRect(Handle, rcWnd);
+    GetWindowRect(Handle, rcWnd);
     RectOffset(rcWnd, -rcWnd.Left, -rcWnd.Top);
     Inc(rcWnd.Right);
     Inc(rcWnd.Bottom);
-		LhRgn := CreateRoundRectRgn(rcWnd.Left, rcWnd.Top, rcWnd.Right, rcWnd.Bottom, szRoundCorner.cx, szRoundCorner.cy);
-		SetWindowRgn(Handle, LhRgn, True);
-		DeleteObject(LhRgn);
-	end;
-	Msg.Result := 0;
+    LhRgn := CreateRoundRectRgn(rcWnd.Left, rcWnd.Top, rcWnd.Right, rcWnd.Bottom, szRoundCorner.cx, szRoundCorner.cy);
+    SetWindowRgn(Handle, LhRgn, True);
+    DeleteObject(LhRgn);
+  end;
+  Msg.Result := 0;
 end;
 
 procedure TDDuiForm.DoSysCommand(var Msg: TMessage);
@@ -581,7 +601,7 @@ begin
   if FIsUIInitd then Exit;
   FCanProcessDuiMsg := True;
   FPaintMgr.Init(Handle);
-  FPaintMgr.AddMessageFilter(FMessageFilterUI);
+  FPaintMgr.AddMessageFilter({$IFDEF FPC}IMessageFilterUI(FMessageFilterUIVMT){$ELSE}FMessageFilterUI{$ENDIF});
 
   LResourcePath := FPaintMgr.GetResourcePath;
   if LResourcePath = '' then
@@ -622,21 +642,21 @@ begin
           end;
       end;
       if FSkinKind = skResource then
-        pRoot := builder.Create(FSkinXml.Text, 'xml', FDialogBuilderCallback, FPaintMgr)
+        pRoot := builder.Create(FSkinXml.Text, 'xml', {$IFDEF FPC}IDialogBuilderCallback(FDialogBuilderCallbackVMT){$ELSE}FDialogBuilderCallback{$ENDIF}, FPaintMgr)
       else
-        pRoot := builder.CreateFromFile(FSkinXmlFile, FDialogBuilderCallback, FPaintMgr);
+        pRoot := builder.CreateFromFile(FSkinXmlFile, {$IFDEF FPC}IDialogBuilderCallback(FDialogBuilderCallbackVMT){$ELSE}FDialogBuilderCallback{$ENDIF}, FPaintMgr);
     finally
       builder.CppDestroy;
     end;
   end;
   if pRoot = nil then
   begin
-    FPaintMgr.RemoveMessageFilter(FMessageFilterUI);
+    FPaintMgr.RemoveMessageFilter({$IFDEF FPC}IMessageFilterUI(FMessageFilterUIVMT){$ELSE}FMessageFilterUI{$ENDIF});
     raise Exception.Create('加载资源文件失败');
     Exit;
   end;
   FPaintMgr.AttachDialog(pRoot);
-  FPaintMgr.AddNotifier(FNotifyUI);
+  FPaintMgr.AddNotifier({$IFDEF FPC}INotifyUI(FNotifyVMT){$ELSE}FNotifyUI{$ENDIF});
   FIsUIInitd := True;
   if Assigned(FOnInitWindow) then
     FOnInitWindow(Self);
@@ -679,17 +699,7 @@ begin
     WM_NCDESTROY:
       DoNcDestroy(Msg);
   end;
-  // 解决调整边框时无法收WM_NCLBUTTONUP消息
-//  if Msg.Msg = WM_NCLBUTTONDOWN then
-//    FIsNcDown := True
-//  else if Msg.Msg = WM_NCLBUTTONUP then
-//  begin
-//    FIsNcDown := False;
-//    ReleaseCapture;
-//  end;
-//  if (Msg.Msg = WM_EXITSIZEMOVE) and FIsNcDown then
-//    Perform(WM_NCLBUTTONUP, HTCAPTION);
-//
+
   if FCanProcessDuiMsg then
   begin
     if FPaintMgr.MessageHandler(Msg.Msg, Msg.WParam, Msg.LParam, Msg.Result) then

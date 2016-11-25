@@ -263,6 +263,7 @@ protected:                                                                \
 #define  DUI_CTR_LISTHEADERITEM                  (_T("ListHeaderItem"))
 
 #define  DUI_CTR_NativeControlUI                 (_T("NativeControlUI"))
+#define  DUI_CTR_NativeControl                   (_T("NativeControl"))
 
 #define  DUI_CTR_LISTTEXTELEMENT                 (_T("ListTextElement"))
 
