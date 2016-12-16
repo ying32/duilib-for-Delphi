@@ -630,6 +630,7 @@ end;
 procedure TChatDialog.DoFinalMessage(hWd: HWND);
 begin
   inherited;
+  RemoveSkinChangedWindow(Self);
   Free;
 end;
 
@@ -639,7 +640,7 @@ var
   LControl: CControlUI;
 begin
   inherited;
-  RemoveSkinChangedWindow(Self);
+
   // 貌似这个方式比在xml文件中添加 menu="true" 属性好用
   if Msg.Msg = WM_RBUTTONUP then
   begin
