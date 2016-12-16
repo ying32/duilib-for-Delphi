@@ -86,7 +86,7 @@ var
   SkinChangedList: TList;
 
 procedure AddSkinChangedWindow(AWindow: TDuiWindowImplBase); forward;
-
+procedure RemoveSkinChangedWindow(AWindow: TDuiWindowImplBase); forward;
 procedure SendSkinChanged(p: TSkinChangedParam); forward;
 
 type
@@ -639,6 +639,7 @@ var
   LControl: CControlUI;
 begin
   inherited;
+  RemoveSkinChangedWindow(Self);
   // 貌似这个方式比在xml文件中添加 menu="true" 属性好用
   if Msg.Msg = WM_RBUTTONUP then
   begin
@@ -1173,6 +1174,12 @@ procedure AddSkinChangedWindow;
 begin
   if SkinChangedList.IndexOf(AWindow) = -1 then
     SkinChangedList.Add(AWindow);
+end;
+
+procedure RemoveSkinChangedWindow;
+begin
+ if SkinChangedList.IndexOf(AWindow) <> -1 then
+    SkinChangedList.Remove(AWindow);
 end;
 
 procedure SendSkinChanged;
