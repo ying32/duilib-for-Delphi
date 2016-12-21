@@ -958,6 +958,7 @@ begin
       uZipFileCache.LoadFromFile(FPaintMgr.GetResourcePath + FSkinZipFile);
     FPaintMgr.SetResourceZip(uZipFileCache.Memory, uZipFileCache.Size)
   end;
+  FPaintMgr.ReloadSkin;
 end;
 
 procedure TDDuiForm.SetSkinXml(const Value: TStrings);
