@@ -620,10 +620,10 @@ begin
         skZip:
           begin
              // 不使用他的，他的直接这样就超级慢
-             //FPaintMgr.SetResourceZip(SkinZipFile, True);
+//             FPaintMgr.SetResourceZip(SkinZipFile, True);
              LMemStream := TMemoryStream.Create;
              try
-               LMemStream.LoadFromFile(FPaintMgr.GetResourceZip);
+               LMemStream.LoadFromFile(LResourcePath + FSkinZipFile);
                FPaintMgr.SetResourceZip(LMemStream.Memory, LMemStream.Size)
              finally
                LMemStream.Free;
