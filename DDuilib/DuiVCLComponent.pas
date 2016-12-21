@@ -168,6 +168,7 @@ type
     procedure ClearEvents;
     procedure AddObjectEvent(AType, AObjName: string; AEvent: TDuiNotifyEvent);
     procedure AddObjectClick(AObjName: string; AEvent: TDuiNotifyEvent);
+    procedure ReloadSkin;
   public
     property PaintMgr: CPaintManagerUI read FPaintMgr;
     property Handle: HWND read FHandle;
@@ -202,6 +203,7 @@ end;
 
 var
   AppObjectExists: Boolean;
+  uZipFileCache: TMemoryStream;
 
 
 // TDDuiApp将不再注册为组件了，在单元初始部分加载并拦截OnAppMessage消息
@@ -596,7 +598,6 @@ var
   LResourcePath: string;
   pRoot: CControlUI;
   LResStream: TResourceStream;
-  LMemStream: TMemoryStream;
 begin
   if FIsUIInitd then Exit;
   FCanProcessDuiMsg := True;
@@ -621,23 +622,28 @@ begin
           begin
              // 不使用他的，他的直接这样就超级慢
 //             FPaintMgr.SetResourceZip(SkinZipFile, True);
-             LMemStream := TMemoryStream.Create;
-             try
-               LMemStream.LoadFromFile(LResourcePath + FSkinZipFile);
-               FPaintMgr.SetResourceZip(LMemStream.Memory, LMemStream.Size)
-             finally
-               LMemStream.Free;
+             if uZipFileCache.Size = 0 then
+             begin
+               uZipFileCache.LoadFromFile(LResourcePath + FSkinZipFile);
+               FPaintMgr.SetResourceZip(uZipFileCache.Memory, uZipFileCache.Size);
              end;
           end;
         skZipResource:
           begin
-            LResStream := TResourceStream.Create(FPaintMgr.GetResourceDll, FSkinResName, 'ZIPRES');
-            try
-              if LResStream.Size <> 0 then
-                FPaintMgr.SetResourceZip(LResStream.Memory, LResStream.Size)
-              else Exit;
-            finally
-              LResStream.Free;
+            if uZipFileCache.Size = 0 then
+            begin
+              LResStream := TResourceStream.Create(FPaintMgr.GetResourceDll, FSkinResName, 'ZIPRES');
+              try
+                if LResStream.Size <> 0 then
+                begin
+                  LResStream.Position := 0;
+                  uZipFileCache.LoadFromStream(LResStream);
+                  FPaintMgr.SetResourceZip(uZipFileCache.Memory, uZipFileCache.Size);
+                end
+                else Exit;
+              finally
+                LResStream.Free;
+              end;
             end;
           end;
       end;
@@ -944,6 +950,16 @@ begin
   Inc(ARect.Bottom, DY);
 end;
 
+procedure TDDuiForm.ReloadSkin;
+begin
+  if FSkinKind in [{skZipResource, }skZip] then
+  begin
+    if FSkinKind = skZip then
+      uZipFileCache.LoadFromFile(FPaintMgr.GetResourcePath + FSkinZipFile);
+    FPaintMgr.SetResourceZip(uZipFileCache.Memory, uZipFileCache.Size)
+  end;
+end;
+
 procedure TDDuiForm.SetSkinXml(const Value: TStrings);
 begin
   FSkinXml.Assign(Value);
@@ -951,8 +967,10 @@ end;
 
 initialization
   DDuiApp := TDDuiApp.Create(nil);
+  uZipFileCache := TMemoryStream.Create;
 
 finalization
+  uZipFileCache.Free;
   DDuiApp.Free;
 
 end.
