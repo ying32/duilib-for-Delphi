@@ -407,36 +407,36 @@ type
     function ArgCount: Integer; {$IFDEF SupportInline}inline;{$ENDIF}
     function ArgType(argIdx: Integer): jsType; {$IFDEF SupportInline}inline;{$ENDIF}
     function Arg(argIdx: Integer): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function TypeOf(v: jsValue): jsType; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function IsNumber(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function IsString(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function IsBoolean(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function IsObject(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function IsFunction(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function IsUndefined(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function IsNull(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function IsArray(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function IsTrue(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function IsFalse(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
+    function TypeOf(v: jsValue): jsType; {$IFDEF SupportInline}inline;{$ENDIF}
+    function IsNumber(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
+    function IsString(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
+    function IsBoolean(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
+    function IsObject(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
+    function IsFunction(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
+    function IsUndefined(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
+    function IsNull(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
+    function IsArray(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
+    function IsTrue(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
+    function IsFalse(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
     function ToInt(v: jsValue): Integer; {$IFDEF SupportInline}inline;{$ENDIF}
     function ToFloat(v: jsValue): Single; {$IFDEF SupportInline}inline;{$ENDIF}
     function ToDouble(v: jsValue): Double; {$IFDEF SupportInline}inline;{$ENDIF}
     function ToBoolean(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
     function ToTempString(v: jsValue): string; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function Int(n: Integer): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function Float(f: Single): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function Double(d: Double): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function Boolean(b: Boolean): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function Undefined: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function Null: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function True_: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    class function False_: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function Int(n: Integer): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function Float(f: Single): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function Double(d: Double): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function Boolean(b: Boolean): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function Undefined: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function Null: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function True_: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function False_: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
     function String_(const AStr: string): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
     function EmptyObject: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
     function EmptyArray: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
     function Object_(obj: PjsData): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
     function Function_(obj: PjsData): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    function GetData(AObject: jsValue): jsData; {$IFDEF SupportInline}inline;{$ENDIF}
+    function GetData(AObject: jsValue): PjsData; {$IFDEF SupportInline}inline;{$ENDIF}
     function Get(AObject: jsValue; const prop: string): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
     procedure Set_(AObject: jsValue; const prop: string; v: jsValue); {$IFDEF SupportInline}inline;{$ENDIF}
     function GetAt(AObject: jsValue; index: Integer): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
@@ -450,7 +450,7 @@ type
     function CallGlobal(func: jsValue; args: PjsValue; argCount: Integer): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
     function GetGlobal(const prop: string): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
     procedure SetGlobal(const prop: string; v: jsValue); {$IFDEF SupportInline}inline;{$ENDIF}
-    class procedure GC; {$IFDEF SupportInline}inline;{$ENDIF}
+    procedure GC; {$IFDEF SupportInline}inline;{$ENDIF}
   end;
 
 
@@ -575,38 +575,38 @@ procedure jsBindSetter(name: PAnsiChar; fn: jsNativeFunction); cdecl;
 function jsArgCount(es: jsExecState): Integer; cdecl;
 function jsArgType(es: jsExecState; argIdx: Integer): jsType; cdecl;
 function jsArg(es: jsExecState; argIdx: Integer): jsValue; cdecl;
-function jsTypeOf(v: jsValue): jsType; cdecl;
-function jsIsNumber(v: jsValue): Boolean; cdecl;
-function jsIsString(v: jsValue): Boolean; cdecl;
-function jsIsBoolean(v: jsValue): Boolean; cdecl;
-function jsIsObject(v: jsValue): Boolean; cdecl;
-function jsIsFunction(v: jsValue): Boolean; cdecl;
-function jsIsUndefined(v: jsValue): Boolean; cdecl;
-function jsIsNull(v: jsValue): Boolean; cdecl;
-function jsIsArray(v: jsValue): Boolean; cdecl;
-function jsIsTrue(v: jsValue): Boolean; cdecl;
-function jsIsFalse(v: jsValue): Boolean; cdecl;
+function jsTypeOf(es: jsExecState; v: jsValue): jsType; cdecl;
+function jsIsNumber(es: jsExecState; v: jsValue): Boolean; cdecl;
+function jsIsString(es: jsExecState; v: jsValue): Boolean; cdecl;
+function jsIsBoolean(es: jsExecState; v: jsValue): Boolean; cdecl;
+function jsIsObject(es: jsExecState; v: jsValue): Boolean; cdecl;
+function jsIsFunction(es: jsExecState; v: jsValue): Boolean; cdecl;
+function jsIsUndefined(es: jsExecState; v: jsValue): Boolean; cdecl;
+function jsIsNull(es: jsExecState; v: jsValue): Boolean; cdecl;
+function jsIsArray(es: jsExecState; v: jsValue): Boolean; cdecl;
+function jsIsTrue(es: jsExecState; v: jsValue): Boolean; cdecl;
+function jsIsFalse(es: jsExecState; v: jsValue): Boolean; cdecl;
 function jsToInt(es: jsExecState; v: jsValue): Integer; cdecl;
 function jsToFloat(es: jsExecState; v: jsValue): Single; cdecl;
 function jsToDouble(es: jsExecState; v: jsValue): Double; cdecl;
 function jsToBoolean(es: jsExecState; v: jsValue): Boolean; cdecl;
 function jsToTempString(es: jsExecState; v: jsValue): putf8; cdecl;
 function jsToTempStringW(es: jsExecState; v: jsValue): pwchar_t; cdecl;
-function jsInt(n: Integer): jsValue; cdecl;
-function jsFloat(f: Single): jsValue; cdecl;
-function jsDouble(d: Double): jsValue; cdecl;
-function jsBoolean(b: Boolean): jsValue; cdecl;
-function jsUndefined: jsValue; cdecl;
-function jsNull: jsValue; cdecl;
-function jsTrue: jsValue; cdecl;
-function jsFalse: jsValue; cdecl;
+function jsInt(es: jsExecState; n: Integer): jsValue; cdecl;
+function jsFloat(es: jsExecState; f: Single): jsValue; cdecl;
+function jsDouble(es: jsExecState; d: Double): jsValue; cdecl;
+function jsBoolean(es: jsExecState; b: Boolean): jsValue; cdecl;
+function jsUndefined(es: jsExecState): jsValue; cdecl;
+function jsNull(es: jsExecState): jsValue; cdecl;
+function jsTrue(es: jsExecState): jsValue; cdecl;
+function jsFalse(es: jsExecState): jsValue; cdecl;
 function jsString(es: jsExecState; str: Putf8): jsValue; cdecl;
 function jsStringW(es: jsExecState; str: Pwchar_t): jsValue; cdecl;
 function jsEmptyObject(es: jsExecState): jsValue; cdecl;
 function jsEmptyArray(es: jsExecState): jsValue; cdecl;
 function jsObject(es: jsExecState; obj: PjsData): jsValue; cdecl;
 function jsFunction(es: jsExecState; obj: PjsData): jsValue; cdecl;
-function jsGetData(es: jsExecState; AObject: jsValue): jsData; cdecl;
+function jsGetData(es: jsExecState; AObject: jsValue): PjsData; cdecl;
 function jsGet(es: jsExecState; AObject: jsValue; prop: PAnsiChar): jsValue; cdecl;
 procedure jsSet(es: jsExecState; AObject: jsValue; prop: PAnsiChar; v: jsValue); cdecl;
 function jsGetAt(es: jsExecState; AObject: jsValue; index: Integer): jsValue; cdecl;
@@ -621,7 +621,7 @@ function jsCall(es: jsExecState; func: jsValue; thisObject: jsValue; args: PjsVa
 function jsCallGlobal(es: jsExecState; func: jsValue; args: PjsValue; argCount: Integer): jsValue; cdecl;
 function jsGetGlobal(es: jsExecState; prop: PAnsiChar): jsValue; cdecl;
 procedure jsSetGlobal(es: jsExecState; prop: PAnsiChar; v: jsValue); cdecl;
-procedure jsGC; cdecl;
+procedure jsGC(es: jsExecState); cdecl;
 
 
 {$IFDEF UseVcFastCall}
@@ -1206,59 +1206,59 @@ begin
   Result := jsArg(Self, argIdx);
 end;
 
-class function JScript.TypeOf(v: jsValue): jsType;
+function JScript.TypeOf(v: jsValue): jsType;
 begin
-  Result := jsTypeOf(v);
+  Result := jsTypeOf(Self, v);
 end;
 
-class function JScript.IsNumber(v: jsValue): Boolean;
+function JScript.IsNumber(v: jsValue): Boolean;
 begin
-  Result := jsIsNumber(v);
+  Result := jsIsNumber(Self, v);
 end;
 
-class function JScript.IsString(v: jsValue): Boolean;
+function JScript.IsString(v: jsValue): Boolean;
 begin
-  Result := jsIsString(v);
+  Result := jsIsString(Self, v);
 end;
 
-class function JScript.IsBoolean(v: jsValue): Boolean;
+function JScript.IsBoolean(v: jsValue): Boolean;
 begin
-  Result := jsIsBoolean(v);
+  Result := jsIsBoolean(Self, v);
 end;
 
-class function JScript.IsObject(v: jsValue): Boolean;
+function JScript.IsObject(v: jsValue): Boolean;
 begin
-  Result := jsIsObject(v);
+  Result := jsIsObject(Self, v);
 end;
 
-class function JScript.IsFunction(v: jsValue): Boolean;
+function JScript.IsFunction(v: jsValue): Boolean;
 begin
-  Result := jsIsFunction(v);
+  Result := jsIsFunction(Self, v);
 end;
 
-class function JScript.IsUndefined(v: jsValue): Boolean;
+function JScript.IsUndefined(v: jsValue): Boolean;
 begin
-  Result := jsIsUndefined(v);
+  Result := jsIsUndefined(Self, v);
 end;
 
-class function JScript.IsNull(v: jsValue): Boolean;
+function JScript.IsNull(v: jsValue): Boolean;
 begin
-  Result := jsIsNull(v);
+  Result := jsIsNull(Self, v);
 end;
 
-class function JScript.IsArray(v: jsValue): Boolean;
+function JScript.IsArray(v: jsValue): Boolean;
 begin
-  Result := jsIsArray(v);
+  Result := jsIsArray(Self, v);
 end;
 
-class function JScript.IsTrue(v: jsValue): Boolean;
+function JScript.IsTrue(v: jsValue): Boolean;
 begin
-  Result := jsIsTrue(v);
+  Result := jsIsTrue(Self, v);
 end;
 
-class function JScript.IsFalse(v: jsValue): Boolean;
+function JScript.IsFalse(v: jsValue): Boolean;
 begin
-  Result := jsIsFalse(v);
+  Result := jsIsFalse(Self, v);
 end;
 
 function JScript.ToInt(v: jsValue): Integer;
@@ -1290,44 +1290,44 @@ begin
 {$ENDIF}
 end;
 
-class function JScript.Int(n: Integer): jsValue;
+function JScript.Int(n: Integer): jsValue;
 begin
-  Result := jsInt(n);
+  Result := jsInt(Self, n);
 end;
 
-class function JScript.Float(f: Single): jsValue;
+function JScript.Float(f: Single): jsValue;
 begin
-  Result := jsFloat(f);
+  Result := jsFloat(Self, f);
 end;
 
-class function JScript.Double(d: Double): jsValue;
+function JScript.Double(d: Double): jsValue;
 begin
-  Result := jsDouble(d);
+  Result := jsDouble(Self, d);
 end;
 
-class function JScript.Boolean(b: Boolean): jsValue;
+function JScript.Boolean(b: Boolean): jsValue;
 begin
-  Result := jsBoolean(b);
+  Result := jsBoolean(Self, b);
 end;
 
-class function JScript.Undefined: jsValue;
+function JScript.Undefined: jsValue;
 begin
-  Result := jsUndefined;
+  Result := jsUndefined(self);
 end;
 
-class function JScript.Null: jsValue;
+function JScript.Null: jsValue;
 begin
-  Result := jsNull;
+  Result := jsNull(Self);
 end;
 
-class function JScript.True_: jsValue;
+function JScript.True_: jsValue;
 begin
-  Result := jsTrue;
+  Result := jsTrue(Self);
 end;
 
-class function JScript.False_: jsValue;
+function JScript.False_: jsValue;
 begin
-  Result := jsFalse;
+  Result := jsFalse(Self);
 end;
 
 function JScript.String_(const AStr: string): jsValue;
@@ -1359,7 +1359,7 @@ begin
   Result := jsFunction(Self, obj);
 end;
 
-function JScript.GetData(AObject: jsValue): jsData;
+function JScript.GetData(AObject: jsValue): PjsData;
 begin
   Result := jsGetData(Self, AObject);
 end;
@@ -1433,9 +1433,9 @@ begin
   jsSetGlobal(Self, PAnsiChar(AnsiString({$IFDEF FPC}Utf8ToAnsi(prop){$ELSE}prop{$ENDIF})), v);
 end;
 
-class procedure JScript.GC;
+procedure JScript.GC;
 begin
-  jsGC;
+  jsGC(Self);
 end;
 
 
