@@ -94,15 +94,15 @@
                 </HorizontalLayout>
                 <HorizontalLayout>
 				  <VerticalLayout padding="9,9,0,0">
-				     <!--NativeControlUI这个后面编译后要改为NativeControl，估计之前手误写错了-->
-				     <NativeControlUI name="vclpagectl" />
+				      
+				     <VclControl name="vclpagectl" />
 				      
 				  </VerticalLayout>
 				</HorizontalLayout>
                 <HorizontalLayout>
 				  <VerticalLayout padding="9,9,0,0">
 				     <!--NativeControlUI这个后面编译后要改为NativeControl，估计之前手误写错了-->
-				     <NativeControlUI name="vcllistviewctl" />
+				     <NativeControl name="vcllistviewctl" />
 				  </VerticalLayout>
 				</HorizontalLayout>
 				
