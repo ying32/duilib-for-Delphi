@@ -59,8 +59,10 @@ type
     FOnURLChanged: TURLChangedEvent;
     FWindowHandle: HWND;
     FUserAgent: string;
+    FIsLayered: Boolean;
     FOnConsoleMessage: TConsoleMessageEvent;
     procedure SetUserAgent(const Value: string);
+    procedure OnWebBrowserPaint(Sender: CControlUI; DC: HDC; const rcPaint: TRect);
   protected
     procedure DoTitleChanged(const ATitle: string); virtual;
     procedure DoURLChanged(const AURL: string); virtual;
@@ -138,6 +140,8 @@ procedure OnwkePaintUpdatedCallback(webView: wkeWebView; param: Pointer; DC: HDC
    x: Integer; y: Integer; cx: Integer; cy: Integer); cdecl;
 begin
   TWkeWebbrowser(param).DoPaintUpdated(DC, x, y, cx, cy);
+  if TWkeWebbrowser(param).FIsLayered then
+    TWkeWebbrowser(param).FNativeCtrl.Invalidate;
 end;
 
 procedure OnwkeAlertBoxCallback(webView: wkeWebView; param: Pointer; msg: wkeString); cdecl;
@@ -210,6 +214,18 @@ end;
 procedure TWkeWebbrowser.Navigate(const AStr: string);
 begin
   Load(AStr);
+end;
+
+procedure TWkeWebbrowser.OnWebBrowserPaint(Sender: CControlUI; DC: HDC;
+  const rcPaint: TRect);
+var
+  R: TRect;
+begin
+  if FWebView <> nil then
+  begin
+    R := Sender.GetPos;
+    BitBlt(DC, R.Left, R.Top, R.Width, R.Height, FWebView.ViewDC, 0, 0, SRCCOPY);
+  end;
 end;
 
 procedure TWkeWebbrowser.Reload;
@@ -418,6 +434,8 @@ begin
   if (ANativeCtrl <> nil) and (ANativeCtrl <> FNativeCtrl) then
   begin
     FNativeCtrl := CNativeControlUI(ANativeCtrl);
+    FNativeCtrl.OnDuiPaint := OnWebBrowserPaint;
+    FIsLayered := FNativeCtrl.GetManager.IsLayered;
     FWebView := wkeCreateWebWindow(WKE_WINDOW_TYPE_CONTROL, FNativeCtrl.GetManager.GetPaintWindow, 0, 0, 1, 1);
     FWindowHandle := FWebView.WindowHandle;
     FWebView.SetOnTitleChanged(OnwkeTitleChangedCallback, Self);
