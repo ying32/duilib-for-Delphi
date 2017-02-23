@@ -1296,3 +1296,5 @@ function Delphi_NativeControlUI_GetClass; external DuiLibdll name 'Delphi_Native
 function Delphi_NativeControlUI_GetText; external DuiLibdll name 'Delphi_NativeControlUI_GetText';
 procedure Delphi_NativeControlUI_SetText; external DuiLibdll name 'Delphi_NativeControlUI_SetText';
 procedure Delphi_NativeControlUI_SetNativeHandle; external DuiLibdll name 'Delphi_NativeControlUI_SetNativeHandle';
+
+

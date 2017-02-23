@@ -1307,3 +1307,5 @@ function Delphi_NativeControlUI_GetClass(Handle: CNativeControlUI): LPCTSTR; cde
 function Delphi_NativeControlUI_GetText(Handle: CNativeControlUI): CDuiString; cdecl;
 procedure Delphi_NativeControlUI_SetText(Handle: CNativeControlUI; pstrText: LPCTSTR); cdecl;
 procedure Delphi_NativeControlUI_SetNativeHandle(Handle: CNativeControlUI; hWd: HWND); cdecl;
+
+

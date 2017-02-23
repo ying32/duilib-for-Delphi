@@ -2174,6 +2174,8 @@ type
   end;
 
 
+
+
  // 文件过大，dll函数放入inc文件中，不然编辑器太卡了
 {$I DuilibImportA.inc}
 
@@ -8510,7 +8512,6 @@ begin
   Delphi_NativeControlUI_SetNativeHandle(Self, hWd);
 end;
 
-
 constructor IListCallbackUI.Create(AEvent: TListGetItemTextEvent);
 begin
   FEvent := AEvent;
@@ -8565,5 +8566,6 @@ end;
 
 
 {$I DuilibImportB.inc}
+
 
 end.

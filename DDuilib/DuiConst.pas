@@ -6,7 +6,7 @@
 //       作者：ying32
 //       QQ  ：1444386932
 //       E-mail：1444386932@qq.com
-//       版权所有 (C) 2015-2015 ying32 All Rights Reserved
+//       版权所有 (C) 2015-2017 ying32 All Rights Reserved
 //
 //
 //***************************************************************************
@@ -101,6 +101,9 @@ const
 
   DUI_CTR_LISTCONTAINERELEMENT  = 'ListContainerElement';
   DUI_CTR_LISTCONTAINERELEMENT_UI = 'ListContainerElementUI';
+
+  DUI_CTR_VCLControlUI          = 'VclControlUI';
+  DUI_CTR_VCLControl            = 'VclControl';
 
   DUI_CTR_MENU_UI = 'MenuUI';
   DUI_CTR_MENU = 'Menu';
