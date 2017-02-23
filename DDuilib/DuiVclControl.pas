@@ -24,7 +24,7 @@ uses
 
 type
 
-  CVCLControlUI = class(CContainerUI)
+  CVCLControlUI = class(CControlUI)
   public
     class function CppCreate(lpObject: Pointer = nil; bisFree: Boolean = True): CVCLControlUI;
     procedure CppDestroy;
@@ -36,9 +36,12 @@ type
     procedure SetVclObject(lpObject: Pointer);
     function GetIsFree: Boolean;
     procedure SetIsFree(bisFree: Boolean);
+  private
+    function GetAsWinControl: TWinControl;
   public
     property IsFree: Boolean read GetIsFree write SetIsFree;
     property VclObject: LPVOID read GetVclObject write SetVclObject;
+    property AsWinControl: TWinControl read GetAsWinControl;
   end;
 
 
@@ -87,6 +90,11 @@ begin
   Delphi_VCLControlUI_SetPos(Self, rc, bNeedInvalidate);
 end;
 
+function CVCLControlUI.GetAsWinControl: TWinControl;
+begin
+  Result := TWinControl(GetVclObject);
+end;
+
 function CVCLControlUI.GetClass: string;
 begin
   Result := Delphi_VCLControlUI_GetClass(Self);
@@ -132,7 +140,7 @@ procedure SetDelphiFreeMethodPtr(ptr: LPVOID); cdecl; external DuiLibdll name 'S
 procedure SetDelphiSetBoundsMethodPtr(ptr: LPVOID); cdecl; external DuiLibdll name 'SetDelphiSetBoundsMethodPtr';
 procedure SetDelphiSetParentWindowMethodPtr(ptr: LPVOID); cdecl; external DuiLibdll name 'SetDelphiSetParentWindowMethodPtr';
 procedure SetDelphiGetHandleMethodPtr(ptr: LPVOID); cdecl; external DuiLibdll name 'SetDelphiGetHandleMethodPtr';
-
+procedure SetDelphiSetFocusMethodPtr(ptr: LPVOID); cdecl; external DuiLibdll name 'SetDelphiSetFocusMethodPtr';
 
 procedure _DelphiVisibleMethod(AObj: TObject; AVisible: Boolean); cdecl;
 begin
@@ -166,6 +174,12 @@ begin
     Result := TWinControl(AObj).Handle;
 end;
 
+procedure _SetFocusMethod(AObj: TObject); cdecl;
+begin
+  if (AObj <> nil) and (AObj is TWinControl) then
+    TWinControl(AObj).SetFocus;
+end;
+
 
 initialization
   // 初始相关函数
@@ -174,5 +188,6 @@ initialization
   SetDelphiSetBoundsMethodPtr(@_DelphiSetBoundsMethod);
   SetDelphiSetParentWindowMethodPtr(@_SetParentWindowMethod);
   SetDelphiGetHandleMethodPtr(@_GetHandleMethod);
+  SetDelphiSetFocusMethodPtr(@_SetFocusMethod);
 
 end.

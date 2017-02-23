@@ -2158,7 +2158,7 @@ type
   end;
 
 
-  CNativeControlUI = class(CContainerUI)
+  CNativeControlUI = class(CControlUI)
   public
     class function CppCreate(hWnd: HWND = 0): CNativeControlUI;
     procedure CppDestroy;
