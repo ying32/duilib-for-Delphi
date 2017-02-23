@@ -434,8 +434,9 @@ begin
   if (ANativeCtrl <> nil) and (ANativeCtrl <> FNativeCtrl) then
   begin
     FNativeCtrl := CNativeControlUI(ANativeCtrl);
-    FNativeCtrl.OnDuiPaint := OnWebBrowserPaint;
     FIsLayered := FNativeCtrl.GetManager.IsLayered;
+	if FIsLayered then
+	  FNativeCtrl.OnDuiPaint := OnWebBrowserPaint;
     FWebView := wkeCreateWebWindow(WKE_WINDOW_TYPE_CONTROL, FNativeCtrl.GetManager.GetPaintWindow, 0, 0, 1, 1);
     FWindowHandle := FWebView.WindowHandle;
     FWebView.SetOnTitleChanged(OnwkeTitleChangedCallback, Self);
