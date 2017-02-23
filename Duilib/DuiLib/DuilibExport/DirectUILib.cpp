@@ -33,6 +33,8 @@ typedef void(*DelphiSetBoundsMethodProc)(LPVOID, RECT);
 typedef void(*DelphiSetParentWindowMethodProc)(LPVOID, HWND);
 // Delphi GetHandle
 typedef HWND(*DelphiGetHandleMethodProc)(LPVOID);
+// Delphi SetFocus
+typedef void(*DelphiSetFoucsMethodProc)(LPVOID);
 
 // 需要在Delphi中调用设置
 static DelphiVisibleMethodProc DelphiVisibleProc = NULL;
@@ -44,6 +46,8 @@ static DelphiSetBoundsMethodProc DelphiSetBoundsProc = NULL;
 static DelphiSetParentWindowMethodProc DelphiSetParentWindowProc = NULL;
 // 获取窗口句柄
 static DelphiGetHandleMethodProc DelphiGetHandleProc = NULL;
+// 设置焦点
+static DelphiSetFoucsMethodProc DelphiSetFocusProc = NULL;
 
 
 // 导出给Delphi调用，并设置此过程
@@ -65,6 +69,10 @@ DIRECTUILIB_API void SetDelphiSetParentWindowMethodPtr(LPVOID ptr) {
 
 DIRECTUILIB_API void SetDelphiGetHandleMethodPtr(LPVOID ptr) {
 	DelphiGetHandleProc = (DelphiGetHandleMethodProc)ptr;
+}
+
+DIRECTUILIB_API void SetDelphiSetFocusMethodPtr(LPVOID ptr) {
+	DelphiSetFocusProc = (DelphiSetFoucsMethodProc)ptr;
 }
 //======================================================================================================
 
@@ -136,7 +144,21 @@ DIRECTUILIB_API void SetDelphiGetHandleMethodPtr(LPVOID ptr) {
 		m_hWnd = hWd;
 	};
 
+	void CNativeControlUI::SetFocus() {
+		CControlUI::SetFocus();
+		if(m_hWnd != NULL) 
+			::SetFocus(m_hWnd);
+	}
 
+	void CNativeControlUI::DoEvent(TEventUI& event) {
+		CControlUI::DoEvent(event);
+		if(event.Type == UIEVENT_SETFOCUS)
+			SetFocus();
+	}
+
+	UINT CNativeControlUI::GetControlFlags() const {
+		return (IsKeyboardEnabled() ? UIFLAG_TABSTOP : 0) | (IsEnabled() ? UIFLAG_SETCURSOR : 0);
+	}
 	// ===========================vcl控件 
 
 	CVCLControlUI::CVCLControlUI(LPVOID lpObject, bool bisFree):
@@ -199,6 +221,26 @@ DIRECTUILIB_API void SetDelphiGetHandleMethodPtr(LPVOID ptr) {
 
 	void CVCLControlUI::SetIsFree(bool bisFree) {
 		m_bisFree = bisFree;
+	}
+
+	bool CVCLControlUI::IsFocused() const {
+		return	CControlUI::IsFocused();
+	}
+
+	void CVCLControlUI::SetFocus() {
+		CControlUI::SetFocus();
+		if(m_lpObject != NULL && DelphiSetFocusProc != NULL) 
+			DelphiSetFocusProc(m_lpObject);
+	}
+
+	void CVCLControlUI::DoEvent(TEventUI& event) {
+		CControlUI::DoEvent(event);
+		if(event.Type == UIEVENT_SETFOCUS)
+			SetFocus();
+	}
+
+	UINT CVCLControlUI::GetControlFlags() const {
+		return (IsKeyboardEnabled() ? UIFLAG_TABSTOP : 0) | (IsEnabled() ? UIFLAG_SETCURSOR : 0);
 	}
 }
 

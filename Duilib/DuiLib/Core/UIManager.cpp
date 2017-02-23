@@ -3191,6 +3191,7 @@ bool CPaintManagerUI::TranslateAccelerator(LPMSG pMsg)
 	return false;
 }
 
+ 
 bool CPaintManagerUI::TranslateMessage(const LPMSG pMsg)
 {
 	// Pretranslate Message takes care of system-wide messages, such as
@@ -3202,6 +3203,7 @@ bool CPaintManagerUI::TranslateMessage(const LPMSG pMsg)
 	if (uChildRes != 0)
 	{
 		HWND hWndParent = ::GetParent(pMsg->hwnd);
+		
 		//code by redrain 2014.12.3,解决edit和webbrowser按tab无法切换焦点的bug
 		//		for( int i = 0; i < m_aPreMessages.GetSize(); i++ ) 
 		for( int i = m_aPreMessages.GetSize() - 1; i >= 0 ; --i ) 
@@ -3210,16 +3212,12 @@ bool CPaintManagerUI::TranslateMessage(const LPMSG pMsg)
 			HWND hTempParent = hWndParent;
 			while(hTempParent)
 			{
-
 				if(pMsg->hwnd == pT->GetPaintWindow() || hTempParent == pT->GetPaintWindow())
 				{
 					if (pT->TranslateAccelerator(pMsg))
 						return true;
+					// 在这里处理子控件的
 					pT->PreMessageHandler(pMsg->message, pMsg->wParam, pMsg->lParam, lRes);
-					// 					if( pT->PreMessageHandler(pMsg->message, pMsg->wParam, pMsg->lParam, lRes) ) 
-					// 						return true;
-					// 
-					// 					return false;  
 				}
 				hTempParent = GetParent(hTempParent);
 			}

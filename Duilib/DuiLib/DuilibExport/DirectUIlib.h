@@ -32,6 +32,9 @@ namespace DuiLib
 		CDuiString GetText() const;
 		void SetText(LPCTSTR pstrText);
 		void SetNativeHandle(HWND hWd);
+	    void SetFocus();
+	    void DoEvent(TEventUI& event);
+		UINT GetControlFlags() const;
 	protected:
 		HWND m_hWnd;
 	};
@@ -54,6 +57,10 @@ namespace DuiLib
 		void SetVclObject(LPVOID lpObject);
 		bool GetIsFree();
 		void SetIsFree(bool bisFree);
+	    bool IsFocused() const;
+        void SetFocus();
+		void DoEvent(TEventUI& event);
+		UINT GetControlFlags() const;
 	};
 
 }
