@@ -17,13 +17,14 @@
 namespace DuiLib
 {
 
-
+	// 普通win的标准控件
 	class CNativeControlUI : public CControlUI
 	{
 	private:
 		void UpdateWindowParent(HWND hWd);
 	public:
 		CNativeControlUI(HWND hWnd = NULL);
+		~CNativeControlUI();
 		void SetInternVisible(bool bVisible = true);
 		void SetVisible(bool bVisible = true);
 		void SetPos(RECT rc, bool bNeedInvalidate);
@@ -33,6 +34,26 @@ namespace DuiLib
 		void SetNativeHandle(HWND hWd);
 	protected:
 		HWND m_hWnd;
+	};
+
+	// Delphi的VCL控件
+	class CVCLControlUI: public CControlUI {
+	private:
+		// 是否由duilib释放vcl控件
+		bool m_bisFree;
+		LPVOID m_lpObject;
+		HWND m_hWnd;
+	public:
+		CVCLControlUI(LPVOID lpObject = NULL, bool bisFree = true);
+		~CVCLControlUI();
+		void SetInternVisible(bool bVisible = true);
+		void SetVisible(bool bVisible = true);
+		void SetPos(RECT rc, bool bNeedInvalidate);
+		LPCTSTR GetClass() const;
+		LPVOID GetVclObject();
+		void SetVclObject(LPVOID lpObject);
+		bool GetIsFree();
+		void SetIsFree(bool bisFree);
 	};
 
 }

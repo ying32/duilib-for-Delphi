@@ -19,17 +19,76 @@ using namespace DuiLib;
 namespace DuiLib
 {
 
-	void CNativeControlUI::UpdateWindowParent(HWND hWd) {
-		if (hWd != NULL && ::IsWindow(hWd)) {
-			HWND hParent = this->GetManager()->GetPaintWindow();
-			if (::GetParent(hWd) != hParent){}
-			::SetParent(hWd, hParent);
-		}
-	}
+/*
+	这里定义一些Delphi函数， 创建对象，释放对象， 显示， 隐藏， 
+*/
+
+// Delphi Visible的
+typedef void(*DelphiVisibleMethodProc)(LPVOID,bool);
+// Delphi Free
+typedef void(*DelphiFreeMethodProc)(LPVOID);
+// Delphi SetBounds
+typedef void(*DelphiSetBoundsMethodProc)(LPVOID, RECT);
+// Delphi SetParentHandle
+typedef void(*DelphiSetParentWindowMethodProc)(LPVOID, HWND);
+// Delphi GetHandle
+typedef HWND(*DelphiGetHandleMethodProc)(LPVOID);
+
+// 需要在Delphi中调用设置
+static DelphiVisibleMethodProc DelphiVisibleProc = NULL;
+// 释放
+static DelphiFreeMethodProc DelphiFreeProc = NULL;
+// 设置位置的
+static DelphiSetBoundsMethodProc DelphiSetBoundsProc = NULL;
+// 设置父窗口
+static DelphiSetParentWindowMethodProc DelphiSetParentWindowProc = NULL;
+// 获取窗口句柄
+static DelphiGetHandleMethodProc DelphiGetHandleProc = NULL;
+
+
+// 导出给Delphi调用，并设置此过程
+DIRECTUILIB_API void SetDelphiVisibleMethodPtr(LPVOID ptr) {
+	DelphiVisibleProc = (DelphiVisibleMethodProc)ptr;
+}
+
+DIRECTUILIB_API void SetDelphiFreeMethodPtr(LPVOID ptr) {
+	DelphiFreeProc = (DelphiFreeMethodProc)ptr;
+}
+
+DIRECTUILIB_API void SetDelphiSetBoundsMethodPtr(LPVOID ptr) {
+	DelphiSetBoundsProc = (DelphiSetBoundsMethodProc)ptr;
+}
+
+DIRECTUILIB_API void SetDelphiSetParentWindowMethodPtr(LPVOID ptr) {
+	DelphiSetParentWindowProc = (DelphiSetParentWindowMethodProc)ptr;
+}
+
+DIRECTUILIB_API void SetDelphiGetHandleMethodPtr(LPVOID ptr) {
+	DelphiGetHandleProc = (DelphiGetHandleMethodProc)ptr;
+}
+//======================================================================================================
+
 
 	CNativeControlUI::CNativeControlUI(HWND hWnd) :
 		m_hWnd(hWnd){
 		UpdateWindowParent(hWnd);
+	}
+
+	void CNativeControlUI::UpdateWindowParent(HWND hWd) {
+		if (hWd != NULL && ::IsWindow(hWd)) {
+			HWND hParent = this->GetManager()->GetPaintWindow();
+			if (::GetParent(hWd) != hParent) {
+			    ::SetParent(hWd, hParent);
+				// 当开启了layered模式时，原生窗口需要添加进这里进行绘制，但其实不咋样，很不好
+				if(this->GetManager() != NULL)
+				    this->GetManager()->AddNativeWindow(this, hWd);
+			}
+		}
+	}
+	// 移除原生窗口
+	CNativeControlUI::~CNativeControlUI() {
+		if(this->GetManager() != NULL)
+		    this->GetManager()->RemoveNativeWindow(m_hWnd);
 	}
 
 	void CNativeControlUI::SetInternVisible(bool bVisible) {
@@ -77,8 +136,71 @@ namespace DuiLib
 		m_hWnd = hWd;
 	};
 
-}
 
+	// ===========================vcl控件 
+
+	CVCLControlUI::CVCLControlUI(LPVOID lpObject, bool bisFree):
+		m_lpObject(NULL),
+		m_bisFree(bisFree),
+	    m_hWnd(NULL){
+		SetVclObject(lpObject);
+	}
+
+	CVCLControlUI::~CVCLControlUI() {
+		// 调用Delphi的释放过程
+		if(m_bisFree && DelphiFreeProc != NULL && m_lpObject != NULL) {
+			DelphiFreeProc(m_lpObject);
+		}
+		if(m_hWnd != NULL && this->GetManager() != NULL) 
+			this->GetManager()->RemoveNativeWindow(DelphiGetHandleProc(m_lpObject));
+	}
+
+	void CVCLControlUI::SetInternVisible(bool bVisible) {
+		CControlUI::SetInternVisible(bVisible);
+		if(m_lpObject != NULL && DelphiVisibleProc != NULL) 
+			DelphiVisibleProc(m_lpObject, bVisible);
+	}
+
+	void CVCLControlUI::SetVisible(bool bVisible) { 
+		CControlUI::SetVisible(bVisible);
+		if(m_lpObject != NULL && DelphiVisibleProc != NULL) 
+			DelphiVisibleProc(m_lpObject, bVisible);
+	}
+
+	void CVCLControlUI::SetPos(RECT rc, bool bNeedInvalidate) {
+		CControlUI::SetPos(rc, bNeedInvalidate);
+		if(m_lpObject != NULL && DelphiSetBoundsProc != NULL)
+			DelphiSetBoundsProc(m_lpObject, rc);
+	}
+
+	LPCTSTR CVCLControlUI::GetClass() const {
+		return DUI_CTR_VCLControlUI;
+	}
+
+	LPVOID CVCLControlUI::GetVclObject() {
+		return m_lpObject;
+	}
+
+	void CVCLControlUI::SetVclObject(LPVOID lpObject) {
+		m_lpObject = lpObject;
+		if(lpObject != NULL && DelphiSetParentWindowProc != NULL && this->GetManager() != NULL)
+			DelphiSetParentWindowProc(lpObject, this->GetManager()->GetPaintWindow());
+		if(lpObject != NULL && DelphiGetHandleProc != NULL && this->GetManager() != NULL) {
+		    m_hWnd = DelphiGetHandleProc(lpObject);
+			if (m_hWnd != NULL)
+		        this->GetManager()->AddNativeWindow(this, m_hWnd);
+		} else
+		  m_hWnd = NULL;
+	}
+
+	bool CVCLControlUI::GetIsFree() {
+		return m_bisFree;
+	}
+
+	void CVCLControlUI::SetIsFree(bool bisFree) {
+		m_bisFree = bisFree;
+	}
+}
 
 
 typedef LRESULT(*HandleMessageCallBack)(LPVOID, UINT, WPARAM, LPARAM, BOOL&);
@@ -5978,4 +6100,47 @@ DIRECTUILIB_API CMenuWnd* Delphi_MenuElementUI_GetMenuWnd(CMenuElementUI* handle
 
 DIRECTUILIB_API void Delphi_MenuElementUI_CreateMenuWnd(CMenuElementUI* handle) {
 	handle->CreateMenuWnd();
+}
+
+
+//================================CVCLControlUI============================
+
+DIRECTUILIB_API CVCLControlUI* Delphi_VCLControlUI_CppCreate(LPVOID lpObject, bool bisFree) {
+    return new CVCLControlUI(lpObject, bisFree);
+}
+
+DIRECTUILIB_API void Delphi_VCLControlUI_CppDestroy(CVCLControlUI* handle) {
+    delete handle;
+}
+
+DIRECTUILIB_API void Delphi_VCLControlUI_SetInternVisible(CVCLControlUI* handle ,bool bVisible) {
+    handle->SetInternVisible(bVisible);
+}
+
+DIRECTUILIB_API void Delphi_VCLControlUI_SetVisible(CVCLControlUI* handle ,bool bVisible) {
+    handle->SetVisible(bVisible);
+}
+
+DIRECTUILIB_API void Delphi_VCLControlUI_SetPos(CVCLControlUI* handle ,RECT rc, bool bNeedInvalidate) {
+    handle->SetPos(rc, bNeedInvalidate);
+}
+
+DIRECTUILIB_API LPCTSTR Delphi_VCLControlUI_GetClass(CVCLControlUI* handle) {
+    return handle->GetClass();
+}
+
+DIRECTUILIB_API LPVOID Delphi_VCLControlUI_GetVclObject(CVCLControlUI* handle) {
+    return handle->GetVclObject();
+}
+
+DIRECTUILIB_API void Delphi_VCLControlUI_SetVclObject(CVCLControlUI* handle ,LPVOID lpObject) {
+    handle->SetVclObject(lpObject);
+}
+
+DIRECTUILIB_API bool Delphi_VCLControlUI_GetIsFree(CVCLControlUI* handle) {
+    return handle->GetIsFree();
+}
+
+DIRECTUILIB_API void Delphi_VCLControlUI_SetIsFree(CVCLControlUI* handle ,bool bisFree) {
+    handle->SetIsFree(bisFree);
 }

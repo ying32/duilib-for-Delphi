@@ -265,6 +265,9 @@ protected:                                                                \
 #define  DUI_CTR_NativeControlUI                 (_T("NativeControlUI"))
 #define  DUI_CTR_NativeControl                   (_T("NativeControl"))
 
+#define  DUI_CTR_VCLControlUI                 (_T("VclControlUI"))
+#define  DUI_CTR_VCLControl                   (_T("VclControl"))
+
 #define  DUI_CTR_LISTTEXTELEMENT                 (_T("ListTextElement"))
 
 #define  DUI_CTR_HORIZONTALLAYOUT                (_T("HorizontalLayout"))
