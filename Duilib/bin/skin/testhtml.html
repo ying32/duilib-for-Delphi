@@ -8,10 +8,21 @@
     if(obj != null) 
       obj.value =  jsMessageBox("消息内容", "标题");
   }
+  function test2() {
+     external.SuperCall(11,"fdsfdfsd");
+	// external(11,"fdsfdfsd");
+  }
+  
+    function test3() {
+     external.Test22(11,"fdsfdfsd");
+	// external(11,"fdsfdfsd");
+  }
 </script>
 </head>
 <body>
 <input type="button" name="testbtn" value="测试消息框" onclick="test();"/>
 <input type="text" id="testtext" value="" /> 
+<input type="button" name="testbtn" value="supercall1" onclick="test2();"/>
+<input type="button" name="testbtn" value="supercall2" onclick="test3();"/>
 </body>
 </html>

@@ -69,7 +69,68 @@ begin
   Result := es.Arg(0);
 end;
 
+{$IFDEF UseVcFastCall}
+function externalSuperCall(es: jsExecState): jsValue;
+{$ELSE}
+function externalSuperCall(p1, p2, es: jsExecState): jsValue;
+{$ENDIF}
+begin
+  {$IFDEF UseVcFastCall}
+     ProcessVcFastCall;
+  {$ENDIF}
+  Writeln('argcount=', es.Arg(0));
+  Writeln('call ok.');
+  Result := es.Int(0);
+end;
+
+
+{$IFDEF UseVcFastCall}
+function externalObj(es: jsExecState): jsValue;
+{$ELSE}
+function externalObj(p1, p2, es: jsExecState): jsValue;
+{$ENDIF}
+var
+  v: jsValue;
+begin
+  {$IFDEF UseVcFastCall}
+     ProcessVcFastCall;
+  {$ENDIF}
+  Writeln('argcount=', es.Arg(0));
+  Writeln('call ok2222.');
+  v :=  es.GetGlobal('SuperCall');
+  if es.IsFunction(v) then
+    Writeln('is function')
+  else Writeln('is not funtion');
+  Result := es.Int(1);
+
+end;
+
+procedure jsfinalize(data: PjsData); cdecl;
+begin
+  Dispose(data);
+  Writeln('js finalize.');
+end;
+
+function jsGetProperty(es: jsExecState; AObject: jsValue; propertyName: PAnsiChar): jsValue; cdecl;
+begin
+  Writeln('property name=', string(propertyName));
+  if propertyName = 'SuperCall' then
+  begin
+    Exit(es.Function_(es.GetData(AObject)));
+  end;
+  Result := es.Undefined;
+end;
+
+function jsCallAsFunction(es: jsExecState; AObject: jsValue; args: PjsValue; argCount: Integer): jsValue; cdecl;
+begin
+  Writeln('call func......');
+end;
+
 constructor TWkeBrowserWindow.Create;
+var
+ es: jsExecState;
+ obj: jsValue;
+ testobj: PjsData;
 begin
   inherited Create('WkebrowserWindow.xml', 'skin');
   FWkeWebbrowser := TWkeWebbrowser.Create;
@@ -77,9 +138,23 @@ begin
   FWkeWebbrowser.OnURLChanged := OnURLChanged;
   FWkeWebbrowser.OnDocumentReady := OnDocumentReady;
   CreateWindow(0, 'wkeä¯ÀÀÆ÷', UI_WNDSTYLE_FRAME, WS_EX_WINDOWEDGE);
+
+   New(testobj);
+   testobj.finalize := jsfinalize;
+   StrCopy(testobj.typeName, 'Object');
+   testobj.propertyGet := jsGetProperty;
+   testobj.callAsFunction := jsCallAsFunction;
+   es := wkeGlobalExec(FWkeWebbrowser.WebView);
+   obj := es.Object_(testobj);
+   es.SetGlobal('external', obj);
+
                             //jsMessageBox
   JScript.BindFunction('jsMessageBox', JsMessageBox, 2);
   JScript.BindFunction('JsFunc2', JsFunc2, 1);
+
+  //JScript.BindGetter('external', externalObj);
+  //JScript.BindFunction('SuperCall', externalSuperCall, 2);
+ // JScript.BindFunction('SuperCall', externalSuperCall, 2);
 end;
 
 destructor TWkeBrowserWindow.Destroy;
