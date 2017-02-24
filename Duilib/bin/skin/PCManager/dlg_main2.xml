@@ -106,7 +106,18 @@
 				  </VerticalLayout>
 				</HorizontalLayout>
 				
-                <HorizontalLayout />
+                <HorizontalLayout>
+				   <VerticalLayout padding="12,0,0,0">
+				      <Edit name="edit1" width="100" height="25" />
+					  <Control height="10" />
+					  <Edit name="edit2" width="100" height="25" />
+					  <Control height="10" />
+					  <Edit name="edit3" width="100" height="25" />
+					  <Control height="10" />
+					  <Edit name="edit4" width="100" height="25" />
+					  <Control height="10" />
+				   </VerticalLayout>
+				</HorizontalLayout>
                 <HorizontalLayout />
                 <HorizontalLayout />
                 <HorizontalLayout />
