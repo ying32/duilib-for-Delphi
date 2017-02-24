@@ -3201,23 +3201,39 @@ bool CPaintManagerUI::TranslateMessage(const LPMSG pMsg)
 	UINT uChildRes = uStyle & WS_CHILD;	
 	LRESULT lRes = 0;
 	if (uChildRes != 0)
-	{
+	{		
 		HWND hWndParent = ::GetParent(pMsg->hwnd);
-		
 		//code by redrain 2014.12.3,解决edit和webbrowser按tab无法切换焦点的bug
 		//		for( int i = 0; i < m_aPreMessages.GetSize(); i++ ) 
 		for( int i = m_aPreMessages.GetSize() - 1; i >= 0 ; --i ) 
 		{
-			CPaintManagerUI* pT = static_cast<CPaintManagerUI*>(m_aPreMessages[i]);        
+			CPaintManagerUI* pT = static_cast<CPaintManagerUI*>(m_aPreMessages[i]);       
+
+			//if(hWndParent != pT->GetPaintWindow()) {
+			//	if(pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_TAB) {
+			//		PostMessage(hWndParent, WM_NEXTDLGCTL, 0, 0); 
+			//	}
+			//}
+
 			HWND hTempParent = hWndParent;
 			while(hTempParent)
 			{
 				if(pMsg->hwnd == pT->GetPaintWindow() || hTempParent == pT->GetPaintWindow())
 				{
 					if (pT->TranslateAccelerator(pMsg))
-						return true;
+					   return true;
 					// 在这里处理子控件的
 					pT->PreMessageHandler(pMsg->message, pMsg->wParam, pMsg->lParam, lRes);
+				} else {
+					// 处里tab的，是否还需要判断为delphi的?	
+					if(hTempParent != pT->GetPaintWindow()) {
+						if(pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_TAB) {
+							if (pT->TranslateAccelerator(pMsg))
+								return true;
+							PostMessage(hTempParent, WM_NEXTDLGCTL, 0, 0);
+							return false;	 
+						}
+					}
 				}
 				hTempParent = GetParent(hTempParent);
 			}
