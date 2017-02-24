@@ -169,12 +169,12 @@ DIRECTUILIB_API void SetDelphiSetFocusMethodPtr(LPVOID ptr) {
 	}
 
 	CVCLControlUI::~CVCLControlUI() {
-		// 调用Delphi的释放过程
+		if(m_hWnd != NULL && this->GetManager() != NULL) 
+			this->GetManager()->RemoveNativeWindow(m_hWnd);
+				// 调用Delphi的释放过程
 		if(m_bisFree && DelphiFreeProc != NULL && m_lpObject != NULL) {
 			DelphiFreeProc(m_lpObject);
 		}
-		if(m_hWnd != NULL && this->GetManager() != NULL) 
-			this->GetManager()->RemoveNativeWindow(DelphiGetHandleProc(m_lpObject));
 	}
 
 	void CVCLControlUI::SetInternVisible(bool bVisible) {
