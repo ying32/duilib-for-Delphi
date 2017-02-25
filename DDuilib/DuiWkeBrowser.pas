@@ -41,6 +41,9 @@ type
   TWindowClosingEvent = procedure(Sender: TObject; var AResult: Boolean) of object;
   TConsoleMessageEvent= procedure(Sender: TObject; var AMessage: wkeConsoleMessage) of object;
 
+  // 当使用rmDefault使用原有的windows组件模式，rmDirect自己绘制到dui控件上
+  TRenderMode = (rmDefault, rmDirect);
+
   TWkeWebbrowser = class
   private
     FWebView: TWkeWebView;
@@ -78,6 +81,7 @@ type
     procedure DoWindowDestroy; virtual;
     procedure DoConsoleMessage(var AMessage: wkeConsoleMessage); virtual;
   public
+
     destructor Destroy; override;
   public
     procedure InitWkeWebBrowser(ANativeCtrl: CControlUI);

@@ -44,6 +44,7 @@ type
     FHandle: HWND;
     FParentHandle: HWND;
     FPaintManagerUI: CPaintManagerUI;
+    FCaption: string;
     function GetHandle: HWND;
     function GetInitSize: TSize;
     function GetScreenSize: TSize;
@@ -55,6 +56,11 @@ type
     function GetTop: Integer;
     function GetWidth: Integer;
     procedure SetParentHandle(const Value: HWND);
+    procedure SetCaption(const Value: string);
+    procedure SetHeight(const Value: Integer);
+    procedure SetLeft(const Value: Integer);
+    procedure SetTop(const Value: Integer);
+    procedure SetWidth(const Value: Integer);
 {$IFDEF UseLowVer}
   published
 {$ELSE}
@@ -147,11 +153,13 @@ type
     procedure OnReceive(Param: Pointer); virtual;
     procedure ShowMessage(const Fmt: string; Args: array of const); overload;
     procedure ShowMessage(const Msg: string); overload;
+    procedure SetBuounds(AX, AY, AWidth, AHeigth: Integer);
   public
-    property Left: Integer read GetLeft;
-    property Top: Integer read GetTop;
-    property Width: Integer read GetWidth;
-    property Height: Integer read GetHeight;
+    property Caption: string read FCaption write SetCaption;
+    property Left: Integer read GetLeft write SetLeft;
+    property Top: Integer read GetTop write SetTop;
+    property Width: Integer read GetWidth write SetWidth;
+    property Height: Integer read GetHeight write SetHeight;
     property ClientRect: TRect read GetClientRect;
     property Handle: HWND read GetHandle;
     property ParentHandle: HWND read FParentHandle write SetParentHandle;
@@ -300,6 +308,7 @@ end;
 procedure TDuiWindowImplBase.CreateDuiWindow(AParent: HWND; ATitle: string);
 begin
   FParentHandle := AParent;
+  FCaption := ATitle;
   {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.CreateDuiWindow(AParent, ATitle, UI_WNDSTYLE_FRAME, WS_EX_STATICEDGE);
 end;
 
@@ -307,6 +316,7 @@ procedure TDuiWindowImplBase.CreateWindow(hwndParent: HWND; ATitle: string;
   dwStyle, dwExStyle: DWORD; x, y, cx, cy: Integer; hMenu: HMENU);
 begin
   FParentHandle := hwndParent;
+  FCaption := ATitle;
   {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.Create(hwndParent, ATitle, dwStyle, dwExStyle, x, y, cx, cy, hMenu);
 end;
 
@@ -314,6 +324,7 @@ procedure TDuiWindowImplBase.CreateWindow(hwndParent: HWND; ATitle: string;
   dwStyle, dwExStyle: DWORD; const rc: TRect; hMenu: HMENU);
 begin
   FParentHandle := hwndParent;
+  FCaption := ATitle;
   {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.Create(hwndParent, ATitle, dwStyle, dwExStyle, rc, hMenu);
 end;
 
@@ -592,14 +603,46 @@ begin
   Perform(WM_SYSCOMMAND, SC_RESTORE);
 end;
 
+procedure TDuiWindowImplBase.SetBuounds(AX, AY, AWidth, AHeigth: Integer);
+begin
+  MoveWindow(Handle, AX, AY, AWidth, AHeigth, False);
+end;
+
+procedure TDuiWindowImplBase.SetCaption(const Value: string);
+begin
+  if FCaption <> '' then
+  begin
+    FCaption := Value;
+    SetWindowText(Handle, FCaption);
+  end;
+end;
+
 procedure TDuiWindowImplBase.SetClassStyle(nStyle: UINT);
 begin
   {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetGetClassStyle(nStyle);
 end;
 
+procedure TDuiWindowImplBase.SetHeight(const Value: Integer);
+var
+  R: TRect;
+begin
+  R := ClientRect;
+  if Value <> R.Bottom - R.Top then
+    SetBuounds(R.Left, R.Top, R.Right - R.Left, Value);
+end;
+
 procedure TDuiWindowImplBase.SetIcon(nRes: UINT);
 begin
   {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.SetIcon(nRes);
+end;
+
+procedure TDuiWindowImplBase.SetLeft(const Value: Integer);
+var
+  R: TRect;
+begin
+  R := ClientRect;
+  if Value <> R.Left then
+    SetBuounds(Value, R.Top, R.Right - R.Left, R.Bottom - R.Top);
 end;
 
 procedure TDuiWindowImplBase.SetParentHandle(const Value: HWND);
@@ -609,6 +652,24 @@ begin
     FParentHandle := Value;
     SetParent(Handle, FParentHandle);
   end;
+end;
+
+procedure TDuiWindowImplBase.SetTop(const Value: Integer);
+var
+  R: TRect;
+begin
+  R := ClientRect;
+  if Value <> R.Top then
+    SetBuounds(R.Left, Value, R.Right - R.Left, R.Bottom - R.Top);
+end;
+
+procedure TDuiWindowImplBase.SetWidth(const Value: Integer);
+var
+  R: TRect;
+begin
+  R := ClientRect;
+  if Value <> R.Right - R.Left then
+    SetBuounds(R.Left, R.Top, Value, R.Bottom - R.Top);
 end;
 
 procedure TDuiWindowImplBase.Show;
