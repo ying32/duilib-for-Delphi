@@ -2,7 +2,7 @@ object frmQQXF: TfrmQQXF
   Left = 0
   Top = 0
   BorderStyle = bsSizeToolWin
-  Caption = 'frmQQXF'
+  Caption = 'QQ'#26059#39118#19979#36733
   ClientHeight = 565
   ClientWidth = 444
   Color = clBtnFace
@@ -13,6 +13,7 @@ object frmQQXF: TfrmQQXF
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
   object DDuiForm1: TDDuiForm
@@ -20,6 +21,7 @@ object frmQQXF: TfrmQQXF
     SkinXmlFile = 'MainWindow.xml'
     SkinResName = 'DefaultSkin'
     SkinKind = skFile
+    OnInitWindow = DDuiForm1InitWindow
     Left = 48
     Top = 208
   end
