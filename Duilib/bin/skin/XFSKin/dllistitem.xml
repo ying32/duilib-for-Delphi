@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window size="400,62">
+    <ListContainerElement height="44">
+        <HorizontalLayout height="44">
+            <VerticalLayout>
+                <VerticalLayout>
+                    <HorizontalLayout>
+                        <Label name="filename" width="330" textcolor="#00959990" disabledtextcolor="#FFA7A6AA" font="1" />
+                        <Label name="filesize" text="0M" width="70" textcolor="#00737473" disabledtextcolor="#FFA7A6AA" font="1" align="right" />
+                    </HorizontalLayout>
+                </VerticalLayout>
+                <VerticalLayout width="400" height="5">
+                    <Progress name="progress" bkimage="progress_bk.png" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" min="0" max="100" value="0" hor="true" />
+                </VerticalLayout>
+                <VerticalLayout width="400">
+                    <HorizontalLayout>
+                        <HorizontalLayout />
+                        <HorizontalLayout width="30" />
+                    </HorizontalLayout>
+                </VerticalLayout>
+            </VerticalLayout>
+        </HorizontalLayout>
+    </ListContainerElement>
+</Window>

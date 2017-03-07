@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window size="408,650" sizebox="0,0,3,3" roundcorner="1,1">
+    <Font name="微软雅黑" size="15" bold="false" italic="false" />
+    <Font name="微软雅黑" size="13" bold="false" italic="false" />
+    <VerticalLayout width="408" height="650" bkimage="skin_bk_leaf.jpg">
+        <VerticalLayout height="60">
+            <HorizontalLayout height="60">
+                <HorizontalLayout>
+                    <Control float="true" pos="6,8,0,0" width="44" height="44" bkimage="little_face_image_frame.png" />
+                    <Button float="true" pos="8,10,0,0" width="40" height="40" bkimage="login.png" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" />
+                    <Option name="btnRecent" float="true" pos="54,12,0,0" width="60" height="45" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;bigbutton_recent.png&apos; source=&apos;0,0,60,45&apos;" hotimage="file=&apos;bigbutton_recent.png&apos; source=&apos;60,0,120,45&apos;" pushedimage="file=&apos;XFSKin\bigbutton_recent.png&apos; source=&apos;120,0,180,45&apos;" disabledimage="file=&apos;bigbutton_recent.png&apos; source=&apos;180,0,240,45&apos;" group="bigbuttongroup" selected="true" selectedimage="file=&apos;bigbutton_recent.png&apos; source=&apos;120,0,180,45&apos;" />
+                    <Option name="btnHistory" float="true" pos="115,12,0,0" width="60" height="45" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;bigbutton_history.png&apos; source=&apos;0,0,60,45&apos;" hotimage="file=&apos;bigbutton_history.png&apos; source=&apos;60,0,120,45&apos;" pushedimage="file=&apos;bigbutton_history.png&apos; source=&apos;120,0,180,45&apos;" disabledimage="file=&apos;bigbutton_history.png&apos; source=&apos;180,0,240,45&apos;" group="bigbuttongroup" selectedimage="file=&apos;bigbutton_history.png&apos; source=&apos;120,0,180,45&apos;" />
+                    <Option name="btnSpace" float="true" pos="176,12,0,0" width="60" height="45" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;bigbutton_space.png&apos; source=&apos;0,0,60,45&apos;" hotimage="file=&apos;bigbutton_space.png&apos; source=&apos;60,0,120,45&apos;" pushedimage="file=&apos;bigbutton_space.png&apos; source=&apos;120,0,180,45&apos;" disabledimage="file=&apos;bigbutton_space.png&apos; source=&apos;180,0,240,45&apos;" group="bigbuttongroup" selectedimage="file=&apos;bigbutton_space.png&apos; source=&apos;120,0,180,45&apos;" />
+                    <Option name="btnPortal" float="true" pos="237,12,0,0" width="60" height="45" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;bigbutton_portal.png&apos; source=&apos;0,0,60,45&apos;" hotimage="file=&apos;bigbutton_portal.png&apos; source=&apos;60,0,120,45&apos;" pushedimage="file=&apos;bigbutton_portal.png&apos; source=&apos;120,0,180,45&apos;" disabledimage="file=&apos;bigbutton_portal.png&apos; source=&apos;180,0,240,45&apos;" group="bigbuttongroup" selectedimage="file=&apos;bigbutton_portal.png&apos; source=&apos;120,0,180,45&apos;" />
+                </HorizontalLayout>
+                <HorizontalLayout width="100">
+                    <Button name="closebtn" tooltip="最小化到托盘" float="true" pos="63,0,0,0" width="37" height="18" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;close.png&apos; source=&apos;0,0,37,18&apos;" hotimage="file=&apos;close.png&apos; source=&apos;37,0,74,18&apos;" pushedimage="file=&apos;close.png&apos; source=&apos;74,0,111,18&apos;" disabledimage="file=&apos;close.png&apos; source=&apos;111,0,148,18&apos;" />
+                    <Button name="minbtn" tooltip="最小化" float="true" pos="35,0,0,0" width="28" height="18" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;min.png&apos; source=&apos;0,0,28,18&apos;" hotimage="file=&apos;min.png&apos; source=&apos;28,0,56,18&apos;" pushedimage="file=&apos;min.png&apos; source=&apos;56,0,84,18&apos;" disabledimage="file=&apos;min.png&apos; source=&apos;84,0,112,18&apos;" />
+                    <Button name="btnsysmenu" tooltip="主菜单" float="true" pos="7,0,0,0" width="28" height="18" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;sysmenu.png&apos; source=&apos;0,0,28,18&apos;" hotimage="file=&apos;sysmenu.png&apos; source=&apos;28,0,56,18&apos;" pushedimage="file=&apos;sysmenu.png&apos; source=&apos;56,0,84,18&apos;" disabledimage="file=&apos;sysmenu.png&apos; source=&apos;84,0,112,18&apos;" />
+                </HorizontalLayout>
+            </HorizontalLayout>
+        </VerticalLayout>
+        <VerticalLayout>
+            <VerticalLayout height="32" bkimage="top_toolbar_bk.png">
+                <HorizontalLayout>
+                    <HorizontalLayout width="348">
+                        <HorizontalLayout width="92" height="32">
+                            <Button name="btnNewTask" text="新建" tooltip="新建下载" float="true" pos="6,6,0,0" width="52" height="20" textpadding="10,0,0,0" textcolor="#00474F40" disabledtextcolor="#FFA7A6AA" font="1" align="center" normalimage="file=&apos;Create.png&apos; dest=&apos;0,0,20,20&apos; source=&apos;0,0,20,20&apos;" hotimage="file=&apos;Create.png&apos; dest=&apos;0,0,20,20&apos; source=&apos;20,0,40,20&apos;" pushedimage="file=&apos;Create.png&apos; dest=&apos;0,0,20,20&apos; source=&apos;40,0,60,20&apos;" disabledimage="file=&apos;Create.png&apos; dest=&apos;0,0,20,20&apos; source=&apos;60,0,80,20&apos;" />
+                            <Control float="true" pos="62,1,0,0" width="3" height="32" bkimage="toolbar_separator.png" />
+                        </HorizontalLayout>
+                        <HorizontalLayout>
+                            <Button name="btnStart" float="true" pos="7,6,0,0" width="20" height="20" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;Start.png&apos; source=&apos;0,0,20,20&apos;" hotimage="file=&apos;Start.png&apos; source=&apos;20,0,40,20&apos;" pushedimage="file=&apos;Start.png&apos; source=&apos;40,0,60,20&apos;" disabledimage="file=&apos;Start.png&apos; source=&apos;60,0,80,20&apos;" />
+                            <Button name="btnPause" float="true" pos="37,6,0,0" width="20" height="20" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;pause.png&apos; source=&apos;0,0,20,20&apos;" hotimage="file=&apos;pause.png&apos; source=&apos;20,0,40,20&apos;" pushedimage="file=&apos;pause.png&apos; source=&apos;40,0,60,20&apos;" disabledimage="file=&apos;pause.png&apos; source=&apos;60,0,80,20&apos;" />
+                            <Button name="btnDelete" float="true" pos="68,6,0,0" width="20" height="20" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;delete.png&apos; source=&apos;0,0,20,20&apos;" hotimage="file=&apos;delete.png&apos; source=&apos;20,0,40,20&apos;" pushedimage="file=&apos;delete.png&apos; source=&apos;40,0,60,20&apos;" disabledimage="file=&apos;delete.png&apos; source=&apos;60,0,80,20&apos;" />
+                        </HorizontalLayout>
+                    </HorizontalLayout>
+                    <HorizontalLayout width="60">
+                        <Button name="btnTaskSort" tooltip="排序列表" float="true" pos="23,7,0,0" width="28" height="20" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;task_sort.png&apos; source=&apos;0,0,28,20&apos;" hotimage="file=&apos;task_sort.png&apos; source=&apos;28,0,56,20&apos;" pushedimage="file=&apos;task_sort.png&apos; source=&apos;56,0,84,20&apos;" disabledimage="file=&apos;task_sort.png&apos; source=&apos;84,0,112,20&apos;" />
+                    </HorizontalLayout>
+                </HorizontalLayout>
+            </VerticalLayout>
+            <VerticalLayout>
+                <List name="DlList" bkimage="list_bk.png" itemtextcolor="#FF000000" itemselectedtextcolor="#FF000000" itemselectedbkcolor="#FFC1E3FF" itemhottextcolor="#FF000000" itemhotbkcolor="#FFE9F5FF" itemdisabledtextcolor="#FFCCCCCC" itemdisabledbkcolor="#FFFFFFFF" itemselectedimage="list_item_select.png" itemhotimage="list_item_hover.png" header="hidden">
+                    <ListHeader />
+					    <ListContainerElement height="44">
+							<HorizontalLayout height="44">
+								<VerticalLayout>
+									<VerticalLayout>
+										<HorizontalLayout>
+											<Label name="filename" width="330" textcolor="#00959990" disabledtextcolor="#FFA7A6AA" font="1" />
+											<Label name="filesize" text="0M" width="70" textcolor="#00737473" disabledtextcolor="#FFA7A6AA" font="1" align="right" />
+										</HorizontalLayout>
+									</VerticalLayout>
+									<VerticalLayout width="400" height="5">
+										<Progress name="progress" bkimage="progress_bk.png" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" min="0" max="100" value="0" hor="true" />
+									</VerticalLayout>
+									<VerticalLayout width="400">
+										<HorizontalLayout>
+											<HorizontalLayout />
+											<HorizontalLayout width="30" />
+										</HorizontalLayout>
+									</VerticalLayout>
+								</VerticalLayout>
+							</HorizontalLayout>
+						</ListContainerElement>
+                </List>
+            </VerticalLayout>
+            <VerticalLayout height="45" bkcolor="#FFE6EDDB">
+                <Button name="btnRecycleBin" float="true" pos="379,13,0,0" width="20" height="20" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;garbage.png&apos; source=&apos;0,0,20,20&apos;" hotimage="file=&apos;garbage.png&apos; source=&apos;20,0,40,20&apos;" pushedimage="file=&apos;garbage.png&apos; source=&apos;40,0,60,20&apos;" disabledimage="file=&apos;garbage.png&apos; source=&apos;60,0,80,20&apos;" />
+                <Button name="btnMore" float="true" pos="345,12,0,0" width="30" height="20" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;options.png&apos; source=&apos;0,0,30,20&apos;" hotimage="file=&apos;options.png&apos; source=&apos;30,0,60,20&apos;" pushedimage="file=&apos;options.png&apos; source=&apos;60,0,90,20&apos;" disabledimage="file=&apos;options.png&apos; source=&apos;90,0,120,20&apos;" />
+                <Button name="btnSkin" float="true" pos="317,11,0,0" width="20" height="20" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;skin_manager_btn.png&apos; source=&apos;0,0,20,20&apos;" hotimage="file=&apos;skin_manager_btn.png&apos; source=&apos;20,0,40,20&apos;" pushedimage="file=&apos;skin_manager_btn.png&apos; source=&apos;40,0,60,20&apos;" disabledimage="file=&apos;skin_manager_btn.png&apos; source=&apos;60,0,80,20&apos;" />
+            </VerticalLayout>
+        </VerticalLayout>
+    </VerticalLayout>
+</Window>
