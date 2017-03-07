@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <Window size="400,62">
-    <ListContainerElement height="44">
-        <HorizontalLayout height="44">
+    <ListContainerElement height="62">
+        <HorizontalLayout height="62" inset="10,0,10,0">
             <VerticalLayout>
-                <VerticalLayout>
-                    <HorizontalLayout>
-                        <Label name="filename" width="330" textcolor="#00959990" disabledtextcolor="#FFA7A6AA" font="1" />
+                <VerticalLayout width="400" height="25">
+                    <HorizontalLayout height="28">
+                        <Label name="filename" height="28" textcolor="#00959990" disabledtextcolor="#FFA7A6AA" font="1" />
                         <Label name="filesize" text="0M" width="70" textcolor="#00737473" disabledtextcolor="#FFA7A6AA" font="1" align="right" />
                     </HorizontalLayout>
                 </VerticalLayout>
                 <VerticalLayout width="400" height="5">
-                    <Progress name="progress" bkimage="progress_bk.png" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" min="0" max="100" value="0" hor="true" />
+                    <Progress name="progress" height="12" bkimage="progress_bk.png" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" foreimage="progress_f.png" min="0" max="100" value="0" hor="true" />
                 </VerticalLayout>
                 <VerticalLayout width="400">
                     <HorizontalLayout>
-                        <HorizontalLayout />
+                        <HorizontalLayout>
+                            <Control name="taskCompleted" float="true" pos="7,12,0,0" width="18" height="14" bkimage="task_completed.png" />
+                            <Control name="taskPause" float="true" pos="11,13,0,0" width="10" height="13" bkimage="task_pause.png" />
+                            <Control name="taskFailed" float="true" pos="9,13,0,0" width="13" height="13" bkimage="task_failed.png" />
+                        </HorizontalLayout>
                         <HorizontalLayout width="30" />
                     </HorizontalLayout>
                 </VerticalLayout>

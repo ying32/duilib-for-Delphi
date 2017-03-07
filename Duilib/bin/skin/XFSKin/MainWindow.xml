@@ -2,16 +2,17 @@
 <Window size="408,650" sizebox="0,0,3,3" roundcorner="1,1">
     <Font name="微软雅黑" size="15" bold="false" italic="false" />
     <Font name="微软雅黑" size="13" bold="false" italic="false" />
-    <VerticalLayout width="408" height="650" bkimage="skin_bk_leaf.jpg">
+    <Default name="VScrollBar" value="width=&quot;12&quot;  button1normalimage=&quot;file=&apos;scrollbar_up_normal.png&apos; source=&apos;0,0,12,12&apos;&quot; button1hotimage=&quot;file=&apos;scrollbar_up_normal.png&apos; source=&apos;12,0,24,12&apos;&quot; button1pushedimage=&quot;file=&apos;scrollbar_up_normal.png&apos; source=&apos;24,0,36,12&apos;&quot; button2normalimage=&quot;file=&apos;scrollbar_down_normal.png&apos; source=&apos;0,0,12,12&apos;&quot; button2hotimage=&quot;file=&apos;scrollbar_down_normal.png&apos; source=&apos;12,0,24,12&apos;&quot; button2pushedimage=&quot;file=&apos;scrollbar_down_normal.png&apos; source=&apos;24,0,36,12&apos;&quot; thumbnormalimage=&quot;file=&apos;scrollbar_mid.png&apos; source=&apos;0,0,12,15&apos; corner=&apos;5,5,5,5&apos;&quot; thumbhotimage=&quot;file=&apos;scrollbar_mid.png&apos; source=&apos;12,0,24,15&apos; corner=&apos;5,5,5,5&apos;&quot; thumbpushedimage=&quot;file=&apos;scrollbar_mid.png&apos; source=&apos;24,0,36,15&apos; corner=&apos;5,5,5,5&apos;&quot; bknormalimage=&quot;scrollbar_bk.png&quot;" />
+    <VerticalLayout width="408" height="650" bkcolor="#FF46B9F0">
         <VerticalLayout height="60">
             <HorizontalLayout height="60">
                 <HorizontalLayout>
                     <Control float="true" pos="6,8,0,0" width="44" height="44" bkimage="little_face_image_frame.png" />
                     <Button float="true" pos="8,10,0,0" width="40" height="40" bkimage="login.png" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" />
-                    <Option name="btnRecent" float="true" pos="54,12,0,0" width="60" height="45" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;bigbutton_recent.png&apos; source=&apos;0,0,60,45&apos;" hotimage="file=&apos;bigbutton_recent.png&apos; source=&apos;60,0,120,45&apos;" pushedimage="file=&apos;XFSKin\bigbutton_recent.png&apos; source=&apos;120,0,180,45&apos;" disabledimage="file=&apos;bigbutton_recent.png&apos; source=&apos;180,0,240,45&apos;" group="bigbuttongroup" selected="true" selectedimage="file=&apos;bigbutton_recent.png&apos; source=&apos;120,0,180,45&apos;" />
-                    <Option name="btnHistory" float="true" pos="115,12,0,0" width="60" height="45" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;bigbutton_history.png&apos; source=&apos;0,0,60,45&apos;" hotimage="file=&apos;bigbutton_history.png&apos; source=&apos;60,0,120,45&apos;" pushedimage="file=&apos;bigbutton_history.png&apos; source=&apos;120,0,180,45&apos;" disabledimage="file=&apos;bigbutton_history.png&apos; source=&apos;180,0,240,45&apos;" group="bigbuttongroup" selectedimage="file=&apos;bigbutton_history.png&apos; source=&apos;120,0,180,45&apos;" />
-                    <Option name="btnSpace" float="true" pos="176,12,0,0" width="60" height="45" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;bigbutton_space.png&apos; source=&apos;0,0,60,45&apos;" hotimage="file=&apos;bigbutton_space.png&apos; source=&apos;60,0,120,45&apos;" pushedimage="file=&apos;bigbutton_space.png&apos; source=&apos;120,0,180,45&apos;" disabledimage="file=&apos;bigbutton_space.png&apos; source=&apos;180,0,240,45&apos;" group="bigbuttongroup" selectedimage="file=&apos;bigbutton_space.png&apos; source=&apos;120,0,180,45&apos;" />
-                    <Option name="btnPortal" float="true" pos="237,12,0,0" width="60" height="45" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;bigbutton_portal.png&apos; source=&apos;0,0,60,45&apos;" hotimage="file=&apos;bigbutton_portal.png&apos; source=&apos;60,0,120,45&apos;" pushedimage="file=&apos;bigbutton_portal.png&apos; source=&apos;120,0,180,45&apos;" disabledimage="file=&apos;bigbutton_portal.png&apos; source=&apos;180,0,240,45&apos;" group="bigbuttongroup" selectedimage="file=&apos;bigbutton_portal.png&apos; source=&apos;120,0,180,45&apos;" />
+                    <Option name="btnRecent" float="true" pos="54,15,0,0" width="60" height="45" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;bigbutton_recent.png&apos; source=&apos;0,0,60,45&apos;" hotimage="file=&apos;bigbutton_recent.png&apos; source=&apos;60,0,120,45&apos;" pushedimage="file=&apos;XFSKin\bigbutton_recent.png&apos; source=&apos;120,0,180,45&apos;" disabledimage="file=&apos;bigbutton_recent.png&apos; source=&apos;180,0,240,45&apos;" group="bigbuttongroup" selected="true" selectedimage="file=&apos;bigbutton_recent.png&apos; source=&apos;120,0,180,45&apos;" />
+                    <Option name="btnHistory" float="true" pos="115,15,0,0" width="60" height="45" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;bigbutton_history.png&apos; source=&apos;0,0,60,45&apos;" hotimage="file=&apos;bigbutton_history.png&apos; source=&apos;60,0,120,45&apos;" pushedimage="file=&apos;bigbutton_history.png&apos; source=&apos;120,0,180,45&apos;" disabledimage="file=&apos;bigbutton_history.png&apos; source=&apos;180,0,240,45&apos;" group="bigbuttongroup" selectedimage="file=&apos;bigbutton_history.png&apos; source=&apos;120,0,180,45&apos;" />
+                    <Option name="btnSpace" float="true" pos="176,15,0,0" width="60" height="45" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;bigbutton_space.png&apos; source=&apos;0,0,60,45&apos;" hotimage="file=&apos;bigbutton_space.png&apos; source=&apos;60,0,120,45&apos;" pushedimage="file=&apos;bigbutton_space.png&apos; source=&apos;120,0,180,45&apos;" disabledimage="file=&apos;bigbutton_space.png&apos; source=&apos;180,0,240,45&apos;" group="bigbuttongroup" selectedimage="file=&apos;bigbutton_space.png&apos; source=&apos;120,0,180,45&apos;" />
+                    <Option name="btnPortal" float="true" pos="237,15,0,0" width="60" height="45" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;bigbutton_portal.png&apos; source=&apos;0,0,60,45&apos;" hotimage="file=&apos;bigbutton_portal.png&apos; source=&apos;60,0,120,45&apos;" pushedimage="file=&apos;bigbutton_portal.png&apos; source=&apos;120,0,180,45&apos;" disabledimage="file=&apos;bigbutton_portal.png&apos; source=&apos;180,0,240,45&apos;" group="bigbuttongroup" selectedimage="file=&apos;bigbutton_portal.png&apos; source=&apos;120,0,180,45&apos;" />
                 </HorizontalLayout>
                 <HorizontalLayout width="100">
                     <Button name="closebtn" tooltip="最小化到托盘" float="true" pos="63,0,0,0" width="37" height="18" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;close.png&apos; source=&apos;0,0,37,18&apos;" hotimage="file=&apos;close.png&apos; source=&apos;37,0,74,18&apos;" pushedimage="file=&apos;close.png&apos; source=&apos;74,0,111,18&apos;" disabledimage="file=&apos;close.png&apos; source=&apos;111,0,148,18&apos;" />
@@ -40,35 +41,14 @@
                 </HorizontalLayout>
             </VerticalLayout>
             <VerticalLayout>
-                <List name="DlList" bkimage="list_bk.png" itemtextcolor="#FF000000" itemselectedtextcolor="#FF000000" itemselectedbkcolor="#FFC1E3FF" itemhottextcolor="#FF000000" itemhotbkcolor="#FFE9F5FF" itemdisabledtextcolor="#FFCCCCCC" itemdisabledbkcolor="#FFFFFFFF" itemselectedimage="list_item_select.png" itemhotimage="list_item_hover.png" header="hidden">
+                <List name="DlList" bkimage="list_bk.png" itemtextcolor="#FF000000" itemselectedtextcolor="#FF000000" itemselectedbkcolor="#FFC1E3FF" itemhottextcolor="#FF000000" itemhotbkcolor="#FFE9F5FF" itemdisabledtextcolor="#FFCCCCCC" itemdisabledbkcolor="#FFFFFFFF" itemselectedimage="list_item_select.png" itemhotimage="list_item_hover.png" vscrollbar="true">
                     <ListHeader />
-					    <ListContainerElement height="44">
-							<HorizontalLayout height="44">
-								<VerticalLayout>
-									<VerticalLayout>
-										<HorizontalLayout>
-											<Label name="filename" width="330" textcolor="#00959990" disabledtextcolor="#FFA7A6AA" font="1" />
-											<Label name="filesize" text="0M" width="70" textcolor="#00737473" disabledtextcolor="#FFA7A6AA" font="1" align="right" />
-										</HorizontalLayout>
-									</VerticalLayout>
-									<VerticalLayout width="400" height="5">
-										<Progress name="progress" bkimage="progress_bk.png" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" min="0" max="100" value="0" hor="true" />
-									</VerticalLayout>
-									<VerticalLayout width="400">
-										<HorizontalLayout>
-											<HorizontalLayout />
-											<HorizontalLayout width="30" />
-										</HorizontalLayout>
-									</VerticalLayout>
-								</VerticalLayout>
-							</HorizontalLayout>
-						</ListContainerElement>
                 </List>
             </VerticalLayout>
             <VerticalLayout height="45" bkcolor="#FFE6EDDB">
                 <Button name="btnRecycleBin" float="true" pos="379,13,0,0" width="20" height="20" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;garbage.png&apos; source=&apos;0,0,20,20&apos;" hotimage="file=&apos;garbage.png&apos; source=&apos;20,0,40,20&apos;" pushedimage="file=&apos;garbage.png&apos; source=&apos;40,0,60,20&apos;" disabledimage="file=&apos;garbage.png&apos; source=&apos;60,0,80,20&apos;" />
-                <Button name="btnMore" float="true" pos="345,12,0,0" width="30" height="20" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;options.png&apos; source=&apos;0,0,30,20&apos;" hotimage="file=&apos;options.png&apos; source=&apos;30,0,60,20&apos;" pushedimage="file=&apos;options.png&apos; source=&apos;60,0,90,20&apos;" disabledimage="file=&apos;options.png&apos; source=&apos;90,0,120,20&apos;" />
-                <Button name="btnSkin" float="true" pos="317,11,0,0" width="20" height="20" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;skin_manager_btn.png&apos; source=&apos;0,0,20,20&apos;" hotimage="file=&apos;skin_manager_btn.png&apos; source=&apos;20,0,40,20&apos;" pushedimage="file=&apos;skin_manager_btn.png&apos; source=&apos;40,0,60,20&apos;" disabledimage="file=&apos;skin_manager_btn.png&apos; source=&apos;60,0,80,20&apos;" />
+                <Button name="btnMore" float="true" pos="345,13,0,0" width="30" height="20" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;options.png&apos; source=&apos;0,0,30,20&apos;" hotimage="file=&apos;options.png&apos; source=&apos;30,0,60,20&apos;" pushedimage="file=&apos;options.png&apos; source=&apos;60,0,90,20&apos;" disabledimage="file=&apos;options.png&apos; source=&apos;90,0,120,20&apos;" />
+                <Button name="btnSkin" float="true" pos="317,13,0,0" width="20" height="20" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;skin_manager_btn.png&apos; source=&apos;0,0,20,20&apos;" hotimage="file=&apos;skin_manager_btn.png&apos; source=&apos;20,0,40,20&apos;" pushedimage="file=&apos;skin_manager_btn.png&apos; source=&apos;40,0,60,20&apos;" disabledimage="file=&apos;skin_manager_btn.png&apos; source=&apos;60,0,80,20&apos;" />
             </VerticalLayout>
         </VerticalLayout>
     </VerticalLayout>
