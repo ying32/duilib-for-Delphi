@@ -110,29 +110,42 @@ end.
 * 1、 DDuilib
    * duilib for Delphi源目录。
 >
-* 2、Demo
-   * 新的Demo工程目录
- >  
-* 3、Duilib
+* 2、 CppConvert
+   * 原Duilib头文件转换工具代码  
+>
+* 3、Demo
+   * Demo工程目录  
+>  
+* 4、Duilib
    * 存放原[duilib](https://github.com/duilib/duilib)工程目录。  
-   * 3.1、 bin
+   * 4.1、 bin
       * 存放编译后的二进制及图片和xml资源，里面有的包含原duilib的资源文件      
-   * 3.2、 Duilib
+   * 4.2、 Duilib
       * 存放duilib c++工程源码
 >	  
-* 4、ThirdParty
-   * 存放一些第三方的库或者二进制文件
+* 5、ThirdParty
+   * 存放一些第三方的库或者二进制文件  
+
+>	  
+* 6、Screenshot
+   * 例程截图相关
+
+>	  
+* 6、Designer
+   * UI设计器，但未完成。
 
 
 #### **截图**
 
-[QQDemo截图1](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot1.png)   
-[QQDemo截图2](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot2.png)   
-[应用程序管理截图](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/screenshot3.png)  
-[PC管家截图](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/TestDelphi/screenshot4.png)  
+[QQDemo截图1](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/Screenshot/screenshot1.png)   
+[QQDemo截图2](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/Screenshot/screenshot2.png)   
+[应用程序管理截图](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/Screenshot/screenshot3.png)  
+[PC管家截图](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/Screenshot/screenshot4.png)  
+[QQ旋风](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/Screenshot/screenshot5_qqxf.png) 
+
 #### **作者信息** 
 ##### 多少无所谓，反正想捐助的就随心吧，不捐助也毫无影响。  
 
-![欢迎捐助](https://github.com/ying32/duilib-for-Delphi/raw/TestDelphi/20160816094242.jpg)  
+![欢迎捐助](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/Screenshot/wx.jpg)  
 [ying32](mailto:1444386932@qq.com) 
 
