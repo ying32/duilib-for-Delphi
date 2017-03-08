@@ -22,6 +22,7 @@ object frmQQXF: TfrmQQXF
     SkinResName = 'DefaultSkin'
     SkinKind = skFile
     OnInitWindow = DDuiForm1InitWindow
+    OnClick = DDuiForm1Click
     Left = 48
     Top = 208
   end

@@ -4,13 +4,14 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DuiVCLComponent, Duilib;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DuiVCLComponent, Duilib, DuiMenu, DuiConst;
 
 type
   TfrmQQXF = class(TForm)
     DDuiForm1: TDDuiForm;
     procedure DDuiForm1InitWindow(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure DDuiForm1Click(Sender: TObject; var Msg: TNotifyUI);
   private
     FList: CListUI;
     FDlgBuilder: CDialogBuilder;
@@ -70,6 +71,26 @@ begin
         FList.Add(LItem);
       end;
     end;
+  end;
+end;
+
+procedure TfrmQQXF.DDuiForm1Click(Sender: TObject; var Msg: TNotifyUI);
+var
+  LMenu: CMenuWnd;
+  LPoint: TPoint;
+begin
+  if Msg.pSender.Name = 'btnTaskSort' then
+  begin
+    LMenu := CMenuWnd.CppCreate(Handle, DDuiForm1.PaintMgr);
+    LPoint := Msg.ptMouse;
+    Winapi.Windows.ClientToScreen(Handle, LPoint);
+    LMenu.Init(nil, 'sortmenu.xml', '', LPoint);
+  end else if Msg.pSender.Name = 'btnMore' then
+  begin
+    LMenu := CMenuWnd.CppCreate(Handle, DDuiForm1.PaintMgr);
+    LPoint := Msg.ptMouse;
+    Winapi.Windows.ClientToScreen(Handle, LPoint);
+    LMenu.Init(nil, 'moremenu.xml', '', LPoint);
   end;
 end;
 
