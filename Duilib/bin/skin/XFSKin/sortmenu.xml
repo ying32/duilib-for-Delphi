@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window layeredimage="file='menu_bk.png' corner='30,6,6,6'">
+  <Font id="0" name="微软雅黑" size="12" bold="false" default="true" />
+  <Default name="Menu" value="inset=&quot;7,7,7,7&quot; itemtextpadding=&quot;30,0,0,0&quot; bkimage=&quot;file='menu_bk.png' corner='30,6,6,6'&quot; hole=&quot;false&quot;" />
+  <Menu>
+	<MenuElement name="test2" text="按文件状态" />
+	<MenuElement name="test11" text="按文件类型" />
+	<MenuElement name="test12" text="按文件大小" />
+	<MenuElement name="test13" text="按文件名" />
+	<MenuElement name="test18" text="按添加时间" />
+  </Menu>
+</Window>

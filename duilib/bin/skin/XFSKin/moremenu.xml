@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window layeredimage="file='menu_bk.png' corner='30,6,6,6'">
+  <Font id="0" name="微软雅黑" size="12" bold="false" default="true" />
+  <Default name="Menu" value="inset=&quot;7,7,7,7&quot; itemtextpadding=&quot;30,0,0,0&quot; bkimage=&quot;file='menu_bk.png' corner='30,6,6,6'&quot; hole=&quot;false&quot;" />
+  <Menu>
+	<MenuElement name="test2" text="全部任务依次下载" />
+	<MenuElement name="test3" text="下载完成后关机" />
+	<MenuElement name="test4" text="计划任务下载…" />
+	<MenuElement text="设置下载模式">
+	   <HorizontalLayout>
+        <Label />
+        <Label width="7" bkimage="file='menu_sub_arrow.png' source='0,0,7,11' dest='0,5,7,16'"/>
+       </HorizontalLayout>
+	   <MenuElement name="test5" text="上网优化"/>
+	   <MenuElement text="下载优化" />
+	</MenuElement>
+	<MenuElement name="test11" text="限制下载速度…" />
+  </Menu>
+</Window>
