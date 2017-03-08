@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<Window size="408,650" sizebox="0,0,3,3" roundcorner="1,1">
-    <Font name="微软雅黑" size="15" bold="false" italic="false" />
-    <Font name="微软雅黑" size="13" bold="false" italic="false" />
+<Window size="408,650" sizebox="0,0,3,3" caption="0,0,0,56" roundcorner="1,1" layeredimage="file='bk_shadow2.png' corner='6,6,6,6'">
+    <Font id="0" name="微软雅黑" size="15" bold="false" italic="false" />
+    <Font id="1" name="微软雅黑" size="13" bold="false" italic="false" />
     <Default name="VScrollBar" value="width=&quot;12&quot;  button1normalimage=&quot;file=&apos;scrollbar_up_normal.png&apos; source=&apos;0,0,12,12&apos;&quot; button1hotimage=&quot;file=&apos;scrollbar_up_normal.png&apos; source=&apos;12,0,24,12&apos;&quot; button1pushedimage=&quot;file=&apos;scrollbar_up_normal.png&apos; source=&apos;24,0,36,12&apos;&quot; button2normalimage=&quot;file=&apos;scrollbar_down_normal.png&apos; source=&apos;0,0,12,12&apos;&quot; button2hotimage=&quot;file=&apos;scrollbar_down_normal.png&apos; source=&apos;12,0,24,12&apos;&quot; button2pushedimage=&quot;file=&apos;scrollbar_down_normal.png&apos; source=&apos;24,0,36,12&apos;&quot; thumbnormalimage=&quot;file=&apos;scrollbar_mid.png&apos; source=&apos;0,0,12,15&apos; corner=&apos;5,5,5,5&apos;&quot; thumbhotimage=&quot;file=&apos;scrollbar_mid.png&apos; source=&apos;12,0,24,15&apos; corner=&apos;5,5,5,5&apos;&quot; thumbpushedimage=&quot;file=&apos;scrollbar_mid.png&apos; source=&apos;24,0,36,15&apos; corner=&apos;5,5,5,5&apos;&quot; bknormalimage=&quot;scrollbar_bk.png&quot;" />
-    <VerticalLayout width="408" height="650" bkcolor="#FF46B9F0">
+    <VerticalLayout bkcolor="#FF46B9F0" inset="6,6,6,6">
         <VerticalLayout height="60">
             <HorizontalLayout height="60">
                 <HorizontalLayout>
@@ -24,7 +24,7 @@
         <VerticalLayout>
             <VerticalLayout height="32" bkimage="top_toolbar_bk.png">
                 <HorizontalLayout>
-                    <HorizontalLayout width="348">
+                    <HorizontalLayout>
                         <HorizontalLayout width="92" height="32">
                             <Button name="btnNewTask" text="新建" tooltip="新建下载" float="true" pos="6,6,0,0" width="52" height="20" textpadding="10,0,0,0" textcolor="#00474F40" disabledtextcolor="#FFA7A6AA" font="1" align="center" normalimage="file=&apos;Create.png&apos; dest=&apos;0,0,20,20&apos; source=&apos;0,0,20,20&apos;" hotimage="file=&apos;Create.png&apos; dest=&apos;0,0,20,20&apos; source=&apos;20,0,40,20&apos;" pushedimage="file=&apos;Create.png&apos; dest=&apos;0,0,20,20&apos; source=&apos;40,0,60,20&apos;" disabledimage="file=&apos;Create.png&apos; dest=&apos;0,0,20,20&apos; source=&apos;60,0,80,20&apos;" />
                             <Control float="true" pos="62,1,0,0" width="3" height="32" bkimage="toolbar_separator.png" />
@@ -46,9 +46,9 @@
                 </List>
             </VerticalLayout>
             <VerticalLayout height="45" bkcolor="#FFE6EDDB">
-                <Button name="btnRecycleBin" float="true" pos="379,13,0,0" width="20" height="20" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;garbage.png&apos; source=&apos;0,0,20,20&apos;" hotimage="file=&apos;garbage.png&apos; source=&apos;20,0,40,20&apos;" pushedimage="file=&apos;garbage.png&apos; source=&apos;40,0,60,20&apos;" disabledimage="file=&apos;garbage.png&apos; source=&apos;60,0,80,20&apos;" />
-                <Button name="btnMore" float="true" pos="345,13,0,0" width="30" height="20" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;options.png&apos; source=&apos;0,0,30,20&apos;" hotimage="file=&apos;options.png&apos; source=&apos;30,0,60,20&apos;" pushedimage="file=&apos;options.png&apos; source=&apos;60,0,90,20&apos;" disabledimage="file=&apos;options.png&apos; source=&apos;90,0,120,20&apos;" />
-                <Button name="btnSkin" float="true" pos="317,13,0,0" width="20" height="20" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;skin_manager_btn.png&apos; source=&apos;0,0,20,20&apos;" hotimage="file=&apos;skin_manager_btn.png&apos; source=&apos;20,0,40,20&apos;" pushedimage="file=&apos;skin_manager_btn.png&apos; source=&apos;40,0,60,20&apos;" disabledimage="file=&apos;skin_manager_btn.png&apos; source=&apos;60,0,80,20&apos;" />
+                <Button name="btnRecycleBin" float="true" pos="368,13,0,0" width="20" height="20" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;garbage.png&apos; source=&apos;0,0,20,20&apos;" hotimage="file=&apos;garbage.png&apos; source=&apos;20,0,40,20&apos;" pushedimage="file=&apos;garbage.png&apos; source=&apos;40,0,60,20&apos;" disabledimage="file=&apos;garbage.png&apos; source=&apos;60,0,80,20&apos;" />
+                <Button name="btnMore" float="true" pos="334,13,0,0" width="30" height="20" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;options.png&apos; source=&apos;0,0,30,20&apos;" hotimage="file=&apos;options.png&apos; source=&apos;30,0,60,20&apos;" pushedimage="file=&apos;options.png&apos; source=&apos;60,0,90,20&apos;" disabledimage="file=&apos;options.png&apos; source=&apos;90,0,120,20&apos;" />
+                <Button name="btnSkin" float="true" pos="306,13,0,0" width="20" height="20" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="file=&apos;skin_manager_btn.png&apos; source=&apos;0,0,20,20&apos;" hotimage="file=&apos;skin_manager_btn.png&apos; source=&apos;20,0,40,20&apos;" pushedimage="file=&apos;skin_manager_btn.png&apos; source=&apos;40,0,60,20&apos;" disabledimage="file=&apos;skin_manager_btn.png&apos; source=&apos;60,0,80,20&apos;" />
             </VerticalLayout>
         </VerticalLayout>
     </VerticalLayout>

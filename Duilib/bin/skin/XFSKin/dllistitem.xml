@@ -15,9 +15,9 @@
                 <VerticalLayout width="400">
                     <HorizontalLayout>
                         <HorizontalLayout>
-                            <Control name="taskCompleted" float="true" pos="7,12,0,0" width="18" height="14" bkimage="task_completed.png" />
-                            <Control name="taskPause" float="true" pos="11,13,0,0" width="10" height="13" bkimage="task_pause.png" />
-                            <Control name="taskFailed" float="true" pos="9,13,0,0" width="13" height="13" bkimage="task_failed.png" />
+                            <Control name="taskCompleted" float="true" pos="0,12,0,0" width="18" height="14" bkimage="task_completed.png" />
+                            <Control name="taskPause" float="true" pos="0,13,0,0" width="10" height="13" bkimage="task_pause.png" />
+                            <Control name="taskFailed" float="true" pos="0,13,0,0" width="13" height="13" bkimage="task_failed.png" />
                         </HorizontalLayout>
                         <HorizontalLayout width="30" />
                     </HorizontalLayout>
