@@ -82,7 +82,9 @@ begin
   end else if LType = DUI_MSGTYPE_MENUITEMCHILDCLICK then
   begin
     Writeln(Format('子项目单击 Type=%s, Name=%s, Text=%s', [LType, LCtlName, Msg.pSender.Text]));
-  end;
+  end else if LType = DUI_MSGTYPE_MENUITEMCHILDVALUECHANGED then
+    Writeln(Format('子项目值改变 Type=%s, Name=%s, Text=%s, value=%d',
+      [LType, LCtlName, Msg.pSender.Text, CSliderUI(Msg.pSender).Value]));
 end;
 
 var
