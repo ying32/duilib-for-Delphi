@@ -2,12 +2,14 @@
 <Window layeredimage="file='menu_bk.png' corner='40,8,8,8'">
   <Font id="0" name="微软雅黑" size="12" bold="false" default="true" />
   <Default name="Menu" value="inset=&quot;7,7,7,7&quot; itemtextpadding=&quot;33,0,0,0&quot; bkimage=&quot;file='menu_bk.png' corner='40,8,8,8'&quot; hole=&quot;false&quot;" />
+  <Default name="Slider" value="thumbsize=&quot;10,10&quot; bkimage=&quot;file='bg.bmp' corner='6,0,6,0' mask='#FFFF00FF'&quot; foreimage=&quot;file='fg.bmp' corner='6,0,6,0' mask='#FFFF00FF'&quot; thumbimage=&quot;file='thumb.bmp' source='30,0,40,10' mask='#FFDAEBF9'&quot; thumbhotimage=&quot;file='thumb.bmp' source='10,0,20,10' mask='#FFDAEBF9'&quot; " />
   <Menu>
 	<MenuElement height="100" mousechild="true">
         <VerticalLayout inset="40,10,0,0">
             <Button text="测试按钮" height="25" width="60" normalimage="file='button.png'" hotimage="file='button_h.png'" pushedimage="file='button_p.png'"/>
 			<Option text="radio" height="25" textpadding="20,0,0,0" align="left"  normalimage="file='radio.png' dest='0,5,15,20'" hotimage="file='radio_h.png' dest='0,5,15,20'" selectedimage="file='radio_p.png' dest='0,5,15,20'" width="60"/>
             <Option text="按键提示音" height="25" textpadding="20,0,0,0" align="left"  normalimage="file='radio.png' dest='0,5,15,20'" hotimage="file='radio_h.png' dest='0,5,15,20'" selectedimage="file='radio_p.png' dest='0,5,15,20'" width="90" />
+			<Slider name="alpha_controlor" min="0" max="100" value="50"/>
         </VerticalLayout>
 	</MenuElement>
 	<MenuElement name="test2" text="菜单测试2" />
