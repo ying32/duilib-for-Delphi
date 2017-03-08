@@ -23,6 +23,7 @@ const TCHAR* const kMenuElementUIClassName = _T("MenuElementUI");
 const TCHAR* const kMenuElementUIInterfaceName = _T("MenuElement");
 const TCHAR* const kmenuitemclick = _T("menuitemclick");
 const TCHAR* const kmenuitemchildclick = _T("menuitemchildclick");
+const TCHAR* const kmenuitemchildvaluechanged = _T("menuitemchildvaluechanged");
 
 CMenuUI::CMenuUI()
 {
@@ -538,6 +539,11 @@ void CMenuWnd::Notify(TNotifyUI& msg) {
 		// 这里添加代码通知就好了
 		if (s_pMainPaint) {
 			s_pMainPaint->SendNotify(msg.pSender, kmenuitemchildclick, 0, 0, true);
+			return;
+		}
+	} else if(_tcscmp(msg.sType, DUI_MSGTYPE_VALUECHANGED) == 0) {
+		if (s_pMainPaint) {
+			s_pMainPaint->SendNotify(msg.pSender, kmenuitemchildvaluechanged, 0, 0, true);
 			return;
 		}
 	}
