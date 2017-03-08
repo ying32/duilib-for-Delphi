@@ -377,13 +377,13 @@ LRESULT CMenuWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 				rc.top = rc.bottom - cyFixed;
 			}
 
-			if (rc.right > rcWork.right)
+			if (rc.right >= rcWork.right)
 			{
 				rc.right = rcWindow.left;
 				rc.left = rc.right - cxFixed;
-
-				rc.top = rcWindow.bottom;
-				rc.bottom = rc.top + cyFixed;
+				// 这里去掉，修复原有问题
+				//rc.top = rcWindow.bottom;
+				//rc.bottom = rc.top + cyFixed;
 			}
 
 			if( rc.top < rcWork.top )
@@ -398,14 +398,10 @@ LRESULT CMenuWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 				rc.right = rc.left + cxFixed;
 			}
 
-			/*
-			  ying32修改减去inset的值，不然显示效果就不好了
-			*/
-			RECT rcInset = m_pLayout->GetInset();
-
+            RECT rcInset = m_pLayout->GetInset();
 			MoveWindow(m_hWnd, rc.left - rcInset.left - rcInset.right - 2, 
 				               rc.top, 
-							   rc.right - rc.left + rcInset.left/* + rcInset.right*/ + 36, // 多加宽，好看, 
+							   rc.right - rc.left + rcInset.left + 36, // 多加宽，好看, 
 				               rc.bottom - rc.top + rcInset.top + rcInset.bottom - 4, 
 							   FALSE);
 		}
@@ -462,19 +458,26 @@ LRESULT CMenuWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 			}
 
 			SetForegroundWindow(m_hWnd);
-			MoveWindow(m_hWnd, rc.left, rc.top, rc.GetWidth(), rc.GetHeight(), FALSE);
+			//MoveWindow(m_hWnd, rc.left, rc.top, rc.GetWidth(), rc.GetHeight(), FALSE);
 			/*
 			ying32 修改计算inset的
 			*/
 			RECT rcInset = ((CMenuUI*)pRoot)->GetInset();
 
-			SetWindowPos(m_hWnd,
-				         HWND_TOPMOST, 
-				         rc.left, 
-						 rc.top, 
-						 rc.GetWidth() + rcInset.left + rcInset.right + 36, // 多加宽，好看
-				         rc.GetHeight() + rcInset.top + rcInset.bottom, 
-						 SWP_SHOWWINDOW);
+			// 修正弹出位置 
+			rc.right += rcInset.left + rcInset.right + 36;
+			rc.bottom += rcInset.top + rcInset.bottom;
+			nWidth = rc.GetWidth();
+			nHeight = rc.GetHeight();
+			if(rc.right >= rcWork.right) {
+				rc.left -= nWidth;
+				rc.right -= nWidth;
+			}
+			if(rc.bottom >= rcWork.bottom) {
+				rc.top -= nHeight;
+				rc.bottom -= nHeight;
+			}
+			SetWindowPos(m_hWnd, HWND_TOPMOST, rc.left, rc.top, rc.GetWidth(), rc.GetHeight(), SWP_SHOWWINDOW);
 		}
 		return 0;
     }
