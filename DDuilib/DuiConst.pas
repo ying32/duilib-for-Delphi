@@ -56,6 +56,7 @@ const
 
   DUI_CTR_EDIT                  = 'Edit';
   DUI_CTR_LIST                  = 'List';
+  DUI_CTR_LIST_UI = 'ListUI';
   DUI_CTR_TEXT                  = 'Text';
 
   DUI_CTR_COMBO                 = 'Combo';
@@ -111,6 +112,9 @@ const
 
   DUI_CTR_MENUELEMENT_UI = 'MenuElementUI';
   DUI_CTR_MENUELEMENT = 'MenuElement';
+
+
+
 
 implementation
 
