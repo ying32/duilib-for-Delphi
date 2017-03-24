@@ -76,6 +76,7 @@ end;
 procedure TFrameWindowWnd.DoInitWindow;
 begin
   inherited;
+  PaintManagerUI.AddMultiLanguageString(0, 'µ¯³ö²Ëµ¥');
   Writeln(Format('mainpaint=%p', [Pointer(PaintManagerUI)]));
   Fchangeskinbtn :=  FindControl('changeskinbtn');
   if Fchangeskinbtn <> nil then
