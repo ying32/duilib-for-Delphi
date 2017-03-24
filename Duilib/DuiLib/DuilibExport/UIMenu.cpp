@@ -9,6 +9,7 @@ ContextMenuObserver s_context_menu_observer;
 
 // 添加接收消息的
 CPaintManagerUI* s_pMainPaint = NULL;
+TDelphiMethod s_OnMenuPopup;
 
 //　ying32添加, 解决点击后被释放了造成野指针问题
 // 切记不能使用指针，不然被释放了就异常了，只时不使用指针也规避了释放问题
@@ -153,13 +154,18 @@ m_pOwner(NULL),
 m_pLayout(),
 m_xml(_T("")),
 m_pMainPaint(pMainPaint)
-{}
+{
+	m_MenuPopupMethod.Code = NULL;
+	m_MenuPopupMethod.Data = NULL;
+}
 
 CMenuWnd::~CMenuWnd(){
 	// 置空接收消息的
 	if (!m_pOwner) {
 		// 不能置空
 		s_pMainPaint = NULL;
+		s_OnMenuPopup.Code = NULL;
+		s_OnMenuPopup.Data = NULL;
 	}
 }
 
@@ -252,7 +258,7 @@ LRESULT CMenuWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 			::GetClientRect(*this, &rcClient);
 			::SetWindowPos(*this, NULL, rcClient.left, rcClient.top, rcClient.right - rcClient.left, \
 				rcClient.bottom - rcClient.top, SWP_FRAMECHANGED);
-		 
+			m_MenuPopupMethod = s_OnMenuPopup;//m_pOwner->m_MenuPopupMethod;
 			m_pm.Init(m_hWnd);
 
 			// ying32修改，这里为支持带阴影的图片背景
@@ -287,6 +293,8 @@ LRESULT CMenuWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 			m_pm.AttachDialog(m_pLayout);
 			m_pm.AddNotifier(this);
 
+			// 发送菜单弹出事件
+			SendMenuPopup(&m_pm);
 			//CButtonUI *pControl = static_cast<CButtonUI*>(m_pm.FindControl(_T("aabc")));
 			//if (pControl != NULL) {
 				//pControl->SetVisible(false);
@@ -409,7 +417,7 @@ LRESULT CMenuWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		else {
 	        // 保存指针
 			s_pMainPaint = m_pMainPaint;
-		
+			
 			m_pm.Init(m_hWnd);
 
 			CDialogBuilder builder;
@@ -418,6 +426,11 @@ LRESULT CMenuWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 			CControlUI* pRoot = builder.Create(m_xml, m_sType.GetData(), &menuCallback, &m_pm);
 			m_pm.AttachDialog(pRoot);
 			m_pm.AddNotifier(this);
+
+
+			// 发送菜单弹出事件
+			SendMenuPopup(&m_pm);
+		 
 
 #if defined(WIN32) && !defined(UNDER_CE)
 			MONITORINFO oMonitor = {}; 
@@ -478,6 +491,7 @@ LRESULT CMenuWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 				rc.top -= nHeight;
 				rc.bottom -= nHeight;
 			}
+
 			SetWindowPos(m_hWnd, HWND_TOPMOST, rc.left, rc.top, rc.GetWidth(), rc.GetHeight(), SWP_SHOWWINDOW);
 		}
 		return 0;
@@ -549,6 +563,26 @@ void CMenuWnd::Notify(TNotifyUI& msg) {
 	}
 }
 
+void CMenuWnd::SendMenuPopup(CPaintManagerUI *pm) {
+	if(m_MenuPopupMethod.Code != NULL && m_MenuPopupMethod.Data != NULL) {
+		// 采用汇编，模拟delphi register
+		DWORD DelphiSelf = (DWORD)m_MenuPopupMethod.Data;
+		LPVOID Addr = m_MenuPopupMethod.Code;
+		// 模拟delphi register call
+		__asm {
+			PUSHAD
+			MOV ECX, pm
+			MOV EAX, DelphiSelf
+			CALL Addr
+			POPAD
+		}
+	}
+}
+
+void CMenuWnd::SetOnMenuPopup(TDelphiMethod m) {
+	m_MenuPopupMethod = m;
+	s_OnMenuPopup = m;
+}
 /////////////////////////////////////////////////////////////////////////////////////
 //
 

@@ -65,6 +65,7 @@ public:
 /////////////////////////////////////////////////////////////////////////////////////
 //
 
+
 // MenuElementUI
 extern const TCHAR* const kMenuElementUIClassName;// = _T("MenuElementUI");
 extern const TCHAR* const kMenuElementUIInterfaceName;// = _T("MenuElement);
@@ -81,8 +82,12 @@ public:
 
     LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
 	BOOL Receive(ContextMenuParam param);
-
+	// 外部设置
+	void SetOnMenuPopup(TDelphiMethod m);
 	void __cdecl Notify(TNotifyUI& msg);
+private:
+	// 发送弹出事件  
+	void SendMenuPopup(CPaintManagerUI *pm);
 public:
 	HWND m_hParent;
 	POINT m_BasedPoint;
@@ -94,6 +99,8 @@ public:
 
 	// 添加接收消息的
 	CPaintManagerUI* m_pMainPaint;
+	// 菜单弹出来的事件，OnShow前
+	TDelphiMethod m_MenuPopupMethod;
 };
 
 class CListContainerElementUI;

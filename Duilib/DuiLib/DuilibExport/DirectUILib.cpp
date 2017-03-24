@@ -6097,6 +6097,10 @@ DIRECTUILIB_API BOOL Delphi_MenuWnd_Receive(CMenuWnd* handle, ContextMenuParam p
 	return handle->Receive(param);
 }
 
+DIRECTUILIB_API void Delphi_MenuWnd_SetOnMenuPopup(CMenuWnd* handle ,TDelphiMethod m) {
+    handle->SetOnMenuPopup(m);
+}
+
 //================================CMenuElementUI============================
 
 DIRECTUILIB_API CMenuElementUI* Delphi_MenuElementUI_CppCreate() {
