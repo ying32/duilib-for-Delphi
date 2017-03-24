@@ -24,6 +24,7 @@ type
     procedure DoInitWindow; override;
     procedure DoNotify(var Msg: TNotifyUI); override;
     procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
+    procedure OnMenuPopup(Sender: TObject; pm: CPaintManagerUI);
   public
     constructor Create;
     destructor Destroy; override;
@@ -71,6 +72,7 @@ begin
     if LCtlName = 'btn_menu' then
     begin
       pMenu := CMenuWnd.CppCreate(Handle, PaintManagerUI);
+      pMenu.SetOnMenuPopup(OnMenuPopup);
       point := msg.ptMouse;
       ClientToScreen(Handle, point);
       pMenu.Init(nil, 'menutest.xml', '', point);
@@ -85,6 +87,26 @@ begin
   end else if LType = DUI_MSGTYPE_MENUITEMCHILDVALUECHANGED then
     Writeln(Format('子项目值改变 Type=%s, Name=%s, Text=%s, value=%d',
       [LType, LCtlName, Msg.pSender.Text, CSliderUI(Msg.pSender).Value]));
+end;
+
+procedure TFrameWindowWnd.OnMenuPopup(Sender: TObject; pm: CPaintManagerUI);
+var
+  LCtl: CSliderUI;
+  LCtl2: CControlUI;
+begin
+
+  Writeln('弹出事件');
+  LCtl := CSliderUI(pm.FindControl('alpha_controlor'));
+  Writeln('LCtl=nil: ', LCtl = nil);
+  if LCtl <> nil then
+    LCtl.Value := 100;
+  LCtl2 := pm.FindControl('test2');
+  Writeln('Find Test2 = nil: ', LCtl2 = nil);
+  if LCtl2 <> nil then
+    LCtl2.Enabled := False;
+  LCtl2 := pm.FindControl('test5');
+  if LCtl2 <> nil then
+    LCtl2.Enabled := True;
 end;
 
 var
