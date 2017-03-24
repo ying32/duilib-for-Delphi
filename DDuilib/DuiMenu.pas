@@ -47,6 +47,8 @@ type
   TContextMenuParam = ContextMenuParam;
 
 
+  TMenuPopupEvent = procedure(Sender: TObject; pm: CPaintManagerUI) of object;
+
   CMenuUI = class(CListUI)
   public
     class function CppCreate: CMenuUI; deprecated {$IFNDEF UseLowVer}'use Create'{$ENDIF};
@@ -76,6 +78,7 @@ type
     procedure OnFinalMessage(hWnd: HWND);
     function HandleMessage(uMsg: UINT; wParam: WPARAM; lParam: LPARAM): LRESULT;
     function Receive(param: ContextMenuParam): BOOL;
+    procedure SetOnMenuPopup(m: TMenuPopupEvent);
   end;
 
   CMenuElementUI = class(CListContainerElementUI)
@@ -123,6 +126,7 @@ function Delphi_MenuWnd_GetWindowClassName(Handle: CMenuWnd): LPCTSTR; cdecl;
 procedure Delphi_MenuWnd_OnFinalMessage(Handle: CMenuWnd; hWnd: HWND); cdecl;
 function Delphi_MenuWnd_HandleMessage(Handle: CMenuWnd; uMsg: UINT; wParam: WPARAM; lParam: LPARAM): LRESULT; cdecl;
 function Delphi_MenuWnd_Receive(Handle: CMenuWnd; param: ContextMenuParam): BOOL; cdecl;
+procedure Delphi_MenuWnd_SetOnMenuPopup(Handle: CMenuWnd; m: TMenuPopupEvent); cdecl;
 
 //================================CMenuElementUI============================
 
@@ -261,6 +265,11 @@ begin
   Result := Delphi_MenuWnd_Receive(Self, param);
 end;
 
+procedure CMenuWnd.SetOnMenuPopup(m: TMenuPopupEvent);
+begin
+  Delphi_MenuWnd_SetOnMenuPopup(Self, m);
+end;
+
 { CMenuElementUI }
 
 class function CMenuElementUI.CppCreate: CMenuElementUI;
@@ -354,6 +363,7 @@ function Delphi_MenuWnd_GetWindowClassName; external DuiLibdll name 'Delphi_Menu
 procedure Delphi_MenuWnd_OnFinalMessage; external DuiLibdll name 'Delphi_MenuWnd_OnFinalMessage';
 function Delphi_MenuWnd_HandleMessage; external DuiLibdll name 'Delphi_MenuWnd_HandleMessage';
 function Delphi_MenuWnd_Receive; external DuiLibdll name 'Delphi_MenuWnd_Receive';
+procedure Delphi_MenuWnd_SetOnMenuPopup; external DuiLibdll name 'Delphi_MenuWnd_SetOnMenuPopup';
 
 //================================CMenuElementUI============================
 
