@@ -439,8 +439,8 @@ begin
   begin
     FNativeCtrl := CNativeControlUI(ANativeCtrl);
     FIsLayered := FNativeCtrl.GetManager.IsLayered;
-	if FIsLayered then
-	  FNativeCtrl.OnDuiPaint := OnWebBrowserPaint;
+    if FIsLayered then
+	    FNativeCtrl.OnDuiPaint := OnWebBrowserPaint;
     FWebView := wkeCreateWebWindow(WKE_WINDOW_TYPE_CONTROL, FNativeCtrl.GetManager.GetPaintWindow, 0, 0, 1, 1);
     FWindowHandle := FWebView.WindowHandle;
     FWebView.SetOnTitleChanged(OnwkeTitleChangedCallback, Self);
@@ -456,7 +456,6 @@ begin
     FWebView.SetOnWindowDestroy(OnwkeWindowDestroyCallback, Self);
     FWebView.SetOnDocumentReady(OnwkeDocumentReadyCallback, Self);
     FWebView.SetOnConsoleMessage(OnwkeConsoleMessageCallback, Self);
-
     FNativeCtrl.SetNativeHandle(FWindowHandle);
     FNativeCtrl.Show;
   end;

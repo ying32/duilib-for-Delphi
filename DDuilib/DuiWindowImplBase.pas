@@ -1077,6 +1077,7 @@ begin
        bHandled := False;
      end;
   end;
+  inherited;
 end;
 
 procedure TDuiTrayWindowImplBase.TrayDClick;
