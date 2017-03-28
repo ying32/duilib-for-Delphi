@@ -45,6 +45,8 @@ type
     FParentHandle: HWND;
     FPaintManagerUI: CPaintManagerUI;
     FCaption: string;
+    FAcceptFiles: Boolean;
+    FDropFileFilter: string;
     function GetHandle: HWND;
     function GetInitSize: TSize;
     function GetScreenSize: TSize;
@@ -87,6 +89,7 @@ type
     procedure DoHandleCustomMessage(var Msg: TMessage; var bHandled: BOOL); virtual;
     function DoCreateControl(pstrStr: string): CControlUI; virtual;
     procedure DoResponseDefaultKeyEvent(wParam: WPARAM; var AResult: LRESULT); virtual;
+    procedure DoDropFiles(var Msg: TMessage; var bHandled: BOOL); virtual;
 
     // 准备函数，重写下CDelphi_WindowImplBase之用，尽可能的使用pascal
 //    function DoGetClassStyle: LongWord; virtual;
@@ -155,7 +158,9 @@ type
     procedure ShowMessage(const Msg: string); overload;
     procedure SetBuounds(AX, AY, AWidth, AHeigth: Integer);
   public
+    property AcceptFiles: Boolean read FAcceptFiles write FAcceptFiles;
     property Caption: string read FCaption write SetCaption;
+    property DropFileFilter: string read FDropFileFilter write FDropFileFilter;
     property Left: Integer read GetLeft write SetLeft;
     property Top: Integer read GetTop write SetTop;
     property Width: Integer read GetWidth write SetWidth;
@@ -283,6 +288,7 @@ end;
 
 constructor TDuiWindowImplBase.Create;
 begin
+  FDropFileFilter := ''; // *.*
   FThis := CDelphi_WindowImplBase.CppCreate;
   FPaintManagerUI := {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.GetPaintManagerUI;
 
@@ -306,10 +312,15 @@ begin
 end;
 
 procedure TDuiWindowImplBase.CreateDuiWindow(AParent: HWND; ATitle: string);
+var
+  LStyleEx: Cardinal;
 begin
   FParentHandle := AParent;
   FCaption := ATitle;
-  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.CreateDuiWindow(AParent, ATitle, UI_WNDSTYLE_FRAME, WS_EX_STATICEDGE);
+  LStyleEx := WS_EX_STATICEDGE;
+  if FAcceptFiles then
+     LStyleEx := LStyleEx or WS_EX_ACCEPTFILES;
+  {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.CreateDuiWindow(AParent, ATitle, UI_WNDSTYLE_FRAME, LStyleEx);
 end;
 
 procedure TDuiWindowImplBase.CreateWindow(hwndParent: HWND; ATitle: string;
@@ -317,6 +328,11 @@ procedure TDuiWindowImplBase.CreateWindow(hwndParent: HWND; ATitle: string;
 begin
   FParentHandle := hwndParent;
   FCaption := ATitle;
+  if FAcceptFiles then
+  begin
+    if dwExStyle and WS_EX_ACCEPTFILES = 0 then
+      dwExStyle := dwExStyle or WS_EX_ACCEPTFILES
+  end;
   {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.Create(hwndParent, ATitle, dwStyle, dwExStyle, x, y, cx, cy, hMenu);
 end;
 
@@ -325,6 +341,11 @@ procedure TDuiWindowImplBase.CreateWindow(hwndParent: HWND; ATitle: string;
 begin
   FParentHandle := hwndParent;
   FCaption := ATitle;
+  if FAcceptFiles then
+  begin
+    if dwExStyle and WS_EX_ACCEPTFILES = 0 then
+      dwExStyle := dwExStyle or WS_EX_ACCEPTFILES
+  end;
   {$IFDEF SupportGeneric}FThis{$ELSE}CDelphi_WindowImplBase(FThis){$ENDIF}.Create(hwndParent, ATitle, dwStyle, dwExStyle, rc, hMenu);
 end;
 
@@ -337,6 +358,12 @@ function TDuiWindowImplBase.DoCreateControl(pstrStr: string): CControlUI;
 begin
   // virtual method
   Result := nil;
+end;
+
+procedure TDuiWindowImplBase.DoDropFiles(var Msg: TMessage;
+  var bHandled: BOOL);
+begin
+
 end;
 
 procedure TDuiWindowImplBase.DoFinalMessage(hWd: HWND);
@@ -353,6 +380,11 @@ end;
 procedure TDuiWindowImplBase.DoHandleMessage(var Msg: TMessage; var bHandled: BOOL);
 begin
   // virtual method
+  case Msg.Msg of
+    WM_DROPFILES:  DoDropFiles(Msg, bHandled);
+  else
+
+  end;
 end;
 
 procedure TDuiWindowImplBase.DoInitWindow;
