@@ -8,6 +8,7 @@
 //       版权所有 (C) 2015-2015 ying32 All Rights Reserved
 //
 //       c++ wke内核: https://github.com/BlzFans/wke
+//                    现使用的分支为：https://github.com/cexer/wke
 //
 //       只封装了Delphi的方法,没有做Dui消息的封装
 //
