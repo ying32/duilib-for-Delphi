@@ -18,6 +18,8 @@ uses
 type
 
   TLoginUI = class(TDuiWindowImplBase)
+  private
+    FComb: CComboUI;
   protected
     procedure DoInitWindow; override;
     procedure DoNotify(var Msg: TNotifyUI); override;
@@ -53,12 +55,25 @@ end;
 
 procedure TLoginUI.DoInitWindow;
 begin
-
+  FComb := CComboUI(FindControl('users'));
+  // FComb := FindControl<CComboUI>('users');
 end;
 
 procedure TLoginUI.DoNotify(var Msg: TNotifyUI);
 begin
-
+  if Msg.sType.m_pstr = DUI_MSGTYPE_CLICK then
+  begin
+    if Msg.pSender.Name = 'delete' then
+    begin
+      Writeln('É¾³ý°´Å¥.Parent=', Msg.wParam, '   ', Msg.lParam);
+      Writeln('FComb.Index=', FComb.CurSel);
+      if FComb.CurSel <> -1 then
+      begin
+        FComb.RemoveAt(FComb.CurSel);
+        FComb.CurSel := -1;
+      end;
+    end;
+  end;
 end;
 
 var
