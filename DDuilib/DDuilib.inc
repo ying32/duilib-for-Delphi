@@ -3,7 +3,7 @@
   {$mode delphi}
   {$DEFINE UseLowVer}
   // fcp中使用兼容delphi语法
-  {$DEFINE SupportGeneric}
+  {'$DEFINE SupportGeneric}
   {$DEFINE SupportInline}
 {$ENDIF}
 

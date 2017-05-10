@@ -788,9 +788,21 @@ type
   public
     class function CppCreate: CDialogBuilder; //deprecated 'use Create';
     procedure CppDestroy; //deprecated 'use Free';
-    function Create(xml: string; AType: string = ''; pCallback: IDialogBuilderCallback = nil; pManager: CPaintManagerUI = nil; pParent: CControlUI = nil): CControlUI; overload;
-    function CreateFromFile(XmlName: string; pCallback: IDialogBuilderCallback = nil; pManager: CPaintManagerUI = nil; pParent: CControlUI = nil): CControlUI;
-    function Create(pCallback: IDialogBuilderCallback = nil; pManager: CPaintManagerUI = nil; pParent: CControlUI = nil): CControlUI; overload;
+
+    function Create(xml: string; AType: string = ''; pCallback: IDialogBuilderCallback = nil;
+                    pManager: CPaintManagerUI = nil; pParent: CControlUI = nil): CControlUI; overload;
+    function CreateFromFile(XmlName: string; pCallback: IDialogBuilderCallback = nil;
+                            pManager: CPaintManagerUI = nil; pParent: CControlUI = nil): CControlUI; {$IFDEF SupportGeneric} overload; {$ENDIF}
+    function Create(pCallback: IDialogBuilderCallback = nil; pManager: CPaintManagerUI = nil;
+                    pParent: CControlUI = nil): CControlUI; overload;
+  {$IFDEF SupportGeneric}
+    function Create<T>(xml: string; AType: string = ''; pCallback: IDialogBuilderCallback = nil;
+                    pManager: CPaintManagerUI = nil; pParent: CControlUI = nil): T; overload;
+    function CreateFromFile<T>(XmlName: string; pCallback: IDialogBuilderCallback = nil;
+                            pManager: CPaintManagerUI = nil; pParent: CControlUI = nil): T; overload;
+    function Create<T>(pCallback: IDialogBuilderCallback = nil; pManager: CPaintManagerUI = nil;
+                    pParent: CControlUI = nil): T; overload;
+  {$ENDIF}
     function GetMarkup: CMarkup;
     procedure GetLastErrorMessage(pstrMessage: string; cchMax: SIZE_T);
     procedure GetLastErrorLocation(pstrSource: string; cchMax: SIZE_T);
@@ -2566,6 +2578,41 @@ function CDialogBuilder.GetMarkup: CMarkup;
 begin
   Result := Delphi_DialogBuilder_GetMarkup(Self);
 end;
+
+{$IFDEF SupportGeneric}
+function CDialogBuilder.Create<T>(xml: string; AType: string = ''; pCallback: IDialogBuilderCallback = nil;
+  pManager: CPaintManagerUI = nil; pParent: CControlUI = nil): T;
+type
+  PT = ^T;
+var
+  L: CControlUI;
+begin
+  L := Delphi_DialogBuilder_Create_01(Self, STRINGorID(xml), PChar(AType), pCallback, pManager, pParent);
+  Result := PT(@L)^;
+end;
+
+function CDialogBuilder.CreateFromFile<T>(XmlName: string; pCallback: IDialogBuilderCallback = nil;
+  pManager: CPaintManagerUI = nil; pParent: CControlUI = nil): T;
+type
+  PT = ^T;
+var
+  L: CControlUI;
+begin
+  L := Delphi_DialogBuilder_Create_02(Self, pCallback, pManager, pParent);
+  Result := PT(@L)^;
+end;
+
+function CDialogBuilder.Create<T>(pCallback: IDialogBuilderCallback = nil; pManager: CPaintManagerUI = nil;
+  pParent: CControlUI = nil): T;
+type
+  PT = ^T;
+var
+  L: CControlUI;
+begin
+  L := Delphi_DialogBuilder_Create_02(Self, pCallback, pManager, pParent);
+  Result := PT(@L)^;
+end;
+{$ENDIF}
 
 procedure CDialogBuilder.GetLastErrorMessage(pstrMessage: string; cchMax: SIZE_T);
 begin
