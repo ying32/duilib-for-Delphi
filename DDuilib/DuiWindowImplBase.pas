@@ -570,53 +570,28 @@ end;
 
 {$IFDEF SupportGeneric}
 function TDuiWindowImplBase.FindControl<T>(const AName: string): T;
-type
-  PT = ^T;
-var
-  L: CControlUI;
 begin
-  L := FPaintManagerUI.FindControl(AName);
-  Result := PT(@L)^;
+  Result := TCVC.CV<T>(FPaintManagerUI.FindControl(AName));
 end;
 
 function TDuiWindowImplBase.FindControl<T>(const APoint: TPoint): T;
-type
-  PT = ^T;
-var
-  L: CControlUI;
 begin
-  L := FPaintManagerUI.FindControl(APoint);
-  Result := PT(@L)^;
+  Result := TCVC.CV<T>(FPaintManagerUI.FindControl(APoint));
 end;
 
 function TDuiWindowImplBase.FindSubControl<T>(const AParent: CControlUI; const AName: string): T;
-type
-  PT = ^T;
-var
-  L: CControlUI;
 begin
-  L := FPaintManagerUI.FindSubControlByName(AParent, AName);
-  Result := PT(@L)^;
+  Result := TCVC.CV<T>(FPaintManagerUI.FindSubControlByName(AParent, AName));
 end;
 
 function TDuiWindowImplBase.FindSubControl<T>(const AParent: CControlUI; const P: TPoint): T;
-type
-  PT = ^T;
-var
-  L: CControlUI;
 begin
-  L := FPaintManagerUI.FindSubControlByPoint(AParent, P);
-  Result := PT(@L)^;
+  Result := TCVC.CV<T>(FPaintManagerUI.FindSubControlByPoint(AParent, P));
 end;
 
 function TDuiWindowImplBase.FindSubControlByClass<T>(const AParent: CControlUI; const AClassName: string; AIndex: Integer = 0): T;
-type
-  PT = ^T;
-var
-  L: CControlUI;
 begin
-  L := FPaintManagerUI.FindSubControlByClass(AParent, AClassName, AIndex);
-  Result := PT(@L)^;
+  Result := TCVC.CV<T>(PaintManagerUI.FindSubControlByClass(AParent, AClassName, AIndex));
 end;
 {$ENDIF}
 

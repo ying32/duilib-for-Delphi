@@ -738,53 +738,28 @@ end;
 
 {$IFDEF DelphiGeneric}
 function TDDuiForm.FindControl<T>(const AName: string): T;
-type
-  PT = ^T;
-var
-  L: CControlUI;
 begin
-  L := FPaintMgr.FindControl(AName);
-  Result := PT(@L)^;
+  Result := TCVC.CV<T>(FPaintMgr.FindControl(AName));
 end;
 
 function TDDuiForm.FindControl<T>(const APoint: TPoint): T;
-type
-  PT = ^T;
-var
-  L: CControlUI;
 begin
-  L := FPaintMgr.FindControl(APoint);
-  Result := PT(@L)^;
+  Result := TCVC.CV<T>(FPaintMgr.FindControl(APoint));
 end;
 
 function TDDuiForm.FindSubControl<T>(const AParent: CControlUI; const AName: string): T;
-type
-  PT = ^T;
-var
-  L: CControlUI;
 begin
-  L := FPaintMgr.FindSubControlByName(AParent, AName);
-  Result := PT(@L)^;
+  Result := TCVC.CV<T>(FPaintMgr.FindSubControlByName(AParent, AName));
 end;
 
 function TDDuiForm.FindSubControl<T>(const AParent: CControlUI; const P: TPoint): T;
-type
-  PT = ^T;
-var
-  L: CControlUI;
 begin
-  L := FPaintMgr.FindSubControlByPoint(AParent, P);
-  Result := PT(@L)^;
+  Result := TCVC.CV<T>(FPaintMgr.FindSubControlByPoint(AParent, P));
 end;
 
 function TDDuiForm.FindSubControlByClass<T>(const AParent: CControlUI; const AClassName: string; AIndex: Integer = 0): T;
-type
-  PT = ^T;
-var
-  L: CControlUI;
 begin
-  L := FPaintMgr.FindSubControlByClass(AParent, AClassName, AIndex);
-  Result := PT(@L)^;
+  Result := TCVC.CV<T>(FPaintMgr.FindSubControlByClass(AParent, AClassName, AIndex));
 end;
 {$ENDIF}
 

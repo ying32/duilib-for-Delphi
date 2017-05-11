@@ -2185,8 +2185,12 @@ type
     property Text: string read GetText write SetText;
   end;
 
-
-
+{$IFDEF SupportGeneric}
+  TCVC = record
+  public
+    class function CV<T>(O: CControlUI): T; static;
+  end;
+{$ENDIF}
 
  // 文件过大，dll函数放入inc文件中，不然编辑器太卡了
 {$I DuilibImportA.inc}
@@ -2196,8 +2200,21 @@ type
   function StringToDuiString(const AStr: string): CDuiString; {$IFDEF SupportInline}inline;{$ENDIF}
   function DuiStringToString(ADuiStr: CDuiString): string; {$IFDEF SupportInline}inline;{$ENDIF}
 {$ENDIF UseLowVer}
+
 implementation
 
+
+{$IFDEF SupportGeneric}
+
+{ TCVC }
+
+class function TCVC.CV<T>(O: CControlUI): T;
+type
+  PT = ^T;
+begin
+  Result := PT(@O)^;
+end;
+{$ENDIF}
 
 // 传回c++类中的
 procedure CppFreeAndNil(var Obj: Pointer); cdecl;
@@ -2582,35 +2599,20 @@ end;
 {$IFDEF SupportGeneric}
 function CDialogBuilder.Create<T>(xml: string; AType: string = ''; pCallback: IDialogBuilderCallback = nil;
   pManager: CPaintManagerUI = nil; pParent: CControlUI = nil): T;
-type
-  PT = ^T;
-var
-  L: CControlUI;
 begin
-  L := Delphi_DialogBuilder_Create_01(Self, STRINGorID(xml), PChar(AType), pCallback, pManager, pParent);
-  Result := PT(@L)^;
+  Result := TCVC.CV<T>(Delphi_DialogBuilder_Create_01(Self, STRINGorID(xml), PChar(AType), pCallback, pManager, pParent));
 end;
 
 function CDialogBuilder.CreateFromFile<T>(XmlName: string; pCallback: IDialogBuilderCallback = nil;
   pManager: CPaintManagerUI = nil; pParent: CControlUI = nil): T;
-type
-  PT = ^T;
-var
-  L: CControlUI;
 begin
-  L := Delphi_DialogBuilder_Create_02(Self, pCallback, pManager, pParent);
-  Result := PT(@L)^;
+  Result := TCVC.CV<T>(Delphi_DialogBuilder_Create_02(Self, pCallback, pManager, pParent));
 end;
 
 function CDialogBuilder.Create<T>(pCallback: IDialogBuilderCallback = nil; pManager: CPaintManagerUI = nil;
   pParent: CControlUI = nil): T;
-type
-  PT = ^T;
-var
-  L: CControlUI;
 begin
-  L := Delphi_DialogBuilder_Create_02(Self, pCallback, pManager, pParent);
-  Result := PT(@L)^;
+  Result := TCVC.CV<T>(Delphi_DialogBuilder_Create_02(Self, pCallback, pManager, pParent));
 end;
 {$ENDIF}
 
