@@ -52,19 +52,19 @@ begin
     for I := 0 to 20 do
     begin
       if not FDlgBuilder.Markup.IsValid then
-        LItem := CListContainerElementUI(FDlgBuilder.Create('dllistitem.xml', '', nil, DDuiForm1.PaintMgr))
+        LItem := FDlgBuilder.Create<CListContainerElementUI>('dllistitem.xml', '', nil, DDuiForm1.PaintMgr)
       else
-        LItem := CListContainerElementUI(FDlgBuilder.Create(nil, DDuiForm1.PaintMgr));
+        LItem := FDlgBuilder.Create<CListContainerElementUI>(nil, DDuiForm1.PaintMgr);
       if LItem <> nil then
       begin
         LItem.SetFixedHeight(75);
-        Lbl := CLabelUI(LItem.FindSubControl('filesize'));
+        Lbl := DDuiForm1.FindSubControl<CLabelUI>(LItem, 'filesize');
         if Lbl <> nil then
           Lbl.Text := Format('%dM', [Random(5000)]);
-        Lbl := CLabelUI(LItem.FindSubControl('filename'));
+        Lbl := DDuiForm1.FindSubControl<CLabelUI>(LItem, 'filename');
         if Lbl <> nil then
           Lbl.Text := Format('file%d', [I]);
-        LProgress := CProgressUI(LItem.FindSubControl('progress'));
+        LProgress := DDuiForm1.FindSubControl<CProgressUI>(LItem, 'progress');
         if LProgress <> nil then
           LProgress.Value := Random(100);
         SetTaskIcon(LItem, I mod 3);
