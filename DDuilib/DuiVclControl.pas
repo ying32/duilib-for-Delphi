@@ -157,7 +157,13 @@ end;
 procedure _DelphiSetBoundsMethod(AObj: TObject; ARc: TRect); cdecl;
 begin
   if (AObj <> nil) then
-    TWinControl(AObj).SetBounds(ARc.Left, ARc.Top, ARc.Width, ARc.Height);
+  begin
+    // ≈–∂œ « TWinControl
+    if AObj is TWinControl then
+      Windows.SetWindowPos(TWinControl(AObj).Handle, HWND_TOP, ARc.Left, ARc.Top, ARc.Width, ARc.Height, SWP_NOZORDER + SWP_NOACTIVATE)
+    else
+      TWinControl(AObj).SetBounds(ARc.Left, ARc.Top, ARc.Width, ARc.Height);
+  end;
 end;
 
 procedure _SetParentWindowMethod(AObj: TObject; AhWnd: HWND); cdecl;
