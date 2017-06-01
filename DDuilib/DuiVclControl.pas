@@ -162,7 +162,7 @@ begin
     if AObj is TWinControl then
       Windows.SetWindowPos(TWinControl(AObj).Handle, HWND_TOP, ARc.Left, ARc.Top, ARc.Width, ARc.Height, SWP_NOZORDER + SWP_NOACTIVATE)
     else
-      TWinControl(AObj).SetBounds(ARc.Left, ARc.Top, ARc.Width, ARc.Height);
+      TControl(AObj).SetBounds(ARc.Left, ARc.Top, ARc.Width, ARc.Height);
   end;
 end;
 
@@ -182,7 +182,8 @@ end;
 
 procedure _SetFocusMethod(AObj: TObject); cdecl;
 begin
-  if (AObj <> nil) and (AObj is TWinControl) then
+  if (AObj <> nil) and (AObj is TWinControl) and TWinControl(AObj).Visible
+    and TWinControl(AObj).Enabled then
     TWinControl(AObj).SetFocus;
 end;
 
