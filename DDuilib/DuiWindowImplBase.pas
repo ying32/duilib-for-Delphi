@@ -654,7 +654,7 @@ end;
 
 procedure TDuiWindowImplBase.SetBuounds(AX, AY, AWidth, AHeigth: Integer);
 begin
-  MoveWindow(Handle, AX, AY, AWidth, AHeigth, False);
+  SetWindowPos(Handle, 0, AX, AY, AWidth, AHeigth, SWP_NOZORDER + SWP_NOACTIVATE);
 end;
 
 procedure TDuiWindowImplBase.SetCaption(const Value: string);
