@@ -30,6 +30,23 @@ type
   end;
 
 
+  TTipUI = class(TDuiWindowImplBase)
+  private
+    FLoginUI: TLoginUI;
+    FMsg: string;
+    FH: Integer;
+  protected
+    procedure DoInitWindow; override;
+    procedure DoNotify(var Msg: TNotifyUI); override;
+    procedure DoHandleMessage(var Msg: TMessage; var bHandled: BOOL); override;
+  public
+    constructor Create(ALoginUI: TLoginUI; AMsg: string);
+    destructor Destroy; override;
+  end;
+
+
+var
+   LoginUI: TLoginUI;
 
 { TLoginUI }
 
@@ -72,12 +89,75 @@ begin
         FComb.RemoveAt(FComb.CurSel);
         FComb.CurSel := -1;
       end;
+    end else
+    if Msg.pSender.Name = 'login' then
+    begin
+      with TTipUI.Create(LoginUI, '这是一个测试消息') do
+      begin
+        ShowModal;
+        Free;
+      end;
     end;
   end;
 end;
 
-var
-   LoginUI: TLoginUI;
+
+
+{ TTipUI }
+
+constructor TTipUI.Create(ALoginUI: TLoginUI; AMsg: string);
+begin
+  FLoginUI := ALoginUI;
+  FMsg := AMsg;
+  inherited Create('tip.xml', '', '');
+  CreateWindow(FLoginUI.Handle, '', UI_WNDSTYLE_EX_DIALOG, WS_EX_WINDOWEDGE);
+  SetWindowPos(Handle, 0,  ALoginUI.Left + (ALoginUI.Width - Self.Width) div 2,  ALoginUI.Top + 5, 0, 0, SWP_NOSIZE);
+end;
+
+destructor TTipUI.Destroy;
+begin
+
+  inherited;
+end;
+
+procedure TTipUI.DoHandleMessage(var Msg: TMessage; var bHandled: BOOL);
+begin
+  inherited;
+  if Msg.Msg = WM_TIMER then
+  begin
+    if TWMTimer(Msg).TimerID = 1000 then
+    begin
+      KillTimer(Handle, 1000);
+      SetTimer(Handle, 1001, 20, nil);
+      Writeln('时间到');
+      //Close;
+    end else
+    if TWMTimer(Msg).TimerID = 1001 then
+    begin
+      Height := Height - 4;
+      if Height <= 0 then
+      begin
+        KillTimer(Handle, 1001);
+        Close;
+      end;
+    end;
+  end;
+end;
+
+procedure TTipUI.DoInitWindow;
+begin
+  inherited;
+  CLabelUI(FindControl('lblmsg')).Text := FMsg;
+  FH := InitSize.Height;
+  Writeln('InitSize.Height=', FH);
+  SetTimer(Handle, 1000, 3000, nil);
+end;
+
+procedure TTipUI.DoNotify(var Msg: TNotifyUI);
+begin
+  inherited;
+
+end;
 
 begin
   try
