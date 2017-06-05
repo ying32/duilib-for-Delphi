@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window size="237,60">
+    <HorizontalLayout bordersize="1" width="237" height="45" bkcolor="#FFE9E9FF">
+        <Label name="lblmsg" float="true" pos="9,15,0,0" width="215" height="32" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" font="0" align="center" />
+    </HorizontalLayout>
+</Window>
