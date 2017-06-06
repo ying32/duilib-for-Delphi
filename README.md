@@ -29,11 +29,15 @@
 
 
 #### **初次使用**  
-使用DDuilib需要具备一定的Delphi基础，其次，最好了解下[duilib](https://github.com/duilib/duilib)以及如何建立UI的xml布局文件，这样学习起来会少走很多弯路。
+使用DDuilib需要具备一定的Delphi基础，其次，最好了解下[duilib](https://github.com/duilib/duilib)以及如何建立UI的xml布局文件，这样学习起来会少走很多弯路。**此外DDuilib分为两个版本，一个是以库形式提供不需要安装，另一个则是以VCL组件形式提供。**
 
 > 简单示例：完整示例可查看[Duilib for Delphi入门](http://blog.csdn.net/zyjying520/article/details/50184759)   
 
-> 另外做了个VCL版本的，在DDulib目录下DDuilibVcl组件工程，注册后只需要在首个窗口添加一个TDDuiApp组件，每个窗口分别添加TDDuiForm组件，并指定相应的布局资源及文件资源。使用此组件可以简化创建窗口部分并可以和VCL相结合。
+> 另外做了个VCL版本的，在DDulib目录下DDuilibVcl组件工程，每个窗口分别添加TDDuiForm组件，并指定相应的布局资源及文件资源。使用此组件可以简化创建窗口部分并可以和VCL相结合。  
+
+> 安装DDuilib组件：  
+> 安装前，需要将DDuilib依赖的Duilib_ud.dll或者Duilib.dll放入与bpl相同目录，或者环境变量路径中。  
+> 下般默认是放公共的Bpl目录中，例如：C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\  
   
 ```delphi
 
