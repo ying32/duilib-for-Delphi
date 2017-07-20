@@ -14,8 +14,8 @@ uses
   Duilib,
   DuiConst,
   DuiWindowImplBase,
-  Wke,
-  DuiWkeBrowser;
+  DuiWkeBrowser,
+  Wke in '..\..\DDuilib\Wke.pas';
 
 type
   TWkeBrowserWindow = class(TDuiWindowImplBase)
@@ -27,7 +27,7 @@ type
     FWkeWebbrowser: TWkeWebbrowser;
     procedure OnTitleChanged(Sender: TObject; const ATitle: string);
     procedure OnURLChanged(Sender: TObject; const AURL: string);
-    procedure OnDocumentReady(Sender: TObject);
+    procedure OnDocumentReady(Sender: TObject; Ainfo: PwkeDocumentReadyInfo);
   protected
     procedure DoInitWindow; override;
     procedure DoNotify(var Msg: TNotifyUI); override;
@@ -42,9 +42,9 @@ type
 
 
 {$IFDEF UseVcFastCall}
-function JsMessageBox(es: jsExecState): JsValue;
+function JsMessageBox(es: wkeJSState): wkeJSValue;
 {$ELSE}
-function JsMessageBox(p1, p2, es: jsExecState): JsValue;
+function JsMessageBox(p1, p2, es: wkeJSState): wkeJSValue;
 {$ENDIF}
 begin
   {$IFDEF UseVcFastCall}
@@ -58,9 +58,9 @@ begin
 end;
 
 {$IFDEF UseVcFastCall}
-function JsFunc2(es: jsExecState): jsValue;
+function JsFunc2(es: wkeJSState): wkeJSValue;
 {$ELSE}
-function JsFunc2(p1, p2, es: jsExecState): jsValue;
+function JsFunc2(p1, p2, es: wkeJSState): wkeJSValue;
 {$ENDIF}
 begin
   {$IFDEF UseVcFastCall}
@@ -70,9 +70,9 @@ begin
 end;
 
 {$IFDEF UseVcFastCall}
-function externalSuperCall(es: jsExecState): jsValue;
+function externalSuperCall(es: wkeJSState): wkeJSValue;
 {$ELSE}
-function externalSuperCall(p1, p2, es: jsExecState): jsValue;
+function externalSuperCall(p1, p2, es: wkeJSState): wkeJSValue;
 {$ENDIF}
 begin
   {$IFDEF UseVcFastCall}
@@ -85,12 +85,12 @@ end;
 
 
 {$IFDEF UseVcFastCall}
-function externalObj(es: jsExecState): jsValue;
+function externalObj(es: wkeJSState): wkeJSValue;
 {$ELSE}
-function externalObj(p1, p2, es: jsExecState): jsValue;
+function externalObj(p1, p2, es: wkeJSState): wkeJSValue;
 {$ENDIF}
 var
-  v: jsValue;
+  v: wkeJSValue;
 begin
   {$IFDEF UseVcFastCall}
      ProcessVcFastCall;
@@ -105,13 +105,13 @@ begin
 
 end;
 
-procedure jsfinalize(data: PjsData); cdecl;
+procedure jsfinalize(data: PwkeJSData); cdecl;
 begin
   Dispose(data);
   Writeln('js finalize.');
 end;
 
-function jsGetProperty(es: jsExecState; AObject: jsValue; propertyName: PAnsiChar): jsValue; cdecl;
+function jsGetProperty(es: wkeJSState; AObject: wkeJSValue; propertyName: PAnsiChar): wkeJSValue; cdecl;
 begin
   Writeln('property name=', string(propertyName));
   if propertyName = 'SuperCall' then
@@ -121,23 +121,25 @@ begin
   Result := es.Undefined;
 end;
 
-function jsCallAsFunction(es: jsExecState; AObject: jsValue; args: PjsValue; argCount: Integer): jsValue; cdecl;
+function jsCallAsFunction(es: wkeJSState; AObject: wkeJSValue; args: PwkeJSValue; argCount: Integer): wkeJSValue; cdecl;
 begin
   Writeln('call func......');
 end;
 
 constructor TWkeBrowserWindow.Create;
 var
- es: jsExecState;
- obj: jsValue;
- testobj: PjsData;
+ es: wkeJSState;
+ obj: wkeJSValue;
+ testobj: PwkeJSData;
 begin
   inherited Create('WkebrowserWindow.xml', 'skin');
   FWkeWebbrowser := TWkeWebbrowser.Create;
   FWkeWebbrowser.OnTitleChanged := OnTitleChanged;
   FWkeWebbrowser.OnURLChanged := OnURLChanged;
   FWkeWebbrowser.OnDocumentReady := OnDocumentReady;
+
   CreateWindow(0, 'wke‰Ø¿¿∆˜', UI_WNDSTYLE_FRAME, WS_EX_WINDOWEDGE);
+
 
    New(testobj);
    testobj.finalize := jsfinalize;
@@ -167,7 +169,7 @@ procedure TWkeBrowserWindow.DoHandleMessage(var Msg: TMessage;
   var bHandled: BOOL);
 begin
   inherited;
-
+  TWkeWebView.RepaintAllNeeded;
 end;
 
 procedure TWkeBrowserWindow.DoInitWindow;
@@ -201,7 +203,7 @@ begin
   end;
 end;
 
-procedure TWkeBrowserWindow.OnDocumentReady(Sender: TObject);
+procedure TWkeBrowserWindow.OnDocumentReady(Sender: TObject; Ainfo: PwkeDocumentReadyInfo);
 begin
   Writeln('º”‘ÿÕÍ≥…');
 end;

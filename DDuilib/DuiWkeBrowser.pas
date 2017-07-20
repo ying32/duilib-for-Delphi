@@ -36,8 +36,8 @@ type
   TConfirmBoxEvent = procedure(Sender: TObject; const AMsg: string; var AResult: Boolean) of object;
   TPromptBoxEvent = procedure(Sender: TObject; const AMsg, ADefaultResult, AResult: string; var AReturn: Boolean) of object;
   TNavigationEvent = procedure(Sender: TObject; ANavigationType: wkeNavigationType; const AURL: string; var AResult: Boolean) of object;
-  TCreateViewEvent = procedure(Sender: TObject; ANavigationType: wkeNavigationType; const AURL: string; AWindowFeatures: PwkeWindowFeatures; var AResult: TwkeWebView) of object;
-  TDocumentReadyEvent = procedure(Sender: TObject) of object;
+  TCreateViewEvent = procedure(Sender: TObject; Info: PwkeNewViewInfo; var AResult: TwkeWebView) of object;
+  TDocumentReadyEvent = procedure(Sender: TObject; Info: PwkeDocumentReadyInfo) of object;
   TLoadingFinishEvent = procedure(Sender: TObject; const AURL: string; AResult: wkeLoadingResult; const AFailedReason: string) of object;
   TWindowClosingEvent = procedure(Sender: TObject; var AResult: Boolean) of object;
   TConsoleMessageEvent= procedure(Sender: TObject; var AMessage: wkeConsoleMessage) of object;
@@ -75,8 +75,8 @@ type
     function DoConfirmBox(const AMsg: string): Boolean; virtual;
     function DoPromptBox(const AMsg, ADefaultResult, AResult: string): Boolean; virtual;
     function DoNavigation(ANavigationType: wkeNavigationType; const AURL: string): Boolean; virtual;
-    function DoCreateView(ANavigationType: wkeNavigationType; const AURL: string; AWindowFeatures: PwkeWindowFeatures): wkeWebView; virtual;
-    procedure DoDocumentReady; virtual;
+    function DoCreateView(Info: PwkeNewViewInfo): wkeWebView; virtual;
+    procedure DoDocumentReady(info: PwkeDocumentReadyInfo); virtual;
     procedure DoLoadingFinish(const AURL: string; AResult: wkeLoadingResult; const AFailedReason: string); virtual;
     function DoWindowClosing: Boolean; virtual;
     procedure DoWindowDestroy; virtual;
@@ -104,8 +104,8 @@ type
     procedure EditorDelete;
     procedure SetFocus;
     procedure KillFocus;
-    function RunJS(const AScript: string): jsValue;
-    function GlobalExec: jsExecState;
+    function RunJS(const AScript: string): wkeJSValue;
+    function GlobalExec: wkeJSState;
     procedure Sleep;
     procedure Wake;
     function IsAwake: Boolean;
@@ -172,15 +172,14 @@ begin
   Result := TWkeWebbrowser(param).DoNavigation(navigationType, webView.GetString(url));
 end;
 
-function OnwkeCreateViewCallback(webView: wkeWebView; param: Pointer; navigationType: wkeNavigationType;
-   url: wkeString; windowFeatures: PwkeWindowFeatures): wkeWebView; cdecl;
+function OnwkeCreateViewCallback(webView: wkeWebView; param: Pointer; info: PwkeNewViewInfo): wkeWebView; cdecl;
 begin
-  Result := TWkeWebbrowser(param).DoCreateView(navigationType, webView.GetString(url), windowFeatures);
+  Result := TWkeWebbrowser(param).DoCreateView(info);
 end;
 
-procedure OnwkeDocumentReadyCallback(webView: wkeWebView; param: Pointer); cdecl;
+procedure OnwkeDocumentReadyCallback(webView: wkeWebView; param: Pointer; info: PwkeDocumentReadyInfo); cdecl;
 begin
-  TWkeWebbrowser(param).DoDocumentReady;
+  TWkeWebbrowser(param).DoDocumentReady(info);
 end;
 
 procedure OnwkeLoadingFinishCallback(webView: wkeWebView; param: Pointer; url: wkeString;
@@ -239,7 +238,7 @@ begin
     FWebView.Reload;
 end;
 
-function TWkeWebbrowser.RunJS(const AScript: string): jsValue;
+function TWkeWebbrowser.RunJS(const AScript: string): wkeJSValue;
 begin
   Result := 0;
   if FWebView <> nil then
@@ -301,18 +300,17 @@ begin
     FOnConsoleMessage(Self, AMessage);
 end;
 
-function TWkeWebbrowser.DoCreateView(ANavigationType: wkeNavigationType;
-  const AURL: string; AWindowFeatures: PwkeWindowFeatures): wkeWebView;
+function TWkeWebbrowser.DoCreateView(Info: PwkeNewViewInfo): wkeWebView;
 begin
   Result := FWebView;
   if Assigned(FOnCreateView) then
-    FOnCreateView(Self, ANavigationType, AURL, AWindowFeatures, Result);
+    FOnCreateView(Self, Info, Result);
 end;
 
-procedure TWkeWebbrowser.DoDocumentReady;
+procedure TWkeWebbrowser.DoDocumentReady(info: PwkeDocumentReadyInfo);
 begin
   if Assigned(FOnDocumentReady) then
-    FOnDocumentReady(Self);
+    FOnDocumentReady(Self, info);
 end;
 
 procedure TWkeWebbrowser.DoLoadingFinish(const AURL: string;
@@ -413,7 +411,7 @@ begin
     FWebView.EditorSelectAll;
 end;
 
-function TWkeWebbrowser.GlobalExec: jsExecState;
+function TWkeWebbrowser.GlobalExec: wkeJSState;
 begin
   Result := nil;
   if FWebView <> nil then

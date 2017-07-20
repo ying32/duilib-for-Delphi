@@ -29,28 +29,28 @@ const
   // wkeMouseFlags
   WKE_LBUTTON = $01;
   WKE_RBUTTON = $02;
-  WKE_SHIFT = $04;
+  WKE_SHIFT   = $04;
   WKE_CONTROL = $08;
   WKE_MBUTTON = $10;
 
 
   // wkeKeyFlags
   WKE_EXTENDED = $0100;
-  WKE_REPEAT = $4000;
+  WKE_REPEAT   = $4000;
 
 
   // wkeMouseMsg
-  WKE_MSG_MOUSEMOVE = $0200;
-  WKE_MSG_LBUTTONDOWN = $0201;
-  WKE_MSG_LBUTTONUP = $0202;
+  WKE_MSG_MOUSEMOVE     = $0200;
+  WKE_MSG_LBUTTONDOWN   = $0201;
+  WKE_MSG_LBUTTONUP     = $0202;
   WKE_MSG_LBUTTONDBLCLK = $0203;
-  WKE_MSG_RBUTTONDOWN = $0204;
-  WKE_MSG_RBUTTONUP = $0205;
+  WKE_MSG_RBUTTONDOWN   = $0204;
+  WKE_MSG_RBUTTONUP     = $0205;
   WKE_MSG_RBUTTONDBLCLK = $0206;
-  WKE_MSG_MBUTTONDOWN = $0207;
-  WKE_MSG_MBUTTONUP = $0208;
+  WKE_MSG_MBUTTONDOWN   = $0207;
+  WKE_MSG_MBUTTONUP     = $0208;
   WKE_MSG_MBUTTONDBLCLK = $0209;
-  WKE_MSG_MOUSEWHEEL = $020A;
+  WKE_MSG_MOUSEWHEEL    = $020A;
 
 
 type
@@ -60,14 +60,14 @@ type
   Pwchar_t = PWideChar;
 
 
-  jsValue = int64;
-  PjsValue = PInt64;
+  wkeJSValue = Int64;
+  PwkeJSValue = ^wkeJSValue;
   wkeString = Pointer;
 
   wkeWebView = class;
   JScript = class;
 
-  jsExecState = JScript;
+  wkeJSState = JScript;
 
   wkeProxyType = (
     WKE_PROXY_NONE,
@@ -108,7 +108,7 @@ type
   );
   TwkeWindowType = wkeWindowType;
 
-  jsType = (
+  wkeJSType = (
     JSTYPE_NUMBER,
     JSTYPE_STRING,
     JSTYPE_BOOLEAN,
@@ -116,7 +116,7 @@ type
     JSTYPE_FUNCTION,
     JSTYPE_UNDEFINED
   );
-  TjsType = jsType;
+  TwkeJSType = wkeJSType;
 
   wkeRect = packed record
     x: Integer;
@@ -198,6 +198,35 @@ type
     lineNumber: LongInt;
   end;
 
+  PwkeNewViewInfo = ^wkeNewViewInfo;
+  wkeNewViewInfo = record
+    navigationType: wkeNavigationType;
+    url: wkeString;
+    target: wkeString;
+
+    x: Integer;
+    y: Integer;
+    width: Integer;
+    height: Integer;
+    menuBarVisible: Boolean;
+    statusBarVisible: bool ;
+    toolBarVisible: Boolean;
+    locationBarVisible: Boolean;
+    scrollbarsVisible: Boolean;
+    resizable: Boolean;
+    fullscreen: Boolean;
+  end;
+  TwkeNewViewInfo = wkeNewViewInfo;
+
+  PwkeDocumentReadyInfo = ^wkeDocumentReadyInfo;
+  wkeDocumentReadyInfo = record
+    url: wkeString;
+    frameJSState: wkeJSState;
+    mainFrameJSState: wkeJSState;
+  end;
+  TwkeDocumentReadyInfo = wkeDocumentReadyInfo;
+
+
 {$IF not Declared(SIZE_T)}
   SIZE_T = Cardinal;
 {$IFEND}
@@ -233,8 +262,8 @@ type
   wkeConfirmBoxCallback = function(webView: wkeWebView; param: Pointer; msg: wkeString): Boolean; cdecl;
   wkePromptBoxCallback = function(webView: wkeWebView; param: Pointer; msg: wkeString; defaultResult: wkeString; result: wkeString): Boolean; cdecl;
   wkeNavigationCallback = function(webView: wkeWebView; param: Pointer; navigationType: wkeNavigationType; url: wkeString): Boolean; cdecl;
-  wkeCreateViewCallback = function(webView: wkeWebView; param: Pointer; navigationType: wkeNavigationType; url: wkeString; windowFeatures: PwkeWindowFeatures): wkeWebView; cdecl;
-  wkeDocumentReadyCallback = procedure(webView: wkeWebView; param: Pointer); cdecl;
+  wkeCreateViewCallback = function(webView: wkeWebView; param: Pointer; info: PwkeNewViewInfo): wkeWebView; cdecl;
+  wkeDocumentReadyCallback = procedure(webView: wkeWebView; param: Pointer; info: PwkeDocumentReadyInfo); cdecl;
   wkeLoadingFinishCallback = procedure(webView: wkeWebView; param: Pointer; url: wkeString; result: wkeLoadingResult; failedReason: wkeString); cdecl;
   wkeWindowClosingCallback = function(webWindow: wkeWebView; param: Pointer): Boolean; cdecl;
   wkeWindowDestroyCallback = procedure(webWindow: wkeWebView; param: Pointer); cdecl;
@@ -243,23 +272,25 @@ type
   wkeConsoleMessageCallback = procedure(webView: wkeWebView; param: Pointer; var AMessage: wkeConsoleMessage); cdecl;
 
 
-//typedef jsValue (*jsGetPropertyCallback)(jsExecState es, jsValue object, const char* propertyName);
-  jsGetPropertyCallback = function(es: jsExecState; AObject: jsValue; propertyName: PAnsiChar): jsValue; cdecl;
-//typedef bool (*jsSetPropertyCallback)(jsExecState es, jsValue object, const char* propertyName, jsValue value);
-  jsSetPropertyCallback = function(es: jsExecState; AObject: jsValue; propertyName: PAnsiChar; value: jsValue): Boolean; cdecl;
-//typedef jsValue (*jsCallAsFunctionCallback)(jsExecState es, jsValue object, jsValue* args, int argCount);
-  jsCallAsFunctionCallback = function(es: jsExecState; AObject: jsValue; args: PjsValue; argCount: Integer): jsValue; cdecl;
-//typedef void (*jsFinalizeCallback)(struct tagjsData* data);
-  PjsData = ^TjsData;
-  jsFinalizeCallback = procedure(data: PjsData); cdecl;
-  jsData = packed record
+  PwkeJSData = ^TwkeJSData;
+
+//typedef jsValue (*wkeJSGetPropertyCallback)(jsExecState es, jsValue object, const char* propertyName);
+  wkeJSGetPropertyCallback = function(es: wkeJSState; AObject: wkeJSValue; propertyName: PAnsiChar): wkeJSValue; cdecl;
+//typedef bool (*wkeJSSetPropertyCallback)(jsExecState es, jsValue object, const char* propertyName, jsValue value);
+  wkeJSSetPropertyCallback = function(es: wkeJSState; AObject: wkeJSValue; propertyName: PAnsiChar; value: wkeJSValue): Boolean; cdecl;
+//typedef jsValue (*wkeJSCallAsFunctionCallback)(jsExecState es, jsValue object, jsValue* args, int argCount);
+  wkeJSCallAsFunctionCallback = function(es: wkeJSState; AObject: wkeJSValue; args: PwkeJSValue; argCount: Integer): wkeJSValue; cdecl;
+//typedef void (*wkeJSFinalizeCallback)(struct tagjsData* data);
+  wkeJSFinalizeCallback = procedure(data: PwkeJSData); cdecl;
+
+  wkeJSData = packed record
     typeName: array[0..99] of AnsiChar; //char
-    propertyGet: jsGetPropertyCallback;
-    propertySet: jsSetPropertyCallback;
-    finalize: jsFinalizeCallback;
-    callAsFunction: jsCallAsFunctionCallback;
+    propertyGet: wkeJSGetPropertyCallback;
+    propertySet: wkeJSSetPropertyCallback;
+    finalize: wkeJSFinalizeCallback;
+    callAsFunction: wkeJSCallAsFunctionCallback;
   end;
-  TjsData = jsData;
+  TwkeJSData = wkeJSData;
 
   wkeWebView = class
   private
@@ -302,6 +333,9 @@ type
     class procedure SetFileSystem(pfn_open: FILE_OPEN; pfn_close: FILE_CLOSE; pfn_size: FILE_SIZE; pfn_read: FILE_READ; pfn_seek: FILE_SEEK);
     class function CreateWebView: wkeWebView;
     class function CreateWebWindow(AType: wkeWindowType; parent: HWND; x: Integer; y: Integer; width: Integer; height: Integer): wkeWebView;
+    class function RepaintAllNeeded: Boolean;
+    class function RunMessageLoop(var quit: Boolean): Boolean;
+
     procedure DestroyWebWindow;
     procedure DestroyWebView;
     procedure LoadURL(const AURL: string);
@@ -334,10 +368,21 @@ type
     function FireKeyPressEvent(charCode: LongInt; flags: LongInt; systemKey: Boolean): Boolean;
     procedure SetFocus;
     procedure KillFocus;
-    function RunJS(const AScript: string): jsValue;
-    function GlobalExec: jsExecState;
+    function RunJS(const AScript: string): wkeJSValue;
+    function GlobalExec: wkeJSState;
     procedure Sleep;
     procedure Wake;
+
+    function GetWebView(name: AnsiString): wkeWebView;
+    function IsLoading(webView: wkeWebView): Boolean;
+
+    procedure SetHostWindow(hostWindow: HWND);
+    function GetHostWindow: HWND;
+    procedure SetRepaintInterval(ms: Integer);
+    function GetRepaintInterval: Integer;
+    function RepaintIfNeededAfterInterval: Boolean;
+
+
     function IsAwake: Boolean;
     class function GetString(AString: wkeString): string;
     class procedure SetString(AString: wkeString; const AStr: string);
@@ -393,10 +438,10 @@ type
   //typedef jsValue (JS_CALL *jsNativeFunction) (jsExecState es);
   // 这里有两种写法，按照vc __fastcall的约定与delphi register约定的不一样
  {$IFDEF UseVcFastCall}
-    jsNativeFunction = function(es: jsExecState): jsValue;
+    jsNativeFunction = function(es: wkeJSState): wkeJSValue;
  {$ELSE}
      // 前两个参数用来占位用
-    jsNativeFunction = function(p1, p2, es: jsExecState): jsValue;
+    jsNativeFunction = function(p1, p2, es: wkeJSState): wkeJSValue;
  {$ENDIF}
 
   JScript = class
@@ -405,52 +450,54 @@ type
     class procedure BindGetter(const AName: string; fn: jsNativeFunction); {$IFDEF SupportInline}inline;{$ENDIF}
     class procedure BindSetter(const AName: string; fn: jsNativeFunction); {$IFDEF SupportInline}inline;{$ENDIF}
     function ArgCount: Integer; {$IFDEF SupportInline}inline;{$ENDIF}
-    function ArgType(argIdx: Integer): jsType; {$IFDEF SupportInline}inline;{$ENDIF}
-    function Arg(argIdx: Integer): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    function TypeOf(v: jsValue): jsType; {$IFDEF SupportInline}inline;{$ENDIF}
-    function IsNumber(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
-    function IsString(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
-    function IsBoolean(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
-    function IsObject(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
-    function IsFunction(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
-    function IsUndefined(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
-    function IsNull(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
-    function IsArray(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
-    function IsTrue(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
-    function IsFalse(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
-    function ToInt(v: jsValue): Integer; {$IFDEF SupportInline}inline;{$ENDIF}
-    function ToFloat(v: jsValue): Single; {$IFDEF SupportInline}inline;{$ENDIF}
-    function ToDouble(v: jsValue): Double; {$IFDEF SupportInline}inline;{$ENDIF}
-    function ToBoolean(v: jsValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
-    function ToTempString(v: jsValue): string; {$IFDEF SupportInline}inline;{$ENDIF}
-    function Int(n: Integer): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    function Float(f: Single): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    function Double(d: Double): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    function Boolean(b: Boolean): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    function Undefined: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    function Null: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    function True_: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    function False_: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    function String_(const AStr: string): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    function EmptyObject: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    function EmptyArray: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    function Object_(obj: PjsData): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    function Function_(obj: PjsData): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    function GetData(AObject: jsValue): PjsData; {$IFDEF SupportInline}inline;{$ENDIF}
-    function Get(AObject: jsValue; const prop: string): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    procedure Set_(AObject: jsValue; const prop: string; v: jsValue); {$IFDEF SupportInline}inline;{$ENDIF}
-    function GetAt(AObject: jsValue; index: Integer): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    procedure SetAt(AObject: jsValue; index: Integer; v: jsValue); {$IFDEF SupportInline}inline;{$ENDIF}
-    function GetLength(AObject: jsValue): Integer; {$IFDEF SupportInline}inline;{$ENDIF}
-    procedure SetLength(AObject: jsValue; length: Integer); {$IFDEF SupportInline}inline;{$ENDIF}
-    function GlobalObject: jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function ArgType(argIdx: Integer): wkeJSType; {$IFDEF SupportInline}inline;{$ENDIF}
+    function Arg(argIdx: Integer): wkeJSValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function TypeOf(v: wkeJSValue): wkeJSType; {$IFDEF SupportInline}inline;{$ENDIF}
+    function IsNumber(v: wkeJSValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
+    function IsString(v: wkeJSValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
+    function IsBoolean(v: wkeJSValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
+    function IsObject(v: wkeJSValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
+    function IsFunction(v: wkeJSValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
+    function IsUndefined(v: wkeJSValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
+    function IsNull(v: wkeJSValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
+    function IsArray(v: wkeJSValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
+    function IsTrue(v: wkeJSValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
+    function IsFalse(v: wkeJSValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
+    function ToInt(v: wkeJSValue): Integer; {$IFDEF SupportInline}inline;{$ENDIF}
+    function ToFloat(v: wkeJSValue): Single; {$IFDEF SupportInline}inline;{$ENDIF}
+    function ToDouble(v: wkeJSValue): Double; {$IFDEF SupportInline}inline;{$ENDIF}
+    function ToBoolean(v: wkeJSValue): Boolean; {$IFDEF SupportInline}inline;{$ENDIF}
+    function ToTempString(v: wkeJSValue): string; {$IFDEF SupportInline}inline;{$ENDIF}
+    function Int(n: Integer): wkeJSValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function Float(f: Single): wkeJSValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function Double(d: Double): wkeJSValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function Boolean(b: Boolean): wkeJSValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function Undefined: wkeJSValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function Null: wkeJSValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function True_: wkeJSValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function False_: wkeJSValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function String_(const AStr: string): wkeJSValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function EmptyObject: wkeJSValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function EmptyArray: wkeJSValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function Object_(obj: PwkeJSData): wkeJSValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function Function_(obj: PwkeJSData): wkeJSValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function GetData(AObject: wkeJSValue): PwkeJSData; {$IFDEF SupportInline}inline;{$ENDIF}
+    function Get(AObject: wkeJSValue; const prop: string): wkeJSValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    procedure Set_(AObject: wkeJSValue; const prop: string; v: wkeJSValue); {$IFDEF SupportInline}inline;{$ENDIF}
+    function GetAt(AObject: wkeJSValue; index: Integer): wkeJSValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    procedure SetAt(AObject: wkeJSValue; index: Integer; v: wkeJSValue); {$IFDEF SupportInline}inline;{$ENDIF}
+    function GetLength(AObject: wkeJSValue): Integer; {$IFDEF SupportInline}inline;{$ENDIF}
+    procedure SetLength(AObject: wkeJSValue; length: Integer); {$IFDEF SupportInline}inline;{$ENDIF}
+    function GlobalObject: wkeJSValue; {$IFDEF SupportInline}inline;{$ENDIF}
     function GetWebView: wkeWebView; {$IFDEF SupportInline}inline;{$ENDIF}
-    function Eval(const AStr: string): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    function Call(func: jsValue; thisObject: jsValue; args: PjsValue; argCount: Integer): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    function CallGlobal(func: jsValue; args: PjsValue; argCount: Integer): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    function GetGlobal(const prop: string): jsValue; {$IFDEF SupportInline}inline;{$ENDIF}
-    procedure SetGlobal(const prop: string; v: jsValue); {$IFDEF SupportInline}inline;{$ENDIF}
-    procedure GC; {$IFDEF SupportInline}inline;{$ENDIF}
+    function Eval(const AStr: string): wkeJSValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function Call(func: wkeJSValue; thisObject: wkeJSValue; args: PwkeJSValue; argCount: Integer): wkeJSValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function CallGlobal(func: wkeJSValue; args: PwkeJSValue; argCount: Integer): wkeJSValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    function GetGlobal(const prop: string): wkeJSValue; {$IFDEF SupportInline}inline;{$ENDIF}
+    procedure SetGlobal(const prop: string; v: wkeJSValue); {$IFDEF SupportInline}inline;{$ENDIF}
+    procedure AddRef(v: wkeJSValue); {$IFDEF SupportInline}inline;{$ENDIF}
+    procedure ReleaseRef(v: wkeJSValue); {$IFDEF SupportInline}inline;{$ENDIF}
+    procedure CollectGarbge; {$IFDEF SupportInline}inline;{$ENDIF}
   end;
 
 
@@ -465,7 +512,7 @@ function wkeGetVersion: Integer; cdecl;
 function wkeGetVersionString: putf8; cdecl;
 procedure wkeSetFileSystem(pfn_open: FILE_OPEN; pfn_close: FILE_CLOSE; pfn_size: FILE_SIZE; pfn_read: FILE_READ; pfn_seek: FILE_SEEK); cdecl;
 function wkeCreateWebView: wkeWebView; cdecl;
-//function wkeGetWebView(name: Pchar): wkeWebView; cdecl;
+function wkeGetWebView(name: PAnsiChar): wkeWebView; cdecl;
 procedure wkeDestroyWebView(webView: wkeWebView); cdecl;
 function wkeGetName(webView: wkeWebView): PAnsiChar; cdecl;
 procedure wkeSetName(webView: wkeWebView; name: PAnsiChar); cdecl;
@@ -505,6 +552,13 @@ procedure wkePaint(webView: wkeWebView; bits: Pointer; bufWid: Integer; bufHei: 
 procedure wkePaint2(webView: wkeWebView; bits: Pointer; pitch: Integer); cdecl;
 procedure wkeRepaintIfNeeded(webView: wkeWebView); cdecl;
 function wkeGetViewDC(webView: wkeWebView): HDC; cdecl;
+
+procedure wkeSetRepaintInterval(webView: wkeWebView; ms: Integer); cdecl;
+function wkeGetRepaintInterval(webView: wkeWebView): Integer; cdecl;
+function wkeRepaintIfNeededAfterInterval(webView: wkeWebView): Boolean; cdecl;
+function wkeRepaintAllNeeded: Boolean; cdecl;
+function wkeRunMessageLoop(var quit: Boolean): Boolean; cdecl;
+
 function wkeCanGoBack(webView: wkeWebView): Boolean; cdecl;
 function wkeGoBack(webView: wkeWebView): Boolean; cdecl;
 function wkeCanGoForward(webView: wkeWebView): Boolean; cdecl;
@@ -529,9 +583,9 @@ function wkeFireKeyPressEvent(webView: wkeWebView; charCode: LongInt; flags: Lon
 procedure wkeSetFocus(webView: wkeWebView); cdecl;
 procedure wkeKillFocus(webView: wkeWebView); cdecl;
 function wkeGetCaretRect(webView: wkeWebView): wkeRect; cdecl;
-function wkeRunJS(webView: wkeWebView; script: Putf8): jsValue; cdecl;
-function wkeRunJSW(webView: wkeWebView; script: Pwchar_t): jsValue; cdecl;
-function wkeGlobalExec(webView: wkeWebView): jsExecState; cdecl;
+function wkeRunJS(webView: wkeWebView; script: Putf8): wkeJSValue; cdecl;
+function wkeRunJSW(webView: wkeWebView; script: Pwchar_t): wkeJSValue; cdecl;
+function wkeGlobalExec(webView: wkeWebView): wkeJSState; cdecl;
 procedure wkeSleep(webView: wkeWebView); cdecl;
 procedure wkeWake(webView: wkeWebView); cdecl;
 function wkeIsAwake(webView: wkeWebView): Boolean; cdecl;
@@ -552,7 +606,7 @@ procedure wkeOnNavigation(webView: wkeWebView; callback: wkeNavigationCallback; 
 procedure wkeOnCreateView(webView: wkeWebView; callback: wkeCreateViewCallback; param: Pointer); cdecl;
 procedure wkeOnDocumentReady(webView: wkeWebView; callback: wkeDocumentReadyCallback; param: Pointer); cdecl;
 procedure wkeOnLoadingFinish(webView: wkeWebView; callback: wkeLoadingFinishCallback; param: Pointer); cdecl;
-//procedure wkeOnConsoleMessage(webView: wkeWebView; callback: wkeConsoleMessageCallback; callbackParam: Pointer); cdecl;
+procedure wkeOnConsoleMessage(webView: wkeWebView; callback: wkeConsoleMessageCallback; callbackParam: Pointer); cdecl;
 function wkeCreateWebWindow(AType: wkeWindowType; parent: HWND; x: Integer; y: Integer; width: Integer; height: Integer): wkeWebView; cdecl;
 procedure wkeDestroyWebWindow(webWindow: wkeWebView); cdecl;
 function wkeGetWindowHandle(webWindow: wkeWebView): HWND; cdecl;
@@ -566,62 +620,68 @@ procedure wkeResizeWindow(webWindow: wkeWebView; width: Integer; height: Integer
 procedure wkeSetWindowTitle(webWindow: wkeWebView; title: Putf8); cdecl;
 procedure wkeSetWindowTitleW(webWindow: wkeWebView; title: Pwchar_t); cdecl;
 
-
+procedure wkeSetHostWindow(webWindow: wkeWebView; hostWindow: HWND); cdecl;
+function wkeGetHostWindow(webWindow: wkeWebView): HWND; cdecl;
 //================================JScript============================
 
-procedure jsBindFunction(name: PAnsiChar; fn: jsNativeFunction; AArgCount: LongInt); cdecl;
-procedure jsBindGetter(name: PAnsiChar; fn: jsNativeFunction); cdecl;
-procedure jsBindSetter(name: PAnsiChar; fn: jsNativeFunction); cdecl;
-function jsArgCount(es: jsExecState): Integer; cdecl;
-function jsArgType(es: jsExecState; argIdx: Integer): jsType; cdecl;
-function jsArg(es: jsExecState; argIdx: Integer): jsValue; cdecl;
-function jsTypeOf(es: jsExecState; v: jsValue): jsType; cdecl;
-function jsIsNumber(es: jsExecState; v: jsValue): Boolean; cdecl;
-function jsIsString(es: jsExecState; v: jsValue): Boolean; cdecl;
-function jsIsBoolean(es: jsExecState; v: jsValue): Boolean; cdecl;
-function jsIsObject(es: jsExecState; v: jsValue): Boolean; cdecl;
-function jsIsFunction(es: jsExecState; v: jsValue): Boolean; cdecl;
-function jsIsUndefined(es: jsExecState; v: jsValue): Boolean; cdecl;
-function jsIsNull(es: jsExecState; v: jsValue): Boolean; cdecl;
-function jsIsArray(es: jsExecState; v: jsValue): Boolean; cdecl;
-function jsIsTrue(es: jsExecState; v: jsValue): Boolean; cdecl;
-function jsIsFalse(es: jsExecState; v: jsValue): Boolean; cdecl;
-function jsToInt(es: jsExecState; v: jsValue): Integer; cdecl;
-function jsToFloat(es: jsExecState; v: jsValue): Single; cdecl;
-function jsToDouble(es: jsExecState; v: jsValue): Double; cdecl;
-function jsToBoolean(es: jsExecState; v: jsValue): Boolean; cdecl;
-function jsToTempString(es: jsExecState; v: jsValue): putf8; cdecl;
-function jsToTempStringW(es: jsExecState; v: jsValue): pwchar_t; cdecl;
-function jsInt(es: jsExecState; n: Integer): jsValue; cdecl;
-function jsFloat(es: jsExecState; f: Single): jsValue; cdecl;
-function jsDouble(es: jsExecState; d: Double): jsValue; cdecl;
-function jsBoolean(es: jsExecState; b: Boolean): jsValue; cdecl;
-function jsUndefined(es: jsExecState): jsValue; cdecl;
-function jsNull(es: jsExecState): jsValue; cdecl;
-function jsTrue(es: jsExecState): jsValue; cdecl;
-function jsFalse(es: jsExecState): jsValue; cdecl;
-function jsString(es: jsExecState; str: Putf8): jsValue; cdecl;
-function jsStringW(es: jsExecState; str: Pwchar_t): jsValue; cdecl;
-function jsEmptyObject(es: jsExecState): jsValue; cdecl;
-function jsEmptyArray(es: jsExecState): jsValue; cdecl;
-function jsObject(es: jsExecState; obj: PjsData): jsValue; cdecl;
-function jsFunction(es: jsExecState; obj: PjsData): jsValue; cdecl;
-function jsGetData(es: jsExecState; AObject: jsValue): PjsData; cdecl;
-function jsGet(es: jsExecState; AObject: jsValue; prop: PAnsiChar): jsValue; cdecl;
-procedure jsSet(es: jsExecState; AObject: jsValue; prop: PAnsiChar; v: jsValue); cdecl;
-function jsGetAt(es: jsExecState; AObject: jsValue; index: Integer): jsValue; cdecl;
-procedure jsSetAt(es: jsExecState; AObject: jsValue; index: Integer; v: jsValue); cdecl;
-function jsGetLength(es: jsExecState; AObject: jsValue): Integer; cdecl;
-procedure jsSetLength(es: jsExecState; AObject: jsValue; length: Integer); cdecl;
-function jsGlobalObject(es: jsExecState): jsValue; cdecl;
-function jsGetWebView(es: jsExecState): wkeWebView; cdecl;
-function jsEval(es: jsExecState; str: Putf8): jsValue; cdecl;
-function jsEvalW(es: jsExecState; str: Pwchar_t): jsValue; cdecl;
-function jsCall(es: jsExecState; func: jsValue; thisObject: jsValue; args: PjsValue; argCount: Integer): jsValue; cdecl;
-function jsCallGlobal(es: jsExecState; func: jsValue; args: PjsValue; argCount: Integer): jsValue; cdecl;
-function jsGetGlobal(es: jsExecState; prop: PAnsiChar): jsValue; cdecl;
-procedure jsSetGlobal(es: jsExecState; prop: PAnsiChar; v: jsValue); cdecl;
-procedure jsGC(es: jsExecState); cdecl;
+procedure wkeJSBindFunction(name: PAnsiChar; fn: jsNativeFunction; AArgCount: LongInt); cdecl;
+procedure wkeJSBindGetter(name: PAnsiChar; fn: jsNativeFunction); cdecl;
+procedure wkeJSBindSetter(name: PAnsiChar; fn: jsNativeFunction); cdecl;
+function wkeJSParamCount(es: wkeJSState): Integer; cdecl;
+function wkeJSParamType(es: wkeJSState; argIdx: Integer): wkeJSType; cdecl;
+function wkeJSParam(es: wkeJSState; argIdx: Integer): wkeJSValue; cdecl;
+function wkeJSTypeOf(es: wkeJSState; v: wkeJSValue): wkeJSType; cdecl;
+function wkeJSIsNumber(es: wkeJSState; v: wkeJSValue): Boolean; cdecl;
+function wkeJSIsString(es: wkeJSState; v: wkeJSValue): Boolean; cdecl;
+function wkeJSIsBool(es: wkeJSState; v: wkeJSValue): Boolean; cdecl;
+function wkeJSIsObject(es: wkeJSState; v: wkeJSValue): Boolean; cdecl;
+function wkeJSIsFunction(es: wkeJSState; v: wkeJSValue): Boolean; cdecl;
+function wkeJSIsUndefined(es: wkeJSState; v: wkeJSValue): Boolean; cdecl;
+function wkeJSIsNull(es: wkeJSState; v: wkeJSValue): Boolean; cdecl;
+function wkeJSIsArray(es: wkeJSState; v: wkeJSValue): Boolean; cdecl;
+function wkeJSIsTrue(es: wkeJSState; v: wkeJSValue): Boolean; cdecl;
+function wkeJSIsFalse(es: wkeJSState; v: wkeJSValue): Boolean; cdecl;
+function wkeJSToInt(es: wkeJSState; v: wkeJSValue): Integer; cdecl;
+function wkeJSToFloat(es: wkeJSState; v: wkeJSValue): Single; cdecl;
+function wkeJSToDouble(es: wkeJSState; v: wkeJSValue): Double; cdecl;
+function wkeJSToBool(es: wkeJSState; v: wkeJSValue): Boolean; cdecl;
+function wkeJSToTempString(es: wkeJSState; v: wkeJSValue): putf8; cdecl;
+function wkeJSToTempStringW(es: wkeJSState; v: wkeJSValue): pwchar_t; cdecl;
+function wkeJSInt(es: wkeJSState; n: Integer): wkeJSValue; cdecl;
+function wkeJSFloat(es: wkeJSState; f: Single): wkeJSValue; cdecl;
+function wkeJSDouble(es: wkeJSState; d: Double): wkeJSValue; cdecl;
+function wkeJSBool(es: wkeJSState; b: Boolean): wkeJSValue; cdecl;
+function wkeJSUndefined(es: wkeJSState): wkeJSValue; cdecl;
+function wkeJSNull(es: wkeJSState): wkeJSValue; cdecl;
+function wkeJSTrue(es: wkeJSState): wkeJSValue; cdecl;
+function wkeJSFalse(es: wkeJSState): wkeJSValue; cdecl;
+function wkeJSString(es: wkeJSState; str: Putf8): wkeJSValue; cdecl;
+function wkeJSStringW(es: wkeJSState; str: Pwchar_t): wkeJSValue; cdecl;
+function wkeJSEmptyObject(es: wkeJSState): wkeJSValue; cdecl;
+function wkeJSEmptyArray(es: wkeJSState): wkeJSValue; cdecl;
+
+function wkeJSObject(es: wkeJSState; obj: PwkeJSData): wkeJSValue; cdecl;
+function wkeJSFunction(es: wkeJSState; obj: PwkeJSData): wkeJSValue; cdecl;
+function wkeJSGetData(es: wkeJSState; AObject: wkeJSValue): PwkeJSData; cdecl;
+function wkeJSGet(es: wkeJSState; AObject: wkeJSValue; prop: PAnsiChar): wkeJSValue; cdecl;
+procedure wkeJSSet(es: wkeJSState; AObject: wkeJSValue; prop: PAnsiChar; v: wkeJSValue); cdecl;
+function wkeJSGetAt(es: wkeJSState; AObject: wkeJSValue; index: Integer): wkeJSValue; cdecl;
+procedure wkeJSSetAt(es: wkeJSState; AObject: wkeJSValue; index: Integer; v: wkeJSValue); cdecl;
+function wkeJSGetLength(es: wkeJSState; AObject: wkeJSValue): Integer; cdecl;
+procedure wkeJSSetLength(es: wkeJSState; AObject: wkeJSValue; length: Integer); cdecl;
+function wkeJSGlobalObject(es: wkeJSState): wkeJSValue; cdecl;
+function wkeJSGetWebView(es: wkeJSState): wkeWebView; cdecl;
+function wkeJSEval(es: wkeJSState; str: Putf8): wkeJSValue; cdecl;
+function wkeJSEvalW(es: wkeJSState; str: Pwchar_t): wkeJSValue; cdecl;
+function wkeJSCall(es: wkeJSState; func: wkeJSValue; thisObject: wkeJSValue; args: PwkeJSValue; argCount: Integer): wkeJSValue; cdecl;
+function wkeJSCallGlobal(es: wkeJSState; func: wkeJSValue; args: PwkeJSValue; argCount: Integer): wkeJSValue; cdecl;
+function wkeJSGetGlobal(es: wkeJSState; prop: PAnsiChar): wkeJSValue; cdecl;
+procedure wkeJSSetGlobal(es: wkeJSState; prop: PAnsiChar; v: wkeJSValue); cdecl;
+
+procedure wkeJSAddRef(es: wkeJSState; v: wkeJSValue); cdecl;
+procedure wkeJSReleaseRef(es: wkeJSState; v: wkeJSValue); cdecl;
+procedure wkeJSCollectGarbge; cdecl;
+
 
 
 {$IFDEF UseVcFastCall}
@@ -784,6 +844,38 @@ begin
   Result := wkeIsLoadingFailed(Self);
 end;
 
+procedure wkeWebView.SetHostWindow(hostWindow: HWND);
+begin
+  wkeSetHostWindow(Self, hostWindow);
+end;
+
+function wkeWebView.GetHostWindow: HWND;
+begin
+  Result := wkeGetHostWindow(Self);
+end;
+
+procedure wkeWebView.SetRepaintInterval(ms: Integer);
+begin
+  wkeSetRepaintInterval(Self, ms);
+end;
+
+function wkeWebView.GetRepaintInterval: Integer;
+begin
+  Result := wkeGetRepaintInterval(Self);
+end;
+
+function wkeWebView.RepaintIfNeededAfterInterval: Boolean;
+begin
+  Result := wkeRepaintIfNeededAfterInterval(Self);
+end;
+
+
+function wkeWebView.IsLoading(webView: wkeWebView): Boolean;
+begin
+  Result := True;
+//  Result := wkeIsLoading(webView);
+end;
+
 function wkeWebView.IsLoadingCompleted: Boolean;
 begin
   Result := wkeIsLoadingCompleted(Self);
@@ -816,6 +908,11 @@ end;
 procedure wkeWebView.Resize(w: Integer; h: Integer);
 begin
   wkeResize(Self, w, h);
+end;
+
+function wkeWebView.GetWebView(name: AnsiString): wkeWebView;
+begin
+  Result := wkeGetWebView(PAnsiChar(name));
 end;
 
 function wkeWebView.GetWidth: Integer;
@@ -866,6 +963,11 @@ end;
 procedure wkeWebView.Paint2(bits: Pointer; pitch: Integer);
 begin
   wkePaint2(Self, bits, pitch);
+end;
+
+class function wkeWebView.RepaintAllNeeded: Boolean;
+begin
+  Result := wkeRepaintAllNeeded;
 end;
 
 procedure wkeWebView.RepaintIfNeeded;
@@ -997,7 +1099,7 @@ begin
   Result := wkeGetCaretRect(Self);
 end;
 
-function wkeWebView.RunJS(const AScript: string): jsValue;
+function wkeWebView.RunJS(const AScript: string): wkeJSValue;
 begin
 {$IFDEF UNICODE}
   Result := wkeRunJSW(Self, PChar(AScript));
@@ -1006,7 +1108,12 @@ begin
 {$ENDIF}
 end;
 
-function wkeWebView.GlobalExec: jsExecState;
+class function wkeWebView.RunMessageLoop(var quit: Boolean): Boolean;
+begin
+  Result := wkeRunMessageLoop(quit);
+end;
+
+function wkeWebView.GlobalExec: wkeJSState;
 begin
   Result := wkeGlobalExec(Self);
 end;
@@ -1178,265 +1285,277 @@ end;
 
 class procedure JScript.BindFunction(const AName: string; fn: jsNativeFunction; AArgCount: LongInt);
 begin
-  jsBindFunction(PAnsiChar(AnsiString({$IFDEF FPC}Utf8ToAnsi(AName){$ELSE}AName{$ENDIF})), fn, AArgCount);
+  wkeJSBindFunction(PAnsiChar(AnsiString({$IFDEF FPC}Utf8ToAnsi(AName){$ELSE}AName{$ENDIF})), fn, AArgCount);
 end;
 
 class procedure JScript.BindGetter(const AName: string; fn: jsNativeFunction);
 begin
-  jsBindGetter(PAnsiChar(AnsiString({$IFDEF FPC}Utf8ToAnsi(AName){$ELSE}AName{$ENDIF})), fn);
+  wkeJSBindGetter(PAnsiChar(AnsiString({$IFDEF FPC}Utf8ToAnsi(AName){$ELSE}AName{$ENDIF})), fn);
 end;
 
 class procedure JScript.BindSetter(const AName: string; fn: jsNativeFunction);
 begin
-  jsBindSetter(PAnsiChar(AnsiString({$IFDEF FPC}Utf8ToAnsi(AName){$ELSE}AName{$ENDIF})), fn);
+  wkeJSBindSetter(PAnsiChar(AnsiString({$IFDEF FPC}Utf8ToAnsi(AName){$ELSE}AName{$ENDIF})), fn);
 end;
 
 function JScript.ArgCount: Integer;
 begin
-  Result := jsArgCount(Self);
+  Result := wkeJSParamCount(Self);
 end;
 
-function JScript.ArgType(argIdx: Integer): jsType;
+function JScript.ArgType(argIdx: Integer): wkeJSType;
 begin
-  Result := jsArgType(Self, argIdx);
+  Result := wkeJSParamType(Self, argIdx);
 end;
 
-function JScript.Arg(argIdx: Integer): jsValue;
+procedure JScript.AddRef(v: wkeJSValue);
 begin
-  Result := jsArg(Self, argIdx);
+  wkeJSAddRef(self, v);
 end;
 
-function JScript.TypeOf(v: jsValue): jsType;
+function JScript.Arg(argIdx: Integer): wkeJSValue;
 begin
-  Result := jsTypeOf(Self, v);
+  Result := wkeJSParam(Self, argIdx);
 end;
 
-function JScript.IsNumber(v: jsValue): Boolean;
+function JScript.TypeOf(v: wkeJSValue): wkeJSType;
 begin
-  Result := jsIsNumber(Self, v);
+  Result := wkeJSTypeOf(Self, v);
 end;
 
-function JScript.IsString(v: jsValue): Boolean;
+function JScript.IsNumber(v: wkeJSValue): Boolean;
 begin
-  Result := jsIsString(Self, v);
+  Result := wkeJSIsNumber(Self, v);
 end;
 
-function JScript.IsBoolean(v: jsValue): Boolean;
+function JScript.IsString(v: wkeJSValue): Boolean;
 begin
-  Result := jsIsBoolean(Self, v);
+  Result := wkeJSIsString(Self, v);
 end;
 
-function JScript.IsObject(v: jsValue): Boolean;
+function JScript.IsBoolean(v: wkeJSValue): Boolean;
 begin
-  Result := jsIsObject(Self, v);
+  Result := wkeJSIsBool(Self, v);
 end;
 
-function JScript.IsFunction(v: jsValue): Boolean;
+function JScript.IsObject(v: wkeJSValue): Boolean;
 begin
-  Result := jsIsFunction(Self, v);
+  Result := wkeJSIsObject(Self, v);
 end;
 
-function JScript.IsUndefined(v: jsValue): Boolean;
+function JScript.IsFunction(v: wkeJSValue): Boolean;
 begin
-  Result := jsIsUndefined(Self, v);
+  Result := wkeJSIsFunction(Self, v);
 end;
 
-function JScript.IsNull(v: jsValue): Boolean;
+function JScript.IsUndefined(v: wkeJSValue): Boolean;
 begin
-  Result := jsIsNull(Self, v);
+  Result := wkeJSIsUndefined(Self, v);
 end;
 
-function JScript.IsArray(v: jsValue): Boolean;
+function JScript.IsNull(v: wkeJSValue): Boolean;
 begin
-  Result := jsIsArray(Self, v);
+  Result := wkeJSIsNull(Self, v);
 end;
 
-function JScript.IsTrue(v: jsValue): Boolean;
+function JScript.IsArray(v: wkeJSValue): Boolean;
 begin
-  Result := jsIsTrue(Self, v);
+  Result := wkeJSIsArray(Self, v);
 end;
 
-function JScript.IsFalse(v: jsValue): Boolean;
+function JScript.IsTrue(v: wkeJSValue): Boolean;
 begin
-  Result := jsIsFalse(Self, v);
+  Result := wkeJSIsTrue(Self, v);
 end;
 
-function JScript.ToInt(v: jsValue): Integer;
+function JScript.IsFalse(v: wkeJSValue): Boolean;
 begin
-  Result := jsToInt(Self, v);
+  Result := wkeJSIsFalse(Self, v);
 end;
 
-function JScript.ToFloat(v: jsValue): Single;
+function JScript.ToInt(v: wkeJSValue): Integer;
 begin
-  Result := jsToFloat(Self, v);
+  Result := wkeJSToInt(Self, v);
 end;
 
-function JScript.ToDouble(v: jsValue): Double;
+function JScript.ToFloat(v: wkeJSValue): Single;
 begin
-  Result := jsToDouble(Self, v);
+  Result := wkeJSToFloat(Self, v);
 end;
 
-function JScript.ToBoolean(v: jsValue): Boolean;
+function JScript.ToDouble(v: wkeJSValue): Double;
 begin
-  Result := jsToBoolean(Self, v);
+  Result := wkeJSToDouble(Self, v);
 end;
 
-function JScript.ToTempString(v: jsValue): string;
+function JScript.ToBoolean(v: wkeJSValue): Boolean;
+begin
+  Result := wkeJSToBool(Self, v);
+end;
+
+function JScript.ToTempString(v: wkeJSValue): string;
 begin
 {$IFDEF UNICODE}
-  Result := jsToTempStringW(Self, v);
+  Result := wkeJSToTempStringW(Self, v);
 {$ELSE}
-  Result := {$IFDEF FPC}jsToTempString(Self, v){$ELSE}Utf8ToAnsi(jsToTempString(Self, v)){$ENDIF};
+  Result := {$IFDEF FPC}wkeJSToTempString(Self, v){$ELSE}Utf8ToAnsi(wkeJSToTempString(Self, v)){$ENDIF};
 {$ENDIF}
 end;
 
-function JScript.Int(n: Integer): jsValue;
+function JScript.Int(n: Integer): wkeJSValue;
 begin
-  Result := jsInt(Self, n);
+  Result := wkeJSInt(Self, n);
 end;
 
-function JScript.Float(f: Single): jsValue;
+function JScript.Float(f: Single): wkeJSValue;
 begin
-  Result := jsFloat(Self, f);
+  Result := wkeJSFloat(Self, f);
 end;
 
-function JScript.Double(d: Double): jsValue;
+function JScript.Double(d: Double): wkeJSValue;
 begin
-  Result := jsDouble(Self, d);
+  Result := wkeJSDouble(Self, d);
 end;
 
-function JScript.Boolean(b: Boolean): jsValue;
+function JScript.Boolean(b: Boolean): wkeJSValue;
 begin
-  Result := jsBoolean(Self, b);
+  Result := wkeJSBool(Self, b);
 end;
 
-function JScript.Undefined: jsValue;
+function JScript.Undefined: wkeJSValue;
 begin
-  Result := jsUndefined(self);
+  Result := wkeJSUndefined(self);
 end;
 
-function JScript.Null: jsValue;
+function JScript.Null: wkeJSValue;
 begin
-  Result := jsNull(Self);
+  Result := wkeJSNull(Self);
 end;
 
-function JScript.True_: jsValue;
+function JScript.True_: wkeJSValue;
 begin
-  Result := jsTrue(Self);
+  Result := wkeJSTrue(Self);
 end;
 
-function JScript.False_: jsValue;
+function JScript.False_: wkeJSValue;
 begin
-  Result := jsFalse(Self);
+  Result := wkeJSFalse(Self);
 end;
 
-function JScript.String_(const AStr: string): jsValue;
+function JScript.String_(const AStr: string): wkeJSValue;
 begin
 {$IFDEF UNICODE}
-  Result := jsStringW(Self, PChar(AStr));
+  Result := wkeJSStringW(Self, PChar(AStr));
 {$ELSE}
-  Result := jsString(Self, PChar({$IFDEF FPC}AStr{$ELSE}AnsiToUtf8(AStr){$ENDIF}));
+  Result := wkeJSString(Self, PChar({$IFDEF FPC}AStr{$ELSE}AnsiToUtf8(AStr){$ENDIF}));
 {$ENDIF}
 end;
 
-function JScript.EmptyObject: jsValue;
+function JScript.EmptyObject: wkeJSValue;
 begin
-  Result := jsEmptyObject(Self);
+  Result := wkeJSEmptyObject(Self);
 end;
 
-function JScript.EmptyArray: jsValue;
+function JScript.EmptyArray: wkeJSValue;
 begin
-  Result := jsEmptyArray(Self);
+  Result := wkeJSEmptyArray(Self);
 end;
 
-function JScript.Object_(obj: PjsData): jsValue;
+function JScript.Object_(obj: PwkeJSData): wkeJSValue;
 begin
-  Result := jsObject(Self, obj);
+  Result := wkeJSObject(Self, obj);
 end;
 
-function JScript.Function_(obj: PjsData): jsValue;
+procedure JScript.ReleaseRef(v: wkeJSValue);
 begin
-  Result := jsFunction(Self, obj);
+  wkeJSReleaseRef(Self, v);
 end;
 
-function JScript.GetData(AObject: jsValue): PjsData;
+function JScript.Function_(obj: PwkeJSData): wkeJSValue;
 begin
-  Result := jsGetData(Self, AObject);
+  Result := wkeJSFunction(Self, obj);
 end;
 
-function JScript.Get(AObject: jsValue; const prop: string): jsValue;
+function JScript.GetData(AObject: wkeJSValue): PwkeJSData;
 begin
-  Result := jsGet(Self, AObject, PAnsiChar(AnsiString({$IFDEF FPC}Utf8ToAnsi(prop){$ELSE}prop{$ENDIF})));
+  Result := wkeJSGetData(Self, AObject);
 end;
 
-procedure JScript.Set_(AObject: jsValue; const prop: string; v: jsValue);
+function JScript.Get(AObject: wkeJSValue; const prop: string): wkeJSValue;
 begin
-  jsSet(Self, AObject, PAnsiChar(AnsiString({$IFDEF FPC}Utf8ToAnsi(prop){$ELSE}prop{$ENDIF})), v);
+  Result := wkeJSGet(Self, AObject, PAnsiChar(AnsiString({$IFDEF FPC}Utf8ToAnsi(prop){$ELSE}prop{$ENDIF})));
 end;
 
-function JScript.GetAt(AObject: jsValue; index: Integer): jsValue;
+procedure JScript.Set_(AObject: wkeJSValue; const prop: string; v: wkeJSValue);
 begin
-  Result := jsGetAt(Self, AObject, index);
+  wkeJSSet(Self, AObject, PAnsiChar(AnsiString({$IFDEF FPC}Utf8ToAnsi(prop){$ELSE}prop{$ENDIF})), v);
 end;
 
-procedure JScript.SetAt(AObject: jsValue; index: Integer; v: jsValue);
+function JScript.GetAt(AObject: wkeJSValue; index: Integer): wkeJSValue;
 begin
-  jsSetAt(Self, AObject, index, v);
+  Result := wkeJSGetAt(Self, AObject, index);
 end;
 
-function JScript.GetLength(AObject: jsValue): Integer;
+procedure JScript.SetAt(AObject: wkeJSValue; index: Integer; v: wkeJSValue);
 begin
-  Result := jsGetLength(Self, AObject);
+  wkeJSSetAt(Self, AObject, index, v);
 end;
 
-procedure JScript.SetLength(AObject: jsValue; length: Integer);
+function JScript.GetLength(AObject: wkeJSValue): Integer;
 begin
-  jsSetLength(Self, AObject, length);
+  Result := wkeJSGetLength(Self, AObject);
 end;
 
-function JScript.GlobalObject: jsValue;
+procedure JScript.SetLength(AObject: wkeJSValue; length: Integer);
 begin
-  Result := jsGlobalObject(Self);
+  wkeJSSetLength(Self, AObject, length);
+end;
+
+function JScript.GlobalObject: wkeJSValue;
+begin
+  Result := wkeJSGlobalObject(Self);
 end;
 
 function JScript.GetWebView: wkeWebView;
 begin
-  Result := jsGetWebView(Self);
+  Result := wkeJSGetWebView(Self);
 end;
 
-function JScript.Eval(const AStr: string): jsValue;
+function JScript.Eval(const AStr: string): wkeJSValue;
 begin
 {$IFDEF UNICODE}
-  Result := jsEvalW(Self, PChar(AStr));
+  Result := wkeJSEvalW(Self, PChar(AStr));
 {$ELSE}
-  Result := jsEval(Self, PChar({$IFDEF FPC}AStr{$ELSE}AnsiToUtf8(AStr){$ENDIF}));
+  Result := wkeJSEval(Self, PChar({$IFDEF FPC}AStr{$ELSE}AnsiToUtf8(AStr){$ENDIF}));
 {$ENDIF}
 end;
 
-function JScript.Call(func: jsValue; thisObject: jsValue; args: PjsValue; argCount: Integer): jsValue;
+function JScript.Call(func: wkeJSValue; thisObject: wkeJSValue; args: PwkeJSValue; argCount: Integer): wkeJSValue;
 begin
-  Result := jsCall(Self, func, thisObject, args, argCount);
+  Result := wkeJSCall(Self, func, thisObject, args, argCount);
 end;
 
-function JScript.CallGlobal(func: jsValue; args: PjsValue; argCount: Integer): jsValue;
+function JScript.CallGlobal(func: wkeJSValue; args: PwkeJSValue; argCount: Integer): wkeJSValue;
 begin
-  Result := jsCallGlobal(Self, func, args, argCount);
+  Result := wkeJSCallGlobal(Self, func, args, argCount);
 end;
 
-function JScript.GetGlobal(const prop: string): jsValue;
+procedure JScript.CollectGarbge;
 begin
-  Result := jsGetGlobal(Self, PAnsiChar(AnsiString({$IFDEF FPC}Utf8ToAnsi(prop){$ELSE}prop{$ENDIF})));
+  wkeJSCollectGarbge;
 end;
 
-procedure JScript.SetGlobal(const prop: string; v: jsValue);
+function JScript.GetGlobal(const prop: string): wkeJSValue;
 begin
-  jsSetGlobal(Self, PAnsiChar(AnsiString({$IFDEF FPC}Utf8ToAnsi(prop){$ELSE}prop{$ENDIF})), v);
+  Result := wkeJSGetGlobal(Self, PAnsiChar(AnsiString({$IFDEF FPC}Utf8ToAnsi(prop){$ELSE}prop{$ENDIF})));
 end;
 
-procedure JScript.GC;
+procedure JScript.SetGlobal(const prop: string; v: wkeJSValue);
 begin
-  jsGC(Self);
+  wkeJSSetGlobal(Self, PAnsiChar(AnsiString({$IFDEF FPC}Utf8ToAnsi(prop){$ELSE}prop{$ENDIF})), v);
 end;
+
+
 
 
 //================================wkeWebView============================
@@ -1450,7 +1569,7 @@ function wkeGetVersion; external wkedll name 'wkeGetVersion';
 function wkeGetVersionString; external wkedll name 'wkeGetVersionString';
 procedure wkeSetFileSystem; external wkedll name 'wkeSetFileSystem';
 function wkeCreateWebView; external wkedll name 'wkeCreateWebView';
-//function wkeGetWebView; external wkedll name 'wkeGetWebView';
+function wkeGetWebView; external wkedll name 'wkeGetWebView';
 procedure wkeDestroyWebView; external wkedll name 'wkeDestroyWebView';
 function wkeGetName; external wkedll name 'wkeGetName';
 procedure wkeSetName; external wkedll name 'wkeSetName';
@@ -1490,6 +1609,13 @@ procedure wkePaint; external wkedll name 'wkePaint';
 procedure wkePaint2; external wkedll name 'wkePaint2';
 procedure wkeRepaintIfNeeded; external wkedll name 'wkeRepaintIfNeeded';
 function wkeGetViewDC; external wkedll name 'wkeGetViewDC';
+
+procedure wkeSetRepaintInterval; external wkedll name 'wkeSetRepaintInterval';
+function wkeGetRepaintInterval; external wkedll name 'wkeGetRepaintInterval';
+function wkeRepaintIfNeededAfterInterval; external wkedll name 'wkeRepaintIfNeededAfterInterval';
+function wkeRepaintAllNeeded; external wkedll name 'wkeRepaintAllNeeded';
+function wkeRunMessageLoop; external wkedll name 'wkeRunMessageLoop';
+
 function wkeCanGoBack; external wkedll name 'wkeCanGoBack';
 function wkeGoBack; external wkedll name 'wkeGoBack';
 function wkeCanGoForward; external wkedll name 'wkeCanGoForward';
@@ -1537,7 +1663,7 @@ procedure wkeOnNavigation; external wkedll name 'wkeOnNavigation';
 procedure wkeOnCreateView; external wkedll name 'wkeOnCreateView';
 procedure wkeOnDocumentReady; external wkedll name 'wkeOnDocumentReady';
 procedure wkeOnLoadingFinish; external wkedll name 'wkeOnLoadingFinish';
-//procedure wkeOnConsoleMessage; external wkedll name 'wkeOnConsoleMessage';
+procedure wkeOnConsoleMessage; external wkedll name 'wkeOnConsoleMessage';
 function wkeCreateWebWindow; external wkedll name 'wkeCreateWebWindow';
 procedure wkeDestroyWebWindow; external wkedll name 'wkeDestroyWebWindow';
 function wkeGetWindowHandle; external wkedll name 'wkeGetWindowHandle';
@@ -1551,63 +1677,67 @@ procedure wkeResizeWindow; external wkedll name 'wkeResizeWindow';
 procedure wkeSetWindowTitle; external wkedll name 'wkeSetWindowTitle';
 procedure wkeSetWindowTitleW; external wkedll name 'wkeSetWindowTitleW';
 
+procedure wkeSetHostWindow; external wkedll name 'wkeSetHostWindow';
+function wkeGetHostWindow; external wkedll name 'wkeGetHostWindow';
 
 //================================JScript============================
 
-procedure jsBindFunction; external wkedll name 'jsBindFunction';
-procedure jsBindGetter; external wkedll name 'jsBindGetter';
-procedure jsBindSetter; external wkedll name 'jsBindSetter';
-function jsArgCount; external wkedll name 'jsArgCount';
-function jsArgType; external wkedll name 'jsArgType';
-function jsArg; external wkedll name 'jsArg';
-function jsTypeOf; external wkedll name 'jsTypeOf';
-function jsIsNumber; external wkedll name 'jsIsNumber';
-function jsIsString; external wkedll name 'jsIsString';
-function jsIsBoolean; external wkedll name 'jsIsBoolean';
-function jsIsObject; external wkedll name 'jsIsObject';
-function jsIsFunction; external wkedll name 'jsIsFunction';
-function jsIsUndefined; external wkedll name 'jsIsUndefined';
-function jsIsNull; external wkedll name 'jsIsNull';
-function jsIsArray; external wkedll name 'jsIsArray';
-function jsIsTrue; external wkedll name 'jsIsTrue';
-function jsIsFalse; external wkedll name 'jsIsFalse';
-function jsToInt; external wkedll name 'jsToInt';
-function jsToFloat; external wkedll name 'jsToFloat';
-function jsToDouble; external wkedll name 'jsToDouble';
-function jsToBoolean; external wkedll name 'jsToBoolean';
-function jsToTempString; external wkedll name 'jsToTempString';
-function jsToTempStringW; external wkedll name 'jsToTempStringW';
-function jsInt; external wkedll name 'jsInt';
-function jsFloat; external wkedll name 'jsFloat';
-function jsDouble; external wkedll name 'jsDouble';
-function jsBoolean; external wkedll name 'jsBoolean';
-function jsUndefined; external wkedll name 'jsUndefined';
-function jsNull; external wkedll name 'jsNull';
-function jsTrue; external wkedll name 'jsTrue';
-function jsFalse; external wkedll name 'jsFalse';
-function jsString; external wkedll name 'jsString';
-function jsStringW; external wkedll name 'jsStringW';
-function jsEmptyObject; external wkedll name 'jsEmptyObject';
-function jsEmptyArray; external wkedll name 'jsEmptyArray';
-function jsObject; external wkedll name 'jsObject';
-function jsFunction; external wkedll name 'jsFunction';
-function jsGetData; external wkedll name 'jsGetData';
-function jsGet; external wkedll name 'jsGet';
-procedure jsSet; external wkedll name 'jsSet';
-function jsGetAt; external wkedll name 'jsGetAt';
-procedure jsSetAt; external wkedll name 'jsSetAt';
-function jsGetLength; external wkedll name 'jsGetLength';
-procedure jsSetLength; external wkedll name 'jsSetLength';
-function jsGlobalObject; external wkedll name 'jsGlobalObject';
-function jsGetWebView; external wkedll name 'jsGetWebView';
-function jsEval; external wkedll name 'jsEval';
-function jsEvalW; external wkedll name 'jsEvalW';
-function jsCall; external wkedll name 'jsCall';
-function jsCallGlobal; external wkedll name 'jsCallGlobal';
-function jsGetGlobal; external wkedll name 'jsGetGlobal';
-procedure jsSetGlobal; external wkedll name 'jsSetGlobal';
-procedure jsGC; external wkedll name 'jsGC';
+procedure wkeJSBindFunction; external wkedll name 'wkeJSBindFunction';
+procedure wkeJSBindGetter; external wkedll name 'wkeJSBindGetter';
+procedure wkeJSBindSetter; external wkedll name 'wkeJSBindSetter';
+function wkeJSParamCount; external wkedll name 'wkeJSParamCount';
+function wkeJSParamType; external wkedll name 'wkeJSParamType';
+function wkeJSParam; external wkedll name 'wkeJSParam';
+function wkeJSTypeOf; external wkedll name 'wkeJSTypeOf';
+function wkeJSIsNumber; external wkedll name 'wkeJSIsNumber';
+function wkeJSIsString; external wkedll name 'wkeJSIsString';
+function wkeJSIsBool; external wkedll name 'wkeJSIsBool';
+function wkeJSIsObject; external wkedll name 'wkeJSIsObject';
+function wkeJSIsFunction; external wkedll name 'wkeJSIsFunction';
+function wkeJSIsUndefined; external wkedll name 'wkeJSIsUndefined';
+function wkeJSIsNull; external wkedll name 'wkeJSIsNull';
+function wkeJSIsArray; external wkedll name 'wkeJSIsArray';
+function wkeJSIsTrue; external wkedll name 'wkeJSIsTrue';
+function wkeJSIsFalse; external wkedll name 'wkeJSIsFalse';
+function wkeJSToInt; external wkedll name 'wkeJSToInt';
+function wkeJSToFloat; external wkedll name 'wkeJSToFloat';
+function wkeJSToDouble; external wkedll name 'wkeJSToDouble';
+function wkeJSToBool; external wkedll name 'wkeJSToBool';
+function wkeJSToTempString; external wkedll name 'wkeJSToTempString';
+function wkeJSToTempStringW; external wkedll name 'wkeJSToTempStringW';
+function wkeJSInt; external wkedll name 'wkeJSInt';
+function wkeJSFloat; external wkedll name 'wkeJSFloat';
+function wkeJSDouble; external wkedll name 'wkeJSDouble';
+function wkeJSBool; external wkedll name 'wkeJSBool';
+function wkeJSUndefined; external wkedll name 'wkeJSUndefined';
+function wkeJSNull; external wkedll name 'wkeJSNull';
+function wkeJSTrue; external wkedll name 'wkeJSTrue';
+function wkeJSFalse; external wkedll name 'wkeJSFalse';
+function wkeJSString; external wkedll name 'wkeJSString';
+function wkeJSStringW; external wkedll name 'wkeJSStringW';
+function wkeJSEmptyObject; external wkedll name 'wkeJSEmptyObject';
+function wkeJSEmptyArray; external wkedll name 'wkeJSEmptyArray';
+function wkeJSObject; external wkedll name 'wkeJSObject';
+function wkeJSFunction; external wkedll name 'wkeJSFunction';
+function wkeJSGetData; external wkedll name 'wkeJSGetData';
+function wkeJSGet; external wkedll name 'wkeJSGet';
+procedure wkeJSSet; external wkedll name 'wkeJSSet';
+function wkeJSGetAt; external wkedll name 'wkeJSGetAt';
+procedure wkeJSSetAt; external wkedll name 'wkeJSSetAt';
+function wkeJSGetLength; external wkedll name 'wkeJSGetLength';
+procedure wkeJSSetLength; external wkedll name 'wkeJSSetLength';
+function wkeJSGlobalObject; external wkedll name 'wkeJSGlobalObject';
+function wkeJSGetWebView; external wkedll name 'wkeJSGetWebView';
+function wkeJSEval; external wkedll name 'wkeJSEval';
+function wkeJSEvalW; external wkedll name 'wkeJSEvalW';
+function wkeJSCall; external wkedll name 'wkeJSCall';
+function wkeJSCallGlobal; external wkedll name 'wkeJSCallGlobal';
+function wkeJSGetGlobal; external wkedll name 'wkeJSGetGlobal';
+procedure wkeJSSetGlobal; external wkedll name 'wkeJSSetGlobal';
 
+procedure wkeJSAddRef; external wkedll name 'wkeJSAddRef';
+procedure wkeJSReleaseRef; external wkedll name 'wkeJSReleaseRef';
+procedure wkeJSCollectGarbge; external wkedll name 'wkeJSCollectGarbge';
 
 
 {$IFDEF MSWINDOWS}
