@@ -12,7 +12,7 @@
 ***
 #### **项目介绍** 
 
-什么是DDuilib(原名“Duilib for Delphi”)？ DDuilib是一个建立在C++开源项目[duilib](https://github.com/duilib/duilib)之上，且最大限度不去修改duilib源代码从而可以应用在Delphi或者FreePascal中构建漂亮的UI的Pascal语言开源项目。**在此也非常感谢duilib作者的辛劳，没有他的库也许就没有现在这DDuilib** 更多关于项目的开发可以访问[我的博客](http://blog.csdn.net/zyjying520/article/details/49976667)。
+什么是DDuilib(原名“Duilib for Delphi”)？ DDuilib是一个建立在C++开源项目[duilib](https://github.com/duilib/duilib)之上，且最大限度不去修改duilib源代码从而可以应用在Delphi或者FreePascal中构建 DirectUI的开源项目。**在此也非常感谢duilib作者的辛劳，没有他的库也许就没有现在这DDuilib** 更多关于项目的开发可以访问[我的博客](http://blog.csdn.net/zyjying520/article/details/49976667)。
 
 
 #### **其它说明** 
@@ -144,9 +144,9 @@ end.
 [QQDemo截图1](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/Screenshot/screenshot1.png)   
 [QQDemo截图2](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/Screenshot/screenshot2.png)   
 [应用程序管理截图](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/Screenshot/screenshot3.png)  
-[PC管家截图](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/Screenshot/screenshot4.png)  
-[QQ旋风](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/Screenshot/screenshot5_qqxf.png) 
-[QQ登录界面](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/Screenshot/screenshot6.png) 
+[PC管家截图](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/Screenshot/screenshot4.png)    
+[QQ旋风](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/Screenshot/screenshot5_qqxf.png)   
+[QQ登录界面](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/Screenshot/screenshot6.png)   
 
 #### **作者信息** 
 ##### 多少无所谓，反正想捐助的就随心吧，不捐助也毫无影响。  
