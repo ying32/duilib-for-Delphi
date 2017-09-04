@@ -146,7 +146,9 @@ end.
 [应用程序管理截图](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/Screenshot/screenshot3.png)  
 [PC管家截图](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/Screenshot/screenshot4.png)    
 [QQ旋风](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/Screenshot/screenshot5_qqxf.png)   
-[QQ登录界面](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/Screenshot/screenshot6.png)   
+[QQ登录界面](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/Screenshot/screenshot6.png)  
+[播放器1,只展示不开源](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/Screenshot/screenshot7.png) 
+[播放器2,只展示不开源](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/Screenshot/screenshot8.png)  
 
 #### **作者信息** 
 ##### 多少无所谓，反正想捐助的就随心吧，不捐助也毫无影响。  
