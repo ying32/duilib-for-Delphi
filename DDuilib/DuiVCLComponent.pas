@@ -5,7 +5,7 @@
 //       QQ  ：1444386932
 //       E-mail：1444386932@qq.com
 //       做成一个组件用来与VCL相结合
-//       版权所有 (C) 2015-2016 ying32 All Rights Reserved
+//       版权所有 (C) 2015-2017 ying32 All Rights Reserved
 //
 //       继之前的DDuilibComponent.pas重新做的一个，此为抛弃
 //       调用TDuiWindowImplBase的类，大部分改为使用Delphi编写
@@ -14,6 +14,10 @@
 unit DuiVCLComponent;
 
 {$I DDuilib.inc}
+
+{$IFDEF FPC}
+  {$MESSAGE ERROR '不支持FPC'}
+{$ENDIF}
 
 interface
 
@@ -27,9 +31,6 @@ uses
 {$IFDEF DelphiGeneric}
   ,Generics.Collections
 {$ENDIF}
-{$IFDEF FPCGeneric}
-  ,fgl
-{$ENDIF}
   ,DuiConst
   ,Duilib;
 
@@ -37,10 +38,8 @@ type
 
   TDDuiApp = class(TComponent)
   private
-  {$IFNDEF FPC}
     FOld: TMessageEvent;
     FOnMessage: TMessageEvent;
-  {$ENDIF}
     FZipFileName: string;
     FResourcePath: string;
     FResourceDll: string;
@@ -56,9 +55,7 @@ type
     property ZipFileName: string read FZipFileName write SetZipFileName;
     property ResourcePath: string read FResourcePath write SetResourcePath;
     property ResourceDll: string read FResourceDll write SetResourceDll;
-  {$IFNDEF FPC}
     property OnMessage: TMessageEvent read FOnMessage write FOnMessage;
-  {$ENDIF}
   end;
 
   /// <summary>
@@ -81,15 +78,10 @@ type
 {$ENDIF}
 
 {$IFDEF SupportGeneric}
-   {$IFDEF DelphiGeneric}
-   TDuiObjectEvents = TDictionary<string, TDuiObjecItem>;
-   {$ELSE}
-   TDuiObjectEvents = TFPGMap<string, TDuiObjecItem>;
-   {$ENDIF}
+  TDuiObjectEvents = TDictionary<string, TDuiObjecItem>;
 {$ELSE}
   TDuiObjectEvents = TList;
 {$ENDIF}
-
 
   TDuiMessageEvent = procedure(Sender: TObject; var Msg: TMessage; var bHandled: Boolean) of object;
   TDuiCreateControlEvent = procedure(Sender: TObject; const AName: string) of object;
@@ -100,11 +92,6 @@ type
     FNotifyUI: INotifyUI;
     FMessageFilterUI: IMessageFilterUI;
     FDialogBuilderCallback: IDialogBuilderCallback;
-  {$IFDEF FPC}
-    FNotifyVMT: PDWORD;
-    FMessageFilterUIVMT: PDWORD;
-    FDialogBuilderCallBackVMT: PDWORD;
-  {$ENDIF}
     FNotifyPump: CNotifyPump;
     FObjectEvents: TDuiObjectEvents;
     FOnNotify: TDuiNotifyEvent;
@@ -214,7 +201,6 @@ begin
   inherited Create(AOwner);
   if not (csDesigning in ComponentState) and not AppObjectExists then
   begin
-  {$IFNDEF FPC}
     if Assigned(Application) then
     begin
       FOld := Application.OnMessage;
@@ -223,7 +209,6 @@ begin
     begin
       raise Exception.Create('Application未初始，无法拦截');
     end;
-  {$ENDIF}
     CPaintManagerUI.SetInstance(HInstance);
   end;
   AppObjectExists := True;
@@ -233,10 +218,8 @@ destructor TDDuiApp.Destroy;
 begin
   if not (csDesigning in ComponentState) then
   begin
-  {$IFNDEF FPC}
     if Assigned(FOld) then
       Application.OnMessage := FOld;
-  {$ENDIF}
     CPaintManagerUI.Term;
     if ResourceDllHinst <> 0 then
       FreeLibrary(ResourceDllHinst);
@@ -250,12 +233,10 @@ begin
   begin
     Handled := True;  // 未测
   end;
-{$IFNDEF FPC}
   if Assigned(FOnMessage) then
     FOnMessage(Msg, Handled);
   if Assigned(FOld) then
     FOld(Msg, Handled);
-{$ENDIF}
 end;
 
 
@@ -341,14 +322,6 @@ begin
   FObjectEvents := TDuiObjectEvents.Create;
   if not IsDesigning then
   begin
-  {$IFDEF FPC}
-    New(FNotifyVMT);
-    New(FMessageFilterUIVMT);
-    New(FDialogBuilderCallBackVMT);
-    FNotifyVMT^ := PDWORD(FNotifyUI)^ + $64;
-    FMessageFilterUIVMT^ := PDWORD(FMessageFilterUI)^ + $64;
-    FDialogBuilderCallBackVMT^ := PDWORD(FDialogBuilderCallback)^ + $64;
-  {$ENDIF}
     FPaintMgr := CPaintManagerUI.CppCreate;
     FNotifyPump := CNotifyPump.CppCreate;
     FHandle := FForm.Handle;
@@ -366,14 +339,6 @@ begin
       FForm.WindowProc := FOldWndProc;
     FNotifyPump.CppDestroy;
     FPaintMgr.CppDestroy;
-    {$IFDEF FPC}
-      if FNotifyVMT <> nil then
-        Dispose(FNotifyVMT);
-      if FMessageFilterUIVMT <> nil then
-        Dispose(FMessageFilterUIVMT);
-      if FDialogBuilderCallBackVMT <> nil then
-        Dispose(FDialogBuilderCallBackVMT);
-    {$ENDIF}
   end;
   FSkinXml.Free;
   ClearEvents;
@@ -417,11 +382,6 @@ end;
 
 procedure TDDuiForm.DoNcCalcSize(var Msg: TMessage);
 var
-//  LPRect: PRect;
-//  LPParam: PNCCalcSizeParams;
-//  oMonitor: TMonitorInfo;
-//  rcWork, rcMonitor: TRect;
-
   LNcMsg: TWMNCCalcSize;
 begin
   LNcMsg := TWMNCCalcSize(Msg);
@@ -431,36 +391,14 @@ begin
     LNcMsg.CalcSize_Params^.rgrc[1] := LNcMsg.CalcSize_Params^.rgrc[0];
   end;
   LNcMsg.Result := 1;
-
-
-//	if Msg.WParam <> 0 then
-//	begin
-//	  LPParam := PNCCalcSizeParams(Msg.LParam);
-//		LPRect := @LPParam^.rgrc[0];
-//	end	else
-//		LPRect := PRect(Msg.LParam);
-//  if IsZoomed(Handle) then
-//  begin
-//    FillChar(oMonitor, SizeOf(oMonitor), #0);
-//    oMonitor.cbSize := sizeof(oMonitor);
-//    GetMonitorInfo(MonitorFromWindow(Handle, MONITOR_DEFAULTTONEAREST), @oMonitor);
-//    rcWork := oMonitor.rcWork;
-//    rcMonitor := oMonitor.rcMonitor;
-//
-//    RectOffset(rcWork, -oMonitor.rcMonitor.Left, -oMonitor.rcMonitor.Top);
-//
-//    LPRect^.Right := LPRect^.Left + (rcWork.Right - rcWork.Left);
-//    LPRect^.Bottom := LPRect^.Top + (rcWork.Bottom - rcWork.Top);
-//    Msg.Result := WVR_REDRAW;
-//  end;
 end;
 
 procedure TDDuiForm.DoNcDestroy(var Msg: TMessage);
 begin
   if Assigned(FPaintMgr) then
   begin
-    FPaintMgr.RemovePreMessageFilter({$IFDEF FPC}IMessageFilterUI(FMessageFilterUIVMT){$ELSE}FMessageFilterUI{$ENDIF});
-    FPaintMgr.RemoveNotifier({$IFDEF FPC}INotifyUI(FNotifyUI){$ELSE}FNotifyUI{$ENDIF});
+    FPaintMgr.RemovePreMessageFilter(FMessageFilterUI);
+    FPaintMgr.RemoveNotifier(FNotifyUI);
     FPaintMgr.ReapObjects(FPaintMgr.GetRoot);
     FCanProcessDuiMsg := False;
   end;
@@ -602,7 +540,7 @@ begin
   if FIsUIInitd then Exit;
   FCanProcessDuiMsg := True;
   FPaintMgr.Init(Handle);
-  FPaintMgr.AddMessageFilter({$IFDEF FPC}IMessageFilterUI(FMessageFilterUIVMT){$ELSE}FMessageFilterUI{$ENDIF});
+  FPaintMgr.AddMessageFilter(FMessageFilterUI);
 
   LResourcePath := FPaintMgr.GetResourcePath;
   if LResourcePath = '' then
@@ -648,21 +586,21 @@ begin
           end;
       end;
       if FSkinKind = skResource then
-        pRoot := builder.Create(FSkinXml.Text, 'xml', {$IFDEF FPC}IDialogBuilderCallback(FDialogBuilderCallbackVMT){$ELSE}FDialogBuilderCallback{$ENDIF}, FPaintMgr)
+        pRoot := builder.Create(FSkinXml.Text, 'xml', FDialogBuilderCallback, FPaintMgr)
       else
-        pRoot := builder.CreateFromFile(FSkinXmlFile, {$IFDEF FPC}IDialogBuilderCallback(FDialogBuilderCallbackVMT){$ELSE}FDialogBuilderCallback{$ENDIF}, FPaintMgr);
+        pRoot := builder.CreateFromFile(FSkinXmlFile, FDialogBuilderCallback, FPaintMgr);
     finally
       builder.CppDestroy;
     end;
   end;
   if pRoot = nil then
   begin
-    FPaintMgr.RemoveMessageFilter({$IFDEF FPC}IMessageFilterUI(FMessageFilterUIVMT){$ELSE}FMessageFilterUI{$ENDIF});
+    FPaintMgr.RemoveMessageFilter(FMessageFilterUI);
     raise Exception.Create('加载资源文件失败');
     Exit;
   end;
   FPaintMgr.AttachDialog(pRoot);
-  FPaintMgr.AddNotifier({$IFDEF FPC}INotifyUI(FNotifyVMT){$ELSE}FNotifyUI{$ENDIF});
+  FPaintMgr.AddNotifier(FNotifyUI);
   FIsUIInitd := True;
   if Assigned(FOnInitWindow) then
     FOnInitWindow(Self);
@@ -827,14 +765,10 @@ var
 begin
   LItem.EventFlags := AType + AObjName;
   LItem.Event := AEvent;
-{$IFNDEF FPC}
   if not FObjectEvents.ContainsKey(LItem.EventFlags) then
-{$ELSE}
-  if FObjectEvents.IndexOf(LItem.EventFlags) = -1 then
-{$ENDIF}
     FObjectEvents.Add(LItem.EventFlags, LItem);
 end;
-{$ELSE}
+{$ELSE SupportGeneric}
 var
   LItem: PDuiObjecItem;
 begin
@@ -846,7 +780,7 @@ begin
     FObjectEvents.Add(LItem);
   end;
 end;
-{$ENDIF}
+{$ENDIF SupportGeneric}
 
 procedure TDDuiForm.AddObjectClick(AObjName: string; AEvent: TDuiNotifyEvent);
 begin
@@ -861,24 +795,16 @@ var
 {$ENDIF}
 begin
 {$IFDEF SupportGeneric}
-  {$IFNDEF FPC}
   if FObjectEvents.TryGetValue(Msg.sType + Msg.pSender.Name, LItem) then
-  begin
-  {$ELSE}
-  if FObjectEvents.IndexOf(Msg.sType.m_pstr + Msg.pSender.Name) <> -1 then
-  begin
-    LItem := FObjectEvents.KeyData[Msg.sType.m_pstr + Msg.pSender.Name];
-  {$ENDIF}
     LItem.Event(Self, Msg);
-  end;
-{$ELSE}
+{$ELSE SupportGeneric}
   I := IndexOfObjEvent(DuiStringToString(Msg.sType) + Msg.pSender.Name);
   if I <> -1 then
   begin
     LItem := PDuiObjecItem(FObjectEvents[I])^;
     LItem.Event(Self, Msg);
   end;
-{$ENDIF}
+{$ENDIF SupportGeneric}
   if Assigned(FOnNotify) then
     FOnNotify(Self, Msg);
 {$IFNDEF UseLowVer}
