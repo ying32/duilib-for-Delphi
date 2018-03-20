@@ -17,6 +17,8 @@
 
 #### **其它说明** 
 
+`用作项目时，同一个Form(Window)能不使用VCL混合就不混合，切记。`
+
 考虑到github经常被墙和访问慢的缘故，这里使用了2个地址存放代码以满足不同用户访问：
 1、[Github项目地址](https://github.com/ying32/duilib-for-Delphi/) 
 2、[OSC项目地址](http://git.oschina.net/ying32/Duilib-for-Delphi)
@@ -133,10 +135,6 @@ end.
 >	  
 * 6、Screenshot
    * 例程截图相关
-
->	  
-* 6、Designer
-   * UI设计器，但未完成。
 
 
 #### **截图**
