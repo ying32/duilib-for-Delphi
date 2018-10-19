@@ -149,8 +149,6 @@ end.
 [播放器2,只展示不开源](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/Screenshot/screenshot8.png)   
 
 #### **作者信息** 
-##### 多少无所谓，反正想捐助的就随心吧，不捐助也毫无影响。  
 
-![欢迎捐助](https://raw.githubusercontent.com/ying32/duilib-for-Delphi/master/Screenshot/wx.jpg)  
 [ying32](mailto:1444386932@qq.com) 
 
